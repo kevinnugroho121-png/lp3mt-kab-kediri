@@ -1,0 +1,131 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Models\Kecamatan;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth; // [PENTING] Wajib ada agar Auth::user() jalan
+
+class KecamatanController extends Controller
+{
+    /**
+     * Tampilkan data kecamatan
+     */
+    public function index(Request $request)
+    {
+        $user = Auth::user(); // Ambil user yang login
+
+        // 1. Siapkan Query + HITUNG DESA
+        $query = Kecamatan::withCount('desa');
+
+        // 2. LOGIKA KHUSUS KORCAM (Kacamata Kuda)
+        // Jika Korcam, paksa hanya tampilkan kecamatannya sendiri
+        if ($user->role == 'korcam') {
+            $query->where('id', $user->kecamatan_id);
+        }
+
+        // 3. Logika Pencarian (Hanya aktif jika BUKAN Korcam)
+        // Korcam tidak perlu cari, karena datanya cuma satu
+        if ($user->role != 'korcam' && $request->filled('search')) {
+            $query->where('nama_kecamatan', 'like', '%' . $request->search . '%');
+        }
+
+        // 4. Ambil data dengan Pagination
+        $kecamatans = $query->orderBy('nama_kecamatan', 'asc')
+                            ->paginate(10)
+                            ->withQueryString();
+
+        return view('admin.kecamatan.index', compact('kecamatans'));
+    }
+
+    /**
+     * Form tambah kecamatan
+     */
+    public function create()
+    {
+        // [PROTEKSI] Korcam DILARANG akses halaman tambah
+        if (Auth::user()->role == 'korcam') {
+            abort(403, 'Akses Ditolak: Korcam tidak berhak menambah kecamatan.');
+        }
+
+        return view('admin.kecamatan.create');
+    }
+
+    /**
+     * Simpan kecamatan baru
+     */
+    public function store(Request $request)
+    {
+        // [PROTEKSI] Korcam DILARANG simpan data
+        if (Auth::user()->role == 'korcam') {
+            abort(403);
+        }
+
+        $request->validate([
+            'nama_kecamatan' => 'required|string|max:255|unique:kecamatans,nama_kecamatan'
+        ], [
+            'nama_kecamatan.unique' => 'Nama kecamatan ini sudah ada di database, tidak boleh ganda.'
+        ]);
+
+        // Contoh di fungsi store / update Kecamatan
+        Kecamatan::create([
+            'nama_kecamatan' => strtoupper($request->nama_kecamatan)
+        ]);
+
+        return redirect()->route('kecamatan.index')
+            ->with('success', 'Data kecamatan berhasil ditambahkan');
+    }
+
+    /**
+     * Form edit kecamatan
+     */
+    public function edit(Kecamatan $kecamatan)
+    {
+        // [PROTEKSI] Korcam hanya boleh edit kecamatannya sendiri
+        $user = Auth::user();
+        if ($user->role == 'korcam' && $kecamatan->id != $user->kecamatan_id) {
+            abort(403, 'Anda tidak memiliki akses ke kecamatan ini.');
+        }
+
+        return view('admin.kecamatan.edit', compact('kecamatan'));
+    }
+
+    /**
+     * Update data kecamatan
+     */
+    public function update(Request $request, Kecamatan $kecamatan)
+    {
+        // [PROTEKSI] Korcam hanya boleh update kecamatannya sendiri
+        $user = Auth::user();
+        if ($user->role == 'korcam' && $kecamatan->id != $user->kecamatan_id) {
+            abort(403);
+        }
+
+        $request->validate([
+            'nama_kecamatan' => 'required|max:255|unique:kecamatans,nama_kecamatan,' . $kecamatan->id,
+        ]);
+
+        // [FIX] Pasang strtoupper juga saat update data
+        $kecamatan->update([
+            'nama_kecamatan' => strtoupper($request->nama_kecamatan)
+        ]);
+
+        return redirect()->route('kecamatan.index')->with('success', 'Data kecamatan berhasil diperbarui');
+    }
+
+    /**
+     * Hapus kecamatan
+     */
+    public function destroy(Kecamatan $kecamatan)
+    {
+        // [PROTEKSI] HANYA ADMIN yang boleh hapus kecamatan
+        // Korcam & Verifikator DILARANG
+        if (Auth::user()->role != 'admin') {
+            return back()->with('error', 'Hanya Admin Pusat yang boleh menghapus kecamatan.');
+        }
+
+        $kecamatan->delete();
+
+        return redirect()->route('kecamatan.index')->with('success', 'Kecamatan berhasil dihapus');
+    }
+}

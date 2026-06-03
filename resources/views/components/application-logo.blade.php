@@ -1,0 +1,1 @@
+<img src="{{ asset('images/logo_lp3mt.png') }}" {{ $attributes }} alt="Logo LP3MT" class="w-16 h-auto object-contain">
