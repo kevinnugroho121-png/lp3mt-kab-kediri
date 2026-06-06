@@ -1,7 +1,38 @@
 <x-app-layout>
     {{-- CONTAINER UTAMA --}}
     <div class="py-2 px-2 w-full"> 
+        {{-- ============================================================ --}}
+        {{-- 📊 [BARU - FASE 2] DASHBOARD TRANSPARAN INDIKATOR KUOTA KORCAM --}}
+        {{-- ============================================================ --}}
+        @if(Auth::user()->role == 'korcam' && isset($filterType) && $filterType == 'INSENTIF' && isset($kuotaSistem))
+            <div class="mb-3 grid grid-cols-1 sm:grid-cols-3 gap-3">
+                <div class="bg-blue-600 text-white p-3 rounded-lg border border-blue-700 shadow-sm flex items-center justify-between">
+                    <div>
+                        <p class="text-[10px] font-bold uppercase tracking-wider opacity-80">Total Jatah Kuota Kecamatan</p>
+                        <h4 class="text-xl font-black mt-0.5">{{ $kuotaSistem['total'] }} <span class="text-xs font-normal">Guru</span></h4>
+                    </div>
+                    <span class="text-2xl">📋</span>
+                </div>
+                <div class="bg-emerald-600 text-white p-3 rounded-lg border border-emerald-700 shadow-sm flex items-center justify-between">
+                    <div>
+                        <p class="text-[10px] font-bold uppercase tracking-wider opacity-80">Kuota Terpakai (Aktif)</p>
+                        <h4 class="text-xl font-black mt-0.5">{{ $kuotaSistem['terpakai'] }} <span class="text-xs font-normal">Guru</span></h4>
+                    </div>
+                    <span class="text-2xl">✅</span>
+                </div>
+                <div class="bg-amber-500 text-white p-3 rounded-lg border border-amber-600 shadow-sm flex items-center justify-between">
+                    <div>
+                        <p class="text-[10px] font-bold uppercase tracking-wider opacity-80">Sisa Peluru Insentif</p>
+                        <h4 class="text-xl font-black mt-0.5">{{ $kuotaSistem['sisa'] }} <span class="text-xs font-normal">Guru</span></h4>
+                    </div>
+                    <span class="text-2xl">🎯</span>
+                </div>
+            </div>
+        @endif
         
+
+
+
         {{-- =========================== --}}
         {{-- 1. HEADER & CONTROL BAR KOMPLIT --}}
         {{-- =========================== --}}
@@ -201,49 +232,31 @@
                     
                     {{-- BODY TABEL --}}
                     <tbody class="text-gray-900 text-[11px] divide-y divide-gray-200">
-                        @php $kuotaTracker = []; @endphp {{-- [BARU] Variabel untuk menghitung urutan per lembaga --}}
-                        
+
                         @forelse($gurus as $index => $guru)
-                            {{-- LOGIKA WARNA BARIS (MERAH / HIJAU / KUNING) --}}
+                            {{-- LOGIKA WARNA BARIS SUPER SIMPEL (FASE 2) --}}
                             @php
                                 // 1. Cek Kelayakan (PNS/PPPK/Inpassing = Merah)
                                 $isTidakLayak = in_array($guru->status_kepegawaian, ['PNS', 'PPPK']) || strtoupper($guru->status_sertifikasi) == 'INPASSING';
                                 
+                                // Penentuan Warna Default (Standby = Putih)
                                 $rowClass = 'hover:bg-gray-50 bg-white';
                                 $stickyClass = 'bg-white';
-                                $badgeKuota = '';
 
                                 if ($isTidakLayak) {
-                                    $rowClass = 'bg-red-100 hover:bg-red-200';
-                                    $stickyClass = 'bg-red-100';
-                                } 
-                                // 2. Logika Kuota Insentif (Hanya jalan di Menu Insentif)
-                                elseif (isset($filterType) && $filterType == 'INSENTIF') {
-                                    $l_id = $guru->lembaga_id;
-                                    
-                                    // Hitung urutan guru di lembaga ini
-                                    if (!isset($kuotaTracker[$l_id])) { $kuotaTracker[$l_id] = 0; }
-                                    $kuotaTracker[$l_id]++;
-                                    
-                                    // Ambil jatah kuota dari tabel lembaga
-                                    $jatahLembaga = $guru->lembaga->penerima_insentif ?? 0;
-
-                                    if ($kuotaTracker[$l_id] <= $jatahLembaga) {
-                                        // MASUK KUOTA -> HIJAU
-                                        $rowClass = 'bg-emerald-50 hover:bg-emerald-100'; 
-                                        $stickyClass = 'bg-emerald-50';
-                                        $badgeKuota = '<div class="mt-1.5"><span class="px-1.5 py-0.5 rounded shadow-sm bg-emerald-500 text-white text-[9px] font-bold border border-emerald-600">MASUK KUOTA</span></div>';
-                                    } else {
-                                        // LUAR KUOTA (DAFTAR TUNGGU) -> KUNING
-                                        $rowClass = 'bg-amber-50 hover:bg-amber-100'; 
-                                        $stickyClass = 'bg-amber-50';
-                                        $badgeKuota = '<div class="mt-1.5"><span class="px-1.5 py-0.5 rounded shadow-sm bg-amber-400 text-amber-900 text-[9px] font-bold border border-amber-500">TIDAK MASUK KUOTA</span></div>';
-                                    }
+                                    $rowClass = 'bg-red-50 hover:bg-red-100';
+                                    $stickyClass = 'bg-red-50';
+                                } elseif ($guru->penerima_insentif == 1) {
+                                    $rowClass = 'bg-emerald-50 hover:bg-emerald-100'; 
+                                    $stickyClass = 'bg-emerald-50';
                                 }
                             @endphp
 
                             <tr class="{{ $rowClass }} transition duration-75 whitespace-nowrap">
-                                
+                              
+                            
+
+
                                 {{-- 1. NO --}}
                                 <td class="border border-gray-300 py-1 text-center font-medium sticky left-0 z-10 {{ $isTidakLayak ? 'bg-red-100' : 'bg-gray-50' }}">
                                     {{ $gurus->firstItem() + $index }}
@@ -253,7 +266,7 @@
                                 <td class="border border-gray-300 px-2 py-1 font-bold sticky left-10 z-10 shadow-r {{ $stickyClass }}">
                                     {{ $guru->nama_lengkap }}
                                     @if($isTidakLayak)
-                                        <span class="block text-[9px] text-red-600 font-normal italic">(Tidak Berhak Insentif)</span>
+                                        <span class="block text-[9px] text-red-600 font-normal italic">(Tidak Berhak Mendapat Insentif)</span>
                                     @endif
                                 </td>
 
@@ -279,20 +292,53 @@
                                     </div>
                                 </td>
 
-                                {{-- 5. INSENTIF --}}
+                                {{-- 5. INSENTIF (SINKRONISASI FASE 2) --}}
                                 <td class="border border-gray-300 px-2 py-1 text-center align-middle">
-                                    @if($guru->penerima_insentif == 1)
-                                        <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-green-100 text-green-700 border border-green-300">
-                                            BERHAK DAPAT
+                                    
+                                    @if($isTidakLayak)
+                                        {{-- JIKA PNS/PPPK/INPASSING: TAMPILKAN SILANG MERAH DI MENU MANAPUN --}}
+                                        <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-red-100 text-red-700 border border-red-300">
+                                            TIDAK BERHAK
                                         </span>
-                                        {{-- Memunculkan Label Hijau/Kuning khusus di Menu Insentif --}}
-                                        {!! $badgeKuota !!} 
+                                    
                                     @else
-                                        <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-gray-100 text-gray-400 border border-gray-300">
-                                            ❌ Tidak
-                                        </span>
+                                        {{-- JIKA NON-ASN (GURU BERHAK) --}}
+                                        @if(Auth::user()->role == 'korcam' && isset($filterType) && $filterType == 'INSENTIF')
+                                            
+                                            {{-- SAKLAR KHUSUS KORCAM (HANYA DI MENU INSENTIF) --}}
+                                            <form action="{{ route('guru.toggle_insentif', $guru->id) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin mengubah status alokasi insentif untuk guru ini?');">
+                                                @csrf
+                                                @if($guru->penerima_insentif == 1)
+                                                    <button type="submit" class="text-[10px] font-bold px-2 py-1 rounded-md bg-green-600 text-white border border-green-700 hover:bg-red-600 hover:text-white transition duration-200 shadow-sm group w-full text-center">
+                                                        <span class="group-hover:hidden">BERHAK & TERPILIH</span>
+                                                        <span class="hidden group-hover:inline">COPOT JATAH</span>
+                                                    </button>
+                                                @else
+                                                    <button type="submit" class="text-[10px] font-bold px-2 py-1 rounded-md bg-yellow-500 text-white border border-yellow-600 hover:bg-emerald-600 hover:text-white transition duration-200 shadow-sm w-full text-center">
+                                                        BERHAK (belum terpilih)
+                                                    </button>
+                                                @endif
+                                            </form>
+
+                                        @else
+                                            
+                                            {{-- TAMPILAN STATIS (UNTUK SUPERADMIN/VERIFIKATOR ATAU DI MENU LAINNYA) --}}
+                                            @if($guru->penerima_insentif == 1)
+                                                <span class="text-[10px] font-bold px-2 py-1 rounded-md bg-green-100 text-green-800 border border-green-500 block text-center">
+                                                    BERHAK & TERPILIH
+                                                </span>
+                                            @else
+                                                <span class="text-[10px] font-bold px-2 py-1 rounded-md bg-yellow-100 text-yellow-800 border border-yellow-500 block text-center">
+                                                    BERHAK (belum terpilih)
+                                                </span>
+                                            @endif
+
+                                        @endif
                                     @endif
                                 </td>
+
+
+
 
                                 {{-- 6. NAMA LEMBAGA --}}
                                 <td class="border border-gray-300 px-2 py-1">

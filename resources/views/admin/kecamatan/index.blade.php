@@ -72,13 +72,18 @@
                 <table class="w-full text-sm border-collapse">
                     {{-- HEADER --}}
                     <thead>
+
+
                         <tr class="bg-gray-100 text-gray-700 uppercase text-xs tracking-wider">
                             <th class="border border-gray-300 px-2 py-2 text-center w-12 font-bold">No</th>
                             <th class="border border-gray-300 px-3 py-2 text-center font-bold">Nama Kecamatan</th>
-                            {{-- Kolom Jumlah Desa (Pengganti Menu Desa) --}}
                             <th class="border border-gray-300 px-3 py-2 text-center font-bold w-48">Data Desa</th> 
+                            {{-- [BARU] Sisipkan kolom kuota insentif di sini --}}
+                            <th class="border border-gray-300 px-3 py-2 text-center font-bold w-64">Jatah Kuota Insentif</th> 
                             <th class="border border-gray-300 px-3 py-2 text-center font-bold w-32">Aksi</th>
                         </tr>
+
+
                     </thead>
                     
                     {{-- BODY --}}
@@ -98,13 +103,33 @@
 
                                 {{-- JUMLAH DESA (LINK KHUSUS) --}}
                                 <td class="border border-gray-300 px-2 py-1 text-center p-0">
-                                    {{-- Link ke index desa dengan filter kecamatan_id --}}
                                     <a href="{{ route('desa.index', ['kecamatan_id' => $kecamatan->id]) }}" class="group flex items-center justify-between w-full h-full px-3 py-1 text-xs hover:bg-blue-50 transition cursor-pointer">
                                         <span class="font-bold text-blue-600 group-hover:underline">
                                             {{ $kecamatan->desa_count ?? 0 }} Desa
                                         </span>
                                         <svg class="w-3 h-3 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
                                     </a>
+                                </td>
+
+                                {{-- [BARU - FASE 2] LOGIKA FORM INPUT KUOTA DINAMIS --}}
+                                <td class="border border-gray-300 px-3 py-1 text-center">
+                                    @if(Auth::user()->role == 'admin' || Auth::user()->role == 'verifikator')
+                                        {{-- Jika Superadmin/Verifikator, tampilkan Form Input Instan --}}
+                                        <form action="{{ route('kecamatan.update_kuota', $kecamatan->id) }}" method="POST" class="flex items-center gap-1 justify-center">
+                                            @csrf
+                                            @method('PUT')
+                                            <input type="number" name="kuota_insentif" value="{{ old('kuota_insentif', $kecamatan->kuota_insentif ?? 0) }}" min="0"
+                                                   class="w-20 border border-gray-300 rounded px-2 py-0.5 text-center text-xs font-bold text-blue-800 focus:ring-1 focus:ring-blue-500 focus:border-blue-500">
+                                            <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white text-[10px] font-bold px-2 py-1 rounded shadow-sm transition">
+                                                Simpan
+                                            </button>
+                                        </form>
+                                    @else
+                                        {{-- Jika Korcam, Cukup Kunci & Tampilkan Angkanya Saja (Read-Only) --}}
+                                        <span class="px-2.5 py-0.5 rounded-full bg-blue-50 border border-blue-300 text-blue-700 font-bold text-xs">
+                                            🎯 {{ $kecamatan->kuota_insentif ?? 0 }} Kuota Guru
+                                        </span>
+                                    @endif
                                 </td>
 
                                 {{-- AKSI --}}

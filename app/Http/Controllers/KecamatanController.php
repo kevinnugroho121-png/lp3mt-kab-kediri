@@ -128,4 +128,32 @@ class KecamatanController extends Controller
 
         return redirect()->route('kecamatan.index')->with('success', 'Kecamatan berhasil dihapus');
     }
+
+    /**
+     * [BARU - FASE 2] Update jatah angka kuota kecamatan oleh Superadmin / Verifikator
+     */
+    public function updateKuota(Request $request, $id)
+    {
+        // 1. Amankan hak akses! Korcam dilarang keras menembak fungsi ini
+        if (Auth::user()->role == 'korcam') {
+            abort(403, 'Akses Ditolak! Korcam tidak berhak mengubah kuota.');
+        }
+
+        // 2. Validasi inputan harus berupa angka bulat positif
+        $request->validate([
+            'kuota_insentif' => 'required|integer|min:0'
+        ], [
+            'kuota_insentif.required' => 'Angka kuota wajib diisi.',
+            'kuota_insentif.integer'  => 'Kuota harus berupa angka, bukan teks.',
+            'kuota_insentif.min'      => 'Kuota minimal adalah angka 0.'
+        ]);
+
+        // 3. Eksekusi simpan perubahan
+        $kecamatan = Kecamatan::findOrFail($id);
+        $kecamatan->update([
+            'kuota_insentif' => $request->kuota_insentif
+        ]);
+
+        return redirect()->route('kecamatan.index')->with('success', "Alhamdulillah! Kuota untuk Kecamatan {$kecamatan->nama_kecamatan} berhasil diatur menjadi {$request->kuota_insentif} jatah.");
+    }
 }

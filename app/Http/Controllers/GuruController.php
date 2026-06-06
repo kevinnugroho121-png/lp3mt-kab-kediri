@@ -37,10 +37,13 @@ class GuruController extends Controller
         }
 
         // Filter Menu
-        if ($filterType != 'ALL' && $filterType != 'INSENTIF') {
+        if ($filterType == 'INSENTIF') {
+            // HANYA NON-ASN YANG BOLEH MASUK SINI! 
+            // PNS dan PPPK dilarang keras tampil di Menu Insentif.
+            $query->where('status_kepegawaian', 'NON-ASN');
+        } elseif (in_array($filterType, ['MADIN', 'TPQ', 'PONPES'])) {
+            // [FIXED FASE 2] Kunci data agar murni menampilkan jenis guru yang sesuai kamar menunya!
             $query->where('jenis_guru', $filterType);
-        } elseif ($filterType == 'INSENTIF') {
-            $query->where('penerima_insentif', 1); // <--- KUNCI MENU INSENTIF
         }
 
         // Filter Wilayah & Search
@@ -89,6 +92,30 @@ class GuruController extends Controller
         $list_lembaga = $lembagaQuery->get();
 
         $gurus = $query->latest()->paginate(20)->withQueryString();
+
+        // ========================================================
+        // 📊 [BARU - FASE 2] HITUNG KUOTA REAL-TIME UNTUK KORCAM
+        // ========================================================
+        $kuotaSistem = ['total' => 0, 'terpakai' => 0, 'sisa' => 0];
+        
+        if ($user->role == 'korcam') {
+            // Ambil jatah kuota kecamatan asli dari Superadmin
+            $kuotaSistem['total'] = \App\Models\Kecamatan::where('id', $user->kecamatan_id)->value('kuota_insentif') ?? 0;
+            
+            // Hitung berapa guru di kecamatan ini yang sudah diaktifkan insentifnya (penerima_insentif = 1)
+            $kuotaSistem['terpakai'] = Guru::whereHas('lembaga', function($q) use ($user) {
+                $q->where('kecamatan_id', $user->kecamatan_id);
+            })->where('penerima_insentif', 1)->count();
+            
+            // Hitung sisa peluru
+            $kuotaSistem['sisa'] = $kuotaSistem['total'] - $kuotaSistem['terpakai'];
+        }
+        // ========================================================
+
+        $gurus = $query->latest()->paginate(20)->withQueryString();
+
+        // Tambahkan 'kuotaSistem' ke dalam compact
+        return view('admin.guru.index', compact('gurus', 'title', 'data_kecamatan', 'data_desa', 'filterType', 'list_lembaga', 'kuotaSistem'));
 
         return view('admin.guru.index', compact('gurus', 'title', 'data_kecamatan', 'data_desa', 'filterType', 'list_lembaga'));
     }
@@ -394,6 +421,46 @@ class GuruController extends Controller
             }
             
             return back()->with('error', 'Terjadi kesalahan sistem: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * [BARU - FASE 2] SAKLAR INSENTIF KORCAM (Kunci & Lepas Jatah Kuota)
+     */
+    public function toggleInsentif(Request $request, $id)
+    {
+        $guru = Guru::with('lembaga.kecamatan')->findOrFail($id);
+        $user = Auth::user();
+
+        // 1. Hak Akses: Korcam hanya boleh utak-atik guru di kecamatannya sendiri
+        if ($user->role == 'korcam' && $guru->lembaga->kecamatan_id != $user->kecamatan_id) {
+            return back()->with('error', 'Akses Ditolak! Guru ini di luar wilayah kecamatan Anda.');
+        }
+
+        // 2. Logika jika Korcam mau MENGAKTIFKAN insentif (dari 0 ke 1)
+        if ($guru->penerima_insentif == 0) {
+            // Ambil batasan kuota kecamatan
+            $maxKuota = $guru->lembaga->kecamatan->kuota_insentif ?? 0;
+
+            // Hitung yang sudah terpakai di kecamatan tersebut saat ini
+            $terpakai = Guru::whereHas('lembaga', function($q) use ($guru) {
+                $q->where('kecamatan_id', $guru->lembaga->kecamatan_id);
+            })->where('penerima_insentif', 1)->count();
+
+            // Jika peluru habis, BLOKIR AKSI!
+            if ($terpakai >= $maxKuota) {
+                return back()->with('error', "Gagal Aktifkan! Jatah Kuota Insentif untuk Kecamatan {$guru->lembaga->kecamatan->nama_kecamatan} sudah HABIS ({$terpakai}/{$maxKuota}).");
+            }
+
+            // Jika aman, set jadi aktif
+            $guru->update(['penerima_insentif' => 1]);
+            return back()->with('success', "Alhamdulillah! {$guru->nama_lengkap} resmi dialokasikan sebagai penerima insentif.");
+        } 
+        
+        // 3. Logika jika Korcam mau MENCOPOT/STANDBY-KAN insentif (dari 1 ke 0)
+        else {
+            $guru->update(['penerima_insentif' => 0]);
+            return back()->with('success', "Status insentif {$guru->nama_lengkap} berhasil dicopot dan kembali Standby.");
         }
     }
     

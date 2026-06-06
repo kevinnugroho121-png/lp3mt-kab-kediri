@@ -9,7 +9,7 @@ class Kecamatan extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['nama_kecamatan'];
+    protected $fillable = ['nama_kecamatan', 'kuota_insentif'];
 
     // PENTING: Nama fungsi ini harus 'desa' (singular/tunggal)
     // Agar cocok dengan kode Controller: withCount('desa')

@@ -151,8 +151,10 @@ class GuruImport implements ToCollection, WithHeadingRow
                     'agama'              => strtoupper($row['agama']),
                     'status_kepegawaian' => 'NON-ASN', 
                     'status_sertifikasi' => 'BELUM SERTIFIKASI',
-                    'penerima_insentif'  => 1, 
+                    'penerima_insentif'  => 0, // <--- [FIXED] Default menjadi 0 (Standby / Abu-abu)
                     'alamat_ktp'         => strtoupper($row['alamat_sesuai_ktp']),
+
+
                     'desa'               => strtoupper($row['desa']),
                     'kecamatan'          => strtoupper($row['kec_1'] ?? $row['kecamatan_guru'] ?? $row['kec'] ?? ''),
                     'kabupaten'          => strtoupper($row['kab'] ?? 'KEDIRI'),

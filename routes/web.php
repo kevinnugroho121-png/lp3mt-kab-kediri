@@ -196,6 +196,7 @@ Route::middleware(['auth', 'role:admin,verifikator,korcam'])->prefix('admin')->g
     
     Route::get('guru/{id}/verifikasi', [GuruController::class, 'verifikasi'])->name('guru.verifikasi');
     Route::post('guru/{id}/verifikasi', [GuruController::class, 'prosesVerifikasi'])->name('guru.proses_verifikasi');
+    Route::post('/guru/{id}/toggle-insentif', [\App\Http\Controllers\GuruController::class, 'toggleInsentif'])->name('guru.toggle_insentif');
     Route::resource('guru', GuruController::class);
 
 });
@@ -211,6 +212,8 @@ Route::post('/logout', function (Request $request) {
 })->name('logout')->middleware('auth');
 
 
+// Pastikan rute ini berada di dalam middleware auth dan pelindung role admin/verifikator jika ada
+Route::put('/kecamatan/{id}/update-kuota', [KecamatanController::class, 'updateKuota'])->name('kecamatan.update_kuota');
 
 // Rute untuk Halaman Profil & Ganti Password
 Route::middleware('auth')->group(function () {
