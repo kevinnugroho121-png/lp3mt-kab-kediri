@@ -68,15 +68,21 @@
                 <x-input-error :messages="$errors->get('email')" class="mt-1" />
             </div>
 
-            {{-- INPUT PASSWORD --}}
+            {{-- INPUT PASSWORD DENGAN IKON MATA --}}
             <div class="relative">
-                <input id="password" class="peer block w-full px-4 py-3.5 rounded-xl border-2 border-slate-200 bg-slate-50 placeholder-transparent focus:border-blue-600 focus:bg-white focus:outline-none focus:ring-0 transition-colors font-semibold text-slate-800" 
+                <input id="password" class="peer block w-full px-4 py-3.5 pr-12 rounded-xl border-2 border-slate-200 bg-slate-50 placeholder-transparent focus:border-blue-600 focus:bg-white focus:outline-none focus:ring-0 transition-colors font-semibold text-slate-800" 
                        type="password" name="password" required autocomplete="current-password"
                        placeholder="Password" />
                 <label for="password" class="absolute left-4 -top-2.5 bg-white px-1.5 text-xs font-bold text-slate-500 transition-all peer-placeholder-shown:top-3.5 peer-placeholder-shown:text-sm peer-placeholder-shown:text-slate-400 peer-focus:-top-2.5 peer-focus:text-xs peer-focus:text-blue-600 rounded">
                     Password
                 </label>
-                <x-input-error :messages="$errors->get('password')" class="mt-1" />
+                
+                {{-- Tombol Mata --}}
+                <button type="button" onclick="toggleLoginPassword()" class="absolute inset-y-0 right-0 px-4 flex items-center text-slate-400 hover:text-blue-600 transition focus:outline-none">
+                    <svg id="eye_icon" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
+                </button>
+
+                <x-input-error :messages="$errors->get('password')" class="mt-1 text-xs text-red-500 font-bold" />
             </div>
 
             {{-- INGAT SAYA & LUPA PASSWORD --}}
@@ -116,5 +122,34 @@
         @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
         .animate-fade-in-up { animation: fadeInUp 0.6s ease-out forwards; }
     </style>
+
+    {{-- Animasi CSS --}}
+    <style>
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .animate-fade-in-up { animation: fadeInUp 0.6s ease-out forwards; }
+    </style>
+
+    {{-- SCRIPT IKON MATA --}}
+    <script>
+        function toggleLoginPassword() {
+            const passwordInput = document.getElementById('password');
+            const eyeIcon = document.getElementById('eye_icon');
+            
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                // Ikon Mata Dicoret
+                eyeIcon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.29 3.29m0 0l3.29 3.29m0 0l-3.29-3.29m0 0L3 3m18 18l-3.29-3.29m0 0l-3.29-3.29m0 0l3.29 3.29m0 0L21 21"></path>';
+            } else {
+                passwordInput.type = 'password';
+                // Ikon Mata Terbuka
+                eyeIcon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>';
+            }
+        }
+    </script>
+</body>
+</html>
+
+
+
 </body>
 </html>

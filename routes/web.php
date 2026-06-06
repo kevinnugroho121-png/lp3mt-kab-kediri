@@ -12,6 +12,7 @@ use App\Models\Kecamatan; // <-- Tambahan Model Kecamatan untuk Dashboard
 use App\Models\Desa; // <-- Tambahan Model Desa
 
 // Import Controller
+use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\KecamatanController;
 use App\Http\Controllers\DesaController;
 use App\Http\Controllers\LembagaController;
@@ -159,49 +160,43 @@ Route::get('/dashboard', function () {
     ));
 })->middleware(['auth', 'verified'])->name('dashboard');
 
-// ===============================
-// 3. GRUP ADMIN (DATA & SYSTEM)
-// ===============================
-Route::middleware(['auth'])->prefix('admin')->group(function () {
-
+// ==============================================================
+// 3A. GRUP KHUSUS SUPERADMIN & VERIFIKATOR (KORCAM DILARANG MASUK)
+// ==============================================================
+Route::middleware(['auth', 'role:admin,verifikator'])->prefix('admin')->group(function () {
+    
     // ===== MASTER DATA WILAYAH =====
     Route::resource('kecamatan', KecamatanController::class);
     Route::resource('desa', DesaController::class);
 
-    // ===== MASTER DATA LEMBAGA =====
+    // ===== MANAJEMEN USER =====
+    Route::get('/user/check-korcam-availability', [UserController::class, 'checkKorcamAvailability'])
+        ->name('user.check-korcam');
+    Route::resource('user', UserController::class);
+
+});
+
+// ==============================================================
+// 3B. GRUP UMUM (ADMIN, VERIFIKATOR, & KORCAM BOLEH MASUK)
+// ==============================================================
+Route::middleware(['auth', 'role:admin,verifikator,korcam'])->prefix('admin')->group(function () {
     
-    // [KHUSUS] Route Verifikasi Dokumen Lembaga
+    // ===== MASTER DATA LEMBAGA =====
     Route::get('lembaga/{lembaga}/verifikasi', [LembagaController::class, 'verifikasi'])->name('lembaga.verifikasi');
     Route::post('lembaga/{lembaga}/verifikasi', [LembagaController::class, 'prosesVerifikasi'])->name('lembaga.proses_verifikasi');
-
-    // Route Resource Standar Lembaga
     Route::post('/lembaga/import', [App\Http\Controllers\LembagaController::class, 'import'])->name('lembaga.import');
     Route::resource('lembaga', LembagaController::class);
 
     // ===== MASTER DATA GURU =====
-    
-    // 1. Route Menu Spesifik (Wajib DI ATAS resource 'guru')
     Route::post('/guru/import', [GuruController::class, 'import'])->name('guru.import');
     Route::get('guru/madin', [GuruController::class, 'indexMadin'])->name('guru.madin');
     Route::get('guru/tpq', [GuruController::class, 'indexTpq'])->name('guru.tpq');
     Route::get('guru/ponpes', [GuruController::class, 'indexPonpes'])->name('guru.ponpes');
     Route::get('guru/insentif', [GuruController::class, 'indexInsentif'])->name('guru.insentif');
-
-    // 2. [TAMBAHAN PENTING] Route Verifikasi Guru
+    
     Route::get('guru/{id}/verifikasi', [GuruController::class, 'verifikasi'])->name('guru.verifikasi');
     Route::post('guru/{id}/verifikasi', [GuruController::class, 'prosesVerifikasi'])->name('guru.proses_verifikasi');
-
-    // 3. Route Resource Standar Guru (CRUD)
     Route::resource('guru', GuruController::class);
-
-    // ===== MANAJEMEN USER =====
-    
-    // Route khusus Cek Posisi Korcam (AJAX) wajib DI ATAS resource 'user'
-    Route::get('/user/check-korcam-availability', [UserController::class, 'checkKorcamAvailability'])
-        ->name('user.check-korcam');
-
-    // Route Resource Standar User
-    Route::resource('user', UserController::class);
 
 });
 
@@ -214,6 +209,15 @@ Route::post('/logout', function (Request $request) {
     $request->session()->regenerateToken();
     return redirect('/'); 
 })->name('logout')->middleware('auth');
+
+
+
+// Rute untuk Halaman Profil & Ganti Password
+Route::middleware('auth')->group(function () {
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+});
 
 // ===============================
 // 5. INCLUDE AUTH BAWAAN

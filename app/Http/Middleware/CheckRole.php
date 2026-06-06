@@ -13,17 +13,19 @@ class CheckRole
      *
      * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
      */
-    public function handle(Request $request, Closure $next, $role): Response
+    public function handle(Request $request, Closure $next, ...$roles): Response
     {
-        // Cek 1: Apakah user sudah login?
-        // Cek 2: Apakah role user yang login == role yang diizinkan ($role)?
-        if (!$request->user() || $request->user()->role !== $role) {
-
-            // Jika tidak sesuai, lempar dia kembali ke halaman dashboard biasa
-            return redirect('/dashboard');
+        // 1. Pastikan user sudah login
+        if (!auth()->check()) {
+            return redirect('login');
         }
 
-        // Jika role-nya sesuai, izinkan dia melanjutkan ke halaman yang dituju
-        return $next($request);
+        // 2. Cek apakah role user saat ini ADA di dalam daftar role yang dikirim (misal: ['admin', 'verifikator'])
+        if (in_array(auth()->user()->role, $roles)) {
+            return $next($request); // Silakan lewat
+        }
+
+        // 3. Jika nyelonong tapi rolenya tidak sesuai, lempar balik ke dashboard
+        return redirect('/dashboard')->with('error', 'Akses ditolak! Anda tidak punya izin ke menu tersebut.');
     }
 }

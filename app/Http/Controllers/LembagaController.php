@@ -267,7 +267,19 @@ class LembagaController extends Controller
         }
         // --- AKHIR SUNTIKAN KODE ---
         
-        // ... (kode upload ijop dilewati) ...
+        // [PERBAIKAN] Cek Upload File Baru IJOP
+        if ($request->hasFile('file_ijop')) {
+            // Hapus file fisik yang lama jika ada
+            if ($lembaga->file_ijop && Storage::disk('public')->exists($lembaga->file_ijop)) {
+                Storage::disk('public')->delete($lembaga->file_ijop);
+            }
+            // Simpan file ke folder dan ubah isi data menjadi path yang benar
+            $data['file_ijop'] = $request->file('file_ijop')->store('dokumen_lembaga', 'public');
+            $data['status_ijop'] = 'Pending';
+        } else {
+            // Jika tidak upload file baru, hapus dari array agar path lama di DB tidak tertimpa alamat temp Windows
+            unset($data['file_ijop']); 
+        }
 
         // Cek Upload File Baru SUPER
         if ($request->hasFile('file_super')) {
@@ -275,7 +287,9 @@ class LembagaController extends Controller
                 Storage::disk('public')->delete($lembaga->file_super);
             }
             $data['file_super'] = $request->file('file_super')->store('dokumen_lembaga', 'public');
-            $data['status_super'] = 'Pending'; // Kembalikan ke pending jika upload ulang
+            $data['status_super'] = 'Pending'; 
+        } else {
+            unset($data['file_super']);
         }
 
         // [BARU] Cek Upload File Baru SKAM
@@ -284,7 +298,9 @@ class LembagaController extends Controller
                 Storage::disk('public')->delete($lembaga->file_skam);
             }
             $data['file_skam'] = $request->file('file_skam')->store('dokumen_lembaga', 'public');
-            $data['status_skam'] = 'Pending'; // Kembalikan ke pending jika upload ulang
+            $data['status_skam'] = 'Pending'; 
+        } else {
+            unset($data['file_skam']);
         }
 
         $lembaga->update($data);
@@ -333,19 +349,24 @@ class LembagaController extends Controller
             'file' => 'required|mimes:xlsx,xls,csv|max:2048',
         ]);
 
+
+
         try {
-            Excel::import(new LembagaImport(Auth::user()), $request->file('file'));
+            $import = new LembagaImport(Auth::user());
+            Excel::import($import, $request->file('file'));
             
-            return redirect()->back()->with('success', 'Alhamdulillah! Seluruh data Lembaga dari file Excel berhasil diproses dan disimpan ke database.');
+            return redirect()->back()->with('success', 'Alhamdulillah! Seluruh data Lembaga dari file Excel berhasil diproses tanpa ada yang cacat/ganda.');
         
-        } catch (ValidationException $e) {
-            // [BARU] TANGKAP ERROR VALIDASI BARIS EXCEL DI SINI
-            $failures = $e->failures();
-            return redirect()->back()->with('excel_errors', $failures);
-            
         } catch (\Exception $e) {
-            // Tangkap error sistem biasa (misal salah kecamatan)
+            if ($e->getMessage() === 'excel_validation_failed') {
+                // Lempar data array string error buatan kita ke session khusus
+                return redirect()->back()->with('custom_excel_errors', $import->errors);
+            }
+            
+            // Tangkap error tidak terduga lainnya
             return redirect()->back()->with('error', $e->getMessage());
         }
+
+
     }
 }

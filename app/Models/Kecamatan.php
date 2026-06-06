@@ -18,4 +18,10 @@ class Kecamatan extends Model
     {
         return $this->hasMany(Desa::class);
     }
+
+    // Relasi ke tabel users (Satu kecamatan bisa punya banyak user/korcam)
+    public function users()
+    {
+        return $this->hasMany(User::class);
+    }
 }

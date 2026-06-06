@@ -6,6 +6,7 @@ use App\Models\User;
 use App\Models\Kecamatan;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Auth\Events\Registered; // <--- [TAMBAHKAN BARIS INI]
 
 class UserController extends Controller
 {
@@ -22,8 +23,10 @@ class UserController extends Controller
     // 2. FORM TAMBAH USER
     public function create()
     {
-        // Hanya butuh data kecamatan untuk dropdown Korcam
-        $kecamatans = Kecamatan::orderBy('nama_kecamatan', 'ASC')->get();
+        // Mengambil semua kecamatan beserta relasi user yang ber-role 'korcam'
+        $kecamatans = Kecamatan::with(['users' => function($query) {
+            $query->where('role', 'korcam');
+        }])->orderBy('nama_kecamatan', 'ASC')->get();
 
         return view('admin.user.create', compact('kecamatans'));
     }
@@ -61,8 +64,8 @@ class UserController extends Controller
             }
         }
 
-        // Simpan ke Database
-        User::create([
+        // Simpan ke Database dan tampung di variabel $user
+        $user = User::create([
             'name'           => strtoupper($request->name),    // [FIX] Paksa Huruf Besar
             'email'          => strtolower($request->email),   // [FIX] Paksa Huruf Kecil
             'password'       => Hash::make($request->password),
@@ -71,8 +74,11 @@ class UserController extends Controller
             'jabatan_korcam' => $jabatan_korcam, 
         ]);
 
+        // [TAMBAHAN BARU] Pancing sistem untuk ngirim email verifikasi!
+        event(new Registered($user));
+
         return redirect()->route('user.index')
-            ->with('success', 'User berhasil ditambahkan');
+            ->with('success', 'User berhasil ditambahkan dan email verifikasi telah dikirim!');
     }
 
     // 4. HAPUS USER

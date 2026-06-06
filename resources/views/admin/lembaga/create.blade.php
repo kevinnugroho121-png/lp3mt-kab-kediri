@@ -111,8 +111,10 @@
                             <h3 class="text-lg font-bold text-gray-800">Statistik & Kontak</h3>
                         </div>
 
+
+
                         <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-                            {{-- Baris 1: Statistik --}}
+                            {{-- Baris 1: Statistik Utama --}}
                             <div>
                                 <label class="block text-xs font-bold text-gray-500 uppercase mb-1 text-center">Jml Santri</label>
                                 <input type="number" name="jumlah_santri" value="0" class="w-full border-gray-300 bg-gray-50 rounded-lg focus:ring-blue-500 text-sm font-bold text-center">
@@ -126,14 +128,23 @@
                                 <input type="number" name="penerima_insentif" value="0" class="w-full border-gray-300 rounded-lg focus:ring-blue-500 text-sm text-center">
                             </div>
                             <div>
-                                <label class="block text-xs font-bold text-gray-500 uppercase mb-1 text-center">Guru Non-Insentif</label>
+                                <label class="block text-xs font-bold text-gray-500 uppercase mb-1 text-center">Non-Insentif</label>
                                 <input type="number" name="belum_menerima_insentif" value="0" class="w-full border-gray-300 rounded-lg focus:ring-blue-500 text-sm text-center">
                             </div>
                             
-                            {{-- Hidden inputs default --}}
-                            <input type="hidden" name="jumlah_pns" value="0">
-                            <input type="hidden" name="jumlah_pppk" value="0">
-                            <input type="hidden" name="jumlah_sertifikasi" value="0">
+                            {{-- Baris 2: Tambahan Dari Excel --}}
+                            <div>
+                                <label class="block text-xs font-bold text-gray-500 uppercase mb-1 text-center">Jml PNS</label>
+                                <input type="number" name="jumlah_pns" value="0" class="w-full border-gray-300 rounded-lg focus:ring-blue-500 text-sm text-center">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-gray-500 uppercase mb-1 text-center" title="Gabungan PPPK dan PPPK Paruh Waktu">Jml PPPK</label>
+                                <input type="number" name="jumlah_pppk" value="0" class="w-full border-gray-300 rounded-lg focus:ring-blue-500 text-sm text-center">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-gray-500 uppercase mb-1 text-center">Sertifikasi</label>
+                                <input type="number" name="jumlah_sertifikasi" value="0" class="w-full border-gray-300 rounded-lg focus:ring-blue-500 text-sm text-center">
+                            </div>
                         </div>
 
                         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -153,7 +164,11 @@
                                 </select>
                             </div>
                         </div>
+
+
                     </div>
+
+
 
                     {{-- SECTION C: DOKUMEN LEGALITAS (LAYOUT BARU: ATAS BAWAH) --}}
                     <div class="mb-8">
@@ -212,7 +227,10 @@
                                         </div>
                                     </div>
                                 </div>
-                                <input type="hidden" name="ijop" value="ADA"> 
+                                <div class="mt-4 pt-4 border-t border-gray-200">
+                                    <label class="block text-sm font-bold text-gray-600 mb-1">Status Fisik Dokumen IJOP</label>
+                                    <input type="text" name="ijop" value="ADA" class="w-full border-gray-300 rounded-md text-sm shadow-sm focus:border-blue-500 focus:ring-blue-500 uppercase" placeholder="CONTOH: ADA / TIDAK ADA / SUKET DOMISILI" oninput="this.value = this.value.toUpperCase()">
+                                </div>
                                 <input type="hidden" name="status_ijop" value="Pending">
                             </div>
 

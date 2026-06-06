@@ -156,7 +156,7 @@
                         {{-- 2. SUPER --}}
                         <div class="bg-gray-50 p-6 rounded-xl border border-gray-200 shadow-sm">
                             <div class="flex justify-between items-center mb-4">
-                                <label class="block text-base font-bold text-gray-800">2. Surat Pernyataan (SUPER)</label>
+                                <label class="block text-base font-bold text-gray-800">2. Surat Pernyataan Tanggung Jawab Mutlak (SPTJM)</label>
                                 <span class="px-3 py-1 rounded-full text-xs font-bold {{ ($lembaga->status_super == 'Disetujui') ? 'bg-green-100 text-green-700' : (($lembaga->status_super == 'Ditolak') ? 'bg-red-100 text-red-700' : 'bg-yellow-100 text-yellow-700') }}">
                                     Status: {{ $lembaga->status_super ?? 'Pending' }}
                                 </span>
@@ -173,6 +173,30 @@
                                 </div>
                             @endif
                         </div>
+
+
+                        {{-- 3. SKAM (BARU) --}}
+                        <div class="bg-gray-50 p-6 rounded-xl border border-gray-200 shadow-sm">
+                            <div class="flex justify-between items-center mb-4">
+                                <label class="block text-base font-bold text-gray-800">3. Surat Keterangan Aktif Mengajar (SKAM)</label>
+                                <span class="px-3 py-1 rounded-full text-xs font-bold {{ ($lembaga->status_skam == 'Disetujui') ? 'bg-green-100 text-green-700' : (($lembaga->status_skam == 'Ditolak') ? 'bg-red-100 text-red-700' : 'bg-yellow-100 text-yellow-700') }}">
+                                    Status: {{ $lembaga->status_skam ?? 'Pending' }}
+                                </span>
+                            </div>
+                            
+                            @if($lembaga->file_skam)
+                                <div class="w-full h-[600px] bg-white rounded-lg border border-gray-300">
+                                    <iframe src="{{ asset('storage/' . $lembaga->file_skam) }}" type="application/pdf" class="w-full h-full rounded-lg"></iframe>
+                                </div>
+                            @else
+                                <div class="h-40 flex items-center justify-center bg-white border-2 border-dashed border-gray-300 rounded-lg text-gray-400 italic">
+                                    File SKAM belum diupload.
+                                </div>
+                            @endif
+                        </div>
+
+
+
                     </div>
                 </div>
 

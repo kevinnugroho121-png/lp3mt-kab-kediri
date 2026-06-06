@@ -66,8 +66,15 @@ class GuruController extends Controller
         }
 
         // Data Dropdown Filter
-        $data_kecamatan = Kecamatan::orderBy('nama_kecamatan')->get();
-        $data_desa = Desa::orderBy('nama_desa')->get();
+        if ($user->role == 'korcam') {
+            // Korcam cuma boleh lihat kecamatannya sendiri & desa di kecamatannya
+            $data_kecamatan = Kecamatan::where('id', $user->kecamatan_id)->orderBy('nama_kecamatan')->get();
+            $data_desa = Desa::where('kecamatan_id', $user->kecamatan_id)->orderBy('nama_desa')->get();
+        } else {
+            // Admin/Verifikator boleh lihat semua
+            $data_kecamatan = Kecamatan::orderBy('nama_kecamatan')->get();
+            $data_desa = Desa::orderBy('nama_desa')->get();
+        }
 
         // Ambil List Lembaga
         $lembagaQuery = Lembaga::orderBy('nama_lembaga');
@@ -105,8 +112,13 @@ class GuruController extends Controller
         $lembagas = $query->get();
 
         // 3. Data Wilayah
-        $kecamatans = Kecamatan::orderBy('nama_kecamatan')->get();
-        $desas = Desa::orderBy('nama_desa')->get();
+        if ($user->role == 'korcam') {
+            $kecamatans = Kecamatan::where('id', $user->kecamatan_id)->orderBy('nama_kecamatan')->get();
+            $desas = Desa::where('kecamatan_id', $user->kecamatan_id)->orderBy('nama_desa')->get();
+        } else {
+            $kecamatans = Kecamatan::orderBy('nama_kecamatan')->get();
+            $desas = Desa::orderBy('nama_desa')->get();
+        }
 
         return view('admin.guru.create', compact('lembagas', 'kecamatans', 'desas', 'type'));
     }
@@ -217,9 +229,16 @@ class GuruController extends Controller
             abort(403, 'Akses Ditolak.');
         }
         
-        $lembagas = Lembaga::orderBy('nama_lembaga')->get();
-        $kecamatans = Kecamatan::orderBy('nama_kecamatan')->get();
-        $desas = Desa::orderBy('nama_desa')->get();
+        // Filter Dropdown di Halaman Edit
+        if ($user->role == 'korcam') {
+            $lembagas = Lembaga::where('kecamatan_id', $user->kecamatan_id)->orderBy('nama_lembaga')->get();
+            $kecamatans = Kecamatan::where('id', $user->kecamatan_id)->orderBy('nama_kecamatan')->get();
+            $desas = Desa::where('kecamatan_id', $user->kecamatan_id)->orderBy('nama_desa')->get();
+        } else {
+            $lembagas = Lembaga::orderBy('nama_lembaga')->get();
+            $kecamatans = Kecamatan::orderBy('nama_kecamatan')->get();
+            $desas = Desa::orderBy('nama_desa')->get();
+        }
 
         return view('admin.guru.edit', compact('guru', 'lembagas', 'kecamatans', 'desas'));
     }

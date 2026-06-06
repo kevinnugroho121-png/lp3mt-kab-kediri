@@ -109,27 +109,30 @@
         {{-- ============================================== --}}
         {{-- NOTIFIKASI ERROR VALIDASI BARIS EXCEL          --}}
         {{-- ============================================== --}}
-        @if (session('excel_errors'))
-            <div class="mb-4 bg-red-50 border border-red-300 rounded-lg p-4">
-                <div class="flex items-center mb-3 text-red-700">
-                    <svg class="w-5 h-5 mr-2 font-bold" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
-                    <strong class="font-bold text-sm">Gagal Import! Ditemukan data yang kosong atau salah format. Seluruh data di file Excel ini BATAL disimpan.</strong>
+
+
+        {{-- BLOK NOTIFIKASI ERROR EXCEL CUSTOM (REJECT-ALL) --}}
+        @if (session('custom_excel_errors'))
+            <div class="mb-4 bg-red-50 border-2 border-red-200 rounded-2xl p-5 shadow-sm">
+                <div class="flex items-center mb-3 text-red-800">
+                    <span class="text-xl mr-2">⚠️</span>
+                    <strong class="font-extrabold text-sm tracking-tight">Sistem Menolak File! Terdeteksi Data Kosong / Duplikat. Seluruh baris BATAL disimpan demi keamanan data.</strong>
                 </div>
                 
-                <div class="border-l-4 border-red-600 bg-white p-3 rounded shadow-sm">
-                    <p class="font-bold text-red-800 text-xs mb-2">Detail Baris Yang Kosong / Salah (Wajib Diperbaiki di Excel):</p>
-                    <div class="max-h-40 overflow-y-auto text-xs text-red-600">
-                        <ul class="list-disc pl-5 space-y-1">
-                            @foreach (session('excel_errors') as $failure)
-                                @foreach ($failure->errors() as $error)
-                                    <li>Baris Ke-{{ $failure->row() }} (Kolom {{ $failure->attribute() }}): {{ $error }}</li>
-                                @endforeach
+                <div class="border-l-4 border-red-600 bg-white p-4 rounded-xl shadow-inner">
+                    <p class="font-bold text-red-900 text-xs mb-2 uppercase tracking-wide">Daftar Baris yang Bermasalah (Wajib Diperbaiki di Excel):</p>
+                    <div class="max-h-60 overflow-y-auto text-xs text-red-700 font-medium">
+                        <ul class="list-disc pl-5 space-y-1.5">
+                            @foreach (session('custom_excel_errors') as $errorPesan)
+                                <li>{!! $errorPesan !!}</li>
                             @endforeach
                         </ul>
                     </div>
                 </div>
             </div>
         @endif
+
+
 
         {{-- Notifikasi Error Sistem Biasa --}}
         @if (session('error'))
@@ -181,9 +184,10 @@
                             <th class="border-r border-gray-300 px-3 text-left w-32">Jumlah Guru</th>
                             <th class="border-r border-gray-300 px-3 text-left w-32">Insentif</th>
                             
-                            {{-- KOLOM BARU --}}
+                            {{-- KOLOM LEGALITAS --}}
                             <th class="border-r border-gray-300 px-3 text-center w-32 bg-blue-50">Legalitas IJOP</th>
                             <th class="border-r border-gray-300 px-3 text-center w-32 bg-purple-50">Legalitas SPTJM</th>
+                            <th class="border-r border-gray-300 px-3 text-center w-32 bg-orange-50">Legalitas SKAM</th>
                             
                             <th class="border-l border-gray-300 px-2 text-center w-24 sticky right-0 bg-gray-100 z-10">Aksi</th>
                         </tr>
@@ -197,11 +201,21 @@
                                 
                                 {{-- 2. IDENTITAS --}}
                                 <td class="border-r border-gray-200 px-3 py-2 sticky left-10 bg-white z-10 hover:bg-yellow-50">
-                                    <div class="font-bold text-sm text-gray-800 uppercase mb-1 leading-tight">{{ $lembaga->nama_lembaga }}</div>
+                                    <div class="font-bold text-sm text-gray-800 uppercase mb-1 leading-tight flex items-center gap-2">
+                                        {{ $lembaga->nama_lembaga }}
+                                        {{-- Badge Status Aktif/Tidak --}}
+                                        <span class="text-[9px] px-1.5 py-0.5 rounded font-bold tracking-wider {{ strtoupper($lembaga->status) == 'AKTIF' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700' }}">
+                                            {{ $lembaga->status ?? 'AKTIF' }}
+                                        </span>
+                                    </div>
                                     <div class="text-[10px] text-gray-500 leading-tight">
                                         <div class="mb-0.5"><span class="font-semibold">Ka:</span> {{ $lembaga->kepala_lembaga ?? '-' }}</div>
                                         <div>Telp: {{ $lembaga->no_telp ?? '-' }}</div>
                                     </div>
+                                    {{-- Keterangan --}}
+                                    @if($lembaga->keterangan)
+                                        <div class="text-[9px] text-gray-400 mt-1 italic leading-tight border-t border-gray-100 pt-1">Ket: {{ \Illuminate\Support\Str::limit($lembaga->keterangan, 40) }}</div>
+                                    @endif
                                 </td>
 
                                 {{-- 3. JENIS --}}
@@ -231,9 +245,19 @@
                                 </td>
 
                                 {{-- 6. GURU --}}
-                                <td class="border-r border-gray-200 px-3">
-                                    <div class="flex justify-between"><span>Total:</span> <b>{{ $lembaga->jumlah_guru }}</b></div>
-                                    <div class="flex justify-between text-gray-500"><span>PNS:</span> {{ $lembaga->jumlah_pns }}</div>
+                                <td class="border-r border-gray-200 px-3 py-2">
+                                    <div class="flex justify-between font-bold text-blue-700 border-b border-gray-100 pb-1 mb-1">
+                                        <span>Total:</span> <span>{{ $lembaga->jumlah_guru }}</span>
+                                    </div>
+                                    <div class="flex justify-between text-gray-500 text-[9px] mb-0.5">
+                                        <span>PNS:</span> <span class="font-semibold">{{ $lembaga->jumlah_pns }}</span>
+                                    </div>
+                                    <div class="flex justify-between text-gray-500 text-[9px] mb-0.5">
+                                        <span>PPPK:</span> <span class="font-semibold">{{ $lembaga->jumlah_pppk }}</span>
+                                    </div>
+                                    <div class="flex justify-between text-gray-500 text-[9px]">
+                                        <span>Sertifikasi:</span> <span class="font-semibold">{{ $lembaga->jumlah_sertifikasi }}</span>
+                                    </div>
                                 </td>
 
                                 {{-- 7. INSENTIF --}}
@@ -244,23 +268,21 @@
                                     </div>
                                 </td>
 
-                                {{-- 8. LEGALITAS IJOP (BARU) --}}
+                                {{-- 8. LEGALITAS IJOP --}}
                                 <td class="border-r border-gray-200 px-2 py-2 text-center align-middle bg-blue-50/30">
                                     <div class="flex flex-col items-center gap-1">
-                                        {{-- Ikon File --}}
+                                        {{-- Ikon File Upload --}}
                                         @if($lembaga->file_ijop)
                                             <div class="flex items-center gap-1 text-green-600 text-[10px] font-bold bg-green-50 px-1.5 py-0.5 rounded border border-green-200">
-                                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path></svg>
-                                                Ada
+                                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path></svg> Ada
                                             </div>
                                         @else
                                             <div class="flex items-center gap-1 text-red-500 text-[10px] font-bold bg-red-50 px-1.5 py-0.5 rounded border border-red-200">
-                                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path></svg>
-                                                Kosong
+                                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path></svg> Kosong
                                             </div>
                                         @endif
 
-                                        {{-- Status Verifikasi --}}
+                                        {{-- Status Verifikasi Dokumen --}}
                                         @php
                                             $badgeIjop = match($lembaga->status_ijop) {
                                                 'Disetujui' => 'text-green-700 bg-green-100',
@@ -269,26 +291,27 @@
                                             };
                                         @endphp
                                         <span class="text-[9px] font-bold px-1.5 py-0.5 rounded {{ $badgeIjop }}">{{ $lembaga->status_ijop ?? 'Pending' }}</span>
+                                        
+                                        {{-- Info Dokumen Fisik dari Excel --}}
+                                        <div class="mt-1 pt-1 border-t border-blue-100 text-[8px] text-gray-500 leading-tight w-full">
+                                            
+                                            <div>Exp: <span class="font-bold text-gray-700">{{ $lembaga->masa_berlaku_ijop ? \Carbon\Carbon::parse($lembaga->masa_berlaku_ijop)->format('d/m/Y') : '-' }}</span></div>
+                                        </div>
                                     </div>
                                 </td>
 
-                                {{-- 9. LEGALITAS SUPER (BARU) --}}
+                                {{-- 9. LEGALITAS SUPER (SPTJM) --}}
                                 <td class="border-r border-gray-200 px-2 py-2 text-center align-middle bg-purple-50/30">
                                     <div class="flex flex-col items-center gap-1">
-                                        {{-- Ikon File --}}
                                         @if($lembaga->file_super)
                                             <div class="flex items-center gap-1 text-green-600 text-[10px] font-bold bg-green-50 px-1.5 py-0.5 rounded border border-green-200">
-                                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path></svg>
-                                                Ada
+                                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path></svg> Ada
                                             </div>
                                         @else
                                             <div class="flex items-center gap-1 text-red-500 text-[10px] font-bold bg-red-50 px-1.5 py-0.5 rounded border border-red-200">
-                                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path></svg>
-                                                Kosong
+                                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path></svg> Kosong
                                             </div>
                                         @endif
-
-                                        {{-- Status Verifikasi --}}
                                         @php
                                             $badgeSuper = match($lembaga->status_super) {
                                                 'Disetujui' => 'text-green-700 bg-green-100',
@@ -299,6 +322,31 @@
                                         <span class="text-[9px] font-bold px-1.5 py-0.5 rounded {{ $badgeSuper }}">{{ $lembaga->status_super ?? 'Pending' }}</span>
                                     </div>
                                 </td>
+
+                                {{-- 10. LEGALITAS SKAM (BARU) --}}
+                                <td class="border-r border-gray-200 px-2 py-2 text-center align-middle bg-orange-50/30">
+                                    <div class="flex flex-col items-center gap-1">
+                                        @if($lembaga->file_skam)
+                                            <div class="flex items-center gap-1 text-green-600 text-[10px] font-bold bg-green-50 px-1.5 py-0.5 rounded border border-green-200">
+                                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path></svg> Ada
+                                            </div>
+                                        @else
+                                            <div class="flex items-center gap-1 text-red-500 text-[10px] font-bold bg-red-50 px-1.5 py-0.5 rounded border border-red-200">
+                                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path></svg> Kosong
+                                            </div>
+                                        @endif
+                                        @php
+                                            $badgeSkam = match($lembaga->status_skam) {
+                                                'Disetujui' => 'text-green-700 bg-green-100',
+                                                'Ditolak' => 'text-red-700 bg-red-100',
+                                                default => 'text-yellow-700 bg-yellow-100'
+                                            };
+                                        @endphp
+                                        <span class="text-[9px] font-bold px-1.5 py-0.5 rounded {{ $badgeSkam }}">{{ $lembaga->status_skam ?? 'Pending' }}</span>
+                                    </div>
+                                </td>
+
+
 
                                 {{-- 10. AKSI (GRID 2x2) --}}
                                 <td class="border-l border-gray-200 text-center p-1 align-middle w-24 sticky right-0 bg-white z-10">

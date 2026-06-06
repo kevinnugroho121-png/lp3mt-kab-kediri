@@ -96,6 +96,8 @@
                             <span class="bg-green-100 text-green-700 w-8 h-8 flex items-center justify-center rounded-full font-bold text-sm">B</span>
                             <h3 class="text-lg font-bold text-gray-800">Statistik & Kontak</h3>
                         </div>
+
+
                         <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
                             <div>
                                 <label class="block text-xs font-bold text-gray-500 uppercase mb-1 text-center">Jml Santri</label>
@@ -112,6 +114,18 @@
                             <div>
                                 <label class="block text-xs font-bold text-gray-500 uppercase mb-1 text-center">Non-Insentif</label>
                                 <input type="number" name="belum_menerima_insentif" value="{{ old('belum_menerima_insentif', $lembaga->belum_menerima_insentif) }}" class="w-full border-gray-300 rounded-lg text-sm text-center">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-gray-500 uppercase mb-1 text-center">Jml PNS</label>
+                                <input type="number" name="jumlah_pns" value="{{ old('jumlah_pns', $lembaga->jumlah_pns) }}" class="w-full border-gray-300 rounded-lg focus:ring-blue-500 text-sm text-center">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-gray-500 uppercase mb-1 text-center">Jml PPPK</label>
+                                <input type="number" name="jumlah_pppk" value="{{ old('jumlah_pppk', $lembaga->jumlah_pppk) }}" class="w-full border-gray-300 rounded-lg focus:ring-blue-500 text-sm text-center">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-gray-500 uppercase mb-1 text-center">Sertifikasi</label>
+                                <input type="number" name="jumlah_sertifikasi" value="{{ old('jumlah_sertifikasi', $lembaga->jumlah_sertifikasi) }}" class="w-full border-gray-300 rounded-lg focus:ring-blue-500 text-sm text-center">
                             </div>
                         </div>
                         
@@ -183,8 +197,22 @@
                                                    class="w-full border-gray-300 rounded-md text-sm shadow-sm focus:border-blue-500 focus:ring-blue-500 text-center">
                                         </div>
                                         <div>
-                                            <div id="info_masa_berlaku" class="hidden bg-green-50 border border-green-200 text-green-800 text-sm p-3 rounded-lg text-center font-medium">
-                                                </div>
+
+                                            {{-- 1. Div untuk info masa berlaku (tetap hidden, akan muncul via JS) --}}
+                                            <div id="info_masa_berlaku" class="hidden bg-green-50 border border-green-200 text-green-800 text-sm p-3 rounded-lg text-center font-medium mt-4">
+                                            </div>
+
+                                            {{-- 2. Div untuk Input Status Fisik IJOP (Dikeluarkan agar SELALU MUNCUL) --}}
+                                            <div class="mt-4 pt-4 border-t border-gray-200">
+                                                <label class="block text-sm font-bold text-gray-600 mb-1">Status Fisik Dokumen IJOP</label>
+                                                <input type="text" name="ijop" 
+                                                    value="{{ old('ijop', $lembaga->ijop) }}" 
+                                                    class="w-full border-gray-300 rounded-md text-sm shadow-sm focus:border-blue-500 focus:ring-blue-500 uppercase" 
+                                                    placeholder="CONTOH: ADA / TIDAK ADA / SUKET DOMISILI" 
+                                                    oninput="this.value = this.value.toUpperCase()">
+                                            </div>
+
+
                                         </div>
                                     </div>
                                 </div>
@@ -192,7 +220,7 @@
 
                             {{-- SUPER --}}
                             <div class="bg-gray-50 p-6 rounded-xl border border-gray-200 shadow-sm">
-                                <label class="block text-base font-bold text-gray-800 mb-3">2. Surat Pernyataan (SUPER)</label>
+                                <label class="block text-base font-bold text-gray-800 mb-3">2. Surat Pernyataan Tanggung Jawab Mutlak (SPTJM)</label>
                                 
                                 @if($lembaga->file_super)
                                     <div class="mb-4 text-center">
@@ -222,6 +250,41 @@
                             </div>
                         </div>
                     </div>
+
+                    {{-- 3. SKAM (BARU) --}}
+                            <div class="bg-gray-50 p-6 rounded-xl border border-gray-200 shadow-sm mt-8">
+                                <label class="block text-base font-bold text-gray-800 mb-3">3. Surat Keterangan Aktif Mengajar (SKAM)</label>
+                                
+                                @if($lembaga->file_skam)
+                                    <div class="mb-4 text-center">
+                                        <p class="text-xs text-green-600 font-bold mb-2">✓ File tersimpan saat ini:</p>
+                                        <iframe src="{{ asset('storage/' . $lembaga->file_skam) }}" type="application/pdf" class="w-full h-[600px] border border-gray-300 rounded-lg bg-white shadow-inner"></iframe>
+                                        <p class="text-xs text-gray-500 mt-2">Untuk mengganti, silakan upload file baru di bawah ini:</p>
+                                    </div>
+                                @else
+                                    <div class="mb-4 text-center text-gray-400 italic border border-dashed border-gray-300 p-4 rounded-lg bg-white">Belum ada file SKAM.</div>
+                                @endif
+
+                                <div class="relative group text-center">
+                                    <input type="file" name="file_skam" id="file_skam" accept="application/pdf"
+                                           class="block w-full text-sm text-gray-500 file:mr-4 file:py-2.5 file:px-6 file:rounded-full file:border-0 file:text-sm file:font-bold file:bg-orange-500 file:text-white hover:file:bg-orange-600 transition cursor-pointer text-center"
+                                           onchange="handleFileSelect(this, 'preview_skam_edit', 'btn_reset_skam_edit')">
+                                    
+                                    <button type="button" id="btn_reset_skam_edit" onclick="resetFile('file_skam', 'preview_skam_edit', 'btn_reset_skam_edit')" 
+                                            class="hidden mt-2 text-sm text-red-600 hover:text-red-800 font-bold underline transition">
+                                        &times; Batal Upload File Baru
+                                    </button>
+                                </div>
+
+                                <div class="mt-4">
+                                    <iframe id="preview_skam_edit" class="hidden w-full h-[600px] border border-gray-300 rounded-lg bg-white shadow-inner" src=""></iframe>
+                                </div>
+                            </div>
+                            
+                            <div class="mt-8 bg-gray-50 p-6 rounded-xl border border-gray-200 shadow-sm">
+                                <label class="block text-sm font-semibold text-gray-700 mb-1 text-center">Catatan Tambahan / Keterangan</label>
+                                <textarea name="keterangan" rows="2" class="w-full border-gray-300 rounded-lg shadow-sm text-sm text-center uppercase" placeholder="TULIS CATATAN JIKA ADA..." oninput="this.value = this.value.toUpperCase()">{{ old('keterangan', $lembaga->keterangan) }}</textarea>
+                            </div>
 
                     <div class="flex items-center justify-end gap-3 pt-6 border-t border-gray-200">
                         <a href="{{ route('lembaga.index') }}" class="px-5 py-2.5 text-sm font-bold text-gray-600 bg-white border border-gray-300 rounded-lg hover:bg-gray-50">Batal</a>

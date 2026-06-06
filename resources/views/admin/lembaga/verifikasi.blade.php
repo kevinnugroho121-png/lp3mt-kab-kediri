@@ -72,7 +72,7 @@
                         <div class="bg-purple-50 px-6 py-4 border-b border-purple-100 flex flex-col md:flex-row justify-between items-center gap-4">
                             <div class="flex items-center gap-3">
                                 <span class="bg-purple-600 text-white w-8 h-8 flex items-center justify-center rounded-full font-bold text-sm">2</span>
-                                <h3 class="font-bold text-lg text-gray-800">Surat Pernyataan (SUPER)</h3>
+                                <h3 class="font-bold text-lg text-gray-800">Surat Pernyataan Tanggung Jawab Mutlak (SPTJM)</h3>
                             </div>
                             
                             {{-- Dropdown Status --}}
@@ -95,6 +95,39 @@
                                 <div class="h-40 flex flex-col items-center justify-center border-2 border-dashed border-gray-300 rounded-lg">
                                     <svg class="w-10 h-10 text-gray-400 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
                                     <span class="text-gray-500 font-medium">File SUPER belum diupload oleh lembaga.</span>
+                                </div>
+                            @endif
+                        </div>
+                    </div>
+
+                    {{-- 3. KARTU VERIFIKASI SKAM --}}
+                    <div class="bg-white rounded-xl shadow-sm border border-orange-200 overflow-hidden">
+                        {{-- Header Kartu --}}
+                        <div class="bg-orange-50 px-6 py-4 border-b border-orange-100 flex flex-col md:flex-row justify-between items-center gap-4">
+                            <div class="flex items-center gap-3">
+                                <span class="bg-orange-500 text-white w-8 h-8 flex items-center justify-center rounded-full font-bold text-sm">3</span>
+                                <h3 class="font-bold text-lg text-gray-800">Surat Keterangan Aktif Mengajar (SKAM)</h3>
+                            </div>
+                            
+                            {{-- Dropdown Status --}}
+                            <div class="flex items-center gap-2">
+                                <label class="text-sm font-bold text-gray-600">Status:</label>
+                                <select name="status_skam" class="border-gray-300 rounded-lg text-sm focus:ring-orange-500 focus:border-orange-500 font-bold">
+                                    <option value="Pending" {{ $lembaga->status_skam == 'Pending' ? 'selected' : '' }}>⏳ Pending</option>
+                                    <option value="Disetujui" {{ $lembaga->status_skam == 'Disetujui' ? 'selected' : '' }}>✅ DISETUJUI</option>
+                                    <option value="Ditolak" {{ $lembaga->status_skam == 'Ditolak' ? 'selected' : '' }}>❌ DITOLAK</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        {{-- Body: Preview PDF --}}
+                        <div class="p-6 bg-gray-50">
+                            @if($lembaga->file_skam)
+                                <iframe src="{{ asset('storage/' . $lembaga->file_skam) }}" type="application/pdf" class="w-full h-[600px] border border-gray-300 rounded-lg bg-white shadow-inner"></iframe>
+                            @else
+                                <div class="h-40 flex flex-col items-center justify-center border-2 border-dashed border-gray-300 rounded-lg">
+                                    <svg class="w-10 h-10 text-gray-400 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                                    <span class="text-gray-500 font-medium">File SKAM belum diupload oleh lembaga.</span>
                                 </div>
                             @endif
                         </div>

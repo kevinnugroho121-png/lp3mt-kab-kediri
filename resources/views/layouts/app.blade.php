@@ -147,12 +147,24 @@
                                     <span class="absolute bottom-0 right-0 block h-2.5 w-2.5 rounded-full bg-green-500 ring-2 ring-white"></span>
                                 </div>
                             </button>
-                            {{-- Dropdown Logout --}}
+                            {{-- Dropdown Profil & Logout --}}
                             <div x-show="open" x-cloak class="absolute right-0 mt-3 w-56 bg-white rounded-xl shadow-xl border border-gray-100 py-2 z-50 origin-top-right">
-                                <div class="px-4 py-3 border-b border-gray-50 bg-gray-50/50 rounded-t-xl">
+                                
+                                {{-- Info User --}}
+                                <div class="px-4 py-3 border-b border-gray-100 bg-gray-50/50 rounded-t-xl">
                                     <p class="text-sm font-bold text-gray-800 truncate">{{ Auth::user()->name }}</p>
                                     <p class="text-xs text-gray-500 truncate">{{ Auth::user()->email }}</p>
                                 </div>
+
+                                {{-- Tombol Profil --}}
+                                <div class="p-1 border-b border-gray-50">
+                                    <a href="{{ route('profile.edit') }}" class="flex items-center gap-2 px-4 py-2.5 text-sm text-gray-700 rounded-lg hover:bg-blue-50 hover:text-blue-700 transition font-medium">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
+                                        Edit Profil & Password
+                                    </a>
+                                </div>
+
+                                {{-- Tombol Logout --}}
                                 <form method="POST" action="{{ route('logout') }}" class="p-1">
                                     @csrf
                                     <a href="{{ route('logout') }}" onclick="event.preventDefault(); this.closest('form').submit();" class="flex items-center gap-2 px-4 py-2.5 text-sm text-red-600 rounded-lg hover:bg-red-50 transition font-medium">
@@ -161,6 +173,9 @@
                                     </a>
                                 </form>
                             </div>
+
+
+
                         </div>
                     </div>
 

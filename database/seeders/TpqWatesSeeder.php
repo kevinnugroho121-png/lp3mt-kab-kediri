@@ -47,7 +47,7 @@ class TpqWatesSeeder extends Seeder
             ['nama_lembaga' => "AL GHOFUR WONOREJO WATES", 'desa' => 'WONOREJO', 'ormas' => 'NU'],
             ['nama_lembaga' => "AL GHOZALI JANTI WATES", 'desa' => 'JANTI', 'ormas' => 'NU'],
             ['nama_lembaga' => "AL GHOZALI DUWET WATES", 'desa' => 'DUWET', 'ormas' => 'NU'],
-            ['nama_lembaga' => "AL HAFIZH GADUNGAN WATES", 'desa' => 'GADUNGAN', 'ormas' => 'Lainnya'], // "-" diset jadi Lainnya
+            ['nama_lembaga' => "AL HAFIZH GADUNGAN WATES", 'desa' => 'GADUNGAN', 'ormas' => 'Lainnya'],
             ['nama_lembaga' => "AL HIDAYAH WATES WATES", 'desa' => 'WATES', 'ormas' => 'NU'],
             ['nama_lembaga' => "AL HIDAYAH TUNGE WATES", 'desa' => 'TUNGE', 'ormas' => 'NU'],
             ['nama_lembaga' => "AL HIDAYAH JANTI WATES", 'desa' => 'JANTI', 'ormas' => 'NU'],
@@ -148,23 +148,29 @@ class TpqWatesSeeder extends Seeder
         foreach ($dataLembaga as $data) {
             $desaId = $getDesaId($data['desa']);
 
-            // Hanya insert jika desa ditemukan
             if ($desaId) {
-                Lembaga::create([
-                    'nama_lembaga' => $data['nama_lembaga'],
-                    'jenis_lembaga' => 'TPQ', // Ingat ini TPQ!
-                    'kecamatan_id' => $kecamatanWates->id,
-                    'desa_id' => $desaId,
-                    'ormas' => $data['ormas'],
-                    'jumlah_santri' => 0,
-                    'jumlah_guru' => 0,
-                    'status_ijop' => 'Pending',
-                    'status_super' => 'Pending',
-                ]);
+                // Gunakan updateOrCreate agar tidak terjadi duplikat jika seeder dijalankan 2x
+                Lembaga::updateOrCreate(
+                    [
+                        // Parameter Pencarian: Jika nama dan kecamatannya sama, berarti itu lembaga yang sama
+                        'nama_lembaga' => $data['nama_lembaga'],
+                        'kecamatan_id' => $kecamatanWates->id,
+                    ],
+                    [
+                        // Parameter Pembaruan/Pembuatan
+                        'jenis_lembaga' => 'TPQ',
+                        'desa_id' => $desaId,
+                        'ormas' => $data['ormas'],
+                        'jumlah_santri' => 0,
+                        'jumlah_guru' => 0,
+                        'status_ijop' => 'Pending',
+                        'status_super' => 'Pending',
+                    ]
+                );
                 $insertedCount++;
             }
         }
 
-        $this->command->info("Berhasil menambahkan {$insertedCount} data Lembaga TPQ di Kecamatan Wates.");
+        $this->command->info("Berhasil memproses {$insertedCount} data Lembaga TPQ di Kecamatan Wates.");
     }
 }
