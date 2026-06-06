@@ -359,43 +359,41 @@ class GuruController extends Controller
 
 
     // ==========================================================
-    // [BARU] FUNGSI IMPORT EXCEL SUPER KETAT (REJECT-ALL SYSTEM)
+    // [FIXED] FUNGSI IMPORT EXCEL SUPER KETAT DENGAN KUNCIAN MENU
     // ==========================================================
     public function import(Request $request)
     {
-        // 1. Validasi harus file Excel
         $request->validate([
-            'file_excel' => 'required|mimes:xlsx,xls|max:5120', // Max 5MB
+            'file_excel' => 'required|mimes:xlsx,xls|max:5120',
         ], [
             'file_excel.required' => 'Silakan pilih file Excel terlebih dahulu.',
-            'file_excel.mimes'    => 'Format file tidak didukung! Harus file Excel (.xlsx atau .xls), bukan CSV.',
+            'file_excel.mimes'    => 'Format file tidak didukung! Harus file Excel (.xlsx atau .xls).',
             'file_excel.max'      => 'Ukuran file Excel maksimal 5MB.',
         ]);
 
+        // [KUNCIAN KRUSIAL] Ambil referer URL untuk mendeteksi asal halaman (madin / tpq / ponpes)
+        $referer = $request->headers->get('referer');
+        $menuAsal = 'MADIN'; // Default fallback
+
+        if (str_contains(strtolower($referer), '/guru/tpq')) {
+            $menuAsal = 'TPQ';
+        } elseif (str_contains(strtolower($referer), '/guru/ponpes')) {
+            $menuAsal = 'PONPES';
+        }
+
         try {
-            // 2. Jalankan Proses Import
-            Excel::import(new GuruImport, $request->file('file_excel'));
+            // Suntikkan $menuAsal ke dalam class Import agar satpam mendeteksi dengan akurat
+            $import = new GuruImport(Auth::user(), $menuAsal);
+            Excel::import($import, $request->file('file_excel'));
 
-            return back()->with('success', 'Alhamdulillah! Seluruh data di file Excel berhasil diproses dan disimpan ke database.');
+            return back()->with('success', "Alhamdulillah! Seluruh data Guru {$menuAsal} di file Excel berhasil diproses tanpa ada NIK/Rekening ganda.");
 
-        } catch (\Maatwebsite\Excel\Validators\ValidationException $e) {
-            // 3. AMBIL ERROR JIKA ADA SEL YANG KOSONG ATAU SALAH (ALAMAT ERROR ALA PAK ARIF)
-            $failures = $e->failures();
-            $errorMessages = [];
-
-            foreach ($failures as $failure) {
-                // $failure->row() = Baris ke berapa di Excel
-                // $failure->attribute() = Nama kolom yang salah
-                // $failure->errors() = Pesan errornya
-                $errorMessages[] = "Baris Ke-" . $failure->row() . " (Kolom " . $failure->attribute() . "): " . implode(', ', $failure->errors());
-            }
-
-            // Batalkan semua data yang sempat masuk, kembalikan dengan error detail
-            return back()->withErrors($errorMessages)->with('error', 'Gagal Import! Ditemukan data yang kosong atau salah format. Seluruh data di file Excel ini BATAL disimpan.');
-            
         } catch (\Exception $e) {
-            // Tangkap error sistem lainnya (misal format tanggal hancur)
-            return back()->with('error', 'Terjadi kesalahan sistem saat membaca file Excel: ' . $e->getMessage());
+            if ($e->getMessage() === 'excel_validation_failed') {
+                return redirect()->back()->with('custom_excel_errors', $import->errors);
+            }
+            
+            return back()->with('error', 'Terjadi kesalahan sistem: ' . $e->getMessage());
         }
     }
     

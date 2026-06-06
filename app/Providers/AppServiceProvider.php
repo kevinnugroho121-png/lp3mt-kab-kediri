@@ -3,6 +3,8 @@
 namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
+use App\Models\Guru;
+use App\Observers\GuruObserver;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -19,6 +21,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        // Tempel baris ini di paling bawah dalam fungsi boot
+        \App\Models\Guru::observe(\App\Observers\GuruObserver::class);
     }
 }

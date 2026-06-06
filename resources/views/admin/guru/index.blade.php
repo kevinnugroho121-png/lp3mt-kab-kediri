@@ -138,14 +138,24 @@
                 </div>
             @endif
 
-            @if ($errors->any() && !request()->is('*/create') && !request()->is('*/edit'))
-                <div class="mt-2 bg-white border-l-4 border-red-500 p-3 rounded shadow-inner max-h-40 overflow-y-auto">
-                    <h4 class="text-xs font-bold text-red-800 mb-1">Detail Baris Yang Kosong / Salah (Wajib Diperbaiki di Excel):</h4>
-                    <ul class="list-disc list-inside text-[11px] text-red-600 space-y-0.5">
-                        @foreach ($errors->all() as $error)
-                            <li>{{ $error }}</li>
-                        @endforeach
-                    </ul>
+            {{-- BLOK NOTIFIKASI ERROR EXCEL CUSTOM (REJECT-ALL) --}}
+            @if (session('custom_excel_errors'))
+                <div class="mt-3 bg-red-50 border-2 border-red-200 rounded-lg p-4 shadow-sm">
+                    <div class="flex items-center mb-2 text-red-800">
+                        <span class="text-lg mr-2">⚠️</span>
+                        <strong class="font-bold text-xs tracking-tight">Sistem Menolak File! Terdeteksi Data Kosong / NIK Duplikat. Seluruh baris BATAL disimpan.</strong>
+                    </div>
+                    
+                    <div class="border-l-4 border-red-600 bg-white p-3 rounded shadow-inner">
+                        <p class="font-bold text-red-900 text-[10px] mb-1 uppercase tracking-wide">Daftar Baris yang Bermasalah (Wajib Diperbaiki di Excel):</p>
+                        <div class="max-h-40 overflow-y-auto text-[11px] text-red-700 font-medium custom-scrollbar">
+                            <ul class="list-disc pl-4 space-y-1">
+                                @foreach (session('custom_excel_errors') as $errorPesan)
+                                    <li>{!! $errorPesan !!}</li>
+                                @endforeach
+                            </ul>
+                        </div>
+                    </div>
                 </div>
             @endif
             
