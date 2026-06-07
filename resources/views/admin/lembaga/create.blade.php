@@ -270,10 +270,12 @@
                                 <input type="hidden" name="status_super" value="Pending">
                             </div>
 
+
+                            
                             {{-- 3. KOTAK UPLOAD SKAM [BARU] --}}
                             <div class="bg-gray-50 p-6 rounded-xl border border-gray-200 shadow-sm">
                                 <div class="flex justify-between items-center mb-4">
-                                    <label class="block text-base font-bold text-gray-800">3. Surat Keterangan Aktif Mengajar</label>
+                                    <label class="block text-base font-bold text-gray-800">3. Surat Keterangan Aktif Mengajar (SKAM)</label>
                                     <span class="text-[10px] bg-white border border-gray-300 px-2 py-0.5 rounded text-gray-500 font-mono">PDF Max 2MB</span>
                                 </div>
 
@@ -303,9 +305,65 @@
                             </div>
 
                         </div>
+
+                        {{-- ================================================================= --}}
+                        {{-- 📸 [BARU - FASE 3] PANEL 4 FOTO DOKUMENTASI (LAYOUT GRID 2x2)     --}}
+                        {{-- ================================================================= --}}
+                        <div class="mt-8 bg-white p-6 rounded-xl border border-gray-300 shadow-sm">
+                            <h3 class="text-sm font-bold text-gray-800 uppercase tracking-wide mb-1">4. Dokumentasi Lembaga (Foto Lapangan)</h3>
+                            <p class="text-[11px] text-gray-500 mb-4">Silakan unggah foto lapangan. <b class="text-red-500">Hanya Format Gambar (JPG/PNG)</b>. Maksimal 1MB per foto.</p>
+                            
+                            {{-- GRID MANDAT: 2 Ke Samping, 2 Ke Bawah --}}
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                
+                                {{-- Kotak A: Profil Lembaga --}}
+                                <div class="border border-gray-300 rounded-lg p-3 bg-gray-50 flex flex-col items-center">
+                                    <label class="text-[11px] font-bold text-gray-700 uppercase mb-1 w-full text-center">A. Foto Profil Lembaga</label>
+                                    <div class="w-full h-32 bg-gray-200 border border-dashed border-gray-400 rounded-md mb-2 overflow-hidden flex justify-center items-center relative">
+                                        <img id="preview_lembaga" src="#" alt="Preview" class="hidden object-cover w-full h-full absolute inset-0 z-10" />
+                                        <span class="text-gray-400 text-[11px] z-0">Belum Ada Gambar</span>
+                                    </div>
+                                    <input type="file" name="foto_lembaga" accept="image/*" onchange="previewImageFase3(this, 'preview_lembaga')" class="text-[10px] w-full file:mr-2 file:py-1 file:px-2 file:rounded file:border-0 file:text-[10px] file:font-bold file:bg-blue-600 file:text-white hover:file:bg-blue-700 cursor-pointer">
+                                </div>
+
+                                {{-- Kotak B: Papan Nama (Nambor) --}}
+                                <div class="border border-gray-300 rounded-lg p-3 bg-gray-50 flex flex-col items-center">
+                                    <label class="text-[11px] font-bold text-gray-700 uppercase mb-1 w-full text-center">B. Papan Nama / Nambor</label>
+                                    <div class="w-full h-32 bg-gray-200 border border-dashed border-gray-400 rounded-md mb-2 overflow-hidden flex justify-center items-center relative">
+                                        <img id="preview_nambor" src="#" alt="Preview" class="hidden object-cover w-full h-full absolute inset-0 z-10" />
+                                        <span class="text-gray-400 text-[11px] z-0">Belum Ada Gambar</span>
+                                    </div>
+                                    <input type="file" name="foto_nambor" accept="image/*" onchange="previewImageFase3(this, 'preview_nambor')" class="text-[10px] w-full file:mr-2 file:py-1 file:px-2 file:rounded file:border-0 file:text-[10px] file:font-bold file:bg-blue-600 file:text-white hover:file:bg-blue-700 cursor-pointer">
+                                </div>
+
+                                {{-- Kotak C: Gedung Bangunan --}}
+                                <div class="border border-gray-300 rounded-lg p-3 bg-gray-50 flex flex-col items-center">
+                                    <label class="text-[11px] font-bold text-gray-700 uppercase mb-1 w-full text-center">C. Gedung / Bangunan</label>
+                                    <div class="w-full h-32 bg-gray-200 border border-dashed border-gray-400 rounded-md mb-2 overflow-hidden flex justify-center items-center relative">
+                                        <img id="preview_bangunan" src="#" alt="Preview" class="hidden object-cover w-full h-full absolute inset-0 z-10" />
+                                        <span class="text-gray-400 text-[11px] z-0">Belum Ada Gambar</span>
+                                    </div>
+                                    <input type="file" name="foto_bangunan" accept="image/*" onchange="previewImageFase3(this, 'preview_bangunan')" class="text-[10px] w-full file:mr-2 file:py-1 file:px-2 file:rounded file:border-0 file:text-[10px] file:font-bold file:bg-blue-600 file:text-white hover:file:bg-blue-700 cursor-pointer">
+                                </div>
+
+                                {{-- Kotak D: KBM --}}
+                                <div class="border border-gray-300 rounded-lg p-3 bg-gray-50 flex flex-col items-center">
+                                    <label class="text-[11px] font-bold text-gray-700 uppercase mb-1 w-full text-center">D. Aktivitas Belajar (KBM)</label>
+                                    <div class="w-full h-32 bg-gray-200 border border-dashed border-gray-400 rounded-md mb-2 overflow-hidden flex justify-center items-center relative">
+                                        <img id="preview_kbm" src="#" alt="Preview" class="hidden object-cover w-full h-full absolute inset-0 z-10" />
+                                        <span class="text-gray-400 text-[11px] z-0">Belum Ada Gambar</span>
+                                    </div>
+                                    <input type="file" name="foto_kbm" accept="image/*" onchange="previewImageFase3(this, 'preview_kbm')" class="text-[10px] w-full file:mr-2 file:py-1 file:px-2 file:rounded file:border-0 file:text-[10px] file:font-bold file:bg-blue-600 file:text-white hover:file:bg-blue-700 cursor-pointer">
+                                </div>
+
+                            </div>
+                        </div>
                         
                         <div class="mt-8">
                             <label class="block text-sm font-semibold text-gray-700 mb-1 text-center">Catatan Tambahan (Opsional)</label>
+
+
+
                             <textarea name="keterangan" rows="2" class="w-full border-gray-300 rounded-lg shadow-sm text-sm text-center uppercase" placeholder="TULIS CATATAN JIKA ADA..." oninput="this.value = this.value.toUpperCase()"></textarea>
                         </div>
                     </div>
@@ -411,6 +469,36 @@
             iframe.src = "";  // Kosongkan Preview
             iframe.classList.add('hidden'); // Sembunyikan Iframe
             btnReset.classList.add('hidden'); // Sembunyikan Tombol Hapus
+        }
+
+
+        function previewImageFase3(input, previewId) {
+            const preview = document.getElementById(previewId);
+            const file = input.files[0];
+            
+            if (file) {
+                // 1. Validasi Ukuran (Maksimal 1 MB = 1.048.576 Bytes)
+                if (file.size > 1048576) {
+                    alert("GAGAL! Ukuran gambar [" + file.name + "] terlalu besar.\n\nMaksimal hanya 1 MB. Silakan kompres gambar Anda terlebih dahulu.");
+                    input.value = ""; // Langsung tolak dan hapus file dari input
+                    return;
+                }
+
+                // 2. Validasi Format (Wajib Image, tolak PDF)
+                if (!file.type.startsWith('image/')) {
+                    alert("GAGAL! File yang dipilih bukan gambar.\n\nSilakan pilih file berformat JPG, JPEG, atau PNG.");
+                    input.value = ""; // Langsung tolak
+                    return;
+                }
+
+                // 3. Jika Lolos Filter, Tampilkan Preview
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    preview.src = e.target.result;
+                    preview.classList.remove('hidden');
+                }
+                reader.readAsDataURL(file);
+            }
         }
     </script>
 </x-app-layout>

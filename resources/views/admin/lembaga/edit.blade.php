@@ -279,10 +279,70 @@
                                 <div class="mt-4">
                                     <iframe id="preview_skam_edit" class="hidden w-full h-[600px] border border-gray-300 rounded-lg bg-white shadow-inner" src=""></iframe>
                                 </div>
+
+
                             </div>
+
+                        {{-- ================================================================= --}}
+                        {{-- 📸 [BARU - FASE 3] PANEL 4 FOTO EDIT DENGAN PREVIEW DATABASE      --}}
+                        {{-- ================================================================= --}}
+                        <div class="mt-8 bg-white p-6 rounded-xl border border-gray-300 shadow-sm">
+                            <h3 class="text-sm font-bold text-gray-800 uppercase tracking-wide mb-1">4. Perbarui Dokumentasi Lembaga (Foto Lapangan)</h3>
+                            <p class="text-[11px] text-gray-500 mb-4">Abaikan jika tidak ingin mengganti foto lama.</p>
+                            
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                
+                                {{-- Kotak A: Profil Lembaga --}}
+                                <div class="border border-gray-300 rounded-lg p-3 bg-gray-50 flex flex-col items-center">
+                                    <label class="text-[11px] font-bold text-gray-700 uppercase mb-1 w-full text-center">A. Foto Profil Lembaga</label>
+                                    <div class="w-full h-32 bg-gray-200 border border-gray-400 rounded-md mb-2 overflow-hidden flex justify-center items-center relative">
+                                        <img id="preview_lembaga" src="{{ $lembaga->foto_lembaga ? asset('storage/' . $lembaga->foto_lembaga) : '#' }}" 
+                                             class="{{ $lembaga->foto_lembaga ? '' : 'hidden' }} object-cover w-full h-full absolute inset-0 z-10" />
+                                        <span class="text-gray-400 text-[11px] z-0">Tidak Ada Foto Terunggah</span>
+                                    </div>
+                                    <input type="file" name="foto_lembaga" accept="image/*" onchange="previewImageFase3(this, 'preview_lembaga')" class="text-[10px] w-full file:mr-2 file:py-1 file:px-2 file:rounded file:border-0 file:text-[10px] file:font-bold file:bg-orange-500 file:text-white hover:file:bg-orange-600 cursor-pointer">
+                                </div>
+
+                                {{-- Kotak B: Papan Nama --}}
+                                <div class="border border-gray-300 rounded-lg p-3 bg-gray-50 flex flex-col items-center">
+                                    <label class="text-[11px] font-bold text-gray-700 uppercase mb-1 w-full text-center">B. Papan Nama / Nambor</label>
+                                    <div class="w-full h-32 bg-gray-200 border border-gray-400 rounded-md mb-2 overflow-hidden flex justify-center items-center relative">
+                                        <img id="preview_nambor" src="{{ $lembaga->foto_nambor ? asset('storage/' . $lembaga->foto_nambor) : '#' }}" 
+                                             class="{{ $lembaga->foto_nambor ? '' : 'hidden' }} object-cover w-full h-full absolute inset-0 z-10" />
+                                        <span class="text-gray-400 text-[11px] z-0">Tidak Ada Foto Terunggah</span>
+                                    </div>
+                                    <input type="file" name="foto_nambor" accept="image/*" onchange="previewImageFase3(this, 'preview_nambor')" class="text-[10px] w-full file:mr-2 file:py-1 file:px-2 file:rounded file:border-0 file:text-[10px] file:font-bold file:bg-orange-500 file:text-white hover:file:bg-orange-600 cursor-pointer">
+                                </div>
+
+                                {{-- Kotak C: Gedung --}}
+                                <div class="border border-gray-300 rounded-lg p-3 bg-gray-50 flex flex-col items-center">
+                                    <label class="text-[11px] font-bold text-gray-700 uppercase mb-1 w-full text-center">C. Gedung / Bangunan</label>
+                                    <div class="w-full h-32 bg-gray-200 border border-gray-400 rounded-md mb-2 overflow-hidden flex justify-center items-center relative">
+                                        <img id="preview_bangunan" src="{{ $lembaga->foto_bangunan ? asset('storage/' . $lembaga->foto_bangunan) : '#' }}" 
+                                             class="{{ $lembaga->foto_bangunan ? '' : 'hidden' }} object-cover w-full h-full absolute inset-0 z-10" />
+                                        <span class="text-gray-400 text-[11px] z-0">Tidak Ada Foto Terunggah</span>
+                                    </div>
+                                    <input type="file" name="foto_bangunan" accept="image/*" onchange="previewImageFase3(this, 'preview_bangunan')" class="text-[10px] w-full file:mr-2 file:py-1 file:px-2 file:rounded file:border-0 file:text-[10px] file:font-bold file:bg-orange-500 file:text-white hover:file:bg-orange-600 cursor-pointer">
+                                </div>
+
+                                {{-- Kotak D: KBM --}}
+                                <div class="border border-gray-300 rounded-lg p-3 bg-gray-50 flex flex-col items-center">
+                                    <label class="text-[11px] font-bold text-gray-700 uppercase mb-1 w-full text-center">D. Aktivitas Belajar (KBM)</label>
+                                    <div class="w-full h-32 bg-gray-200 border border-gray-400 rounded-md mb-2 overflow-hidden flex justify-center items-center relative">
+                                        <img id="preview_kbm" src="{{ $lembaga->foto_kbm ? asset('storage/' . $lembaga->foto_kbm) : '#' }}" 
+                                             class="{{ $lembaga->foto_kbm ? '' : 'hidden' }} object-cover w-full h-full absolute inset-0 z-10" />
+                                        <span class="text-gray-400 text-[11px] z-0">Tidak Ada Foto Terunggah</span>
+                                    </div>
+                                    <input type="file" name="foto_kbm" accept="image/*" onchange="previewImageFase3(this, 'preview_kbm')" class="text-[10px] w-full file:mr-2 file:py-1 file:px-2 file:rounded file:border-0 file:text-[10px] file:font-bold file:bg-orange-500 file:text-white hover:file:bg-orange-600 cursor-pointer">
+                                </div>
+
+                            </div>
+                        </div>
                             
                             <div class="mt-8 bg-gray-50 p-6 rounded-xl border border-gray-200 shadow-sm">
                                 <label class="block text-sm font-semibold text-gray-700 mb-1 text-center">Catatan Tambahan / Keterangan</label>
+                                
+                                
                                 <textarea name="keterangan" rows="2" class="w-full border-gray-300 rounded-lg shadow-sm text-sm text-center uppercase" placeholder="TULIS CATATAN JIKA ADA..." oninput="this.value = this.value.toUpperCase()">{{ old('keterangan', $lembaga->keterangan) }}</textarea>
                             </div>
 

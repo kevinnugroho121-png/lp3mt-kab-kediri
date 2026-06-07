@@ -49,10 +49,18 @@ class Lembaga extends Model
         // ===============================================
         'file_ijop',
         'file_super',
-        'file_skam', // <--- [BARU] File Surat Ket. Aktif Mengajar
+        'file_skam', 
         'status_ijop',
         'status_super',
-        'status_skam', // <--- [BARU] Status Verifikasi SKAM
+        'status_skam', 
+        
+        // ===============================================
+        // 📸 [BARU - FASE 3] KOLOM FOTO DOKUMENTASI LEMBAGA
+        // ===============================================
+        'foto_lembaga',
+        'foto_nambor',
+        'foto_bangunan',
+        'foto_kbm',
     ];
 
     /**

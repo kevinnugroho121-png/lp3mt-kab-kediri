@@ -180,6 +180,7 @@
                             <th class="border-r border-gray-300 px-3 text-left w-56 sticky left-10 bg-gray-100 z-10">Identitas Lembaga</th>
                             <th class="border-r border-gray-300 px-2 text-center w-24">Jenis</th>
                             <th class="border-r border-gray-300 px-3 text-left w-40">Lokasi</th>
+                            <th class="border border-gray-300 px-1 py-2 text-center w-24">Dokumentasi</th>
                             <th class="border-r border-gray-300 px-2 text-center w-16">Santri</th>
                             <th class="border-r border-gray-300 px-3 text-left w-32">Jumlah Guru</th>
                             <th class="border-r border-gray-300 px-3 text-left w-32">Insentif</th>
@@ -238,6 +239,42 @@
                                     <div class="font-bold">{{ $lembaga->desa->nama_desa ?? '-' }}</div>
                                     <div class="text-gray-500 text-[10px]">Kec. {{ $lembaga->kecamatan->nama_kecamatan ?? '-' }}</div>
                                 </td>
+
+                                {{-- 📸 [BARU] ICON GRID MINI INTERAKTIF DENGAN POP-UP MODAL --}}
+                                <td class="border border-gray-300 px-1 py-1 text-center align-middle bg-gray-50">
+                                    <div class="grid grid-cols-2 gap-1 w-12 mx-auto">
+                                        {{-- 1. Profil Lembaga --}}
+                                        @if($lembaga->foto_lembaga)
+                                            <button onclick="bukaModalGambar('{{ asset('storage/' . $lembaga->foto_lembaga) }}', 'A. Foto Profil Lembaga')" title="Lihat Profil Lembaga" class="bg-blue-100 text-blue-700 border border-blue-300 p-0.5 rounded hover:bg-blue-600 hover:text-white transition text-[10px]">📸</button>
+                                        @else
+                                            <span title="Kosong" class="bg-gray-100 text-gray-300 border border-gray-200 p-0.5 rounded text-[10px] cursor-not-allowed">📸</span>
+                                        @endif
+
+                                        {{-- 2. Nambor --}}
+                                        @if($lembaga->foto_nambor)
+                                            <button onclick="bukaModalGambar('{{ asset('storage/' . $lembaga->foto_nambor) }}', 'B. Papan Nama / Nambor')" title="Lihat Papan Nama" class="bg-indigo-100 text-indigo-700 border border-indigo-300 p-0.5 rounded hover:bg-indigo-600 hover:text-white transition text-[10px]">🏷️</button>
+                                        @else
+                                            <span title="Kosong" class="bg-gray-100 text-gray-300 border border-gray-200 p-0.5 rounded text-[10px] cursor-not-allowed">🏷️</span>
+                                        @endif
+
+                                        {{-- 3. Gedung Bangunan --}}
+                                        @if($lembaga->foto_bangunan)
+                                            <button onclick="bukaModalGambar('{{ asset('storage/' . $lembaga->foto_bangunan) }}', 'C. Gedung Bangunan')" title="Lihat Bangunan" class="bg-amber-100 text-amber-700 border border-amber-300 p-0.5 rounded hover:bg-amber-600 hover:text-white transition text-[10px]">🏢</button>
+                                        @else
+                                            <span title="Kosong" class="bg-gray-100 text-gray-300 border border-gray-200 p-0.5 rounded text-[10px] cursor-not-allowed">🏢</span>
+                                        @endif
+
+                                        {{-- 4. KBM --}}
+                                        @if($lembaga->foto_kbm)
+                                            <button onclick="bukaModalGambar('{{ asset('storage/' . $lembaga->foto_kbm) }}', 'D. Kegiatan Belajar (KBM)')" title="Lihat KBM" class="bg-green-100 text-green-700 border border-green-300 p-0.5 rounded hover:bg-green-600 hover:text-white transition text-[10px]">👥</button>
+                                        @else
+                                            <span title="Kosong" class="bg-gray-100 text-gray-300 border border-gray-200 p-0.5 rounded text-[10px] cursor-not-allowed">👥</span>
+                                        @endif
+                                    </div>
+                                </td>
+
+
+
 
                                 {{-- 5. SANTRI --}}
                                 <td class="border-r border-gray-200 text-center font-bold text-blue-600 text-sm">
@@ -451,5 +488,39 @@
             // Jalankan saat pertama kali halaman dimuat
             updateDesaFilter();
         });
+
+        
+    </script>
+
+    {{-- ======================================================== --}}
+    {{-- 🖼️ KOTAK POP-UP MODAL PREVIEW GAMBAR (TIDAK FULL SCREEN) --}}
+    {{-- ======================================================== --}}
+    <div id="modalGambar" class="fixed inset-0 z-[9999] bg-black bg-opacity-70 hidden flex justify-center items-center p-4 backdrop-blur-sm transition-opacity">
+        <div class="relative bg-white rounded-xl shadow-2xl max-w-3xl w-full flex flex-col border border-gray-300 overflow-hidden transform scale-100">
+            
+            {{-- Header Pop-Up --}}
+            <div class="flex justify-between items-center p-3 bg-gray-100 border-b border-gray-300">
+                <h3 id="judulModalGambar" class="text-sm font-bold text-gray-800 tracking-wide uppercase">Preview Gambar</h3>
+                <button onclick="tutupModalGambar()" class="text-gray-500 hover:text-red-600 font-black text-xl leading-none px-2 transition">&times;</button>
+            </div>
+            
+            {{-- Area Gambar --}}
+            <div class="p-4 flex justify-center items-center bg-gray-200">
+                <img id="sumberModalGambar" src="" alt="Preview" class="max-w-full max-h-[70vh] object-contain rounded shadow-sm border border-gray-300">
+            </div>
+        </div>
+    </div>
+
+    {{-- Script Pembuka & Penutup Pop-Up --}}
+    <script>
+        function bukaModalGambar(urlGambar, judul) {
+            document.getElementById('sumberModalGambar').src = urlGambar;
+            document.getElementById('judulModalGambar').innerText = judul;
+            document.getElementById('modalGambar').classList.remove('hidden');
+        }
+        function tutupModalGambar() {
+            document.getElementById('modalGambar').classList.add('hidden');
+            document.getElementById('sumberModalGambar').src = "";
+        }
     </script>
 </x-app-layout>

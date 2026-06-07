@@ -112,14 +112,26 @@ class LembagaController extends Controller
             
             
             // Validasi File PDF
-            'file_ijop'          => 'nullable|mimes:pdf|max:2048', // Max 2MB
-            'file_super'         => 'nullable|mimes:pdf|max:2048', // Max 2MB
-            'file_skam'          => 'nullable|mimes:pdf|max:2048', // [BARU] SKAM Max 2MB
+            'file_ijop'          => 'nullable|mimes:pdf|max:2048', 
+            'file_super'         => 'nullable|mimes:pdf|max:2048', 
+            'file_skam'          => 'nullable|mimes:pdf|max:2048', 
+
+            // [BARU - FASE 3] Validasi Gambar Dokumentasi (HANYA GAMBAR, MAKSIMAL 1 MB)
+            'foto_lembaga'       => 'nullable|image|mimes:jpeg,png,jpg|max:1024',
+            'foto_nambor'        => 'nullable|image|mimes:jpeg,png,jpg|max:1024',
+            'foto_bangunan'      => 'nullable|image|mimes:jpeg,png,jpg|max:1024',
+            'foto_kbm'           => 'nullable|image|mimes:jpeg,png,jpg|max:1024',
         ], [
             'file_ijop.mimes'    => 'File IJOP harus format PDF.',
             'file_ijop.max'      => 'Ukuran file IJOP maksimal 2MB.',
             'file_super.mimes'   => 'File Surat Pernyataan harus format PDF.',
-            'file_skam.mimes'    => 'File Surat Ket. Aktif Mengajar harus format PDF.', // [BARU]
+            'file_skam.mimes'    => 'File Surat Ket. Aktif Mengajar harus format PDF.',
+            
+            // Pesan validasi gambar kustom
+            'foto_lembaga.image' => 'File profil lembaga wajib berupa format gambar (JPG/PNG) maksimal 1MB.',
+            'foto_nambor.image'  => 'File papan nama wajib berupa format gambar (JPG/PNG) maksimal 1MB.',
+            'foto_bangunan.image'=> 'File bangunan wajib berupa format gambar (JPG/PNG) maksimal 1MB.',
+            'foto_kbm.image'     => 'File KBM wajib berupa format gambar (JPG/PNG) maksimal 1MB.',
         ]);
 
         // 2. PROSES UPLOAD FILE
@@ -133,15 +145,23 @@ class LembagaController extends Controller
             $pathSuper = $request->file('file_super')->store('dokumen_lembaga', 'public');
         }
 
-        // [BARU] Upload File SKAM
         $pathSkam = null;
         if ($request->hasFile('file_skam')) {
             $pathSkam = $request->file('file_skam')->store('dokumen_lembaga', 'public');
         }
 
         // 3. SIMPAN KE DATABASE
-        // Kita gabungkan data request dengan path file yang baru
         $data = $request->all();
+
+        // [BARU - FASE 3] PROSES UPLOAD 4 GAMBAR DOKUMENTASI LAPANGAN
+        $fotoFields = ['foto_lembaga', 'foto_nambor', 'foto_bangunan', 'foto_kbm'];
+        foreach ($fotoFields as $field) {
+            if ($request->hasFile($field)) {
+                $data[$field] = $request->file($field)->store('dokumentasi_lembaga', 'public');
+            }
+        }
+
+        // --- MULAI SUNTIKAN KODE PEMAKSAAN KAPITAL ---
 
         // --- MULAI SUNTIKAN KODE PEMAKSAAN KAPITAL ---
         $kolom_teks = ['nama_lembaga', 'nsbq', 'ormas', 'alamat', 'kepala_lembaga', 'keterangan'];
@@ -252,11 +272,34 @@ class LembagaController extends Controller
             'nama_lembaga'       => 'required|string|max:255',
             'file_ijop'          => 'nullable|mimes:pdf|max:2048',
             'file_super'         => 'nullable|mimes:pdf|max:2048',
-            'file_skam'          => 'nullable|mimes:pdf|max:2048', // [BARU]
-            // ... validasi lain bisa disingkat ...
+            'file_skam'          => 'nullable|mimes:pdf|max:2048',
+            
+            // [BARU - FASE 3] Validasi Gambar saat Update Data
+            'foto_lembaga'       => 'nullable|image|mimes:pdf,jpeg,png,jpg|max:1024',
+            'foto_nambor'        => 'nullable|image|mimes:pdf,jpeg,png,jpg|max:1024',
+            'foto_bangunan'      => 'nullable|image|mimes:pdf,jpeg,png,jpg|max:1024',
+            'foto_kbm'           => 'nullable|image|mimes:pdf,jpeg,png,jpg|max:1024',
         ]);
 
         $data = $request->all();
+
+        // [BARU - FASE 3] LOGIKA AMAN PENIMPAAN FOTO LAMA (CEGAH SAMPAH STORAGE)
+        $fotoFields = ['foto_lembaga', 'foto_nambor', 'foto_bangunan', 'foto_kbm'];
+        foreach ($fotoFields as $field) {
+            if ($request->hasFile($field)) {
+                // Hapus file fisik foto lama di local storage jika terdeteksi ada
+                if ($lembaga->$field && Storage::disk('public')->exists($lembaga->$field)) {
+                    Storage::disk('public')->delete($lembaga->$field);
+                }
+                // Simpan file foto baru
+                $data[$field] = $request->file($field)->store('dokumentasi_lembaga', 'public');
+            } else {
+                // Jika tidak upload baru, hapus field dari array data agar alamat lama tidak tertimpa NULL
+                unset($data[$field]);
+            }
+        }
+
+        // --- MULAI SUNTIKAN KODE PEMAKSAAN KAPITAL ---
 
         // --- MULAI SUNTIKAN KODE PEMAKSAAN KAPITAL ---
         $kolom_teks = ['nama_lembaga', 'nsbq', 'ormas', 'alamat', 'kepala_lembaga', 'keterangan'];
@@ -333,6 +376,14 @@ class LembagaController extends Controller
         // [BARU] Hapus file SKAM
         if ($lembaga->file_skam && Storage::disk('public')->exists($lembaga->file_skam)) {
             Storage::disk('public')->delete($lembaga->file_skam);
+        }
+
+        // [BARU - FASE 3] BERSIHKAN 4 FILE FOTO FISIK DARI STORAGE SAAT LEMBAGA DIHAPUS
+        $fotoFields = ['foto_lembaga', 'foto_nambor', 'foto_bangunan', 'foto_kbm'];
+        foreach ($fotoFields as $field) {
+            if ($lembaga->$field && Storage::disk('public')->exists($lembaga->$field)) {
+                Storage::disk('public')->delete($lembaga->$field);
+            }
         }
 
         $lembaga->delete();
