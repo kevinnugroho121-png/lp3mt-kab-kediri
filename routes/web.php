@@ -169,6 +169,9 @@ Route::middleware(['auth', 'role:admin,verifikator'])->prefix('admin')->group(fu
     Route::get('/activity-logs', [ActivityLogController::class, 'index'])->name('activity.log');
     Route::post('/activity-logs/clear', [ActivityLogController::class, 'clear'])->name('activity.log.clear');
 
+    // ===== [BARU] BACKUP DATABASE =====
+    Route::post('/backup-database', [\App\Http\Controllers\BackupController::class, 'download'])->name('backup.database');
+
     // ===== MANAJEMEN LANDING PAGE =====
     Route::resource('dokumentasi', DokumentasiController::class)->only(['index', 'store', 'destroy', 'edit', 'update']);
 
@@ -195,6 +198,8 @@ Route::middleware(['auth', 'role:admin,verifikator,korcam'])->prefix('admin')->g
     Route::get('guru/{id}/verifikasi', [GuruController::class, 'verifikasi'])->name('guru.verifikasi');
     Route::post('guru/{id}/verifikasi', [GuruController::class, 'prosesVerifikasi'])->name('guru.proses_verifikasi');
     Route::post('/guru/{id}/toggle-insentif', [GuruController::class, 'toggleInsentif'])->name('guru.toggle_insentif');
+    // Selipkan rute ini di dalam Grup 3B
+    Route::get('/guru/export-excel', [GuruController::class, 'exportExcel'])->name('guru.export');
     Route::resource('guru', GuruController::class);
 
 });

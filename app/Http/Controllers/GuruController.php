@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB; // <--- [TAMBAH INI UNTUK LOG AKTIVITAS]
 use Maatwebsite\Excel\Facades\Excel; // <--- [BARU]
 use App\Imports\GuruImport; // <--- [BARU]
+use App\Exports\GuruExport;
 
 class GuruController extends Controller
 {
@@ -501,6 +502,26 @@ class GuruController extends Controller
             ]);
             return back()->with('success', "Status insentif {$guru->nama_lengkap} berhasil dicopot dan kembali Standby.");
         }
+    }
+
+    // ==========================================
+    // 6. EXPORT EXCEL (UNDUH LAPORAN)
+    // ==========================================
+    public function exportExcel(Request $request)
+    {
+        $jenis = $request->query('type', 'ALL');
+        $namaFile = 'Data_Guru_LP3MT_' . $jenis . '_' . date('d-M-Y') . '.xlsx';
+        
+        // [CCTV LOG] Catat diam-diam siapa yang mengunduh database
+        DB::table('activity_logs')->insert([
+            'user_id'    => Auth::id(),
+            'nama_user'  => Auth::user()->name,
+            'aksi'       => 'Download Rekap Excel',
+            'target'     => 'Data ' . $jenis,
+            'created_at' => now(),
+        ]);
+
+        return Excel::download(new GuruExport($request), $namaFile);
     }
     
 }
