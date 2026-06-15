@@ -117,8 +117,8 @@
                                <span class="text-sm font-bold flex items-center gap-1">INSENTIF</span>
                             </a>
 
-                            {{-- I. MANAJEMEN USER (HANYA ADMIN PUSAT) --}}
-                            @if(Auth::user()->role == 'admin')
+                            {{-- I. MANAJEMEN USER & GALERI FOTO --}}
+                            @if(Auth::user()->role == 'admin' || Auth::user()->role == 'verifikator' || Auth::user()->role == 'superadmin')
                                 {{-- DIVIDER --}}
                                 <div class="h-8 w-px bg-gray-200 mx-1"></div>
                                 
@@ -127,6 +127,14 @@
                                    {{ request()->routeIs('user.*') ? 'bg-blue-50 text-blue-700 border-blue-200 shadow-sm' : 'text-gray-500 hover:bg-blue-50 hover:text-blue-700' }}">
                                    <span class="text-[10px] font-medium uppercase tracking-wide opacity-80 mb-0.5">MANAJEMEN</span>
                                    <span class="text-sm font-bold">USER</span>
+                                </a>
+
+                                {{-- J. [BARU] MENU GALERI DOKUMENTASI --}}
+                                <a href="{{ route('dokumentasi.index') }}" 
+                                   class="flex flex-col items-center justify-center h-12 px-4 rounded-lg transition-all duration-200 border border-transparent leading-none
+                                   {{ request()->routeIs('dokumentasi.*') ? 'bg-blue-50 text-blue-700 border-blue-200 shadow-sm' : 'text-gray-500 hover:bg-blue-50 hover:text-blue-700' }}">
+                                   <span class="text-[10px] font-medium uppercase tracking-wide opacity-80 mb-0.5">GALERI</span>
+                                   <span class="text-sm font-bold">FOTO</span>
                                 </a>
                             @endif
 

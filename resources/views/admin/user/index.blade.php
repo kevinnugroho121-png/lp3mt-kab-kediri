@@ -9,24 +9,21 @@
         <div class="max-w-[1500px] mx-auto px-4 sm:px-6 lg:px-8">
             
             {{-- HEADER: JUDUL & TOMBOL --}}
-            <div class="flex justify-between items-center mb-4">
+            <div class="flex flex-col md:flex-row justify-between items-end mb-4 gap-4">
                 <div>
-                    <h3 class="font-bold text-lg text-gray-800">Daftar Pengguna</h3>
-                    <p class="text-xs text-gray-500">Kelola akun Admin, Verifikator, dan Korcam</p>
+                    <h3 class="font-bold text-lg text-gray-800">Daftar Pengguna & Pemantauan</h3>
+                    <p class="text-xs text-gray-500">Kelola akun dan pantau aktivitas perangkat secara Real-Time.</p>
                 </div>
                 
-                <div class="flex gap-2">
-                    {{-- SEARCH BOX --}}
-                    <form action="{{ route('user.index') }}" method="GET" class="relative">
-                        <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari user..." 
-                               class="w-64 border border-gray-300 rounded-md px-3 py-1.5 text-sm focus:outline-none focus:border-green-500 focus:ring-1 focus:ring-green-500 shadow-sm">
-                        <button type="submit" class="absolute right-2 top-2 text-gray-400 hover:text-green-600">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
-                        </button>
-                    </form>
+                <div class="flex flex-wrap gap-2">
+                    {{-- 🕵️‍♂️ [BARU] TOMBOL BUKA CCTV LOG --}}
+                    <a href="{{ route('activity.log') }}" class="bg-slate-700 hover:bg-slate-800 text-white px-4 py-2 rounded-md text-sm font-medium flex items-center gap-2 shadow-sm transition">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                        Lihat Log Aktivitas
+                    </a>
 
-                    {{-- TOMBOL TAMBAH --}}
-                    <a href="{{ route('user.create') }}" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-1.5 rounded-md text-sm font-medium flex items-center gap-1 shadow-sm transition">
+                    {{-- TOMBOL TAMBAH USER --}}
+                    <a href="{{ route('user.create') }}" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm font-medium flex items-center gap-2 shadow-sm transition">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
                         Tambah User Baru
                     </a>
@@ -41,87 +38,154 @@
                 </div>
             @endif
 
-            {{-- TABEL ALA EXCEL (BORDERED & COMPACT) --}}
-            <div class="bg-white border border-gray-400 overflow-hidden shadow-sm">
-                <table class="w-full text-sm border-collapse">
-                    {{-- HEADER --}}
+            {{-- ================================================= --}}
+            {{-- 1. [BARU] PANEL FILTER PINTAR --}}
+            {{-- ================================================= --}}
+            <div class="bg-white p-4 rounded-t-xl border-t border-l border-r border-gray-300 shadow-sm">
+                <form action="{{ route('user.index') }}" method="GET" class="grid grid-cols-1 md:grid-cols-12 gap-3 items-end">
+                    
+                    {{-- Pencarian Nama/Email --}}
+                    <div class="md:col-span-4">
+                        <label class="block text-[10px] font-bold text-gray-500 uppercase mb-1">Cari Pengguna</label>
+                        <input type="text" name="search" value="{{ request('search') }}" placeholder="Ketik nama atau email..." 
+                               class="w-full border border-gray-300 rounded-md px-3 py-1.5 text-sm focus:border-blue-500 focus:ring-blue-500">
+                    </div>
+
+                    {{-- Filter Role --}}
+                    <div class="md:col-span-3">
+                        <label class="block text-[10px] font-bold text-gray-500 uppercase mb-1">Filter Jabatan</label>
+                        <select name="filter_role" class="w-full border border-gray-300 rounded-md px-3 py-1.5 text-sm focus:border-blue-500 focus:ring-blue-500">
+                            <option value="">- Semua Jabatan -</option>
+                            <option value="admin" {{ request('filter_role') == 'admin' ? 'selected' : '' }}>Super Admin</option>
+                            <option value="verifikator" {{ request('filter_role') == 'verifikator' ? 'selected' : '' }}>Verifikator Kab</option>
+                            <option value="korcam" {{ request('filter_role') == 'korcam' ? 'selected' : '' }}>Korcam</option>
+                        </select>
+                    </div>
+
+                    {{-- Filter Kecamatan --}}
+                    <div class="md:col-span-3">
+                        <label class="block text-[10px] font-bold text-gray-500 uppercase mb-1">Filter Wilayah</label>
+                        <select name="filter_kecamatan" class="w-full border border-gray-300 rounded-md px-3 py-1.5 text-sm focus:border-blue-500 focus:ring-blue-500">
+                            <option value="">- Semua Kecamatan -</option>
+                            @foreach($data_kecamatan as $kec)
+                                <option value="{{ $kec->id }}" {{ request('filter_kecamatan') == $kec->id ? 'selected' : '' }}>Kec. {{ $kec->nama_kecamatan }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    {{-- Tombol Filter --}}
+                    <div class="md:col-span-2 flex gap-2">
+                        <button type="submit" class="bg-gray-800 text-white px-4 py-1.5 rounded-md text-sm font-bold w-full hover:bg-gray-900 transition">Filter</button>
+                        <a href="{{ route('user.index') }}" class="bg-gray-100 text-gray-600 border border-gray-300 px-3 py-1.5 rounded-md text-sm font-bold hover:bg-gray-200 transition text-center flex items-center justify-center">Reset</a>
+                    </div>
+                </form>
+            </div>
+
+            {{-- ================================================= --}}
+            {{-- 2. TABEL DATA & INTELIJEN SESI --}}
+            {{-- ================================================= --}}
+            <div class="bg-white border border-gray-400 overflow-hidden shadow-sm rounded-b-xl">
+                <table class="w-full text-sm border-collapse min-w-[1000px]">
                     <thead>
-                        <tr class="bg-gray-100 text-gray-700 uppercase text-xs tracking-wider">
-                            <th class="border border-gray-300 px-2 py-2 text-center w-12 font-bold">No</th>
-                            <th class="border border-gray-300 px-3 py-2 text-center font-bold">Nama Lengkap</th>
-                            <th class="border border-gray-300 px-3 py-2 text-center font-bold">Email (Login)</th>
-                            <th class="border border-gray-300 px-3 py-2 text-center font-bold">Jabatan (Role)</th>
-                            <th class="border border-gray-300 px-3 py-2 text-center font-bold">Wilayah Tugas</th>
-                            <th class="border border-gray-300 px-3 py-2 text-center font-bold w-24">Aksi</th>
+                        <tr class="bg-slate-100 text-slate-700 uppercase text-[10px] tracking-wider border-b border-gray-300">
+                            <th class="border-r border-gray-300 px-2 py-3 text-center font-bold w-12">No</th>
+                            <th class="border-r border-gray-300 px-3 py-3 text-left font-bold w-64">Nama & Kontak</th>
+                            <th class="border-r border-gray-300 px-3 py-3 text-center font-bold w-40">Jabatan & Wilayah</th>
+                            
+                            {{-- [BARU] Kolom Mata-Mata --}}
+                            <th class="border-r border-gray-300 px-3 py-3 text-left font-bold bg-blue-50/50">Aktivitas Terakhir (Intelijen)</th>
+                            
+                            <th class="px-3 py-3 text-center font-bold w-32">Aksi Pengelola</th>
                         </tr>
                     </thead>
-                    
-                    {{-- BODY --}}
-                    <tbody class="text-gray-600">
+                    <tbody class="text-gray-700 divide-y divide-gray-200">
                         @forelse($users as $index => $user)
-                            <tr class="hover:bg-yellow-50 transition duration-150">
+                            <tr class="hover:bg-yellow-50 transition duration-150 align-top">
                                 
-                                {{-- NO --}}
-                                <td class="border border-gray-300 px-2 py-1 text-center bg-gray-50 font-medium">
+                                <td class="border-r border-gray-200 px-2 py-3 text-center bg-gray-50 font-medium">
                                     {{ $users->firstItem() + $index }}
                                 </td>
 
-                                {{-- NAMA --}}
-                                <td class="border border-gray-300 px-3 py-1 font-bold text-gray-800">
-                                    {{ $user->name }}
+                                <td class="border-r border-gray-200 px-3 py-3">
+                                    <div class="font-bold text-gray-900">{{ $user->name }}</div>
+                                    <div class="text-xs text-gray-500 mt-0.5">{{ $user->email }}</div>
                                 </td>
 
-                                {{-- EMAIL --}}
-                                <td class="border border-gray-300 px-3 py-1 text-gray-600">
-                                    {{ $user->email }}
-                                </td>
-
-                                {{-- JABATAN (ROLE) --}}
-                                <td class="border border-gray-300 px-2 py-1 text-center">
+                                <td class="border-r border-gray-200 px-3 py-3 text-center">
                                     @if($user->role == 'admin')
-                                        <span class="inline-block px-2 py-0.5 rounded text-[10px] font-bold bg-purple-100 text-purple-700 border border-purple-200">
-                                            Super Admin
-                                        </span>
+                                        <div class="inline-block px-2 py-0.5 rounded text-[10px] font-bold bg-purple-100 text-purple-700 border border-purple-200 mb-1">Super Admin</div>
                                     @elseif($user->role == 'verifikator')
-                                        <span class="inline-block px-2 py-0.5 rounded text-[10px] font-bold bg-blue-100 text-blue-700 border border-blue-200">
-                                            Verifikator Kab
-                                        </span>
+                                        <div class="inline-block px-2 py-0.5 rounded text-[10px] font-bold bg-blue-100 text-blue-700 border border-blue-200 mb-1">Verifikator Kab</div>
                                     @elseif($user->role == 'korcam')
-                                        <span class="inline-block px-2 py-0.5 rounded text-[10px] font-bold bg-orange-100 text-orange-700 border border-orange-200">
-                                            Korcam - {{ $user->jabatan_korcam ?? 'Tim' }}
-                                        </span>
-                                    @else
-                                        <span class="text-gray-500 text-xs">{{ $user->role }}</span>
+                                        <div class="inline-block px-2 py-0.5 rounded text-[10px] font-bold bg-orange-100 text-orange-700 border border-orange-200 mb-1">Korcam - {{ $user->jabatan_korcam ?? 'Tim' }}</div>
+                                    @endif
+                                    
+                                    <div class="text-[10px] text-gray-600 font-semibold mt-1">
+                                        {{ $user->kecamatan ? 'Kec. ' . $user->kecamatan->nama_kecamatan : 'Pusat Kabupaten' }}
+                                    </div>
+                                </td>
+
+                                {{-- [BARU] KOLOM INTELIJEN --}}
+                                <td class="border-r border-gray-200 px-3 py-3 bg-blue-50/20">
+                                    <div class="flex items-center gap-2 mb-1">
+                                        @if($user->is_online)
+                                            <span class="relative flex h-3 w-3">
+                                              <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                                              <span class="relative inline-flex rounded-full h-3 w-3 bg-green-500"></span>
+                                            </span>
+                                            <span class="text-xs font-bold text-green-600">SEDANG ONLINE</span>
+                                        @else
+                                            <span class="h-2.5 w-2.5 rounded-full bg-gray-400 border border-gray-500"></span>
+                                            <span class="text-xs font-bold text-gray-500">Offline</span>
+                                            <span class="text-[10px] text-gray-400 ml-1">({{ $user->last_seen }})</span>
+                                        @endif
+                                    </div>
+                                    
+                                    @if($user->last_seen != 'Offline')
+                                        <div class="text-[10px] text-gray-500 mt-1">
+                                            <span class="font-semibold text-gray-700">Device:</span> {{ $user->perangkat }} <br>
+                                            <span class="font-semibold text-gray-700">IP:</span> {{ $user->ip_address }}
+                                        </div>
                                     @endif
                                 </td>
 
-                                {{-- WILAYAH TUGAS --}}
-                                <td class="border border-gray-300 px-3 py-1 text-center">
-                                    @if($user->kecamatan)
-                                        <span class="font-bold text-gray-700">Kec. {{ $user->kecamatan->nama_kecamatan }}</span>
-                                    @else
-                                        <span class="text-gray-400 italic text-xs">Seluruh Kabupaten</span>
-                                    @endif
-                                </td>
+                                <td class="px-2 py-3 text-center align-middle">
+                                    <div class="flex items-center justify-center gap-1.5 flex-wrap">
+                                        
+                                        {{-- 🔑 Tombol Reset Password --}}
+                                        <form action="{{ route('user.reset-password', $user->id) }}" method="POST" onsubmit="return confirm('Yakin ingin mereset password user ini menjadi: kediri2026 ?');">
+                                            @csrf
+                                            <button type="submit" class="p-1.5 bg-gray-100 text-gray-700 border border-gray-300 rounded hover:bg-gray-700 hover:text-white transition" title="Reset Password ke Default">
+                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"></path></svg>
+                                            </button>
+                                        </form>
 
-                                {{-- AKSI --}}
-                                <td class="border border-gray-300 px-2 py-1 text-center">
-                                    <form action="{{ route('user.destroy', $user->id) }}" method="POST" class="inline-block" onsubmit="return confirm('Yakin hapus user ini?');">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="p-1 rounded hover:bg-red-100 text-red-500 transition" title="Hapus User">
-                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
-                                        </button>
-                                    </form>
+                                        {{-- 📱 Tombol Sapu Jagat (Hanya Korcam) --}}
+                                        @if($user->role == 'korcam')
+                                            <form action="{{ route('user.reset-device', $user->id) }}" method="POST" onsubmit="return confirm('Yakin logout paksa seluruh perangkat Korcam ini?');">
+                                                @csrf
+                                                <button type="submit" class="p-1.5 bg-amber-100 text-amber-700 border border-amber-300 rounded hover:bg-amber-600 hover:text-white transition" title="Kosongkan Slot Login">
+                                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+                                                </button>
+                                            </form>
+                                        @endif
+
+                                        {{-- 🗑️ Tombol Hapus --}}
+                                        <form action="{{ route('user.destroy', $user->id) }}" method="POST" onsubmit="return confirm('Yakin hapus user ini permanen?');">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="p-1.5 bg-red-50 text-red-500 border border-red-200 rounded hover:bg-red-500 hover:text-white transition" title="Hapus User">
+                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                                            </button>
+                                        </form>
+
+                                    </div>
                                 </td>
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="6" class="border border-gray-300 px-4 py-8 text-center text-gray-400 bg-gray-50">
-                                    <div class="flex flex-col items-center justify-center">
-                                        <svg class="w-8 h-8 text-gray-300 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
-                                        <span class="text-xs">Belum ada data user.</span>
-                                    </div>
+                                <td colspan="5" class="border border-gray-300 px-4 py-8 text-center text-gray-400 bg-gray-50">
+                                    Belum ada data user / Tidak ditemukan.
                                 </td>
                             </tr>
                         @endforelse
@@ -129,11 +193,7 @@
                 </table>
             </div>
             
-            {{-- PAGINATION --}}
-            <div class="mt-4">
-                {{ $users->withQueryString()->links() }}
-            </div>
-
+            <div class="mt-4">{{ $users->withQueryString()->links() }}</div>
         </div>
     </div>
 </x-app-layout>

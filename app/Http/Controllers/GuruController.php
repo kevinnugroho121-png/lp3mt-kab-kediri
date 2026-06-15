@@ -9,6 +9,7 @@ use App\Models\Desa;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB; // <--- [TAMBAH INI UNTUK LOG AKTIVITAS]
 use Maatwebsite\Excel\Facades\Excel; // <--- [BARU]
 use App\Imports\GuruImport; // <--- [BARU]
 
@@ -91,33 +92,26 @@ class GuruController extends Controller
         }
         $list_lembaga = $lembagaQuery->get();
 
-        $gurus = $query->latest()->paginate(20)->withQueryString();
-
         // ========================================================
         // 📊 [BARU - FASE 2] HITUNG KUOTA REAL-TIME UNTUK KORCAM
         // ========================================================
         $kuotaSistem = ['total' => 0, 'terpakai' => 0, 'sisa' => 0];
         
         if ($user->role == 'korcam') {
-            // Ambil jatah kuota kecamatan asli dari Superadmin
             $kuotaSistem['total'] = \App\Models\Kecamatan::where('id', $user->kecamatan_id)->value('kuota_insentif') ?? 0;
             
-            // Hitung berapa guru di kecamatan ini yang sudah diaktifkan insentifnya (penerima_insentif = 1)
             $kuotaSistem['terpakai'] = Guru::whereHas('lembaga', function($q) use ($user) {
                 $q->where('kecamatan_id', $user->kecamatan_id);
             })->where('penerima_insentif', 1)->count();
             
-            // Hitung sisa peluru
             $kuotaSistem['sisa'] = $kuotaSistem['total'] - $kuotaSistem['terpakai'];
         }
-        // ========================================================
 
+        // [DIPERBAIKI] Panggil query paginasi cukup 1x saja di bawah
         $gurus = $query->latest()->paginate(20)->withQueryString();
 
-        // Tambahkan 'kuotaSistem' ke dalam compact
+        // [DIPERBAIKI] Return view cukup 1x saja
         return view('admin.guru.index', compact('gurus', 'title', 'data_kecamatan', 'data_desa', 'filterType', 'list_lembaga', 'kuotaSistem'));
-
-        return view('admin.guru.index', compact('gurus', 'title', 'data_kecamatan', 'data_desa', 'filterType', 'list_lembaga'));
     }
 
     // ==========================================
@@ -218,6 +212,15 @@ class GuruController extends Controller
             'status_ktp'        => 'Pending',
             'status_kk'         => 'Pending',
             'status_bukurekening'=> 'Pending',
+        ]);
+
+        // [BARU] Cctv Log - Mencatat siapa yang menambah data
+        DB::table('activity_logs')->insert([
+            'user_id'    => Auth::id(),
+            'nama_user'  => Auth::user()->name,
+            'aksi'       => 'Menambah Data Guru',
+            'target'     => strtoupper($request->nama_lengkap) . ' (' . $request->nik . ')',
+            'created_at' => now(),
         ]);
 
         // Redirect Pintar
@@ -328,6 +331,15 @@ class GuruController extends Controller
         // Update ke Database
         $guru->update($data);
 
+        // [BARU] Cctv Log - Mencatat siapa yang edit data
+        DB::table('activity_logs')->insert([
+            'user_id'    => Auth::id(),
+            'nama_user'  => Auth::user()->name,
+            'aksi'       => 'Mengubah Profil Guru',
+            'target'     => $guru->nama_lengkap . ' (' . $guru->nik . ')',
+            'created_at' => now(),
+        ]);
+
         // Redirect Pintar
         $route = 'guru.index';
         if($guru->jenis_guru == 'MADIN') $route = 'guru.madin';
@@ -378,6 +390,15 @@ class GuruController extends Controller
         if ($guru->file_ktp) Storage::disk('public')->delete($guru->file_ktp);
         if ($guru->file_kk) Storage::disk('public')->delete($guru->file_kk);
         if ($guru->file_bukurekening) Storage::disk('public')->delete($guru->file_bukurekening);
+
+        // [BARU] Cctv Log - Mencatat sebelum datanya hilang
+        DB::table('activity_logs')->insert([
+            'user_id'    => Auth::id(),
+            'nama_user'  => Auth::user()->name,
+            'aksi'       => 'Menghapus Data Guru',
+            'target'     => $guru->nama_lengkap . ' (' . $guru->nik . ')',
+            'created_at' => now(),
+        ]);
 
         $guru->delete();
 
@@ -454,12 +475,30 @@ class GuruController extends Controller
 
             // Jika aman, set jadi aktif
             $guru->update(['penerima_insentif' => 1]);
+
+            // [BARU] Cctv Log Aktifkan Insentif
+            DB::table('activity_logs')->insert([
+                'user_id'    => Auth::id(),
+                'nama_user'  => Auth::user()->name,
+                'aksi'       => 'Mengaktifkan Status Insentif',
+                'target'     => $guru->nama_lengkap,
+                'created_at' => now(),
+            ]);
             return back()->with('success', "Alhamdulillah! {$guru->nama_lengkap} resmi dialokasikan sebagai penerima insentif.");
         } 
         
         // 3. Logika jika Korcam mau MENCOPOT/STANDBY-KAN insentif (dari 1 ke 0)
         else {
             $guru->update(['penerima_insentif' => 0]);
+
+            // [BARU] Cctv Log Copot Insentif
+            DB::table('activity_logs')->insert([
+                'user_id'    => Auth::id(),
+                'nama_user'  => Auth::user()->name,
+                'aksi'       => 'Mencopot Status Insentif',
+                'target'     => $guru->nama_lengkap,
+                'created_at' => now(),
+            ]);
             return back()->with('success', "Status insentif {$guru->nama_lengkap} berhasil dicopot dan kembali Standby.");
         }
     }

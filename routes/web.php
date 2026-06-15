@@ -2,14 +2,14 @@
 
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB; // <-- Tambahan DB Facade
+use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 
 // Import Model
 use App\Models\Lembaga;
 use App\Models\Guru;
-use App\Models\Kecamatan; // <-- Tambahan Model Kecamatan untuk Dashboard
-use App\Models\Desa; // <-- Tambahan Model Desa
+use App\Models\Kecamatan;
+use App\Models\Desa;
 
 // Import Controller
 use App\Http\Controllers\ProfileController;
@@ -18,18 +18,17 @@ use App\Http\Controllers\DesaController;
 use App\Http\Controllers\LembagaController;
 use App\Http\Controllers\GuruController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\ActivityLogController;
+use App\Http\Controllers\DokumentasiController;
 
 // ===============================
 // 1. HALAMAN DEPAN (LANDING PAGE)
 // ===============================
 Route::get('/', function () {
-    // 1. Hitung Total Lembaga (Real Data)
     $lembagaTPQ = Lembaga::where('jenis_lembaga', 'TPQ')->count();
     $lembagaMadin = Lembaga::where('jenis_lembaga', 'MADIN')->count();
     $lembagaPonpes = Lembaga::where('jenis_lembaga', 'PONPES')->count();
 
-    // 2. Hitung Total Guru (Real Data)
-    // Menggunakan kolom jenis_guru sesuai filter di GuruController
     $guruTPQ = Guru::where('jenis_guru', 'TPQ')->count();
     $guruMadin = Guru::where('jenis_guru', 'MADIN')->count();
     $guruPonpes = Guru::where('jenis_guru', 'PONPES')->count();
@@ -46,16 +45,12 @@ Route::get('/', function () {
 Route::get('/dashboard', function () {
     $user = Auth::user();
     
-    // Default: Ambil SEMUA data (Untuk Admin Pusat & Verifikator)
     $queryLembaga = Lembaga::query();
     $queryGuru = Guru::query();
     $wilayahKerja = 'Seluruh Kabupaten Kediri';
 
-    // Jika yang login Korcam, filter datanya HANYA untuk kecamatannya saja
     if ($user->role == 'korcam') {
         $queryLembaga->where('kecamatan_id', $user->kecamatan_id);
-        
-        // Filter guru berdasarkan relasi ke tabel lembaga -> kecamatan_id
         $queryGuru->whereHas('lembaga', function($q) use ($user) {
             $q->where('kecamatan_id', $user->kecamatan_id);
         });
@@ -64,28 +59,27 @@ Route::get('/dashboard', function () {
         $wilayahKerja = 'Kecamatan ' . ($kecamatan ? $kecamatan->nama_kecamatan : 'Tidak Diketahui');
     }
 
-    // --- 1. DATA LEMBAGA ---
     $lembagaTPQ = (clone $queryLembaga)->where('jenis_lembaga', 'TPQ')->count();
     $lembagaMadin = (clone $queryLembaga)->where('jenis_lembaga', 'MADIN')->count();
     $lembagaPonpes = (clone $queryLembaga)->where('jenis_lembaga', 'PONPES')->count();
 
-    // --- 2. DATA SANTRI & GURU (TOTAL) ---
     $totalSantri = (clone $queryLembaga)->sum('jumlah_santri');
     $totalGuru = (clone $queryGuru)->count();
 
-    // --- 3. DATA STATUS GURU ---
     $guruPNS = (clone $queryGuru)->where('status_kepegawaian', 'PNS')->count();
     $guruP3KFull = (clone $queryGuru)->where('status_kepegawaian', 'PPPK')->count();
-    $guruP3KParuh = 0; // Sesuaikan jika ada status ini di database-mu
+    $guruP3KParuh = 0; 
     $guruInpassing = (clone $queryGuru)->where('status_sertifikasi', 'Inpassing')->count();
     
-    // Non-ASN = Total Guru dikurangi ASN & Inpassing
     $guruNonASN = $totalGuru - ($guruPNS + $guruP3KFull + $guruP3KParuh + $guruInpassing);
     if($guruNonASN < 0) $guruNonASN = 0;
 
-    // --- 4. DATA INSENTIF ---
-    // Target Insentif (Sebagai contoh: Korcam target 100, Admin target 1550)
-    $targetInsentif = ($user->role == 'korcam') ? 100 : 1550; 
+    // Target Insentif Real Database
+    if ($user->role == 'korcam') {
+        $targetInsentif = \App\Models\Kecamatan::where('id', $user->kecamatan_id)->value('kuota_insentif') ?? 0;
+    } else {
+        $targetInsentif = \App\Models\Kecamatan::sum('kuota_insentif');
+    }
     
     $sudahTerimaInsentif = (clone $queryGuru)->where('penerima_insentif', 1)->count();
     $belumTerimaInsentif = $targetInsentif - $sudahTerimaInsentif;
@@ -94,13 +88,11 @@ Route::get('/dashboard', function () {
     $persenSudah = ($targetInsentif > 0) ? round(($sudahTerimaInsentif / $targetInsentif) * 100) : 0;
     $persenBelum = ($targetInsentif > 0) ? round(($belumTerimaInsentif / $targetInsentif) * 100) : 0;
 
-    // --- 5. DATA CHART SEBARAN PER KECAMATAN ---
     $kecamatanLabels = [];
     $dataTpqSebaran = [];
     $dataMadinSebaran = [];
     $dataTotalSebaran = [];
 
-    // Tentukan kecamatan yang akan dilooping (Semua atau Cuma 1 untuk Korcam)
     $kecamatans = ($user->role == 'korcam') 
                   ? Kecamatan::where('id', $user->kecamatan_id)->get() 
                   : Kecamatan::orderBy('nama_kecamatan')->get();
@@ -116,7 +108,6 @@ Route::get('/dashboard', function () {
         $dataTotalSebaran[] = $jmlTpq + $jmlMadin;
     }
 
-    // --- 6. DATA CHART SEBARAN GURU PER DESA (BAWAH) ---
     $sebaranGuruPerKecamatan = [];
     foreach ($kecamatans as $kec) {
         $sebaranGuruPerKecamatan[$kec->id] = [
@@ -127,7 +118,6 @@ Route::get('/dashboard', function () {
 
     $desaList = Desa::whereIn('kecamatan_id', $kecamatans->pluck('id'))->orderBy('nama_desa')->get();
     
-    // Perhitungan cepat menggunakan Join dan GroupBy
     $guruCounts = DB::table('gurus')
         ->join('lembagas', 'gurus.lembaga_id', '=', 'lembagas.id')
         ->select('lembagas.desa_id', 'gurus.jenis_guru', DB::raw('count(*) as total'))
@@ -139,7 +129,6 @@ Route::get('/dashboard', function () {
         $mappedCounts[$gc->desa_id][$gc->jenis_guru] = $gc->total;
     }
 
-    // Memasukkan hasil hitungan ke dalam format array untuk JavaScript
     foreach ($desaList as $desa) {
         $tpq = $mappedCounts[$desa->id]['TPQ'] ?? 0;
         $madin = $mappedCounts[$desa->id]['MADIN'] ?? 0;
@@ -156,7 +145,7 @@ Route::get('/dashboard', function () {
         'guruPNS', 'guruP3KFull', 'guruP3KParuh', 'guruInpassing', 'guruNonASN',
         'targetInsentif', 'sudahTerimaInsentif', 'belumTerimaInsentif', 'persenSudah', 'persenBelum',
         'kecamatanLabels', 'dataTpqSebaran', 'dataMadinSebaran', 'dataTotalSebaran',
-        'kecamatans', 'sebaranGuruPerKecamatan' // <-- Inject data Dropdown & Grafik Bawah
+        'kecamatans', 'sebaranGuruPerKecamatan'
     ));
 })->middleware(['auth', 'verified'])->name('dashboard');
 
@@ -167,12 +156,21 @@ Route::middleware(['auth', 'role:admin,verifikator'])->prefix('admin')->group(fu
     
     // ===== MASTER DATA WILAYAH =====
     Route::resource('kecamatan', KecamatanController::class);
+    Route::put('/kecamatan/{id}/update-kuota', [KecamatanController::class, 'updateKuota'])->name('kecamatan.update_kuota');
     Route::resource('desa', DesaController::class);
 
     // ===== MANAJEMEN USER =====
-    Route::get('/user/check-korcam-availability', [UserController::class, 'checkKorcamAvailability'])
-        ->name('user.check-korcam');
+    Route::get('/user/check-korcam-availability', [UserController::class, 'checkKorcamAvailability'])->name('user.check-korcam');
+    Route::post('/user/{id}/reset-device', [UserController::class, 'resetDevice'])->name('user.reset-device');
+    Route::post('/user/{id}/reset-password', [UserController::class, 'resetPassword'])->name('user.reset-password');
     Route::resource('user', UserController::class);
+
+    // ===== LOG AKTIVITAS (CCTV SISTEM) =====
+    Route::get('/activity-logs', [ActivityLogController::class, 'index'])->name('activity.log');
+    Route::post('/activity-logs/clear', [ActivityLogController::class, 'clear'])->name('activity.log.clear');
+
+    // ===== MANAJEMEN LANDING PAGE =====
+    Route::resource('dokumentasi', DokumentasiController::class)->only(['index', 'store', 'destroy', 'edit', 'update']);
 
 });
 
@@ -184,7 +182,7 @@ Route::middleware(['auth', 'role:admin,verifikator,korcam'])->prefix('admin')->g
     // ===== MASTER DATA LEMBAGA =====
     Route::get('lembaga/{lembaga}/verifikasi', [LembagaController::class, 'verifikasi'])->name('lembaga.verifikasi');
     Route::post('lembaga/{lembaga}/verifikasi', [LembagaController::class, 'prosesVerifikasi'])->name('lembaga.proses_verifikasi');
-    Route::post('/lembaga/import', [App\Http\Controllers\LembagaController::class, 'import'])->name('lembaga.import');
+    Route::post('/lembaga/import', [LembagaController::class, 'import'])->name('lembaga.import');
     Route::resource('lembaga', LembagaController::class);
 
     // ===== MASTER DATA GURU =====
@@ -196,24 +194,10 @@ Route::middleware(['auth', 'role:admin,verifikator,korcam'])->prefix('admin')->g
     
     Route::get('guru/{id}/verifikasi', [GuruController::class, 'verifikasi'])->name('guru.verifikasi');
     Route::post('guru/{id}/verifikasi', [GuruController::class, 'prosesVerifikasi'])->name('guru.proses_verifikasi');
-    Route::post('/guru/{id}/toggle-insentif', [\App\Http\Controllers\GuruController::class, 'toggleInsentif'])->name('guru.toggle_insentif');
+    Route::post('/guru/{id}/toggle-insentif', [GuruController::class, 'toggleInsentif'])->name('guru.toggle_insentif');
     Route::resource('guru', GuruController::class);
 
 });
-
-// ===============================
-// 4. ROUTE KHUSUS LOGOUT
-// ===============================
-Route::post('/logout', function (Request $request) {
-    Auth::logout();
-    $request->session()->invalidate();
-    $request->session()->regenerateToken();
-    return redirect('/'); 
-})->name('logout')->middleware('auth');
-
-
-// Pastikan rute ini berada di dalam middleware auth dan pelindung role admin/verifikator jika ada
-Route::put('/kecamatan/{id}/update-kuota', [KecamatanController::class, 'updateKuota'])->name('kecamatan.update_kuota');
 
 // Rute untuk Halaman Profil & Ganti Password
 Route::middleware('auth')->group(function () {

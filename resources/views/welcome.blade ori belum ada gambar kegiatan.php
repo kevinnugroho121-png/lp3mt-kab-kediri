@@ -15,8 +15,6 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     {{-- KUSTOM ANIMASI --}}
-
-
     <style>
         body { font-family: 'Plus Jakarta Sans', sans-serif; }
         
@@ -30,9 +28,7 @@
         .delay-200 { animation-delay: 0.2s; }
         .delay-300 { animation-delay: 0.3s; }
         .delay-400 { animation-delay: 0.4s; }
-        .delay-500 { animation-delay: 0.5s; } /* [BARU] Jeda tambahan untuk footer */
     </style>
-
 </head>
 <body class="bg-slate-50 text-slate-800 flex flex-col min-h-screen">
 
@@ -147,57 +143,11 @@
 
             </div>
 
-            {{-- ========================================== --}}
-            {{-- 5. [BARU] GALERI DOKUMENTASI KEGIATAN      --}}
-            {{-- ========================================== --}}
-            <div class="mt-20 w-full max-w-5xl mx-auto animate-fade-in-up delay-400 opacity-0 mb-10">
-                
-                {{-- Header Galeri --}}
-                <div class="text-center mb-10">
-                    <h3 class="text-3xl font-extrabold text-slate-800 tracking-tight mb-3">Dokumentasi Kegiatan</h3>
-                    <div class="w-16 h-1 bg-gradient-to-r from-blue-600 to-red-600 mx-auto rounded-full mb-4"></div>
-                    <p class="text-sm md:text-base text-slate-500">Potret pelaksanaan dan pendampingan program LP3MT di wilayah Kabupaten Kediri.</p>
-                </div>
-                
-                {{-- Grid Galeri Dinamis (Menyesuaikan Jumlah Foto) --}}
-                @php
-                    // Ambil data dokumentasi dari database (Urutkan dari yang terbaru)
-                    $dokumentasis = \App\Models\Dokumentasi::latest()->get();
-                @endphp
-
-                @if($dokumentasis->count() > 0)
-                    {{-- [GRID AUTOMAGIC] Kotak akan menyesuaikan ukuran dengan pintar --}}
-                    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-{{ $dokumentasis->count() < 4 ? $dokumentasis->count() : '4' }} gap-4 auto-rows-max">
-                        
-                        @foreach($dokumentasis as $dok)
-                            <div class="group relative overflow-hidden rounded-2xl shadow-sm border border-slate-200 cursor-pointer bg-slate-200 aspect-[4/3] w-full">
-                                {{-- Mengambil gambar dari folder Storage --}}
-                                <img src="{{ asset('storage/' . $dok->foto_path) }}" alt="{{ $dok->judul }}" class="absolute inset-0 w-full h-full object-cover transform group-hover:scale-110 transition duration-500 ease-in-out">
-                                
-                                <div class="absolute inset-0 bg-gradient-to-t from-slate-900/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition duration-300 flex items-end p-4">
-                                    {{-- Mengambil Judul Foto dari Database --}}
-                                    <span class="text-white text-xs font-bold tracking-wide">{{ $dok->judul }}</span>
-                                </div>
-                            </div>
-                        @endforeach
-
-                    </div>
-                @else
-                    {{-- Tampilan jika Admin belum upload foto sama sekali --}}
-                    <div class="flex flex-col items-center justify-center p-12 bg-slate-100 border border-slate-200 rounded-3xl border-dashed">
-                        <svg class="w-16 h-16 text-slate-300 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
-                        <p class="text-slate-500 font-medium text-sm">Dokumentasi kegiatan belum diunggah.</p>
-                    </div>
-                @endif
-            </div>
-            {{-- End Galeri --}}
-
         </div>
     </main>
 
     {{-- FOOTER RESMI (Gov-Tech Style) --}}
-    <footer class="bg-slate-900 pt-16 pb-8 border-t-4 border-blue-600 mt-16 animate-fade-in-up delay-500 opacity-0">
-
+    <footer class="bg-slate-900 pt-16 pb-8 border-t-4 border-blue-600 mt-16 animate-fade-in-up delay-400 opacity-0">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex flex-col md:flex-row justify-between items-center gap-6">
                 
