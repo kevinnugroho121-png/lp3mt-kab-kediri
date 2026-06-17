@@ -74,6 +74,25 @@ Route::get('/dashboard', function () {
     $guruNonASN = $totalGuru - ($guruPNS + $guruP3KFull + $guruP3KParuh + $guruInpassing);
     if($guruNonASN < 0) $guruNonASN = 0;
 
+    // ========================================================
+    // [BARU] HITUNG PROGRESS PEMBERKASAN DOKUMEN (LEMBAGA & GURU)
+    // ========================================================
+    // 1. Progress Lembaga
+    $totalLembagaBerkas = (clone $queryLembaga)->count();
+    $lembagaLengkap = (clone $queryLembaga)
+        ->whereNotNull('file_ijop')->whereNotNull('file_super')->whereNotNull('file_skam')
+        ->where('status_ijop', 'Disetujui')->where('status_super', 'Disetujui')->where('status_skam', 'Disetujui')
+        ->count();
+    $persenLembaga = $totalLembagaBerkas > 0 ? round(($lembagaLengkap / $totalLembagaBerkas) * 100) : 0;
+
+    // 2. Progress Guru
+    $totalGuruBerkas = (clone $queryGuru)->count();
+    $guruLengkap = (clone $queryGuru)
+        ->whereNotNull('file_ktp')->whereNotNull('file_kk')->whereNotNull('file_bukurekening')
+        ->where('status_ktp', 'Disetujui')->where('status_kk', 'Disetujui')->where('status_bukurekening', 'Disetujui')
+        ->count();
+    $persenGuru = $totalGuruBerkas > 0 ? round(($guruLengkap / $totalGuruBerkas) * 100) : 0;
+
     // Target Insentif Real Database
     if ($user->role == 'korcam') {
         $targetInsentif = \App\Models\Kecamatan::where('id', $user->kecamatan_id)->value('kuota_insentif') ?? 0;
@@ -145,8 +164,12 @@ Route::get('/dashboard', function () {
         'guruPNS', 'guruP3KFull', 'guruP3KParuh', 'guruInpassing', 'guruNonASN',
         'targetInsentif', 'sudahTerimaInsentif', 'belumTerimaInsentif', 'persenSudah', 'persenBelum',
         'kecamatanLabels', 'dataTpqSebaran', 'dataMadinSebaran', 'dataTotalSebaran',
-        'kecamatans', 'sebaranGuruPerKecamatan'
+        'kecamatans', 'sebaranGuruPerKecamatan',
+        'totalLembagaBerkas', 'lembagaLengkap', 'persenLembaga', // [BARU]
+        'totalGuruBerkas', 'guruLengkap', 'persenGuru' // [BARU]
     ));
+
+
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 // ==============================================================
@@ -186,6 +209,7 @@ Route::middleware(['auth', 'role:admin,verifikator,korcam'])->prefix('admin')->g
     Route::get('lembaga/{lembaga}/verifikasi', [LembagaController::class, 'verifikasi'])->name('lembaga.verifikasi');
     Route::post('lembaga/{lembaga}/verifikasi', [LembagaController::class, 'prosesVerifikasi'])->name('lembaga.proses_verifikasi');
     Route::post('/lembaga/import', [LembagaController::class, 'import'])->name('lembaga.import');
+    Route::get('/lembaga/export-excel', [LembagaController::class, 'exportExcel'])->name('lembaga.export'); // <--- [TAMBAH BARIS INI]
     Route::resource('lembaga', LembagaController::class);
 
     // ===== MASTER DATA GURU =====

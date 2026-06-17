@@ -85,7 +85,7 @@
                             <span class="text-sm font-bold text-blue-600">{{ number_format($guruPNS) }}</span>
                         </div>
                         <div class="flex items-center justify-between bg-white p-2 rounded border border-gray-100">
-                            <span class="text-[10px] text-gray-500 font-bold">P3K Full</span>
+                            <span class="text-[10px] text-gray-500 font-bold">PPPK</span>
                             <span class="text-sm font-bold text-emerald-600">{{ number_format($guruP3KFull) }}</span>
                         </div>
                         <div class="flex items-center justify-between bg-white p-2 rounded border border-gray-100">
@@ -93,8 +93,8 @@
                             <span class="text-sm font-bold text-amber-600">{{ number_format($guruP3KParuh) }}</span>
                         </div>
                         <div class="flex items-center justify-between bg-white p-2 rounded border border-gray-100">
-                            <span class="text-[10px] text-gray-500 font-bold">Inpassing</span>
-                            <span class="text-sm font-bold text-purple-600">{{ number_format($guruInpassing) }}</span>
+                            <span class="text-[10px] text-gray-500 font-bold">Non ASN</span>
+                            <span class="text-sm font-bold text-purple-600">{{ number_format($guruNonASN) }}</span>
                         </div>
                     </div>
                     <p class="text-[10px] text-center text-gray-400 mt-3 italic">*Data Non-ASN lainnya: {{ number_format($guruNonASN) }}</p>
@@ -142,6 +142,68 @@
                             <span class="text-xs font-bold text-red-500">{{ $persenBelum }}%</span>
                         </div>
                     </div>
+                </div>
+            </div>
+        </div>
+
+
+        {{-- ==================================================== --}}
+        {{-- BAGIAN TENGAH: PROGRESS PEMBERKASAN (BARU) --}}
+        {{-- ==================================================== --}}
+        <div class="bg-white rounded-2xl border border-gray-100 p-6 shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07)] mb-8 transition duration-300 hover:shadow-lg">
+            <div class="flex items-center gap-3 mb-5 border-b border-gray-100 pb-4">
+                <div class="p-2.5 bg-indigo-50 text-indigo-600 rounded-xl">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                </div>
+                <div>
+                    <h3 class="font-bold text-gray-800 text-lg leading-tight">Status Pemberkasan Dokumen</h3>
+                    <p class="text-[11px] text-gray-500 font-medium">Pemantauan kelengkapan file fisik yang sudah diverifikasi & disetujui</p>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-12 px-2">
+                {{-- Progress Lembaga --}}
+                <div>
+                    <div class="flex justify-between items-end mb-2">
+                        <div>
+                            <p class="text-sm font-bold text-gray-700">Dokumen Legalitas Lembaga</p>
+                            <p class="text-[10px] text-gray-500 mt-0.5"><span class="font-bold text-gray-700">{{ number_format($lembagaLengkap) }}</span> dari {{ number_format($totalLembagaBerkas) }} Lembaga Lengkap</p>
+                        </div>
+                        <span class="text-xl font-black {{ $persenLembaga == 100 ? 'text-emerald-500' : 'text-orange-500' }}">{{ $persenLembaga }}%</span>
+                    </div>
+                    <div class="w-full bg-gray-100 rounded-full h-3 mb-1.5 overflow-hidden border border-gray-200">
+                        <div class="{{ $persenLembaga == 100 ? 'bg-emerald-500' : 'bg-orange-500' }} h-3 rounded-full transition-all duration-1000 ease-out relative" style="width: {{ $persenLembaga }}%">
+                            {{-- Efek Kilau --}}
+                            <div class="absolute top-0 left-0 bottom-0 right-0 bg-white opacity-20" style="background-image: linear-gradient(45deg,rgba(255,255,255,.15) 25%,transparent 25%,transparent 50%,rgba(255,255,255,.15) 50%,rgba(255,255,255,.15) 75%,transparent 75%,transparent); background-size: 1rem 1rem;"></div>
+                        </div>
+                    </div>
+                    @if($persenLembaga < 100)
+                        <p class="text-[10px] text-orange-600 font-bold italic">⚠️ Ada {{ number_format($totalLembagaBerkas - $lembagaLengkap) }} lembaga butuh perhatian.</p>
+                    @else
+                        <p class="text-[10px] text-emerald-600 font-bold italic">✅ Sempurna! Seluruh berkas lembaga disetujui.</p>
+                    @endif
+                </div>
+
+                {{-- Progress Guru --}}
+                <div>
+                    <div class="flex justify-between items-end mb-2">
+                        <div>
+                            <p class="text-sm font-bold text-gray-700">Dokumen Identitas Guru</p>
+                            <p class="text-[10px] text-gray-500 mt-0.5"><span class="font-bold text-gray-700">{{ number_format($guruLengkap) }}</span> dari {{ number_format($totalGuruBerkas) }} Guru Lengkap</p>
+                        </div>
+                        <span class="text-xl font-black {{ $persenGuru == 100 ? 'text-emerald-500' : 'text-orange-500' }}">{{ $persenGuru }}%</span>
+                    </div>
+                    <div class="w-full bg-gray-100 rounded-full h-3 mb-1.5 overflow-hidden border border-gray-200">
+                        <div class="{{ $persenGuru == 100 ? 'bg-emerald-500' : 'bg-orange-500' }} h-3 rounded-full transition-all duration-1000 ease-out relative" style="width: {{ $persenGuru }}%">
+                             {{-- Efek Kilau --}}
+                             <div class="absolute top-0 left-0 bottom-0 right-0 bg-white opacity-20" style="background-image: linear-gradient(45deg,rgba(255,255,255,.15) 25%,transparent 25%,transparent 50%,rgba(255,255,255,.15) 50%,rgba(255,255,255,.15) 75%,transparent 75%,transparent); background-size: 1rem 1rem;"></div>
+                        </div>
+                    </div>
+                    @if($persenGuru < 100)
+                        <p class="text-[10px] text-orange-600 font-bold italic">⚠️ Ada {{ number_format($totalGuruBerkas - $guruLengkap) }} guru butuh perhatian.</p>
+                    @else
+                        <p class="text-[10px] text-emerald-600 font-bold italic">✅ Sempurna! Seluruh berkas guru disetujui.</p>
+                    @endif
                 </div>
             </div>
         </div>

@@ -14,11 +14,22 @@
                 @endif
             </div>
             
-            {{-- TOMBOL TAMBAH --}}
-            <a href="{{ route('lembaga.create') }}" class="mt-2 sm:mt-0 inline-flex items-center justify-center bg-green-600 hover:bg-green-700 text-white px-5 py-2 rounded-lg text-sm font-bold shadow-sm gap-2 transition">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
-                Tambah Lembaga
-            </a>
+            {{-- BUNGKUSAN FLEX UNTUK 2 TOMBOL --}}
+            <div class="mt-2 sm:mt-0 flex flex-wrap items-center gap-2">
+                
+                {{-- 1. TOMBOL DOWNLOAD EXCEL --}}
+                <a href="{{ route('lembaga.export', request()->all()) }}" class="inline-flex items-center justify-center bg-emerald-600 hover:bg-emerald-700 text-white px-5 py-2 rounded-lg text-sm font-bold shadow-sm gap-2 transition">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                    Download Excel
+                </a>
+
+                {{-- 2. TOMBOL TAMBAH LEMBAGA --}}
+                <a href="{{ route('lembaga.create') }}" class="inline-flex items-center justify-center bg-green-600 hover:bg-green-700 text-white px-5 py-2 rounded-lg text-sm font-bold shadow-sm gap-2 transition">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+                    Tambah Lembaga
+                </a>
+                
+            </div>
         </div>
 
         {{-- FILTER BAR (DENGAN SELECT2) --}}
@@ -73,7 +84,7 @@
                     {{-- 4. FILTER JENIS --}}
                     <div class="md:col-span-2 w-full">
                         <label class="block text-[10px] font-bold text-gray-500 uppercase mb-1">Jenis</label>
-                        <select name="filter_jenis" onchange="this.form.submit()" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-[7px]">
+                        <select name="filter_jenis" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-[7px]">
                             <option value="">- Semua -</option>
                             <option value="TPQ" {{ request('filter_jenis') == 'TPQ' ? 'selected' : '' }}>TPQ</option>
                             <option value="MADIN" {{ request('filter_jenis') == 'MADIN' ? 'selected' : '' }}>MADIN</option>
@@ -84,12 +95,25 @@
                     {{-- 5. FILTER ORMAS --}}
                     <div class="md:col-span-1 w-full">
                         <label class="block text-[10px] font-bold text-gray-500 uppercase mb-1">Ormas</label>
-                        <select name="filter_ormas" onchange="this.form.submit()" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-[7px]">
+                        <select name="filter_ormas" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-[7px]">
                             <option value="">Semua</option>
                             <option value="NU" {{ request('filter_ormas') == 'NU' ? 'selected' : '' }}>NU</option>
                             <option value="Muhammadiyah" {{ request('filter_ormas') == 'Muhammadiyah' ? 'selected' : '' }}>Muh</option>
                             <option value="LDII" {{ request('filter_ormas') == 'LDII' ? 'selected' : '' }}>LDII</option>
                             <option value="Lainnya" {{ request('filter_ormas') == 'Lainnya' ? 'selected' : '' }}>Lain</option>
+                        </select>
+                    </div>
+
+
+                    {{-- 6. FILTER BERKAS [REVISI] --}}
+                    <div class="md:col-span-2 w-full">
+                        <label class="block text-[10px] font-bold text-gray-500 uppercase mb-1">Status Berkas</label>
+                        <select name="filter_berkas" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-[7px]">
+                            <option value="">- Semua Status -</option>
+                            <option value="kosong" {{ request('filter_berkas') == 'kosong' ? 'selected' : '' }}>📄 Belum Upload (Kosong)</option>
+                            <option value="pending" {{ request('filter_berkas') == 'pending' ? 'selected' : '' }}>⏳ Pending (Menunggu)</option>
+                            <option value="ditolak" {{ request('filter_berkas') == 'ditolak' ? 'selected' : '' }}>❌ Ditolak (Revisi)</option>
+                            <option value="disetujui" {{ request('filter_berkas') == 'disetujui' ? 'selected' : '' }}>✅ Disetujui (Lengkap)</option>
                         </select>
                     </div>
 
@@ -200,6 +224,8 @@
                                 {{-- 1. NO --}}
                                 <td class="border-r border-gray-200 text-center font-medium bg-gray-50 py-3 sticky left-0 z-10">{{ $lembagas->firstItem() + $index }}</td>
                                 
+
+
                                 {{-- 2. IDENTITAS --}}
                                 <td class="border-r border-gray-200 px-3 py-2 sticky left-10 bg-white z-10 hover:bg-yellow-50">
                                     <div class="font-bold text-sm text-gray-800 uppercase mb-1 leading-tight flex items-center gap-2">
@@ -213,11 +239,31 @@
                                         <div class="mb-0.5"><span class="font-semibold">Ka:</span> {{ $lembaga->kepala_lembaga ?? '-' }}</div>
                                         <div>Telp: {{ $lembaga->no_telp ?? '-' }}</div>
                                     </div>
+
+                                    {{-- [BARU] BADGE INDIKATOR STATUS BERKAS LEMBAGA --}}
+                                    <div class="mt-1.5 flex flex-wrap gap-1">
+                                        @if($lembaga->status_berkas == 'bermasalah')
+                                            <span class="inline-flex items-center bg-orange-50 text-orange-700 text-[9px] font-bold px-1.5 py-0.5 rounded border border-orange-200 tracking-wide">
+                                                ⚠️ BERKAS BELUM LENGKAP
+                                            </span>
+                                        @elseif($lembaga->status_berkas == 'pending')
+                                            <span class="inline-flex items-center bg-blue-50 text-blue-700 text-[9px] font-bold px-1.5 py-0.5 rounded border border-blue-200 tracking-wide">
+                                                ⏳ VERIFIKASI PENDING
+                                            </span>
+                                        @endif
+                                    </div>
+
+
+
+
                                     {{-- Keterangan --}}
                                     @if($lembaga->keterangan)
                                         <div class="text-[9px] text-gray-400 mt-1 italic leading-tight border-t border-gray-100 pt-1">Ket: {{ \Illuminate\Support\Str::limit($lembaga->keterangan, 40) }}</div>
                                     @endif
                                 </td>
+
+
+
 
                                 {{-- 3. JENIS --}}
                                 <td class="border-r border-gray-200 text-center px-1">

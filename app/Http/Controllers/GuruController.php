@@ -59,9 +59,45 @@ class GuruController extends Controller
                 $q->where('desa_id', $request->filter_desa);
             });
         }
-        if ($request->filled('filter_lembaga')) {
-            $query->where('lembaga_id', $request->filter_lembaga);
+
+
+        // [REVISI] Filter Cerdas (Smart Sort) Dokumen Guru
+        if ($request->filled('filter_berkas')) {
+            $filterBerkas = $request->filter_berkas;
+
+            if ($filterBerkas == 'kosong') {
+                // Cari yang fisiknya benar-benar belum diupload sama sekali
+                $query->where(function($q) {
+                    $q->whereNull('file_ktp')
+                      ->orWhereNull('file_kk')
+                      ->orWhereNull('file_bukurekening');
+                });
+            } elseif ($filterBerkas == 'pending') {
+                // Cari yang salah satu statusnya masih Pending
+                $query->where(function($q) {
+                    $q->where('status_ktp', 'Pending')
+                      ->orWhere('status_kk', 'Pending')
+                      ->orWhere('status_bukurekening', 'Pending');
+                });
+            } elseif ($filterBerkas == 'ditolak') {
+                // Cari yang salah satu statusnya Ditolak
+                $query->where(function($q) {
+                    $q->where('status_ktp', 'Ditolak')
+                      ->orWhere('status_kk', 'Ditolak')
+                      ->orWhere('status_bukurekening', 'Ditolak');
+                });
+            } elseif ($filterBerkas == 'disetujui') {
+                // Cari yang KETIGANYA sudah disetujui dan filenya ada
+                $query->whereNotNull('file_ktp')
+                      ->whereNotNull('file_kk')
+                      ->whereNotNull('file_bukurekening')
+                      ->where('status_ktp', 'Disetujui')
+                      ->where('status_kk', 'Disetujui')
+                      ->where('status_bukurekening', 'Disetujui');
+            }
         }
+
+
         if ($request->filled('search')) {
             $search = $request->search;
             $query->where(function($q) use ($search) {

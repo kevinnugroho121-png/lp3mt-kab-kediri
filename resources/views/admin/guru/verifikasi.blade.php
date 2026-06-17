@@ -129,7 +129,7 @@
                                 Batal
                             </a>
                             <button type="submit" class="flex-1 md:flex-none px-8 py-3 bg-green-600 hover:bg-green-700 text-white font-bold rounded-lg shadow-md transition transform hover:scale-105">
-                                SIMPAN HASIL VERIFIKASI
+                                SIMPAN
                             </button>
                         </div>
                     </div>

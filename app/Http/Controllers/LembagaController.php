@@ -44,8 +44,38 @@ class LembagaController extends Controller
         if ($request->filled('filter_jenis')) {
             $query->where('jenis_lembaga', $request->filter_jenis);
         }
-        if ($request->filled('filter_ormas')) {
-            $query->where('ormas', $request->filter_ormas);
+
+
+        // [REVISI] Filter Cerdas (Smart Sort) Dokumen Lembaga
+        if ($request->filled('filter_berkas')) {
+            $filterBerkas = $request->filter_berkas;
+
+            if ($filterBerkas == 'kosong') {
+                $query->where(function($q) {
+                    $q->whereNull('file_ijop')
+                      ->orWhereNull('file_super')
+                      ->orWhereNull('file_skam');
+                });
+            } elseif ($filterBerkas == 'pending') {
+                $query->where(function($q) {
+                    $q->where('status_ijop', 'Pending')
+                      ->orWhere('status_super', 'Pending')
+                      ->orWhere('status_skam', 'Pending');
+                });
+            } elseif ($filterBerkas == 'ditolak') {
+                $query->where(function($q) {
+                    $q->where('status_ijop', 'Ditolak')
+                      ->orWhere('status_super', 'Ditolak')
+                      ->orWhere('status_skam', 'Ditolak');
+                });
+            } elseif ($filterBerkas == 'disetujui') {
+                $query->whereNotNull('file_ijop')
+                      ->whereNotNull('file_super')
+                      ->whereNotNull('file_skam')
+                      ->where('status_ijop', 'Disetujui')
+                      ->where('status_super', 'Disetujui')
+                      ->where('status_skam', 'Disetujui');
+            }
         }
 
         // [PENCARIAN]
@@ -419,5 +449,21 @@ class LembagaController extends Controller
         }
 
 
+    }
+
+    public function exportExcel(Request $request)
+    {
+        $namaFile = 'Data_Lembaga_LP3MT_' . date('d-M-Y') . '.xlsx';
+        
+        // Catat di log aktivitas
+        \Illuminate\Support\Facades\DB::table('activity_logs')->insert([
+            'user_id'    => \Illuminate\Support\Facades\Auth::id(),
+            'nama_user'  => \Illuminate\Support\Facades\Auth::user()->name,
+            'aksi'       => 'Download Rekap Excel',
+            'target'     => 'Data Lembaga',
+            'created_at' => now(),
+        ]);
+
+        return \Maatwebsite\Excel\Facades\Excel::download(new \App\Exports\LembagaExport($request), $namaFile);
     }
 }

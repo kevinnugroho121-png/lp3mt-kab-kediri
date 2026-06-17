@@ -71,4 +71,19 @@ class Guru extends Model
     {
         return $this->belongsTo(Lembaga::class);
     }
+
+    // [BARU] Accessor untuk mengecek status keseluruhan berkas Guru
+    public function getStatusBerkasAttribute()
+    {
+        if (empty($this->file_ktp) || empty($this->file_kk) || empty($this->file_bukurekening) ||
+            $this->status_ktp == 'Ditolak' || $this->status_kk == 'Ditolak' || $this->status_bukurekening == 'Ditolak') {
+            return 'bermasalah';
+        }
+
+        if ($this->status_ktp == 'Pending' || $this->status_kk == 'Pending' || $this->status_bukurekening == 'Pending') {
+            return 'pending';
+        }
+
+        return 'lengkap';
+    }
 }

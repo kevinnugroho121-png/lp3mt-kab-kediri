@@ -71,8 +71,10 @@
 
                 </div>
 
-                {{-- BARIS 2: Jajaran Kolom Filter (Grid 5 Kolom) --}}
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-2 items-end">
+                {{-- BARIS 2: Jajaran Kolom Filter (Grid 6 Kolom) --}}
+                <div class="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-6 gap-2 items-end">
+
+
                     
                     {{-- 1. Search --}}
                     <div class="w-full">
@@ -129,8 +131,24 @@
                         </select>
                     </div>
 
+
+                    {{-- 5. Filter Status Berkas [REVISI] --}}
+                    <div class="w-full">
+                        <label class="text-[10px] font-bold text-gray-600 uppercase tracking-wider ml-1">Status Berkas</label>
+                        <select name="filter_berkas" class="bg-gray-50 border border-gray-400 text-gray-900 text-sm rounded-md focus:ring-blue-500 focus:border-blue-500 block w-full h-8 px-1 py-1">
+                            <option value="">- Semua Status -</option>
+                            <option value="kosong" {{ request('filter_berkas') == 'kosong' ? 'selected' : '' }}>📄 Belum Upload (Kosong)</option>
+                            <option value="pending" {{ request('filter_berkas') == 'pending' ? 'selected' : '' }}>⏳ Pending (Menunggu)</option>
+                            <option value="ditolak" {{ request('filter_berkas') == 'ditolak' ? 'selected' : '' }}>❌ Ditolak (Revisi)</option>
+                            <option value="disetujui" {{ request('filter_berkas') == 'disetujui' ? 'selected' : '' }}>✅ Disetujui (Lengkap)</option>
+                        </select>
+                    </div>
+
                     {{-- 5. Tombol Aksi (Cari & Reset) --}}
                     <div class="w-full flex gap-1 h-8">
+
+
+                    
                         <button type="submit" class="flex-1 bg-blue-600 text-white rounded-md text-xs font-bold hover:bg-blue-700 flex items-center justify-center gap-1 shadow-sm transition">
                             <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
                             Filter
@@ -276,13 +294,31 @@
                                     {{ $gurus->firstItem() + $index }}
                                 </td>
 
+
+
+
                                 {{-- 2. NAMA --}}
                                 <td class="border border-gray-300 px-2 py-1 font-bold sticky left-10 z-10 shadow-r {{ $stickyClass }}">
                                     {{ $guru->nama_lengkap }}
                                     @if($isTidakLayak)
                                         <span class="block text-[9px] text-red-600 font-normal italic">(Tidak Berhak Mendapat Insentif)</span>
                                     @endif
+
+                                    {{-- [BARU] BADGE INDIKATOR STATUS BERKAS GURU --}}
+                                    <div class="mt-1 flex flex-wrap gap-1">
+                                        @if($guru->status_berkas == 'bermasalah')
+                                            <span class="inline-flex items-center bg-orange-50 text-orange-700 text-[9px] font-bold px-1.5 py-0.5 rounded border border-orange-200 tracking-wide">
+                                                ⚠️ BERKAS BELUM LENGKAP ⚠️
+                                            </span>
+                                        @elseif($guru->status_berkas == 'pending')
+                                            <span class="inline-flex items-center bg-blue-50 text-blue-700 text-[9px] font-bold px-1.5 py-0.5 rounded border border-blue-200 tracking-wide">
+                                                ⏳ MENUNGGU VERIFIKASI
+                                            </span>
+                                        @endif
+                                    </div>
                                 </td>
+
+
 
                                 {{-- 3. NIK --}}
                                 <td class="border border-gray-300 px-2 py-1 font-mono text-gray-600">

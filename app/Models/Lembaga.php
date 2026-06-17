@@ -90,4 +90,19 @@ class Lembaga extends Model
     {
         return $this->hasMany(Guru::class);
     }
+
+    // [BARU] Accessor untuk mengecek status keseluruhan berkas Lembaga
+    public function getStatusBerkasAttribute()
+    {
+        if (empty($this->file_ijop) || empty($this->file_super) || empty($this->file_skam) ||
+            $this->status_ijop == 'Ditolak' || $this->status_super == 'Ditolak' || $this->status_skam == 'Ditolak') {
+            return 'bermasalah';
+        }
+
+        if ($this->status_ijop == 'Pending' || $this->status_super == 'Pending' || $this->status_skam == 'Pending') {
+            return 'pending';
+        }
+
+        return 'lengkap';
+    }
 }

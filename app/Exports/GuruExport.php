@@ -18,7 +18,6 @@ class GuruExport implements FromQuery, WithHeadings, WithMapping, ShouldAutoSize
 
     protected $request;
 
-    // Menerima request filter dari Controller
     public function __construct($request)
     {
         $this->request = $request;
@@ -31,21 +30,18 @@ class GuruExport implements FromQuery, WithHeadings, WithMapping, ShouldAutoSize
         
         $filterType = $this->request->type ?? 'ALL';
 
-        // Filter Wilayah Korcam
         if ($user->role == 'korcam') {
             $query->whereHas('lembaga', function($q) use ($user) {
                 $q->where('kecamatan_id', $user->kecamatan_id);
             });
         }
 
-        // Filter Jenis / Menu
         if ($filterType == 'INSENTIF') {
             $query->where('status_kepegawaian', 'NON-ASN');
         } elseif (in_array($filterType, ['MADIN', 'TPQ', 'PONPES'])) {
             $query->where('jenis_guru', $filterType);
         }
 
-        // Filter Pencarian dari Form
         if ($user->role != 'korcam' && $this->request->filled('filter_kecamatan')) {
             $query->whereHas('lembaga', function($q) {
                 $q->where('kecamatan_id', $this->request->filter_kecamatan);
@@ -70,43 +66,45 @@ class GuruExport implements FromQuery, WithHeadings, WithMapping, ShouldAutoSize
         return $query->latest();
     }
 
-    // Menentukan Judul Kolom di Excel
+    // [DIUBAH] NAMA KOLOM SAMA PERSIS DENGAN TEMPLATE IMPORT LAMA
     public function headings(): array
     {
         return [
-            'NO', 'NAMA LENGKAP', 'NIK', 'JENIS KELAMIN', 'TEMPAT LAHIR', 'TANGGAL LAHIR',
-            'NAMA LEMBAGA', 'JENIS LEMBAGA', 'KECAMATAN', 'DESA',
-            'STATUS KEPEGAWAIAN', 'STATUS SERTIFIKASI', 'PENERIMA INSENTIF',
-            'NO HP', 'NOMOR REKENING'
+            'No', 'NAMA LENGKAP (tanpa gelar)', 'TEMPAT TANGGAL LAHIR', 'JENIS KELAMIN', 'NIK',
+            'NAMA LEMBAGA', 'JENIS LEMBAGA', 'ALAMAT SESUAI KTP', 'DESA', 'KEC', 'KAB', 
+            'AGAMA', 'NO HP', 'NAMA IBU KANDUNG', 'NOMER REKENING', 'KETERANGAN'
         ];
     }
 
-    // Memetakan Data ke dalam Kolom Excel
     public function map($guru): array
     {
         static $rowNumber = 0;
         $rowNumber++;
 
+        // Gabungkan lagi Tempat dan Tanggal Lahir (Contoh: "KEDIRI, 16-06-2026")
+        $tgl_lahir = $guru->tanggal_lahir ? \Carbon\Carbon::parse($guru->tanggal_lahir)->format('d-m-Y') : '';
+        $ttl_gabungan = $guru->tempat_lahir . ($tgl_lahir ? ', ' . $tgl_lahir : '');
+
         return [
             $rowNumber,
             $guru->nama_lengkap,
-            "'" . $guru->nik, // Tanda petik agar NIK tidak jadi rumus eksponen di Excel
+            $ttl_gabungan,
             $guru->jenis_kelamin,
-            $guru->tempat_lahir,
-            \Carbon\Carbon::parse($guru->tanggal_lahir)->format('d-m-Y'),
+            "'" . $guru->nik, 
             $guru->lembaga->nama_lembaga ?? '-',
             $guru->jenis_guru,
-            $guru->lembaga->kecamatan->nama_kecamatan ?? '-',
+            $guru->alamat_ktp,
             $guru->lembaga->desa->nama_desa ?? '-',
-            $guru->status_kepegawaian,
-            $guru->status_sertifikasi,
-            $guru->penerima_insentif ? 'YA' : 'TIDAK',
+            $guru->lembaga->kecamatan->nama_kecamatan ?? '-',
+            $guru->kabupaten ?? 'KEDIRI',
+            $guru->agama,
             "'" . $guru->no_hp,
+            $guru->nama_ibu_kandung,
             "'" . $guru->nomor_rekening,
+            $guru->keterangan
         ];
     }
 
-    // Mempercantik Tampilan Header Excel (Warna Hijau LP3MT)
     public function styles(Worksheet $sheet)
     {
         return [
