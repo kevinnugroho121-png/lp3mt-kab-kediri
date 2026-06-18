@@ -1,14 +1,15 @@
 <x-app-layout>
     {{-- CONTAINER UTAMA --}}
-    <div class="py-4 px-4 w-full"> 
+    {{-- CONTAINER UTAMA --}}
+    <div class="pb-4 pt-1 px-1 sm:px-2 w-full">
         
         {{-- JUDUL HALAMAN --}}
         <div class="mb-4 flex flex-col sm:flex-row justify-between items-end">
             <div>
-                <h2 class="text-2xl font-bold text-gray-800 uppercase tracking-tight leading-none">
+                <h2 class="text-2xl font-bold text-black-800 uppercase tracking-tight leading-none">
                     Data Lembaga
                 </h2>
-                <p class="text-xs text-gray-500 mt-1">Total: {{ $lembagas->total() }} Lembaga</p>
+                <p class="text-xs text-black-500 mt-1">Total: {{ $lembagas->total() }} Lembaga</p>
                 @if(Auth::user()->role == 'korcam')
                     <p class="text-xs text-green-600 font-bold mt-1">Wilayah Kerja: Kec. {{ Auth::user()->kecamatan->nama_kecamatan ?? '-' }}</p>
                 @endif
@@ -33,24 +34,24 @@
         </div>
 
         {{-- FILTER BAR (DENGAN SELECT2) --}}
-        <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-200 mb-4">
+        <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-400 mb-4">
             <form action="{{ url()->current() }}" method="GET">
                 <div class="grid grid-cols-1 md:grid-cols-12 gap-3 items-end">
                     
                     {{-- 1. SEARCH --}}
                     <div class="md:col-span-3">
-                        <label class="block text-[10px] font-bold text-gray-500 uppercase mb-1">Cari Lembaga / Kepala</label>
+                        <label class="block text-[10px] font-bold text-black-500 uppercase mb-1">Cari Lembaga / Kepala</label>
                         <div class="relative">
                             <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-                                <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                                <svg class="w-4 h-4 text-black-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
                             </div>
-                            <input type="text" name="search" value="{{ request('search') }}" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full pl-9 p-2" placeholder="Ketik nama...">
+                            <input type="text" name="search" value="{{ request('search') }}" class="bg-gray-50 border border-gray-400 text-black-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full pl-9 p-2" placeholder="Ketik nama...">
                         </div>
                     </div>
 
                     {{-- 2. Filter Kecamatan --}}
                     <div class="md:col-span-2 w-full">
-                        <label class="block text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-1">Kecamatan</label>
+                        <label class="block text-[10px] font-bold text-black-500 uppercase tracking-wider mb-1">Kecamatan</label>
                         <select name="filter_kecamatan" id="filter_kecamatan" class="select2-filter w-full border border-gray-400 rounded-md px-1 py-1 text-sm focus:outline-none focus:border-blue-500 h-8">
                             <option value="">- Semua Kec -</option>
                             @if(isset($data_kecamatan))
@@ -65,7 +66,7 @@
 
                     {{-- 3. Filter Desa --}}
                     <div class="md:col-span-2 w-full">
-                        <label class="block text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-1">Desa</label>
+                        <label class="block text-[10px] font-bold text-black-500 uppercase tracking-wider mb-1">Desa</label>
                         <select name="filter_desa" id="filter_desa" class="select2-filter w-full border border-gray-400 rounded-md px-1 py-1 text-sm focus:outline-none focus:border-blue-500 h-8">
                             <option value="">- Semua Desa -</option>
                             {{-- Isinya akan diisi otomatis oleh Javascript di bawah --}}
@@ -83,8 +84,8 @@
 
                     {{-- 4. FILTER JENIS --}}
                     <div class="md:col-span-2 w-full">
-                        <label class="block text-[10px] font-bold text-gray-500 uppercase mb-1">Jenis</label>
-                        <select name="filter_jenis" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-[7px]">
+                        <label class="block text-[10px] font-bold text-black-500 uppercase mb-1">Jenis</label>
+                        <select name="filter_jenis" class="bg-gray-50 border border-gray-400 text-black-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-[7px]">
                             <option value="">- Semua -</option>
                             <option value="TPQ" {{ request('filter_jenis') == 'TPQ' ? 'selected' : '' }}>TPQ</option>
                             <option value="MADIN" {{ request('filter_jenis') == 'MADIN' ? 'selected' : '' }}>MADIN</option>
@@ -94,8 +95,8 @@
 
                     {{-- 5. FILTER ORMAS --}}
                     <div class="md:col-span-1 w-full">
-                        <label class="block text-[10px] font-bold text-gray-500 uppercase mb-1">Ormas</label>
-                        <select name="filter_ormas" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-[7px]">
+                        <label class="block text-[10px] font-bold text-black-500 uppercase mb-1">Ormas</label>
+                        <select name="filter_ormas" class="bg-gray-50 border border-gray-400 text-black-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-[7px]">
                             <option value="">Semua</option>
                             <option value="NU" {{ request('filter_ormas') == 'NU' ? 'selected' : '' }}>NU</option>
                             <option value="Muhammadiyah" {{ request('filter_ormas') == 'Muhammadiyah' ? 'selected' : '' }}>Muh</option>
@@ -107,8 +108,8 @@
 
                     {{-- 6. FILTER BERKAS [REVISI] --}}
                     <div class="md:col-span-2 w-full">
-                        <label class="block text-[10px] font-bold text-gray-500 uppercase mb-1">Status Berkas</label>
-                        <select name="filter_berkas" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-[7px]">
+                        <label class="block text-[10px] font-bold text-black-500 uppercase mb-1">Status Berkas</label>
+                        <select name="filter_berkas" class="bg-gray-50 border border-gray-400 text-black-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-[7px]">
                             <option value="">- Semua Status -</option>
                             <option value="kosong" {{ request('filter_berkas') == 'kosong' ? 'selected' : '' }}>📄 Belum Upload (Kosong)</option>
                             <option value="pending" {{ request('filter_berkas') == 'pending' ? 'selected' : '' }}>⏳ Pending (Menunggu)</option>
@@ -120,7 +121,7 @@
                     {{-- 6. TOMBOL RESET --}}
                     <div class="md:col-span-2 flex gap-2 w-full">
                         <button type="submit" class="bg-blue-600 text-white px-4 py-[7px] rounded-lg text-sm font-bold hover:bg-blue-700 w-full">Cari</button>
-                        <a href="{{ url()->current() }}" class="bg-gray-100 text-gray-600 border border-gray-300 px-3 py-[7px] rounded-lg text-sm font-bold hover:bg-gray-200 flex items-center justify-center">Reset</a>
+                        <a href="{{ url()->current() }}" class="bg-gray-100 text-black-600 border border-gray-400 px-3 py-[7px] rounded-lg text-sm font-bold hover:bg-gray-200 flex items-center justify-center">Reset</a>
                     </div>
                 </div>
             </form>
@@ -183,7 +184,7 @@
                     <p class="text-sm text-green-700 mt-1">Pastikan format kolom sesuai template. Sistem akan memblokir NIK/Lembaga ganda.</p>
                 </div>
                 <div class="flex items-center space-x-3 w-full sm:w-auto">
-                    <input type="file" name="file" required class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-bold file:bg-white file:text-green-700 file:border file:border-green-300 hover:file:bg-green-100 cursor-pointer transition">
+                    <input type="file" name="file" required class="block w-full text-sm text-black-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-bold file:bg-white file:text-green-700 file:border file:border-green-300 hover:file:bg-green-100 cursor-pointer transition">
                     
                     <button type="submit" class="bg-green-700 hover:bg-green-800 text-white font-bold py-2 px-6 rounded-md transition shadow-sm whitespace-nowrap">
                         Impor
@@ -199,56 +200,56 @@
             <div class="overflow-x-auto">
                 <table class="w-full text-xs border-collapse min-w-[1200px]"> {{-- Min width agar bisa scroll horizontal --}}
                     <thead>
-                        <tr class="bg-gray-100 text-gray-800 uppercase text-[10px] tracking-wider font-bold h-10 border-b border-gray-300">
-                            <th class="border-r border-gray-300 w-10 text-center sticky left-0 bg-gray-100 z-10">No</th>
-                            <th class="border-r border-gray-300 px-3 text-left w-56 sticky left-10 bg-gray-100 z-10">Identitas Lembaga</th>
-                            <th class="border-r border-gray-300 px-2 text-center w-24">Jenis</th>
-                            <th class="border-r border-gray-300 px-3 text-left w-40">Lokasi</th>
-                            <th class="border border-gray-300 px-1 py-2 text-center w-24">Dokumentasi</th>
-                            <th class="border-r border-gray-300 px-2 text-center w-16">Santri</th>
-                            <th class="border-r border-gray-300 px-3 text-left w-32">Jumlah Guru</th>
-                            <th class="border-r border-gray-300 px-3 text-left w-32">Insentif</th>
+                        <tr class="bg-gray-100 text-black-800 uppercase text-[10px] tracking-wider font-bold h-10 border-b border-gray-400">
+                            <th class="border-r border-gray-400 w-10 text-center sticky left-0 bg-gray-100 z-10">No</th>
+
+                            <th class="border-r border-gray-400 px-3 text-center w-48 sticky left-10 bg-gray-100 z-10">Identitas Lembaga</th>
+                            
+                            <th class="border-r border-gray-400 px-2 text-center w-24">Jenis lembaga</th>
+                            
+                            <th class="border-r border-gray-400 px-3 text-center w-32">Alamat lembaga</th>
+                            <th class="border border-gray-400 px-1 py-2 text-center w-24">Dokumentasi lembaga</th>
+                            <th class="border-r border-gray-400 px-2 text-center w-16">Jumlah Santri</th>
+                            <th class="border-r border-gray-400 px-3 text-center w-32">Jumlah Guru</th>
+                            <th class="border-r border-gray-400 px-3 text-center w-32">Status Insentif</th>
                             
                             {{-- KOLOM LEGALITAS --}}
-                            <th class="border-r border-gray-300 px-3 text-center w-32 bg-blue-50">Legalitas IJOP</th>
-                            <th class="border-r border-gray-300 px-3 text-center w-32 bg-purple-50">Legalitas SPTJM</th>
-                            <th class="border-r border-gray-300 px-3 text-center w-32 bg-orange-50">Legalitas SKAM</th>
+                            <th class="border-r border-gray-400 px-3 text-center w-32 bg-blue-50">Surat IJOP Lembaga</th>
+                            <th class="border-r border-gray-400 px-3 text-center w-32 bg-teal-50">Surat Keterangan Domisili</th> {{-- [BARU] Kolom SKD --}}
+                            <th class="border-r border-gray-400 px-3 text-center w-32 bg-purple-50">Surat Pernyataan Tanggung Jawab Mutlak</th>
+                            <th class="border-r border-gray-400 px-3 text-center w-32 bg-orange-50">SK Aktif Mengajar</th>
                             
-                            <th class="border-l border-gray-300 px-2 text-center w-24 sticky right-0 bg-gray-100 z-10">Aksi</th>
+                            <th class="border-l border-gray-400 px-2 text-center w-24 sticky right-0 bg-gray-100 z-10">Aksi</th>
                         </tr>
                     </thead>
-                    <tbody class="text-gray-900 text-[11px] divide-y divide-gray-200">
+                    <tbody class="text-black-900 text-[11px] divide-y divide-gray-200">
                         @forelse($lembagas as $index => $lembaga)
-                            <tr class="hover:bg-yellow-50 transition duration-75 h-16 align-middle">
+                            <tr class="hover:bg-yellow-50 transition duration-75 h-16 align-top">
                                 
                                 {{-- 1. NO --}}
-                                <td class="border-r border-gray-200 text-center font-medium bg-gray-50 py-3 sticky left-0 z-10">{{ $lembagas->firstItem() + $index }}</td>
+                                <td class="border-r border-gray-400 text-center font-medium bg-gray-50 py-3 sticky left-0 z-10">{{ $lembagas->firstItem() + $index }}</td>
                                 
 
 
                                 {{-- 2. IDENTITAS --}}
-                                <td class="border-r border-gray-200 px-3 py-2 sticky left-10 bg-white z-10 hover:bg-yellow-50">
-                                    <div class="font-bold text-sm text-gray-800 uppercase mb-1 leading-tight flex items-center gap-2">
-                                        {{ $lembaga->nama_lembaga }}
-                                        {{-- Badge Status Aktif/Tidak --}}
-                                        <span class="text-[9px] px-1.5 py-0.5 rounded font-bold tracking-wider {{ strtoupper($lembaga->status) == 'AKTIF' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700' }}">
-                                            {{ $lembaga->status ?? 'AKTIF' }}
-                                        </span>
+                                <td class="border-r border-gray-400 px-3 py-2 sticky left-10 bg-white z-10 hover:bg-yellow-50">
+                                    <div class="font-bold text-sm text-black-800 uppercase mb-1 leading-tight flex items-center gap-2">
+                                        {{ $lembaga->nama_lembaga }}                                       
                                     </div>
-                                    <div class="text-[10px] text-gray-500 leading-tight">
-                                        <div class="mb-0.5"><span class="font-semibold">Ka:</span> {{ $lembaga->kepala_lembaga ?? '-' }}</div>
-                                        <div>Telp: {{ $lembaga->no_telp ?? '-' }}</div>
+                                    <div class="text-[10px] text-black-500 leading-tight">
+                                        <div class="mb-0.5"><span class="font-semibold">Kepala :</span> {{ $lembaga->kepala_lembaga ?? '-' }}</div>
+                                        <div>No. Hp : {{ $lembaga->no_telp ?? '-' }}</div>
                                     </div>
 
                                     {{-- [BARU] BADGE INDIKATOR STATUS BERKAS LEMBAGA --}}
                                     <div class="mt-1.5 flex flex-wrap gap-1">
                                         @if($lembaga->status_berkas == 'bermasalah')
                                             <span class="inline-flex items-center bg-orange-50 text-orange-700 text-[9px] font-bold px-1.5 py-0.5 rounded border border-orange-200 tracking-wide">
-                                                ⚠️ BERKAS BELUM LENGKAP
+                                                BERKAS BELUM LENGKAP
                                             </span>
                                         @elseif($lembaga->status_berkas == 'pending')
                                             <span class="inline-flex items-center bg-blue-50 text-blue-700 text-[9px] font-bold px-1.5 py-0.5 rounded border border-blue-200 tracking-wide">
-                                                ⏳ VERIFIKASI PENDING
+                                                SEDANG DIVERIFIKASI
                                             </span>
                                         @endif
                                     </div>
@@ -258,7 +259,7 @@
 
                                     {{-- Keterangan --}}
                                     @if($lembaga->keterangan)
-                                        <div class="text-[9px] text-gray-400 mt-1 italic leading-tight border-t border-gray-100 pt-1">Ket: {{ \Illuminate\Support\Str::limit($lembaga->keterangan, 40) }}</div>
+                                        <div class="text-[9px] text-black-400 mt-1 italic leading-tight border-t border-gray-400 pt-1">Ket : {{ \Illuminate\Support\Str::limit($lembaga->keterangan, 40) }}</div>
                                     @endif
                                 </td>
 
@@ -266,55 +267,63 @@
 
 
                                 {{-- 3. JENIS --}}
-                                <td class="border-r border-gray-200 text-center px-1">
+                                <td class="border-r border-gray-400 text-center px-1">
                                     @php
                                         $j = $lembaga->jenis_lembaga;
                                         $color = match($j) {
                                             'TPQ' => 'bg-green-100 text-green-800 border-green-200',
                                             'MADIN' => 'bg-blue-100 text-blue-800 border-blue-200',
                                             'PONPES' => 'bg-purple-100 text-purple-800 border-purple-200',
-                                            default => 'bg-gray-100 text-gray-800'
+                                            default => 'bg-gray-100 text-black-800'
                                         };
                                     @endphp
                                     <div class="px-2 py-1 rounded text-[10px] font-bold mb-1 border {{ $color }}">{{ $j }}</div>
-                                    <div class="text-[9px] border border-gray-200 rounded px-1">{{ $lembaga->ormas ?? '-' }}</div>
+                                    <div class="text-[9px] border border-gray-400 rounded px-1">{{ $lembaga->ormas ?? '-' }}</div>
                                 </td>
 
                                 {{-- 4. LOKASI --}}
-                                <td class="border-r border-gray-200 px-3">
-                                    <div class="font-bold">{{ $lembaga->desa->nama_desa ?? '-' }}</div>
-                                    <div class="text-gray-500 text-[10px]">Kec. {{ $lembaga->kecamatan->nama_kecamatan ?? '-' }}</div>
+                                <td class="border-r border-gray-400 px-3 py-2">
+                                    <div class="font-bold mb-0.5">{{ $lembaga->desa->nama_desa ?? '-' }}</div>
+                                    <div class="text-black-500 text-[10px] mb-1.5 border-b border-gray-400 pb-1">Kec. {{ $lembaga->kecamatan->nama_kecamatan ?? '-' }}</div>
+                                    
+                                    {{-- Badge Status Aktif Dipindah ke Sini --}}
+                                    <div class="flex items-center">
+                                        <span class="text-[9px] px-1.5 py-0.5 rounded font-bold tracking-wider w-full text-center border {{ strtoupper($lembaga->status) == 'AKTIF' ? 'bg-green-50 text-green-700 border-green-200' : 'bg-red-50 text-red-700 border-red-200' }}">
+                                            {{ $lembaga->status ?? 'AKTIF' }}
+                                        </span>
+                                    </div>
                                 </td>
 
+
                                 {{-- 📸 [BARU] ICON GRID MINI INTERAKTIF DENGAN POP-UP MODAL --}}
-                                <td class="border border-gray-300 px-1 py-1 text-center align-middle bg-gray-50">
+                                <td class="border border-gray-400 px-1 py-1 text-center align-top bg-gray-50">
                                     <div class="grid grid-cols-2 gap-1 w-12 mx-auto">
                                         {{-- 1. Profil Lembaga --}}
                                         @if($lembaga->foto_lembaga)
                                             <button onclick="bukaModalGambar('{{ asset('storage/' . $lembaga->foto_lembaga) }}', 'A. Foto Profil Lembaga')" title="Lihat Profil Lembaga" class="bg-blue-100 text-blue-700 border border-blue-300 p-0.5 rounded hover:bg-blue-600 hover:text-white transition text-[10px]">📸</button>
                                         @else
-                                            <span title="Kosong" class="bg-gray-100 text-gray-300 border border-gray-200 p-0.5 rounded text-[10px] cursor-not-allowed">📸</span>
+                                            <span title="Kosong" class="bg-gray-100 text-black-300 border border-gray-400 p-0.5 rounded text-[10px] cursor-not-allowed">📸</span>
                                         @endif
 
                                         {{-- 2. Nambor --}}
                                         @if($lembaga->foto_nambor)
                                             <button onclick="bukaModalGambar('{{ asset('storage/' . $lembaga->foto_nambor) }}', 'B. Papan Nama / Nambor')" title="Lihat Papan Nama" class="bg-indigo-100 text-indigo-700 border border-indigo-300 p-0.5 rounded hover:bg-indigo-600 hover:text-white transition text-[10px]">🏷️</button>
                                         @else
-                                            <span title="Kosong" class="bg-gray-100 text-gray-300 border border-gray-200 p-0.5 rounded text-[10px] cursor-not-allowed">🏷️</span>
+                                            <span title="Kosong" class="bg-gray-100 text-black-300 border border-gray-400 p-0.5 rounded text-[10px] cursor-not-allowed">🏷️</span>
                                         @endif
 
                                         {{-- 3. Gedung Bangunan --}}
                                         @if($lembaga->foto_bangunan)
                                             <button onclick="bukaModalGambar('{{ asset('storage/' . $lembaga->foto_bangunan) }}', 'C. Gedung Bangunan')" title="Lihat Bangunan" class="bg-amber-100 text-amber-700 border border-amber-300 p-0.5 rounded hover:bg-amber-600 hover:text-white transition text-[10px]">🏢</button>
                                         @else
-                                            <span title="Kosong" class="bg-gray-100 text-gray-300 border border-gray-200 p-0.5 rounded text-[10px] cursor-not-allowed">🏢</span>
+                                            <span title="Kosong" class="bg-gray-100 text-black-300 border border-gray-400 p-0.5 rounded text-[10px] cursor-not-allowed">🏢</span>
                                         @endif
 
                                         {{-- 4. KBM --}}
                                         @if($lembaga->foto_kbm)
                                             <button onclick="bukaModalGambar('{{ asset('storage/' . $lembaga->foto_kbm) }}', 'D. Kegiatan Belajar (KBM)')" title="Lihat KBM" class="bg-green-100 text-green-700 border border-green-300 p-0.5 rounded hover:bg-green-600 hover:text-white transition text-[10px]">👥</button>
                                         @else
-                                            <span title="Kosong" class="bg-gray-100 text-gray-300 border border-gray-200 p-0.5 rounded text-[10px] cursor-not-allowed">👥</span>
+                                            <span title="Kosong" class="bg-gray-100 text-black-300 border border-gray-400 p-0.5 rounded text-[10px] cursor-not-allowed">👥</span>
                                         @endif
                                     </div>
                                 </td>
@@ -323,73 +332,88 @@
 
 
                                 {{-- 5. SANTRI --}}
-                                <td class="border-r border-gray-200 text-center font-bold text-blue-600 text-sm">
+                                <td class="border-r border-gray-400 text-center font-bold text-blue-600 text-sm">
                                     {{ $lembaga->jumlah_santri }}
                                 </td>
 
                                 {{-- 6. GURU --}}
-                                <td class="border-r border-gray-200 px-3 py-2">
-                                    <div class="flex justify-between font-bold text-blue-700 border-b border-gray-100 pb-1 mb-1">
+                                <td class="border-r border-gray-400 px-3 py-2">
+                                    <div class="flex justify-between font-bold text-blue-700 border-b border-gray-400 pb-1 mb-1">
                                         <span>Total:</span> <span>{{ $lembaga->jumlah_guru }}</span>
                                     </div>
-                                    <div class="flex justify-between text-gray-500 text-[9px] mb-0.5">
+                                    <div class="flex justify-between text-black-500 text-[9px] mb-0.5">
                                         <span>PNS:</span> <span class="font-semibold">{{ $lembaga->jumlah_pns }}</span>
                                     </div>
-                                    <div class="flex justify-between text-gray-500 text-[9px] mb-0.5">
+                                    <div class="flex justify-between text-black-500 text-[9px] mb-0.5">
                                         <span>PPPK:</span> <span class="font-semibold">{{ $lembaga->jumlah_pppk }}</span>
                                     </div>
-                                    <div class="flex justify-between text-gray-500 text-[9px]">
-                                        <span>Sertifikasi:</span> <span class="font-semibold">{{ $lembaga->jumlah_sertifikasi }}</span>
+                                    <div class="flex justify-between text-black-500 text-[9px]">
+                                        <span>Memenuhi Kriteria:</span> <span class="font-semibold">{{ $lembaga->jumlah_sertifikasi }}</span>
                                     </div>
                                 </td>
 
-                                {{-- 7. INSENTIF --}}
-                                <td class="border-r border-gray-200 px-3">
-                                    <div class="flex gap-2">
-                                        <div class="text-green-600">Ok: <b>{{ $lembaga->penerima_insentif }}</b></div>
-                                        <div class="text-red-500">No: <b>{{ $lembaga->belum_menerima_insentif }}</b></div>
+                                {{-- 7. INSENTIF [REVISI POIN 7] --}}
+                                <td class="border-r border-gray-400 px-3 text-[10px]">
+                                    <div class="flex flex-col gap-1">
+                                        <div class="text-green-600">Diajukan: <b>{{ $lembaga->hitung_guru_diajukan }}</b></div>
+                                        <div class="text-red-500">Tidak Diajukan: <b>{{ $lembaga->hitung_guru_tidak_diajukan }}</b></div>
                                     </div>
                                 </td>
 
-                                {{-- 8. LEGALITAS IJOP --}}
-                                <td class="border-r border-gray-200 px-2 py-2 text-center align-middle bg-blue-50/30">
+
+
+                                {{-- 8. LEGALITAS IJOP (MURNI) --}}
+                                <td class="border-r border-gray-400 px-2 py-2 text-center align-top bg-blue-50/30">
                                     <div class="flex flex-col items-center gap-1">
-                                        {{-- Ikon File Upload --}}
                                         @if($lembaga->file_ijop)
-                                            <div class="flex items-center gap-1 text-green-600 text-[10px] font-bold bg-green-50 px-1.5 py-0.5 rounded border border-green-200">
-                                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path></svg> Ada
-                                            </div>
+                                            <button onclick="bukaModalPdf('{{ asset('storage/' . $lembaga->file_ijop) }}', 'IJOP - {{ addslashes($lembaga->nama_lembaga) }}')" class="flex items-center gap-1 text-green-600 text-[10px] font-bold bg-green-50 px-2 py-1 rounded border border-green-300 hover:bg-green-600 hover:text-white transition shadow-sm" title="Lihat IJOP">
+                                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg> Cek File
+                                            </button>
                                         @else
                                             <div class="flex items-center gap-1 text-red-500 text-[10px] font-bold bg-red-50 px-1.5 py-0.5 rounded border border-red-200">
                                                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path></svg> Kosong
                                             </div>
                                         @endif
-
-                                        {{-- Status Verifikasi Dokumen --}}
                                         @php
                                             $badgeIjop = match($lembaga->status_ijop) {
-                                                'Disetujui' => 'text-green-700 bg-green-100',
-                                                'Ditolak' => 'text-red-700 bg-red-100',
-                                                default => 'text-yellow-700 bg-yellow-100'
+                                                'Disetujui' => 'text-green-700 bg-green-100', 'Ditolak' => 'text-red-700 bg-red-100', default => 'text-yellow-700 bg-yellow-100'
                                             };
                                         @endphp
                                         <span class="text-[9px] font-bold px-1.5 py-0.5 rounded {{ $badgeIjop }}">{{ $lembaga->status_ijop ?? 'Pending' }}</span>
-                                        
-                                        {{-- Info Dokumen Fisik dari Excel --}}
-                                        <div class="mt-1 pt-1 border-t border-blue-100 text-[8px] text-gray-500 leading-tight w-full">
-                                            
-                                            <div>Exp: <span class="font-bold text-gray-700">{{ $lembaga->masa_berlaku_ijop ? \Carbon\Carbon::parse($lembaga->masa_berlaku_ijop)->format('d/m/Y') : '-' }}</span></div>
+                                        <div class="mt-1 pt-1 border-t border-blue-100 text-[8px] text-black-500 leading-tight w-full">
+                                            <div>Exp: <span class="font-bold text-black-700">{{ $lembaga->masa_berlaku_ijop ? \Carbon\Carbon::parse($lembaga->masa_berlaku_ijop)->format('d/m/Y') : '-' }}</span></div>
                                         </div>
                                     </div>
                                 </td>
 
+                                {{-- 8B. LEGALITAS SKD SEMENTARA [BARU] --}}
+                                <td class="border-r border-gray-400 px-2 py-2 text-center align-top bg-teal-50/30">
+                                    <div class="flex flex-col items-center gap-1">
+                                        @if($lembaga->file_skd)
+                                            <button onclick="bukaModalPdf('{{ asset('storage/' . $lembaga->file_skd) }}', 'SKD - {{ addslashes($lembaga->nama_lembaga) }}')" class="flex items-center gap-1 text-teal-600 text-[10px] font-bold bg-teal-50 px-2 py-1 rounded border border-teal-300 hover:bg-teal-600 hover:text-white transition shadow-sm" title="Lihat SKD">
+                                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg> Cek File
+                                            </button>
+                                        @else
+                                            <div class="flex items-center gap-1 text-red-500 text-[10px] font-bold bg-red-50 px-1.5 py-0.5 rounded border border-red-200">
+                                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path></svg> Kosong
+                                            </div>
+                                        @endif
+                                        @php
+                                            $badgeSkd = match($lembaga->status_skd) {
+                                                'Disetujui' => 'text-green-700 bg-green-100', 'Ditolak' => 'text-red-700 bg-red-100', default => 'text-yellow-700 bg-yellow-100'
+                                            };
+                                        @endphp
+                                        <span class="text-[9px] font-bold px-1.5 py-0.5 rounded {{ $badgeSkd }}">{{ $lembaga->status_skd ?? 'Pending' }}</span>
+                                    </div>
+                                </td>
+
                                 {{-- 9. LEGALITAS SUPER (SPTJM) --}}
-                                <td class="border-r border-gray-200 px-2 py-2 text-center align-middle bg-purple-50/30">
+                                <td class="border-r border-gray-400 px-2 py-2 text-center align-top bg-purple-50/30">
                                     <div class="flex flex-col items-center gap-1">
                                         @if($lembaga->file_super)
-                                            <div class="flex items-center gap-1 text-green-600 text-[10px] font-bold bg-green-50 px-1.5 py-0.5 rounded border border-green-200">
-                                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path></svg> Ada
-                                            </div>
+                                            <button onclick="bukaModalPdf('{{ asset('storage/' . $lembaga->file_super) }}', 'SPTJM - {{ addslashes($lembaga->nama_lembaga) }}')" class="flex items-center gap-1 text-purple-600 text-[10px] font-bold bg-purple-50 px-2 py-1 rounded border border-purple-300 hover:bg-purple-600 hover:text-white transition shadow-sm" title="Lihat SPTJM">
+                                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg> Cek File
+                                            </button>
                                         @else
                                             <div class="flex items-center gap-1 text-red-500 text-[10px] font-bold bg-red-50 px-1.5 py-0.5 rounded border border-red-200">
                                                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path></svg> Kosong
@@ -397,22 +421,20 @@
                                         @endif
                                         @php
                                             $badgeSuper = match($lembaga->status_super) {
-                                                'Disetujui' => 'text-green-700 bg-green-100',
-                                                'Ditolak' => 'text-red-700 bg-red-100',
-                                                default => 'text-yellow-700 bg-yellow-100'
+                                                'Disetujui' => 'text-green-700 bg-green-100', 'Ditolak' => 'text-red-700 bg-red-100', default => 'text-yellow-700 bg-yellow-100'
                                             };
                                         @endphp
                                         <span class="text-[9px] font-bold px-1.5 py-0.5 rounded {{ $badgeSuper }}">{{ $lembaga->status_super ?? 'Pending' }}</span>
                                     </div>
                                 </td>
 
-                                {{-- 10. LEGALITAS SKAM (BARU) --}}
-                                <td class="border-r border-gray-200 px-2 py-2 text-center align-middle bg-orange-50/30">
+                                {{-- 10. LEGALITAS SKAM --}}
+                                <td class="border-r border-gray-400 px-2 py-2 text-center align-top bg-orange-50/30">
                                     <div class="flex flex-col items-center gap-1">
                                         @if($lembaga->file_skam)
-                                            <div class="flex items-center gap-1 text-green-600 text-[10px] font-bold bg-green-50 px-1.5 py-0.5 rounded border border-green-200">
-                                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path></svg> Ada
-                                            </div>
+                                            <button onclick="bukaModalPdf('{{ asset('storage/' . $lembaga->file_skam) }}', 'SKAM - {{ addslashes($lembaga->nama_lembaga) }}')" class="flex items-center gap-1 text-orange-600 text-[10px] font-bold bg-orange-50 px-2 py-1 rounded border border-orange-300 hover:bg-orange-600 hover:text-white transition shadow-sm" title="Lihat SKAM">
+                                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg> Cek File
+                                            </button>
                                         @else
                                             <div class="flex items-center gap-1 text-red-500 text-[10px] font-bold bg-red-50 px-1.5 py-0.5 rounded border border-red-200">
                                                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path></svg> Kosong
@@ -420,9 +442,7 @@
                                         @endif
                                         @php
                                             $badgeSkam = match($lembaga->status_skam) {
-                                                'Disetujui' => 'text-green-700 bg-green-100',
-                                                'Ditolak' => 'text-red-700 bg-red-100',
-                                                default => 'text-yellow-700 bg-yellow-100'
+                                                'Disetujui' => 'text-green-700 bg-green-100', 'Ditolak' => 'text-red-700 bg-red-100', default => 'text-yellow-700 bg-yellow-100'
                                             };
                                         @endphp
                                         <span class="text-[9px] font-bold px-1.5 py-0.5 rounded {{ $badgeSkam }}">{{ $lembaga->status_skam ?? 'Pending' }}</span>
@@ -432,7 +452,7 @@
 
 
                                 {{-- 10. AKSI (GRID 2x2) --}}
-                                <td class="border-l border-gray-200 text-center p-1 align-middle w-24 sticky right-0 bg-white z-10">
+                                <td class="border-l border-gray-400 text-center p-1 align-top w-24 sticky right-0 bg-white z-10">
                                     <div class="grid grid-cols-2 gap-1 w-full max-w-[80px] mx-auto">
                                         
                                         {{-- 1. Tombol DETAIL (Mata) --}}
@@ -466,7 +486,7 @@
                                 </td>
                             </tr>
                         @empty
-                            <tr><td colspan="10" class="border border-gray-300 py-8 text-center text-gray-400 bg-gray-50">Data lembaga tidak ditemukan.</td></tr>
+                            <tr><td colspan="10" class="border border-gray-400 py-8 text-center text-black-400 bg-gray-50">Data lembaga tidak ditemukan.</td></tr>
                         @endforelse
                     </tbody>
                 </table>
@@ -542,17 +562,17 @@
     {{-- 🖼️ KOTAK POP-UP MODAL PREVIEW GAMBAR (TIDAK FULL SCREEN) --}}
     {{-- ======================================================== --}}
     <div id="modalGambar" class="fixed inset-0 z-[9999] bg-black bg-opacity-70 hidden flex justify-center items-center p-4 backdrop-blur-sm transition-opacity">
-        <div class="relative bg-white rounded-xl shadow-2xl max-w-3xl w-full flex flex-col border border-gray-300 overflow-hidden transform scale-100">
+        <div class="relative bg-white rounded-xl shadow-2xl max-w-3xl w-full flex flex-col border border-gray-400 overflow-hidden transform scale-100">
             
             {{-- Header Pop-Up --}}
-            <div class="flex justify-between items-center p-3 bg-gray-100 border-b border-gray-300">
-                <h3 id="judulModalGambar" class="text-sm font-bold text-gray-800 tracking-wide uppercase">Preview Gambar</h3>
-                <button onclick="tutupModalGambar()" class="text-gray-500 hover:text-red-600 font-black text-xl leading-none px-2 transition">&times;</button>
+            <div class="flex justify-between items-center p-3 bg-gray-100 border-b border-gray-400">
+                <h3 id="judulModalGambar" class="text-sm font-bold text-black-800 tracking-wide uppercase">Preview Gambar</h3>
+                <button onclick="tutupModalGambar()" class="text-black-500 hover:text-red-600 font-black text-xl leading-none px-2 transition">&times;</button>
             </div>
             
             {{-- Area Gambar --}}
             <div class="p-4 flex justify-center items-center bg-gray-200">
-                <img id="sumberModalGambar" src="" alt="Preview" class="max-w-full max-h-[70vh] object-contain rounded shadow-sm border border-gray-300">
+                <img id="sumberModalGambar" src="" alt="Preview" class="max-w-full max-h-[70vh] object-contain rounded shadow-sm border border-gray-400">
             </div>
         </div>
     </div>
@@ -568,5 +588,65 @@
             document.getElementById('modalGambar').classList.add('hidden');
             document.getElementById('sumberModalGambar').src = "";
         }
+        
+        // =======================================================
+        // [BARU POIN 6] JAVASCRIPT ANTI-LOMPAT (STAY ON PAGE)
+        // =======================================================
+        
+        // 1. Simpan posisi scroll saat di-scroll
+        window.addEventListener('scroll', function() {
+            localStorage.setItem('scrollPositionLembaga', window.scrollY);
+        });
+
+        // 2. Kembalikan posisi scroll saat halaman selesai di-load (refresh)
+        const savedScrollPosition = localStorage.getItem('scrollPositionLembaga');
+        if (savedScrollPosition) {
+            // Gunakan setTimeout kecil untuk memastikan DOM sudah ter-render sempurna
+            setTimeout(() => {
+                window.scrollTo({
+                    top: parseInt(savedScrollPosition),
+                    behavior: 'instant' // Langsung lompat tanpa animasi (smooth) agar tidak pusing
+                });
+            }, 100);
+        }
+
+        // 3. (Opsional/Jaga-jaga) Jika ada tombol yang di-klik dan melakukan submit/refresh,
+        // paksa simpan posisi terakhir detik itu juga
+        $('form').on('submit', function() {
+            localStorage.setItem('scrollPositionLembaga', window.scrollY);
+        });
     </script>
+
+    {{-- ======================================================== --}}
+    {{-- 📄 KOTAK POP-UP MODAL PREVIEW PDF (FULL SCREEN)          --}}
+    {{-- ======================================================== --}}
+    <div id="modalPdf" class="fixed inset-0 z-[9999] bg-black bg-opacity-75 hidden flex justify-center items-center p-4 backdrop-blur-sm transition-opacity">
+        <div class="relative bg-white rounded-xl shadow-2xl w-full max-w-5xl h-[90vh] flex flex-col border border-gray-400 overflow-hidden">
+            {{-- Header Pop-Up --}}
+            <div class="flex justify-between items-center p-3 bg-gray-100 border-b border-gray-400">
+                <h3 id="judulModalPdf" class="text-sm font-bold text-black-800 tracking-wide uppercase">Preview Dokumen</h3>
+                <button onclick="tutupModalPdf()" class="text-black-500 hover:text-red-600 font-black text-xl leading-none px-2 transition">&times;</button>
+            </div>
+            {{-- Area PDF (Pake Iframe) --}}
+            <div class="flex-grow bg-gray-200 w-full h-full">
+                <iframe id="sumberModalPdf" src="" class="w-full h-full border-none"></iframe>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Logika Buka/Tutup Modal PDF
+        function bukaModalPdf(urlPdf, judul) {
+            document.getElementById('sumberModalPdf').src = urlPdf;
+            document.getElementById('judulModalPdf').innerText = judul;
+            document.getElementById('modalPdf').classList.remove('hidden');
+        }
+        function tutupModalPdf() {
+            document.getElementById('modalPdf').classList.add('hidden');
+            document.getElementById('sumberModalPdf').src = ""; // Clear memori iframe
+        }
+    </script>
+
+
+
 </x-app-layout>

@@ -15,14 +15,14 @@
                 </div>
                 <div class="bg-emerald-600 text-white p-3 rounded-lg border border-emerald-700 shadow-sm flex items-center justify-between">
                     <div>
-                        <p class="text-[10px] font-bold uppercase tracking-wider opacity-80">Kuota Terpakai (Aktif)</p>
+                        <p class="text-[10px] font-bold uppercase tracking-wider opacity-80">Kuota Terpakai</p>
                         <h4 class="text-xl font-black mt-0.5">{{ $kuotaSistem['terpakai'] }} <span class="text-xs font-normal">Guru</span></h4>
                     </div>
                     <span class="text-2xl">✅</span>
                 </div>
                 <div class="bg-amber-500 text-white p-3 rounded-lg border border-amber-600 shadow-sm flex items-center justify-between">
                     <div>
-                        <p class="text-[10px] font-bold uppercase tracking-wider opacity-80">Sisa Peluru Insentif</p>
+                        <p class="text-[10px] font-bold uppercase tracking-wider opacity-80">Sisa Kuota Insentif</p>
                         <h4 class="text-xl font-black mt-0.5">{{ $kuotaSistem['sisa'] }} <span class="text-xs font-normal">Guru</span></h4>
                     </div>
                     <span class="text-2xl">🎯</span>
@@ -36,11 +36,11 @@
         {{-- =========================== --}}
         {{-- 1. HEADER & CONTROL BAR KOMPLIT --}}
         {{-- =========================== --}}
-        <div class="mb-3 bg-white p-3 rounded-lg border border-gray-300 shadow-sm">
+        <div class="mb-3 bg-white p-3 rounded-lg border border-gray-400 shadow-sm">
             <form action="{{ url()->current() }}" method="GET"> 
                 
                 {{-- BARIS 1: Judul & Tombol Tambah --}}
-                <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center mb-3 pb-2 border-b border-gray-100">
+                <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center mb-3 pb-2 border-b border-gray-400">
                     <div>
                         <h2 class="text-xl font-bold text-gray-800 uppercase tracking-tight">
                             {{ $title ?? 'Data Guru' }}
@@ -71,8 +71,8 @@
 
                 </div>
 
-                {{-- BARIS 2: Jajaran Kolom Filter (Grid 6 Kolom) --}}
-                <div class="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-6 gap-2 items-end">
+                {{-- BARIS 2: Jajaran Kolom Filter (Grid 7 Kolom) --}}
+                <div class="grid grid-cols-1 sm:grid-cols-3 xl:grid-cols-7 gap-2 items-end">
 
 
                     
@@ -144,11 +144,19 @@
                         </select>
                     </div>
 
-                    {{-- 5. Tombol Aksi (Cari & Reset) --}}
-                    <div class="w-full flex gap-1 h-8">
+                    {{-- 6. [BARU POIN 3] Filter Status Insentif --}}
+                    <div class="w-full">
+                        <label class="text-[10px] font-bold text-gray-600 uppercase tracking-wider ml-1">Insentif</label>
+                        <select name="filter_insentif" class="bg-gray-50 border border-gray-400 text-gray-900 text-sm rounded-md focus:ring-blue-500 focus:border-blue-500 block w-full h-8 px-1 py-1">
+                            <option value="">- Semua -</option>
+                            <option value="1" {{ request('filter_insentif') == '1' ? 'selected' : '' }}>✅ Diajukan</option>
+                            <option value="0" {{ request('filter_insentif') == '0' ? 'selected' : '' }}>❌ Tidak Diajukan</option>
+                        </select>
+                    </div>
 
+                    {{-- 7. Tombol Aksi (Cari & Reset) --}}
 
-                    
+                    <div class="w-full flex gap-1 h-8">                 
                         <button type="submit" class="flex-1 bg-blue-600 text-white rounded-md text-xs font-bold hover:bg-blue-700 flex items-center justify-center gap-1 shadow-sm transition">
                             <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
                             Filter
@@ -237,28 +245,28 @@
                     {{-- HEADER TABEL --}}
                     <thead>
                         <tr class="bg-gray-100 text-gray-800 uppercase text-[10px] tracking-wider font-bold h-9">
-                            <th class="border border-gray-300 w-10 text-center sticky left-0 bg-gray-100 z-10">No</th>
-                            <th class="border border-gray-300 px-2 text-center w-48 sticky left-10 bg-gray-100 z-10 shadow-r">Nama Lengkap</th>
-                            <th class="border border-gray-300 px-2 text-center w-32">NIK</th>
-                            <th class="border border-gray-300 px-2 text-center w-32">Status Guru</th>
-                            <th class="border border-gray-300 px-2 text-center w-24">Insentif</th>
-                            <th class="border border-gray-300 px-2 text-center w-48">Nama Lembaga</th>
-                            <th class="border border-gray-300 px-2 text-center w-24">Jenis</th>
-                            <th class="border border-gray-300 px-2 text-center w-32">File KTP</th> 
-                            <th class="border border-gray-300 px-2 text-center w-32">File KK</th> 
-                            <th class="border border-gray-300 px-2 text-center w-32">File Rekening</th> 
-                            <th class="border border-gray-300 px-2 text-center w-64">Alamat (Sesuai KTP)</th>
-                            <th class="border border-gray-300 px-2 text-center w-32">Tempat Tanggal Lahir</th>
-                            <th class="border border-gray-300 px-2 text-center w-10">L/P</th>
-                            <th class="border border-gray-300 px-2 text-center w-32">Desa</th>
-                            <th class="border border-gray-300 px-2 text-center w-32">Kecamatan</th>
-                            <th class="border border-gray-300 px-2 text-center w-24">Kabupaten</th>
-                            <th class="border border-gray-300 px-2 text-center w-20">Agama</th>
-                            <th class="border border-gray-300 px-2 text-center w-28">Nomor HP</th>
-                            <th class="border border-gray-300 px-2 text-center w-40">Nama Ibu Kandung</th>
-                            <th class="border border-gray-300 px-2 text-center w-40">Nomor Rekening</th>
-                            <th class="border border-gray-300 px-2 text-center w-40">Keterangan</th>
-                            <th class="border border-gray-300 px-2 text-center w-40 sticky right-0 bg-gray-100 z-10">Aksi</th>
+                            <th class="border border-gray-400 w-10 text-center sticky left-0 bg-gray-100 z-10">No</th>
+                            <th class="border border-gray-400 px-2 text-center w-48 sticky left-10 bg-gray-100 z-10 shadow-r">Nama Lengkap</th>
+                            <th class="border border-gray-400 px-2 text-center w-32">NIK</th>
+                            <th class="border border-gray-400 px-2 text-center w-32">Status Guru</th>
+                            <th class="border border-gray-400 px-2 text-center w-24">Insentif</th>
+                            <th class="border border-gray-400 px-2 text-center w-48">Nama Lembaga</th>
+                            <th class="border border-gray-400 px-2 text-center w-24">Jenis</th>
+                            <th class="border border-gray-400 px-2 text-center w-32">File KTP</th> 
+                            <th class="border border-gray-400 px-2 text-center w-32">File KK</th> 
+                            <th class="border border-gray-400 px-2 text-center w-32">File Rekening</th> 
+                            <th class="border border-gray-400 px-2 text-center w-64">Alamat (Sesuai KTP)</th>
+                            <th class="border border-gray-400 px-2 text-center w-32">Tempat Tanggal Lahir</th>
+                            <th class="border border-gray-400 px-2 text-center w-10">L/P</th>
+                            <th class="border border-gray-400 px-2 text-center w-32">Desa</th>
+                            <th class="border border-gray-400 px-2 text-center w-32">Kecamatan</th>
+                            <th class="border border-gray-400 px-2 text-center w-24">Kabupaten</th>
+                            <th class="border border-gray-400 px-2 text-center w-20">Agama</th>
+                            <th class="border border-gray-400 px-2 text-center w-28">Nomor HP</th>
+                            <th class="border border-gray-400 px-2 text-center w-40">Nama Ibu Kandung</th>
+                            <th class="border border-gray-400 px-2 text-center w-40">Nomor Rekening</th>
+                            <th class="border border-gray-400 px-2 text-center w-40">Keterangan</th>
+                            <th class="border border-gray-400 px-2 text-center w-40 sticky right-0 bg-gray-100 z-10">Aksi</th>
                         </tr>
                     </thead>
                     
@@ -290,7 +298,7 @@
 
 
                                 {{-- 1. NO --}}
-                                <td class="border border-gray-300 py-1 text-center font-medium sticky left-0 z-10 {{ $isTidakLayak ? 'bg-red-100' : 'bg-gray-50' }}">
+                                <td class="border border-gray-400 py-1 text-center font-medium sticky left-0 z-10 {{ $isTidakLayak ? 'bg-red-100' : 'bg-gray-50' }}">
                                     {{ $gurus->firstItem() + $index }}
                                 </td>
 
@@ -298,7 +306,7 @@
 
 
                                 {{-- 2. NAMA --}}
-                                <td class="border border-gray-300 px-2 py-1 font-bold sticky left-10 z-10 shadow-r {{ $stickyClass }}">
+                                <td class="border border-gray-400 px-2 py-1 font-bold sticky left-10 z-10 shadow-r {{ $stickyClass }}">
                                     {{ $guru->nama_lengkap }}
                                     @if($isTidakLayak)
                                         <span class="block text-[9px] text-red-600 font-normal italic">(Tidak Berhak Mendapat Insentif)</span>
@@ -308,11 +316,11 @@
                                     <div class="mt-1 flex flex-wrap gap-1">
                                         @if($guru->status_berkas == 'bermasalah')
                                             <span class="inline-flex items-center bg-orange-50 text-orange-700 text-[9px] font-bold px-1.5 py-0.5 rounded border border-orange-200 tracking-wide">
-                                                ⚠️ BERKAS BELUM LENGKAP ⚠️
+                                                BERKAS BELUM LENGKAP
                                             </span>
                                         @elseif($guru->status_berkas == 'pending')
                                             <span class="inline-flex items-center bg-blue-50 text-blue-700 text-[9px] font-bold px-1.5 py-0.5 rounded border border-blue-200 tracking-wide">
-                                                ⏳ MENUNGGU VERIFIKASI
+                                                MENUNGGU VERIFIKASI
                                             </span>
                                         @endif
                                     </div>
@@ -321,12 +329,12 @@
 
 
                                 {{-- 3. NIK --}}
-                                <td class="border border-gray-300 px-2 py-1 font-mono text-gray-600">
+                                <td class="border border-gray-400 px-2 py-1 font-mono text-gray-600">
                                     {{ $guru->nik }}
                                 </td>
 
                                 {{-- 4. STATUS GURU --}}
-                                <td class="border border-gray-300 px-2 py-1 text-center">
+                                <td class="border border-gray-400 px-2 py-1 text-center">
                                     <div class="flex flex-col gap-1 items-center">
                                         {{-- Badge Status Kepegawaian (PNS/NON-ASN) --}}
                                         <span class="text-[9px] font-bold px-1.5 py-0.5 rounded bg-gray-100 border text-gray-600">
@@ -343,7 +351,7 @@
                                 </td>
 
                                 {{-- 5. INSENTIF (SINKRONISASI FASE 2) --}}
-                                <td class="border border-gray-300 px-2 py-1 text-center align-middle">
+                                <td class="border border-gray-400 px-2 py-1 text-center align-middle">
                                     
                                     @if($isTidakLayak)
                                         {{-- JIKA PNS/PPPK/INPASSING: TAMPILKAN SILANG MERAH DI MENU MANAPUN --}}
@@ -360,7 +368,7 @@
                                                 @csrf
                                                 @if($guru->penerima_insentif == 1)
                                                     <button type="submit" class="text-[10px] font-bold px-2 py-1 rounded-md bg-green-600 text-white border border-green-700 hover:bg-red-600 hover:text-white transition duration-200 shadow-sm group w-full text-center">
-                                                        <span class="group-hover:hidden">BERHAK & TERPILIH</span>
+                                                        <span class="group-hover:hidden">BERHAK & DIAJUKAN</span>
                                                         <span class="hidden group-hover:inline">COPOT JATAH</span>
                                                     </button>
                                                 @else
@@ -375,7 +383,7 @@
                                             {{-- TAMPILAN STATIS (UNTUK SUPERADMIN/VERIFIKATOR ATAU DI MENU LAINNYA) --}}
                                             @if($guru->penerima_insentif == 1)
                                                 <span class="text-[10px] font-bold px-2 py-1 rounded-md bg-green-100 text-green-800 border border-green-500 block text-center">
-                                                    BERHAK & TERPILIH
+                                                    BERHAK & DIAJUKAN
                                                 </span>
                                             @else
                                                 <span class="text-[10px] font-bold px-2 py-1 rounded-md bg-yellow-100 text-yellow-800 border border-yellow-500 block text-center">
@@ -391,19 +399,19 @@
 
 
                                 {{-- 6. NAMA LEMBAGA --}}
-                                <td class="border border-gray-300 px-2 py-1">
+                                <td class="border border-gray-400 px-2 py-1">
                                     {{ $guru->lembaga->nama_lembaga ?? '-' }}
                                 </td>
 
                                 {{-- 7. JENIS LEMBAGA --}}
-                                <td class="border border-gray-300 px-2 py-1 text-center">
+                                <td class="border border-gray-400 px-2 py-1 text-center">
                                     @php
                                         $j = $guru->lembaga->jenis_lembaga ?? '-';
                                         $color = match($j) {
                                             'TPQ' => 'text-green-700 bg-green-100 border-green-300',
                                             'MADIN' => 'text-blue-700 bg-blue-100 border-blue-300',
                                             'PONPES' => 'text-purple-700 bg-purple-100 border-purple-300',
-                                            default => 'text-gray-600 bg-gray-100 border-gray-300'
+                                            default => 'text-gray-600 bg-gray-100 border-gray-400'
                                         };
                                     @endphp
                                     <span class="px-2 py-0.5 rounded text-[10px] font-bold border {{ $color }}">
@@ -412,7 +420,7 @@
                                 </td>
 
                                 {{-- 8. FILE KTP --}}
-                                <td class="border border-gray-300 px-2 py-1 text-center {{ $isTidakLayak ? 'bg-red-100' : 'bg-gray-50' }}">
+                                <td class="border border-gray-400 px-2 py-1 text-center {{ $isTidakLayak ? 'bg-red-100' : 'bg-gray-50' }}">
                                     @if($guru->file_ktp)
                                         <div class="flex flex-col items-center">
                                             <a href="{{ asset('storage/' . $guru->file_ktp) }}" target="_blank" class="text-blue-600 underline font-bold hover:text-blue-800 mb-1">
@@ -430,7 +438,7 @@
                                 </td>
 
                                 {{-- 9. FILE KK --}}
-                                <td class="border border-gray-300 px-2 py-1 text-center {{ $isTidakLayak ? 'bg-red-100' : 'bg-white' }}">
+                                <td class="border border-gray-400 px-2 py-1 text-center {{ $isTidakLayak ? 'bg-red-100' : 'bg-white' }}">
                                     @if($guru->file_kk)
                                         <div class="flex flex-col items-center">
                                             <a href="{{ asset('storage/' . $guru->file_kk) }}" target="_blank" class="text-green-600 underline font-bold hover:text-green-800 mb-1">
@@ -448,7 +456,7 @@
                                 </td>
 
                                 {{-- 10. FILE REKENING --}}
-                                <td class="border border-gray-300 px-2 py-1 text-center {{ $isTidakLayak ? 'bg-red-100' : 'bg-gray-50' }}">
+                                <td class="border border-gray-400 px-2 py-1 text-center {{ $isTidakLayak ? 'bg-red-100' : 'bg-gray-50' }}">
                                     @if($guru->file_bukurekening)
                                         <div class="flex flex-col items-center">
                                             <a href="{{ asset('storage/' . $guru->file_bukurekening) }}" target="_blank" class="text-purple-600 underline font-bold hover:text-purple-800 mb-1">
@@ -466,34 +474,34 @@
                                 </td>
 
                                 {{-- 11. ALAMAT --}}
-                                <td class="border border-gray-300 px-2 py-1 truncate max-w-xs" title="{{ $guru->alamat_ktp }}">
+                                <td class="border border-gray-400 px-2 py-1 truncate max-w-xs" title="{{ $guru->alamat_ktp }}">
                                     {{ Str::limit($guru->alamat_ktp, 30) }}
                                 </td>
 
                                 {{-- 12. TTL --}}
-                                <td class="border border-gray-300 px-2 py-1">
+                                <td class="border border-gray-400 px-2 py-1">
                                     {{ $guru->tempat_lahir }}, {{ \Carbon\Carbon::parse($guru->tanggal_lahir)->format('d-m-Y') }}
                                 </td>
 
                                 {{-- 13. L/P --}}
-                                <td class="border border-gray-300 px-2 py-1 text-center">
+                                <td class="border border-gray-400 px-2 py-1 text-center">
                                     {{ $guru->jenis_kelamin }}
                                 </td>
 
                                 {{-- 14-18. WILAYAH & KONTAK --}}
-                                <td class="border border-gray-300 px-2 py-1">{{ $guru->desa ?? '-' }}</td>
-                                <td class="border border-gray-300 px-2 py-1">{{ $guru->kecamatan ?? '-' }}</td>
-                                <td class="border border-gray-300 px-2 py-1 text-center">{{ $guru->kabupaten }}</td>
-                                <td class="border border-gray-300 px-2 py-1 text-center">{{ $guru->agama }}</td>
-                                <td class="border border-gray-300 px-2 py-1 text-center">{{ $guru->no_hp }}</td>
+                                <td class="border border-gray-400 px-2 py-1">{{ $guru->desa ?? '-' }}</td>
+                                <td class="border border-gray-400 px-2 py-1">{{ $guru->kecamatan ?? '-' }}</td>
+                                <td class="border border-gray-400 px-2 py-1 text-center">{{ $guru->kabupaten }}</td>
+                                <td class="border border-gray-400 px-2 py-1 text-center">{{ $guru->agama }}</td>
+                                <td class="border border-gray-400 px-2 py-1 text-center">{{ $guru->no_hp }}</td>
 
                                 {{-- 19-21. DETAIL LAIN --}}
-                                <td class="border border-gray-300 px-2 py-1">{{ $guru->nama_ibu_kandung }}</td>
-                                <td class="border border-gray-300 px-2 py-1 font-mono font-bold text-gray-700">{{ $guru->nomor_rekening }}</td>
-                                <td class="border border-gray-300 px-2 py-1 text-gray-500 italic">{{ $guru->keterangan ?? '-' }}</td>
+                                <td class="border border-gray-400 px-2 py-1">{{ $guru->nama_ibu_kandung }}</td>
+                                <td class="border border-gray-400 px-2 py-1 font-mono font-bold text-gray-700">{{ $guru->nomor_rekening }}</td>
+                                <td class="border border-gray-400 px-2 py-1 text-gray-500 italic">{{ $guru->keterangan ?? '-' }}</td>
 
                                 {{-- 22. AKSI --}}
-                                <td class="border border-gray-300 py-1 text-center sticky right-0 z-10 shadow-l {{ $stickyClass }}">
+                                <td class="border border-gray-400 py-1 text-center sticky right-0 z-10 shadow-l {{ $stickyClass }}">
                                     <div class="flex justify-center gap-1 px-1">
                                         
                                         {{-- LIHAT --}}
@@ -527,7 +535,7 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="22" class="border border-gray-300 px-4 py-8 text-center bg-gray-50 text-gray-400">
+                                <td colspan="22" class="border border-gray-400 px-4 py-8 text-center bg-gray-50 text-gray-400">
                                     <div class="flex flex-col items-center">
                                         <span class="text-2xl mb-1">📂</span>
                                         <p>Belum ada data guru. Silakan klik tombol <b>+ Tambah</b>.</p>

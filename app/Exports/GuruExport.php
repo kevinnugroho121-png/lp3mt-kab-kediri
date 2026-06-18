@@ -52,10 +52,17 @@ class GuruExport implements FromQuery, WithHeadings, WithMapping, ShouldAutoSize
                 $q->where('desa_id', $this->request->filter_desa);
             });
         }
+
         if ($this->request->filled('filter_lembaga')) {
             $query->where('lembaga_id', $this->request->filter_lembaga);
         }
+        // [BARU - Poin 3] Filter status insentif pada Excel
+        if ($this->request->filled('filter_insentif')) {
+            $query->where('penerima_insentif', $this->request->filter_insentif);
+        }
         if ($this->request->filled('search')) {
+
+
             $search = $this->request->search;
             $query->where(function($q) use ($search) {
                 $q->where('nama_lengkap', 'like', "%{$search}%")
@@ -98,10 +105,14 @@ class GuruExport implements FromQuery, WithHeadings, WithMapping, ShouldAutoSize
             $guru->lembaga->kecamatan->nama_kecamatan ?? '-',
             $guru->kabupaten ?? 'KEDIRI',
             $guru->agama,
+
+
             "'" . $guru->no_hp,
             $guru->nama_ibu_kandung,
             "'" . $guru->nomor_rekening,
-            $guru->keterangan
+            // [BARU - Poin 4] Otomatisasi status keterangan Excel
+            // PNS, PPPK, dan Guru Non-Aktif otomatis terkelompok menjadi "TIDAK"
+            ($guru->penerima_insentif == 1) ? 'YA DIAJUKAN' : 'TIDAK'
         ];
     }
 

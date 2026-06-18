@@ -1,6 +1,6 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-bold text-xl text-gray-800 leading-tight">
+        <h2 class="font-bold text-xl text-black-800 leading-tight">
             {{ __('CCTV Sistem: Log Aktivitas Operator') }}
         </h2>
     </x-slot>
@@ -12,13 +12,13 @@
             <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
                 <div class="flex items-center gap-4">
                     {{-- TOMBOL KEMBALI --}}
-                    <a href="{{ route('user.index') }}" class="bg-gray-100 text-gray-600 hover:bg-gray-200 hover:text-gray-900 p-2 rounded-lg transition border border-gray-300 shadow-sm" title="Kembali ke Manajemen User">
+                    <a href="{{ route('user.index') }}" class="bg-gray-100 text-black-600 hover:bg-gray-200 hover:text-black-900 p-2 rounded-lg transition border border-gray-300 shadow-sm" title="Kembali ke Manajemen User">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
                     </a>
                     
                     <div>
-                        <h3 class="font-bold text-lg text-gray-800">Buku Catatan Aktivitas</h3>
-                        <p class="text-xs text-gray-500">Memantau rekam jejak aksi Tambah, Edit, Hapus, dan Saklar Insentif secara Real-Time.</p>
+                        <h3 class="font-bold text-lg text-black-800">Buku Catatan Aktivitas</h3>
+                        <p class="text-xs text-black-500">Memantau rekam jejak aksi Tambah, Edit, Hapus, dan Saklar Insentif secara Real-Time.</p>
                     </div>
                 </div>
                 
@@ -49,7 +49,7 @@
                            class="w-full border border-gray-300 rounded-md px-3 py-1.5 text-sm focus:border-blue-500 focus:ring-blue-500 shadow-sm">
                     <button type="submit" class="bg-gray-800 text-white px-4 py-1.5 rounded-md text-sm font-bold hover:bg-gray-900 transition shadow-sm">Cari</button>
                     @if(request('search'))
-                        <a href="{{ route('activity.log') }}" class="bg-gray-100 text-gray-600 border border-gray-300 px-3 py-1.5 rounded-md text-sm font-bold hover:bg-gray-200 transition flex items-center justify-center">Reset</a>
+                        <a href="{{ route('activity.log') }}" class="bg-gray-100 text-black-600 border border-gray-300 px-3 py-1.5 rounded-md text-sm font-bold hover:bg-gray-200 transition flex items-center justify-center">Reset</a>
                     @endif
                 </form>
             </div>
@@ -66,24 +66,24 @@
                             <th class="px-4 py-3 text-left font-bold">Target Objek (Data Guru)</th>
                         </tr>
                     </thead>
-                    <tbody class="text-gray-700 divide-y divide-gray-200">
+                    <tbody class="text-black-700 divide-y divide-gray-200">
                         @forelse($logs as $index => $log)
                             <tr class="hover:bg-slate-50 transition duration-150">
                                 
                                 {{-- NOMOR --}}
-                                <td class="border-r border-gray-200 px-2 py-3 text-center bg-gray-50 font-medium text-gray-500">
+                                <td class="border-r border-gray-200 px-2 py-3 text-center bg-gray-50 font-medium text-black-500">
                                     {{ $logs->firstItem() + $index }}
                                 </td>
 
                                 {{-- WAKTU (Jam Aktual Kediri) --}}
-                                <td class="border-r border-gray-200 px-4 py-3 text-xs text-gray-600 font-mono">
+                                <td class="border-r border-gray-200 px-4 py-3 text-xs text-black-600 font-mono">
                                     {{ \Carbon\Carbon::parse($log->created_at)->translatedFormat('d M Y (H:i:s)') }}
                                 </td>
 
                                 {{-- NAMA OPERATOR --}}
                                 <td class="border-r border-gray-200 px-4 py-3">
-                                    <span class="font-bold text-gray-900">{{ $log->nama_user }}</span>
-                                    <span class="text-[10px] text-gray-400 block font-mono">ID: #{{ $log->user_id ?? 'N/A' }}</span>
+                                    <span class="font-bold text-black-900">{{ $log->nama_user }}</span>
+                                    <span class="text-[10px] text-black-400 block font-mono">ID: #{{ $log->user_id ?? 'N/A' }}</span>
                                 </td>
 
                                 {{-- AKSI / TINDAKAN (Diberi warna biar gampang dibaca) --}}
@@ -100,16 +100,16 @@
                                 </td>
 
                                 {{-- TARGET GURU --}}
-                                <td class="px-4 py-3 font-semibold text-gray-800">
+                                <td class="px-4 py-3 font-semibold text-black-800">
                                     {{ $log->target }}
                                 </td>
 
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="5" class="border border-gray-300 px-4 py-12 text-center text-gray-400 bg-gray-50">
+                                <td colspan="5" class="border border-gray-300 px-4 py-12 text-center text-black-400 bg-gray-50">
                                     <div class="flex flex-col items-center justify-center">
-                                        <svg class="w-8 h-8 text-gray-300 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path></svg>
+                                        <svg class="w-8 h-8 text-black-300 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path></svg>
                                         <span class="text-xs">Belum ada riwayat aktivitas yang terekam di sistem.</span>
                                     </div>
                                 </td>

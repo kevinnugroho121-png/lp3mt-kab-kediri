@@ -1,6 +1,6 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-bold text-xl text-gray-800 leading-tight">
+        <h2 class="font-bold text-xl text-black-800 leading-tight">
             {{ __('Manajemen Dokumentasi Landing Page') }}
         </h2>
     </x-slot>
@@ -21,16 +21,16 @@
                 {{-- FORM TAMBAH FOTO --}}
                 <div class="lg:col-span-1">
                     <div class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm sticky top-24">
-                        <h3 class="font-bold text-gray-800 mb-4">Tambah Foto Baru</h3>
+                        <h3 class="font-bold text-black-800 mb-4">Tambah Foto Baru</h3>
                         <form action="{{ route('dokumentasi.store') }}" method="POST" enctype="multipart/form-data">
                             @csrf
                             <div class="mb-4">
-                                <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Judul / Keterangan</label>
+                                <label class="block text-xs font-bold text-black-500 uppercase mb-1">Judul / Keterangan</label>
                                 <input type="text" name="judul" required class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:border-blue-500 focus:ring-blue-500">
                             </div>
                             <div class="mb-4">
-                                <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Pilih Foto</label>
-                                <input type="file" name="foto" required accept="image/*" class="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100">
+                                <label class="block text-xs font-bold text-black-500 uppercase mb-1">Pilih Foto</label>
+                                <input type="file" name="foto" required accept="image/*" class="w-full text-sm text-black-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100">
                             </div>
                             <button type="submit" class="w-full bg-blue-600 text-white py-2 rounded-md text-sm font-bold hover:bg-blue-700 transition">Upload Foto</button>
                         </form>
@@ -59,7 +59,7 @@
                                         </td>
                                         
                                         {{-- KOLOM JUDUL --}}
-                                        <td class="px-4 py-3 font-semibold text-gray-800">{{ $dok->judul }}</td>
+                                        <td class="px-4 py-3 font-semibold text-black-800">{{ $dok->judul }}</td>
                                         
                                         {{-- KOLOM AKSI (Preview, Edit, Hapus) --}}
                                         <td class="px-4 py-3 text-center">
@@ -87,7 +87,7 @@
                                     </tr>
                                 @empty
                                     <tr>
-                                        <td colspan="3" class="px-4 py-12 text-center text-gray-400">Belum ada foto yang diupload.</td>
+                                        <td colspan="3" class="px-4 py-12 text-center text-black-400">Belum ada foto yang diupload.</td>
                                     </tr>
                                 @endforelse
                             </tbody>
@@ -111,7 +111,7 @@
 
                 {{-- Judul Modal --}}
                 <div class="mb-4 text-center border-b pb-3">
-                    <h3 class="font-extrabold text-xl text-gray-800" x-text="previewTitle"></h3>
+                    <h3 class="font-extrabold text-xl text-black-800" x-text="previewTitle"></h3>
                 </div>
 
                 {{-- Gambar Ukuran Penuh --}}

@@ -48,6 +48,7 @@ class GuruController extends Controller
             $query->where('jenis_guru', $filterType);
         }
 
+
         // Filter Wilayah & Search
         if ($user->role != 'korcam' && $request->filled('filter_kecamatan')) {
             $query->whereHas('lembaga', function($q) use ($request) {
@@ -59,6 +60,22 @@ class GuruController extends Controller
                 $q->where('desa_id', $request->filter_desa);
             });
         }
+
+        // [BARU POIN 3] Filter Spesifik Lembaga
+        if ($request->filled('filter_lembaga')) {
+            $query->where('lembaga_id', $request->filter_lembaga);
+        }
+
+        // [BARU POIN 3] Filter Spesifik Insentif (Diajukan / Tidak)
+        if ($request->filled('filter_insentif')) {
+            if ($request->filter_insentif == '1') {
+                $query->where('penerima_insentif', 1);
+            } elseif ($request->filter_insentif == '0') {
+                $query->where('penerima_insentif', 0);
+            }
+        }
+
+
 
 
         // [REVISI] Filter Cerdas (Smart Sort) Dokumen Guru

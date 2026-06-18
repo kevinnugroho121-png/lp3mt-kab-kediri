@@ -143,14 +143,15 @@ class LembagaController extends Controller
             
             // Validasi File PDF
             'file_ijop'          => 'nullable|mimes:pdf|max:2048', 
+            'file_skd'           => 'nullable|mimes:pdf|max:2048', // [BARU Poin 1] Validasi SKD
             'file_super'         => 'nullable|mimes:pdf|max:2048', 
-            'file_skam'          => 'nullable|mimes:pdf|max:2048', 
+            'file_skam'          => 'nullable|mimes:pdf|max:2048',
 
             // [BARU - FASE 3] Validasi Gambar Dokumentasi (HANYA GAMBAR, MAKSIMAL 1 MB)
-            'foto_lembaga'       => 'nullable|image|mimes:jpeg,png,jpg|max:1024',
-            'foto_nambor'        => 'nullable|image|mimes:jpeg,png,jpg|max:1024',
-            'foto_bangunan'      => 'nullable|image|mimes:jpeg,png,jpg|max:1024',
-            'foto_kbm'           => 'nullable|image|mimes:jpeg,png,jpg|max:1024',
+            'foto_lembaga'       => 'nullable|image|mimes:jpeg,png,jpg,jfif|max:1024',
+            'foto_nambor'        => 'nullable|image|mimes:jpeg,png,jpg,jfif|max:1024',
+            'foto_bangunan'      => 'nullable|image|mimes:jpeg,png,jpg,jfif|max:1024',
+            'foto_kbm'           => 'nullable|image|mimes:jpeg,png,jpg,jfif|max:1024',
         ], [
             'file_ijop.mimes'    => 'File IJOP harus format PDF.',
             'file_ijop.max'      => 'Ukuran file IJOP maksimal 2MB.',
@@ -202,16 +203,24 @@ class LembagaController extends Controller
         }
         // --- AKHIR SUNTIKAN KODE ---
 
+        // [BARU Poin 1] PROSES UPLOAD FILE SKD
+        $pathSkd = null;
+        if ($request->hasFile('file_skd')) {
+            $pathSkd = $request->file('file_skd')->store('dokumen_lembaga', 'public');
+        }
+
         $data['file_ijop'] = $pathIjop;
-
-
+        $data['file_skd']  = $pathSkd; // [BARU]
         $data['file_super'] = $pathSuper;
-        $data['file_skam'] = $pathSkam; // [BARU]
+        $data['file_skam'] = $pathSkam; 
         
         // Set default status dokumen jika belum ada
         $data['status_ijop'] = 'Pending';
+        $data['status_skd'] = 'Pending'; // [BARU]
         $data['status_super'] = 'Pending';
-        $data['status_skam'] = 'Pending'; // [BARU]
+        $data['status_skam'] = 'Pending';
+
+
 
         Lembaga::create($data);
 
@@ -249,15 +258,17 @@ class LembagaController extends Controller
     {
         $request->validate([
             'status_ijop' => 'required',
+            'status_skd' => 'required', // [BARU] Wajib validasi status SKD
             'status_super' => 'required',
-            'status_skam' => 'required', // [BARU]
+            'status_skam' => 'required', 
             'catatan_verifikasi' => 'nullable|string'
         ]);
 
         $lembaga->update([
             'status_ijop' => $request->status_ijop,
+            'status_skd' => $request->status_skd, // [BARU] Simpan status SKD sesuai pilihan Admin
             'status_super' => $request->status_super,
-            'status_skam' => $request->status_skam, // [BARU]
+            'status_skam' => $request->status_skam, 
             'keterangan' => $request->catatan_verifikasi
         ]);
 
@@ -301,14 +312,17 @@ class LembagaController extends Controller
         $request->validate([
             'nama_lembaga'       => 'required|string|max:255',
             'file_ijop'          => 'nullable|mimes:pdf|max:2048',
+            'file_skd'           => 'nullable|mimes:pdf|max:2048', // [BARU] Validasi SKD
             'file_super'         => 'nullable|mimes:pdf|max:2048',
             'file_skam'          => 'nullable|mimes:pdf|max:2048',
+
+
             
             // [BARU - FASE 3] Validasi Gambar saat Update Data
-            'foto_lembaga'       => 'nullable|image|mimes:pdf,jpeg,png,jpg|max:1024',
-            'foto_nambor'        => 'nullable|image|mimes:pdf,jpeg,png,jpg|max:1024',
-            'foto_bangunan'      => 'nullable|image|mimes:pdf,jpeg,png,jpg|max:1024',
-            'foto_kbm'           => 'nullable|image|mimes:pdf,jpeg,png,jpg|max:1024',
+            'foto_lembaga'       => 'nullable|image|mimes:jpeg,png,jpg,jfif|max:1024',
+            'foto_nambor'        => 'nullable|image|mimes:jpeg,png,jpg,jfif|max:1024',
+            'foto_bangunan'      => 'nullable|image|mimes:jpeg,png,jpg,jfif|max:1024',
+            'foto_kbm'           => 'nullable|image|mimes:jpeg,png,jpg,jfif|max:1024',
         ]);
 
         $data = $request->all();
@@ -341,6 +355,19 @@ class LembagaController extends Controller
         // --- AKHIR SUNTIKAN KODE ---
         
         // [PERBAIKAN] Cek Upload File Baru IJOP
+        // [BARU Poin 1] Cek Upload File Baru SKD
+        if ($request->hasFile('file_skd')) {
+            if ($lembaga->file_skd && Storage::disk('public')->exists($lembaga->file_skd)) {
+                Storage::disk('public')->delete($lembaga->file_skd);
+            }
+            $data['file_skd'] = $request->file('file_skd')->store('dokumen_lembaga', 'public');
+            $data['status_skd'] = 'Pending'; 
+        } else {
+            unset($data['file_skd']);
+        }
+
+
+
         if ($request->hasFile('file_ijop')) {
             // Hapus file fisik yang lama jika ada
             if ($lembaga->file_ijop && Storage::disk('public')->exists($lembaga->file_ijop)) {
@@ -398,15 +425,22 @@ class LembagaController extends Controller
         if ($lembaga->file_ijop && Storage::disk('public')->exists($lembaga->file_ijop)) {
             Storage::disk('public')->delete($lembaga->file_ijop);
         }
+        
+        // [BARU] Hapus file fisik SKD
+        if ($lembaga->file_skd && Storage::disk('public')->exists($lembaga->file_skd)) {
+            Storage::disk('public')->delete($lembaga->file_skd);
+        }
+
         if ($lembaga->file_super && Storage::disk('public')->exists($lembaga->file_super)) {
             Storage::disk('public')->delete($lembaga->file_super);
         }
 
-
-        // [BARU] Hapus file SKAM
         if ($lembaga->file_skam && Storage::disk('public')->exists($lembaga->file_skam)) {
             Storage::disk('public')->delete($lembaga->file_skam);
         }
+
+
+
 
         // [BARU - FASE 3] BERSIHKAN 4 FILE FOTO FISIK DARI STORAGE SAAT LEMBAGA DIHAPUS
         $fotoFields = ['foto_lembaga', 'foto_nambor', 'foto_bangunan', 'foto_kbm'];

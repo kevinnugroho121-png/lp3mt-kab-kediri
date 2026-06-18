@@ -36,7 +36,7 @@
         {{-- NAVBAR ATAS --}}
         {{-- ======================================================== --}}
         <nav class="bg-white border-b border-gray-200 sticky top-0 z-50 shadow-[0_2px_15px_-3px_rgba(0,0,0,0.05)]">
-            <div class="max-w-[1500px] mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="w-full px-2 sm:px-4">
                 <div class="flex items-center justify-between h-20">
                     
                     {{-- 1. LOGO KIRI --}}
@@ -53,7 +53,7 @@
                             {{-- A. DASHBOARD (SEMUA ROLE) --}}
                             <a href="{{ route('dashboard') }}" 
                                class="flex items-center justify-center h-12 px-5 rounded-lg transition-all duration-200 border border-transparent
-                               {{ request()->routeIs('dashboard') ? 'bg-green-50 text-green-700 border-green-200 shadow-sm' : 'text-gray-500 hover:bg-gray-50 hover:text-green-700' }}">
+                               {{ request()->routeIs('dashboard') ? 'bg-green-50 text-green-700 border-green-200 shadow-sm' : 'text-black-500 hover:bg-gray-50 hover:text-green-700' }}">
                                <span class="text-sm font-bold">DASHBOARD</span>
                             </a>
                             
@@ -61,7 +61,7 @@
                             @if(Auth::user()->role == 'admin')
                                 <a href="{{ route('kecamatan.index') }}" 
                                    class="flex items-center justify-center h-12 px-4 rounded-lg transition-all duration-200 border border-transparent
-                                   {{ request()->routeIs('kecamatan.*', 'desa.*') ? 'bg-green-50 text-green-700 border-green-200 shadow-sm font-bold' : 'text-gray-500 hover:bg-gray-50 hover:text-green-700 font-medium' }}">
+                                   {{ request()->routeIs('kecamatan.*', 'desa.*') ? 'bg-green-50 text-green-700 border-green-200 shadow-sm font-bold' : 'text-black-500 hover:bg-gray-50 hover:text-green-700 font-medium' }}">
                                    <span class="text-sm font-bold">DATA WILAYAH</span>
                                 </a>
 
@@ -72,7 +72,7 @@
                             {{-- C. DATA LEMBAGA (SEMUA ROLE) --}}
                             <a href="{{ route('lembaga.index') }}" 
                                class="flex flex-col items-center justify-center h-12 px-4 rounded-lg transition-all duration-200 border border-transparent leading-none
-                               {{ request()->routeIs('lembaga.*') ? 'bg-green-50 text-green-700 border-green-200 shadow-sm' : 'text-gray-500 hover:bg-gray-50 hover:text-green-700' }}">
+                               {{ request()->routeIs('lembaga.*') ? 'bg-green-50 text-green-700 border-green-200 shadow-sm' : 'text-black-500 hover:bg-gray-50 hover:text-green-700' }}">
                                <span class="text-[10px] font-medium uppercase tracking-wide opacity-80 mb-0.5">DATA</span>
                                <span class="text-sm font-bold">LEMBAGA</span>
                             </a>
@@ -80,7 +80,7 @@
                             {{-- D. GURU MADIN (SEMUA ROLE) --}}
                             <a href="{{ route('guru.madin') }}" 
                                class="flex flex-col items-center justify-center h-12 px-4 rounded-lg transition-all duration-200 border border-transparent leading-none
-                               {{ request()->routeIs('guru.madin') ? 'bg-green-50 text-green-700 border-green-200 shadow-sm font-bold' : 'text-gray-500 hover:bg-gray-50 hover:text-green-700 font-medium' }}">
+                               {{ request()->routeIs('guru.madin') ? 'bg-green-50 text-green-700 border-green-200 shadow-sm font-bold' : 'text-black-500 hover:bg-gray-50 hover:text-green-700 font-medium' }}">
                                <span class="text-[10px] font-medium uppercase tracking-wide opacity-70 mb-0.5">GURU</span>
                                <span class="text-sm font-bold">MADIN</span>
                             </a>
@@ -88,7 +88,7 @@
                             {{-- E. GURU TPQ (SEMUA ROLE) --}}
                             <a href="{{ route('guru.tpq') }}" 
                                class="flex flex-col items-center justify-center h-12 px-4 rounded-lg transition-all duration-200 border border-transparent leading-none
-                               {{ request()->routeIs('guru.tpq') ? 'bg-green-50 text-green-700 border-green-200 shadow-sm font-bold' : 'text-gray-500 hover:bg-gray-50 hover:text-green-700 font-medium' }}">
+                               {{ request()->routeIs('guru.tpq') ? 'bg-green-50 text-green-700 border-green-200 shadow-sm font-bold' : 'text-black-500 hover:bg-gray-50 hover:text-green-700 font-medium' }}">
                                <span class="text-[10px] font-medium uppercase tracking-wide opacity-70 mb-0.5">GURU</span>
                                <span class="text-sm font-bold">TPQ</span>
                             </a>
@@ -96,7 +96,7 @@
                             {{-- F. GURU PONPES (SEMUA ROLE) --}}
                             <a href="{{ route('guru.ponpes') }}" 
                                class="flex flex-col items-center justify-center h-12 px-4 rounded-lg transition-all duration-200 border border-transparent leading-none
-                               {{ request()->routeIs('guru.ponpes') ? 'bg-green-50 text-green-700 border-green-200 shadow-sm font-bold' : 'text-gray-500 hover:bg-gray-50 hover:text-green-700 font-medium' }}">
+                               {{ request()->routeIs('guru.ponpes') ? 'bg-green-50 text-green-700 border-green-200 shadow-sm font-bold' : 'text-black-500 hover:bg-gray-50 hover:text-green-700 font-medium' }}">
                                <span class="text-[10px] font-medium uppercase tracking-wide opacity-70 mb-0.5">GURU</span>
                                <span class="text-sm font-bold">PONPES</span>
                             </a>
@@ -104,7 +104,7 @@
                             {{-- G. SEMUA GURU (SEMUA ROLE) --}}
                             <a href="{{ route('guru.index') }}" 
                                class="flex flex-col items-center justify-center h-12 px-4 rounded-lg transition-all duration-200 border border-transparent leading-none
-                               {{ request()->routeIs('guru.index') ? 'bg-green-50 text-green-700 border-green-200 shadow-sm' : 'text-gray-500 hover:bg-gray-50 hover:text-green-700 font-medium' }}">
+                               {{ request()->routeIs('guru.index') ? 'bg-green-50 text-green-700 border-green-200 shadow-sm' : 'text-black-500 hover:bg-gray-50 hover:text-green-700 font-medium' }}">
                                <span class="text-[10px] font-medium uppercase tracking-wide opacity-80 mb-0.5">Semua</span>
                                <span class="text-sm font-bold">GURU</span>
                             </a>
@@ -112,7 +112,7 @@
                             {{-- H. INSENTIF (SEMUA ROLE) --}}
                             <a href="{{ route('guru.insentif') }}" 
                                class="flex flex-col items-center justify-center h-12 px-4 rounded-lg transition-all duration-200 border border-transparent leading-none
-                               {{ request()->routeIs('guru.insentif') ? 'bg-green-50 text-green-700 border-green-200 shadow-sm font-bold' : 'text-gray-500 hover:bg-gray-50 hover:text-green-700 font-medium' }}">
+                               {{ request()->routeIs('guru.insentif') ? 'bg-green-50 text-green-700 border-green-200 shadow-sm font-bold' : 'text-black-500 hover:bg-gray-50 hover:text-green-700 font-medium' }}">
                                <span class="text-[10px] font-medium uppercase tracking-wide opacity-70 mb-0.5">MENU</span>
                                <span class="text-sm font-bold flex items-center gap-1">INSENTIF</span>
                             </a>
@@ -124,7 +124,7 @@
                                 
                                 <a href="{{ route('user.index') }}" 
                                    class="flex flex-col items-center justify-center h-12 px-4 rounded-lg transition-all duration-200 border border-transparent leading-none
-                                   {{ request()->routeIs('user.*') ? 'bg-blue-50 text-blue-700 border-blue-200 shadow-sm' : 'text-gray-500 hover:bg-blue-50 hover:text-blue-700' }}">
+                                   {{ request()->routeIs('user.*') ? 'bg-blue-50 text-blue-700 border-blue-200 shadow-sm' : 'text-black-500 hover:bg-blue-50 hover:text-blue-700' }}">
                                    <span class="text-[10px] font-medium uppercase tracking-wide opacity-80 mb-0.5">MANAJEMEN</span>
                                    <span class="text-sm font-bold">USER</span>
                                 </a>
@@ -132,7 +132,7 @@
                                 {{-- J. [BARU] MENU GALERI DOKUMENTASI --}}
                                 <a href="{{ route('dokumentasi.index') }}" 
                                    class="flex flex-col items-center justify-center h-12 px-4 rounded-lg transition-all duration-200 border border-transparent leading-none
-                                   {{ request()->routeIs('dokumentasi.*') ? 'bg-blue-50 text-blue-700 border-blue-200 shadow-sm' : 'text-gray-500 hover:bg-blue-50 hover:text-blue-700' }}">
+                                   {{ request()->routeIs('dokumentasi.*') ? 'bg-blue-50 text-blue-700 border-blue-200 shadow-sm' : 'text-black-500 hover:bg-blue-50 hover:text-blue-700' }}">
                                    <span class="text-[10px] font-medium uppercase tracking-wide opacity-80 mb-0.5">GALERI</span>
                                    <span class="text-sm font-bold">FOTO</span>
                                 </a>
@@ -146,7 +146,7 @@
                         <div class="relative" x-data="{ open: false }">
                             <button @click="open = !open" @click.outside="open = false" class="flex items-center gap-2 focus:outline-none group">
                                 <div class="text-right hidden xl:block">
-                                    <p class="text-sm font-bold text-gray-700 group-hover:text-green-700 transition">{{ Auth::user()->name }}</p>
+                                    <p class="text-sm font-bold text-black-700 group-hover:text-green-700 transition">{{ Auth::user()->name }}</p>
                                 </div>
                                 <div class="relative">
                                     <img class="h-10 w-10 rounded-full object-cover border-2 border-white ring-2 ring-gray-100 group-hover:ring-green-200 transition shadow-sm" 
@@ -160,13 +160,13 @@
                                 
                                 {{-- Info User --}}
                                 <div class="px-4 py-3 border-b border-gray-100 bg-gray-50/50 rounded-t-xl">
-                                    <p class="text-sm font-bold text-gray-800 truncate">{{ Auth::user()->name }}</p>
-                                    <p class="text-xs text-gray-500 truncate">{{ Auth::user()->email }}</p>
+                                    <p class="text-sm font-bold text-black-800 truncate">{{ Auth::user()->name }}</p>
+                                    <p class="text-xs text-black-500 truncate">{{ Auth::user()->email }}</p>
                                 </div>
 
                                 {{-- Tombol Profil --}}
                                 <div class="p-1 border-b border-gray-50">
-                                    <a href="{{ route('profile.edit') }}" class="flex items-center gap-2 px-4 py-2.5 text-sm text-gray-700 rounded-lg hover:bg-blue-50 hover:text-blue-700 transition font-medium">
+                                    <a href="{{ route('profile.edit') }}" class="flex items-center gap-2 px-4 py-2.5 text-sm text-black-700 rounded-lg hover:bg-blue-50 hover:text-blue-700 transition font-medium">
                                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
                                         Edit Profil & Password
                                     </a>
@@ -192,12 +192,12 @@
         </nav>
 
         {{-- MAIN CONTENT --}}
-        <main class="flex-1 w-full max-w-[1500px] mx-auto py-8 px-4 sm:px-6 lg:px-8">
+        <main class="flex-1 w-full pb-8 pt-2 px-2 sm:px-4">
             {{ $slot ?? '' }} 
             @yield('content')
         </main>
         
-        <footer class="py-6 text-center text-xs text-gray-400 border-t border-gray-100 mt-auto">
+        <footer class="py-6 text-center text-xs text-black-400 border-t border-gray-100 mt-auto">
             &copy; {{ date('Y') }} LP3MT Kabupaten Kediri. All rights reserved.
         </footer>
 

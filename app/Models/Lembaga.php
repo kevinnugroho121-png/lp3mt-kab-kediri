@@ -48,9 +48,11 @@ class Lembaga extends Model
         // 6. DOKUMEN PDF & STATUS VERIFIKASI
         // ===============================================
         'file_ijop',
+        'file_skd', // [BARU - Poin 1]
         'file_super',
         'file_skam', 
         'status_ijop',
+        'status_skd', // [BARU - Poin 1]
         'status_super',
         'status_skam', 
         
@@ -65,8 +67,6 @@ class Lembaga extends Model
 
     /**
      * Casting tipe data otomatis.
-     * 'masa_berlaku_ijop' akan otomatis jadi objek Tanggal (Carbon).
-     * Ini PENTING agar Date Picker di menu Edit bisa membaca nilai tanggalnya.
      */
     protected $casts = [
         'masa_berlaku_ijop' => 'date',
@@ -91,15 +91,38 @@ class Lembaga extends Model
         return $this->hasMany(Guru::class);
     }
 
-    // [BARU] Accessor untuk mengecek status keseluruhan berkas Lembaga
+    // ==========================================
+    // [BARU - Poin 7] FUNGSI PENGHITUNG REAL-TIME GURU & INSENTIF
+    // ==========================================
+    public function getHitungTotalGuruAttribute()
+    {
+        return $this->gurus()->count();
+    }
+
+    public function getHitungGuruDiajukanAttribute()
+    {
+        // Menghitung jumlah guru di lembaga ini yang status insentifnya '1' (Diajukan)
+        return $this->gurus()->where('penerima_insentif', 1)->count();
+    }
+
+    public function getHitungGuruTidakDiajukanAttribute()
+    {
+        // Sisanya: Total Guru dikurangi yang diajukan
+        return $this->hitung_total_guru - $this->hitung_guru_diajukan;
+    }
+
+    // ==========================================
+    // ACCESSOR STATUS BERKAS
+    // ==========================================
     public function getStatusBerkasAttribute()
     {
-        if (empty($this->file_ijop) || empty($this->file_super) || empty($this->file_skam) ||
-            $this->status_ijop == 'Ditolak' || $this->status_super == 'Ditolak' || $this->status_skam == 'Ditolak') {
+        // [DIUBAH - Poin 1] Toleransi kelonggaran. Kalau file IJOP kosong TAPI SKD diisi, tidak apa-apa (tidak bermasalah).
+        if ((empty($this->file_ijop) && empty($this->file_skd)) || empty($this->file_super) || empty($this->file_skam) ||
+            $this->status_ijop == 'Ditolak' || $this->status_skd == 'Ditolak' || $this->status_super == 'Ditolak' || $this->status_skam == 'Ditolak') {
             return 'bermasalah';
         }
 
-        if ($this->status_ijop == 'Pending' || $this->status_super == 'Pending' || $this->status_skam == 'Pending') {
+        if ($this->status_ijop == 'Pending' || $this->status_skd == 'Pending' || $this->status_super == 'Pending' || $this->status_skam == 'Pending') {
             return 'pending';
         }
 

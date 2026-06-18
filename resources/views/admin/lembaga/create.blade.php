@@ -1,6 +1,6 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-bold text-xl text-gray-800 leading-tight">
+        <h2 class="font-bold text-xl text-black-800 leading-tight">
             {{ __('Master Data Lembaga') }}
         </h2>
     </x-slot>
@@ -11,10 +11,10 @@
             {{-- HEADER NAVIGASI --}}
             <div class="flex justify-between items-center mb-6">
                 <div>
-                    <h1 class="text-2xl font-bold text-gray-800">Tambah Lembaga Baru</h1>
-                    <p class="text-sm text-gray-500 mt-1">Lengkapi data identitas, statistik, dan dokumen legalitas.</p>
+                    <h1 class="text-2xl font-bold text-black-800">Tambah Lembaga Baru</h1>
+                    <p class="text-sm text-black-500 mt-1">Lengkapi data identitas, statistik, dan dokumen legalitas.</p>
                 </div>
-                <a href="{{ route('lembaga.index') }}" class="inline-flex items-center px-4 py-2 bg-white border border-gray-300 rounded-md font-semibold text-xs text-gray-700 uppercase tracking-widest shadow-sm hover:bg-gray-50 transition">
+                <a href="{{ route('lembaga.index') }}" class="inline-flex items-center px-4 py-2 bg-white border border-gray-300 rounded-md font-semibold text-xs text-black-700 uppercase tracking-widest shadow-sm hover:bg-gray-50 transition">
                     &larr; Kembali
                 </a>
             </div>
@@ -30,13 +30,13 @@
                     <div class="mb-10">
                         <div class="flex items-center gap-2 mb-4 pb-2 border-b border-gray-100">
                             <span class="bg-blue-100 text-blue-700 w-8 h-8 flex items-center justify-center rounded-full font-bold text-sm">A</span>
-                            <h3 class="text-lg font-bold text-gray-800">Identitas & Lokasi</h3>
+                            <h3 class="text-lg font-bold text-black-800">Identitas & Lokasi</h3>
                         </div>
 
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                             {{-- Nama Lembaga (Full Width) --}}
                             <div class="md:col-span-2">
-                                <label class="block text-sm font-semibold text-gray-700 mb-1 text-center">Nama Lembaga <span class="text-red-500">*</span></label>
+                                <label class="block text-sm font-semibold text-black-700 mb-1 text-center">Nama Lembaga <span class="text-red-500">*</span></label>
                                 <input type="text" name="nama_lembaga" value="{{ old('nama_lembaga') }}" 
                                        class="w-full border-gray-300 rounded-lg shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm py-2.5 text-center uppercase" 
                                        placeholder="CONTOH: TPQ AL-HIDAYAH" required oninput="this.value = this.value.toUpperCase()">
@@ -44,10 +44,10 @@
 
                             {{-- Kecamatan (Logic Role) --}}
                             <div>
-                                <label class="block text-sm font-semibold text-gray-700 mb-1 text-center">Kecamatan <span class="text-red-500">*</span></label>
+                                <label class="block text-sm font-semibold text-black-700 mb-1 text-center">Kecamatan <span class="text-red-500">*</span></label>
                                 @if(Auth::user()->role == 'korcam')
                                     <input type="text" value="{{ Auth::user()->kecamatan->nama_kecamatan }}" 
-                                           class="w-full bg-gray-100 border-gray-300 rounded-lg text-gray-500 text-sm py-2.5 cursor-not-allowed font-bold text-center" readonly>
+                                           class="w-full bg-gray-100 border-gray-300 rounded-lg text-black-500 text-sm py-2.5 cursor-not-allowed font-bold text-center" readonly>
                                     <input type="hidden" name="kecamatan_id" value="{{ Auth::user()->kecamatan_id }}">
                                 @else
                                     <select name="kecamatan_id" id="kecamatanSelect" class="w-full border-gray-300 rounded-lg shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm py-2.5 text-center">
@@ -61,7 +61,7 @@
 
                             {{-- Desa (Dependent Dropdown) --}}
                             <div>
-                                <label class="block text-sm font-semibold text-gray-700 mb-1 text-center">Desa / Kelurahan <span class="text-red-500">*</span></label>
+                                <label class="block text-sm font-semibold text-black-700 mb-1 text-center">Desa / Kelurahan <span class="text-red-500">*</span></label>
                                 <select name="desa_id" id="desaSelect" class="w-full border-gray-300 rounded-lg shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm py-2.5 text-center">
                                     <option value="">-- Pilih Desa --</option>
                                     @foreach($desas as $desa)
@@ -72,7 +72,7 @@
 
                             {{-- Jenis & Ormas --}}
                             <div>
-                                <label class="block text-sm font-semibold text-gray-700 mb-1 text-center">Jenis Lembaga <span class="text-red-500">*</span></label>
+                                <label class="block text-sm font-semibold text-black-700 mb-1 text-center">Jenis Lembaga <span class="text-red-500">*</span></label>
                                 <select name="jenis_lembaga" class="w-full border-gray-300 rounded-lg shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm py-2.5 text-center">
                                     <option value="TPQ">TPQ</option>
                                     <option value="MADIN">MADIN</option>
@@ -80,7 +80,7 @@
                                 </select>
                             </div>
                             <div>
-                                <label class="block text-sm font-semibold text-gray-700 mb-1 text-center">Ormas Afiliasi</label>
+                                <label class="block text-sm font-semibold text-black-700 mb-1 text-center">Ormas Afiliasi</label>
                                 <select name="ormas" class="w-full border-gray-300 rounded-lg shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm py-2.5 text-center">
                                     <option value="">- Tidak Ada / Lainnya -</option>
                                     <option value="NU">Nahdlatul Ulama (NU)</option>
@@ -93,11 +93,11 @@
                             {{-- NSBQ & Alamat --}}
                             <div class="md:col-span-2 grid grid-cols-1 md:grid-cols-3 gap-6">
                                 <div class="md:col-span-1">
-                                    <label class="block text-sm font-semibold text-gray-700 mb-1 text-center">Nomor Statistik (NSBQ)</label>
+                                    <label class="block text-sm font-semibold text-black-700 mb-1 text-center">Nomor Statistik (NSBQ)</label>
                                     <input type="text" name="nsbq" class="w-full border-gray-300 rounded-lg shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm py-2.5 text-center uppercase" placeholder="OPSIONAL" oninput="this.value = this.value.toUpperCase()">
                                 </div>
                                 <div class="md:col-span-2">
-                                    <label class="block text-sm font-semibold text-gray-700 mb-1 text-center">Alamat Lengkap</label>
+                                    <label class="block text-sm font-semibold text-black-700 mb-1 text-center">Alamat Lengkap</label>
                                     <input type="text" name="alamat" class="w-full border-gray-300 rounded-lg shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm py-2.5 text-center uppercase" placeholder="JALAN, DUSUN, RT/RW" oninput="this.value = this.value.toUpperCase()">
                                 </div>
                             </div>
@@ -108,7 +108,7 @@
                     <div class="mb-10">
                         <div class="flex items-center gap-2 mb-4 pb-2 border-b border-gray-100">
                             <span class="bg-green-100 text-green-700 w-8 h-8 flex items-center justify-center rounded-full font-bold text-sm">B</span>
-                            <h3 class="text-lg font-bold text-gray-800">Statistik & Kontak</h3>
+                            <h3 class="text-lg font-bold text-black-800">Statistik & Kontak</h3>
                         </div>
 
 
@@ -116,48 +116,48 @@
                         <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
                             {{-- Baris 1: Statistik Utama --}}
                             <div>
-                                <label class="block text-xs font-bold text-gray-500 uppercase mb-1 text-center">Jml Santri</label>
+                                <label class="block text-xs font-bold text-black-500 uppercase mb-1 text-center">Jml Santri</label>
                                 <input type="number" name="jumlah_santri" value="0" class="w-full border-gray-300 bg-gray-50 rounded-lg focus:ring-blue-500 text-sm font-bold text-center">
                             </div>
                             <div>
-                                <label class="block text-xs font-bold text-gray-500 uppercase mb-1 text-center">Total Guru</label>
+                                <label class="block text-xs font-bold text-black-500 uppercase mb-1 text-center">Total Guru</label>
                                 <input type="number" name="jumlah_guru" value="0" class="w-full border-gray-300 bg-gray-50 rounded-lg focus:ring-blue-500 text-sm font-bold text-center">
                             </div>
                             <div>
-                                <label class="block text-xs font-bold text-gray-500 uppercase mb-1 text-center">Guru Insentif</label>
+                                <label class="block text-xs font-bold text-black-500 uppercase mb-1 text-center">Guru Insentif</label>
                                 <input type="number" name="penerima_insentif" value="0" class="w-full border-gray-300 rounded-lg focus:ring-blue-500 text-sm text-center">
                             </div>
                             <div>
-                                <label class="block text-xs font-bold text-gray-500 uppercase mb-1 text-center">Non-Insentif</label>
+                                <label class="block text-xs font-bold text-black-500 uppercase mb-1 text-center">Non-Insentif</label>
                                 <input type="number" name="belum_menerima_insentif" value="0" class="w-full border-gray-300 rounded-lg focus:ring-blue-500 text-sm text-center">
                             </div>
                             
                             {{-- Baris 2: Tambahan Dari Excel --}}
                             <div>
-                                <label class="block text-xs font-bold text-gray-500 uppercase mb-1 text-center">Jml PNS</label>
+                                <label class="block text-xs font-bold text-black-500 uppercase mb-1 text-center">Jml PNS</label>
                                 <input type="number" name="jumlah_pns" value="0" class="w-full border-gray-300 rounded-lg focus:ring-blue-500 text-sm text-center">
                             </div>
                             <div>
-                                <label class="block text-xs font-bold text-gray-500 uppercase mb-1 text-center" title="Gabungan PPPK dan PPPK Paruh Waktu">Jml PPPK</label>
+                                <label class="block text-xs font-bold text-black-500 uppercase mb-1 text-center" title="Gabungan PPPK dan PPPK Paruh Waktu">Jml PPPK</label>
                                 <input type="number" name="jumlah_pppk" value="0" class="w-full border-gray-300 rounded-lg focus:ring-blue-500 text-sm text-center">
                             </div>
                             <div>
-                                <label class="block text-xs font-bold text-gray-500 uppercase mb-1 text-center">Sertifikasi</label>
+                                <label class="block text-xs font-bold text-black-500 uppercase mb-1 text-center">Sertifikasi</label>
                                 <input type="number" name="jumlah_sertifikasi" value="0" class="w-full border-gray-300 rounded-lg focus:ring-blue-500 text-sm text-center">
                             </div>
                         </div>
 
                         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                             <div>
-                                <label class="block text-sm font-semibold text-gray-700 mb-1 text-center">Kepala Lembaga</label>
+                                <label class="block text-sm font-semibold text-black-700 mb-1 text-center">Kepala Lembaga</label>
                                 <input type="text" name="kepala_lembaga" class="w-full border-gray-300 rounded-lg shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm py-2.5 text-center uppercase" oninput="this.value = this.value.toUpperCase()">
                             </div>
                             <div>
-                                <label class="block text-sm font-semibold text-gray-700 mb-1 text-center">No. Telp / WA</label>
+                                <label class="block text-sm font-semibold text-black-700 mb-1 text-center">No. Telp / WA</label>
                                 <input type="text" name="no_telp" class="w-full border-gray-300 rounded-lg shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm py-2.5 text-center">
                             </div>
                             <div>
-                                <label class="block text-sm font-semibold text-gray-700 mb-1 text-center">Status Operasional</label>
+                                <label class="block text-sm font-semibold text-black-700 mb-1 text-center">Status Operasional</label>
                                 <select name="status" class="w-full border-gray-300 rounded-lg shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm py-2.5 text-center">
                                     <option value="AKTIF">AKTIF</option>
                                     <option value="TIDAK AKTIF">TIDAK AKTIF</option>
@@ -174,7 +174,7 @@
                     <div class="mb-8">
                         <div class="flex items-center gap-2 mb-4 pb-2 border-b border-gray-100">
                             <span class="bg-purple-100 text-purple-700 w-8 h-8 flex items-center justify-center rounded-full font-bold text-sm">C</span>
-                            <h3 class="text-lg font-bold text-gray-800">Upload Dokumen (PDF)</h3>
+                            <h3 class="text-lg font-bold text-black-800">Upload Dokumen (PDF)</h3>
                         </div>
 
                         {{-- Ubah Grid menjadi Space-y (Vertical Stack) agar Full Width --}}
@@ -183,14 +183,14 @@
                             {{-- 1. KOTAK UPLOAD IJOP --}}
                             <div class="bg-gray-50 p-6 rounded-xl border border-gray-200 shadow-sm">
                                 <div class="flex justify-between items-center mb-4">
-                                    <label class="block text-base font-bold text-gray-800">1. Izin Operasional (IJOP)</label>
-                                    <span class="text-[10px] bg-white border border-gray-300 px-2 py-0.5 rounded text-gray-500 font-mono">PDF Max 2MB</span>
+                                    <label class="block text-base font-bold text-black-800">1. Surat Izin Operasional (IJOP)</label>
+                                    <span class="text-[10px] bg-white border border-gray-300 px-2 py-0.5 rounded text-black-500 font-mono">PDF Max 2MB</span>
                                 </div>
                                 
                                 {{-- Input File Wrapper --}}
                                 <div class="relative group mb-4">
                                     <input type="file" name="file_ijop" id="file_ijop" accept="application/pdf"
-                                           class="block w-full text-sm text-gray-500
+                                           class="block w-full text-sm text-black-500
                                                   file:mr-4 file:py-2.5 file:px-6
                                                   file:rounded-full file:border-0
                                                   file:text-sm file:font-bold
@@ -212,11 +212,39 @@
                                     <iframe id="preview_ijop" class="hidden w-full h-[500px] border border-gray-300 rounded-lg bg-white shadow-inner" src=""></iframe>
                                 </div>
 
+
+                                {{-- [BARU POIN 1] KOTAK UPLOAD SKD --}}
+                                <div class="bg-gray-50 p-6 rounded-xl border border-gray-200 shadow-sm mt-8">
+                                    <div class="flex justify-between items-center mb-4">
+                                        <label class="block text-base font-bold text-black-800">2. Surat Keterangan Domisili (SKD)</label>
+                                        <span class="text-[10px] bg-white border border-gray-300 px-2 py-0.5 rounded text-black-500 font-mono">PDF Max 2MB</span>
+                                    </div>
+                                    <p class="text-xs text-orange-600 mb-4 font-bold italic">*Hanya diisi jika belum memiliki IJOP resmi.</p>
+
+                                    <div class="relative group mb-4">
+                                        <input type="file" name="file_skd" id="file_skd" accept="application/pdf"
+                                            class="block w-full text-sm text-black-500 file:mr-4 file:py-2.5 file:px-6 file:rounded-full file:border-0 file:text-sm file:font-bold file:bg-gray-600 file:text-white hover:file:bg-gray-700 transition cursor-pointer text-center"
+                                            onchange="handleFileSelect(this, 'preview_skd', 'btn_reset_skd')">
+                                        
+                                        <div class="text-center">
+                                            <button type="button" id="btn_reset_skd" onclick="resetFile('file_skd', 'preview_skd', 'btn_reset_skd')" 
+                                                    class="hidden mt-2 text-sm text-red-600 hover:text-red-800 font-bold underline transition">
+                                                &times; Hapus File / Batal Upload
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    <div class="mt-4">
+                                        <iframe id="preview_skd" class="hidden w-full h-[500px] border border-gray-300 rounded-lg bg-white shadow-inner" src=""></iframe>
+                                    </div>
+                                </div>
+                                
+
                                 {{-- TANGGAL OTOMATIS 5 TAHUN --}}
                                 <div class="mt-6 pt-4 border-t border-gray-200">
                                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4 items-center">
                                         <div>
-                                            <label class="block text-sm font-bold text-gray-600 mb-1 text-center md:text-left">Tanggal Terbit IJOP</label>
+                                            <label class="block text-sm font-bold text-black-600 mb-1 text-center md:text-left">Tanggal Terbit IJOP</label>
                                             <input type="date" name="masa_berlaku_ijop" id="tgl_ijop" 
                                                    class="w-full border-gray-300 rounded-md text-sm shadow-sm focus:border-blue-500 focus:ring-blue-500 text-center">
                                         </div>
@@ -228,7 +256,7 @@
                                     </div>
                                 </div>
                                 <div class="mt-4 pt-4 border-t border-gray-200">
-                                    <label class="block text-sm font-bold text-gray-600 mb-1">Status Fisik Dokumen IJOP</label>
+                                    <label class="block text-sm font-bold text-black-600 mb-1">Status Fisik Dokumen IJOP</label>
                                     <input type="text" name="ijop" value="ADA" class="w-full border-gray-300 rounded-md text-sm shadow-sm focus:border-blue-500 focus:ring-blue-500 uppercase" placeholder="CONTOH: ADA / TIDAK ADA / SUKET DOMISILI" oninput="this.value = this.value.toUpperCase()">
                                 </div>
                                 <input type="hidden" name="status_ijop" value="Pending">
@@ -237,13 +265,13 @@
                             {{-- 2. KOTAK UPLOAD SUPER --}}
                             <div class="bg-gray-50 p-6 rounded-xl border border-gray-200 shadow-sm">
                                 <div class="flex justify-between items-center mb-4">
-                                    <label class="block text-base font-bold text-gray-800">2. Surat Pernyataan Tanggung Jawab Mutlak (SPTJM)</label>
-                                    <span class="text-[10px] bg-white border border-gray-300 px-2 py-0.5 rounded text-gray-500 font-mono">PDF Max 2MB</span>
+                                    <label class="block text-base font-bold text-black-800">3. Surat Pernyataan Tanggung Jawab Mutlak (SPTJM)</label>
+                                    <span class="text-[10px] bg-white border border-gray-300 px-2 py-0.5 rounded text-black-500 font-mono">PDF Max 2MB</span>
                                 </div>
 
                                 <div class="relative group mb-4">
                                     <input type="file" name="file_super" id="file_super" accept="application/pdf"
-                                           class="block w-full text-sm text-gray-500
+                                           class="block w-full text-sm text-black-500
                                                   file:mr-4 file:py-2.5 file:px-6
                                                   file:rounded-full file:border-0
                                                   file:text-sm file:font-bold
@@ -265,7 +293,7 @@
                                 
                                 <div class="mt-4 pt-4 border-t border-gray-200 text-center">
                                     
-                                    <p class="text-xs text-gray-500 italic">Pastikan dokumen Surat Pernyataan sudah ditandatangani dan stempel basah sebelum di-scan.</p>
+                                    <p class="text-xs text-black-500 italic">Pastikan dokumen Surat Pernyataan sudah ditandatangani dan stempel basah sebelum di-scan.</p>
                                 </div>
                                 <input type="hidden" name="status_super" value="Pending">
                             </div>
@@ -275,13 +303,13 @@
                             {{-- 3. KOTAK UPLOAD SKAM [BARU] --}}
                             <div class="bg-gray-50 p-6 rounded-xl border border-gray-200 shadow-sm">
                                 <div class="flex justify-between items-center mb-4">
-                                    <label class="block text-base font-bold text-gray-800">3. Surat Keterangan Aktif Mengajar (SKAM)</label>
-                                    <span class="text-[10px] bg-white border border-gray-300 px-2 py-0.5 rounded text-gray-500 font-mono">PDF Max 2MB</span>
+                                    <label class="block text-base font-bold text-black-800">4. Surat Keterangan Aktif Mengajar (SKAM)</label>
+                                    <span class="text-[10px] bg-white border border-gray-300 px-2 py-0.5 rounded text-black-500 font-mono">PDF Max 2MB</span>
                                 </div>
 
                                 <div class="relative group mb-4">
                                     <input type="file" name="file_skam" id="file_skam" accept="application/pdf"
-                                           class="block w-full text-sm text-gray-500
+                                           class="block w-full text-sm text-black-500
                                                   file:mr-4 file:py-2.5 file:px-6
                                                   file:rounded-full file:border-0
                                                   file:text-sm file:font-bold
@@ -310,48 +338,48 @@
                         {{-- 📸 [BARU - FASE 3] PANEL 4 FOTO DOKUMENTASI (LAYOUT GRID 2x2)     --}}
                         {{-- ================================================================= --}}
                         <div class="mt-8 bg-white p-6 rounded-xl border border-gray-300 shadow-sm">
-                            <h3 class="text-sm font-bold text-gray-800 uppercase tracking-wide mb-1">4. Dokumentasi Lembaga (Foto Lapangan)</h3>
-                            <p class="text-[11px] text-gray-500 mb-4">Silakan unggah foto lapangan. <b class="text-red-500">Hanya Format Gambar (JPG/PNG)</b>. Maksimal 1MB per foto.</p>
+                            <h3 class="text-sm font-bold text-black-800 uppercase tracking-wide mb-1">4. Dokumentasi Lembaga (Foto Lapangan)</h3>
+                            <p class="text-[11px] text-black-500 mb-4">Silakan unggah foto lapangan. <b class="text-red-500">Hanya Format Gambar (JPG/PNG)</b>. Maksimal 1MB per foto.</p>
                             
                             {{-- GRID MANDAT: 2 Ke Samping, 2 Ke Bawah --}}
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 
                                 {{-- Kotak A: Profil Lembaga --}}
                                 <div class="border border-gray-300 rounded-lg p-3 bg-gray-50 flex flex-col items-center">
-                                    <label class="text-[11px] font-bold text-gray-700 uppercase mb-1 w-full text-center">A. Foto Profil Lembaga</label>
+                                    <label class="text-[11px] font-bold text-black-700 uppercase mb-1 w-full text-center">A. Foto Profil Lembaga</label>
                                     <div class="w-full h-32 bg-gray-200 border border-dashed border-gray-400 rounded-md mb-2 overflow-hidden flex justify-center items-center relative">
                                         <img id="preview_lembaga" src="#" alt="Preview" class="hidden object-cover w-full h-full absolute inset-0 z-10" />
-                                        <span class="text-gray-400 text-[11px] z-0">Belum Ada Gambar</span>
+                                        <span class="text-black-400 text-[11px] z-0">Belum Ada Gambar</span>
                                     </div>
                                     <input type="file" name="foto_lembaga" accept="image/*" onchange="previewImageFase3(this, 'preview_lembaga')" class="text-[10px] w-full file:mr-2 file:py-1 file:px-2 file:rounded file:border-0 file:text-[10px] file:font-bold file:bg-blue-600 file:text-white hover:file:bg-blue-700 cursor-pointer">
                                 </div>
 
                                 {{-- Kotak B: Papan Nama (Nambor) --}}
                                 <div class="border border-gray-300 rounded-lg p-3 bg-gray-50 flex flex-col items-center">
-                                    <label class="text-[11px] font-bold text-gray-700 uppercase mb-1 w-full text-center">B. Papan Nama / Nambor</label>
+                                    <label class="text-[11px] font-bold text-black-700 uppercase mb-1 w-full text-center">B. Papan Nama / Nambor</label>
                                     <div class="w-full h-32 bg-gray-200 border border-dashed border-gray-400 rounded-md mb-2 overflow-hidden flex justify-center items-center relative">
                                         <img id="preview_nambor" src="#" alt="Preview" class="hidden object-cover w-full h-full absolute inset-0 z-10" />
-                                        <span class="text-gray-400 text-[11px] z-0">Belum Ada Gambar</span>
+                                        <span class="text-black-400 text-[11px] z-0">Belum Ada Gambar</span>
                                     </div>
                                     <input type="file" name="foto_nambor" accept="image/*" onchange="previewImageFase3(this, 'preview_nambor')" class="text-[10px] w-full file:mr-2 file:py-1 file:px-2 file:rounded file:border-0 file:text-[10px] file:font-bold file:bg-blue-600 file:text-white hover:file:bg-blue-700 cursor-pointer">
                                 </div>
 
                                 {{-- Kotak C: Gedung Bangunan --}}
                                 <div class="border border-gray-300 rounded-lg p-3 bg-gray-50 flex flex-col items-center">
-                                    <label class="text-[11px] font-bold text-gray-700 uppercase mb-1 w-full text-center">C. Gedung / Bangunan</label>
+                                    <label class="text-[11px] font-bold text-black-700 uppercase mb-1 w-full text-center">C. Gedung / Bangunan</label>
                                     <div class="w-full h-32 bg-gray-200 border border-dashed border-gray-400 rounded-md mb-2 overflow-hidden flex justify-center items-center relative">
                                         <img id="preview_bangunan" src="#" alt="Preview" class="hidden object-cover w-full h-full absolute inset-0 z-10" />
-                                        <span class="text-gray-400 text-[11px] z-0">Belum Ada Gambar</span>
+                                        <span class="text-black-400 text-[11px] z-0">Belum Ada Gambar</span>
                                     </div>
                                     <input type="file" name="foto_bangunan" accept="image/*" onchange="previewImageFase3(this, 'preview_bangunan')" class="text-[10px] w-full file:mr-2 file:py-1 file:px-2 file:rounded file:border-0 file:text-[10px] file:font-bold file:bg-blue-600 file:text-white hover:file:bg-blue-700 cursor-pointer">
                                 </div>
 
                                 {{-- Kotak D: KBM --}}
                                 <div class="border border-gray-300 rounded-lg p-3 bg-gray-50 flex flex-col items-center">
-                                    <label class="text-[11px] font-bold text-gray-700 uppercase mb-1 w-full text-center">D. Aktivitas Belajar (KBM)</label>
+                                    <label class="text-[11px] font-bold text-black-700 uppercase mb-1 w-full text-center">D. Aktivitas Belajar (KBM)</label>
                                     <div class="w-full h-32 bg-gray-200 border border-dashed border-gray-400 rounded-md mb-2 overflow-hidden flex justify-center items-center relative">
                                         <img id="preview_kbm" src="#" alt="Preview" class="hidden object-cover w-full h-full absolute inset-0 z-10" />
-                                        <span class="text-gray-400 text-[11px] z-0">Belum Ada Gambar</span>
+                                        <span class="text-black-400 text-[11px] z-0">Belum Ada Gambar</span>
                                     </div>
                                     <input type="file" name="foto_kbm" accept="image/*" onchange="previewImageFase3(this, 'preview_kbm')" class="text-[10px] w-full file:mr-2 file:py-1 file:px-2 file:rounded file:border-0 file:text-[10px] file:font-bold file:bg-blue-600 file:text-white hover:file:bg-blue-700 cursor-pointer">
                                 </div>
@@ -360,7 +388,7 @@
                         </div>
                         
                         <div class="mt-8">
-                            <label class="block text-sm font-semibold text-gray-700 mb-1 text-center">Catatan Tambahan (Opsional)</label>
+                            <label class="block text-sm font-semibold text-black-700 mb-1 text-center">Catatan Tambahan (Opsional)</label>
 
 
 
@@ -370,7 +398,7 @@
 
                     {{-- FOOTER ACTION --}}
                     <div class="flex items-center justify-end gap-3 pt-6 border-t border-gray-200">
-                        <a href="{{ route('lembaga.index') }}" class="px-5 py-2.5 text-sm font-bold text-gray-600 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition">
+                        <a href="{{ route('lembaga.index') }}" class="px-5 py-2.5 text-sm font-bold text-black-600 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition">
                             Batal
                         </a>
                         <button type="submit" class="px-6 py-2.5 text-sm font-bold text-white bg-green-600 rounded-lg shadow-md hover:bg-green-700 transition flex items-center gap-2">

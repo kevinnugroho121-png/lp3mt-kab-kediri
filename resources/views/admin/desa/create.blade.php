@@ -1,6 +1,6 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-bold text-xl text-gray-800 leading-tight">
+        <h2 class="font-bold text-xl text-black-800 leading-tight">
             {{ __('Tambah Data Desa') }}
         </h2>
     </x-slot>
@@ -14,8 +14,8 @@
                     
                     {{-- JUDUL FORM --}}
                     <div class="mb-6">
-                        <h3 class="text-lg font-bold text-gray-800">Formulir Desa Baru</h3>
-                        <p class="text-sm text-gray-500">Silakan lengkapi data desa di bawah ini.</p>
+                        <h3 class="text-lg font-bold text-black-800">Formulir Desa Baru</h3>
+                        <p class="text-sm text-black-500">Silakan lengkapi data desa di bawah ini.</p>
                     </div>
 
                     {{-- START FORM --}}
@@ -24,10 +24,10 @@
 
                         {{-- 1. INPUT NAMA DESA --}}
                         <div class="mb-5">
-                            <label for="nama_desa" class="block mb-2 text-sm font-bold text-gray-700">Nama Desa / Kelurahan</label>
+                            <label for="nama_desa" class="block mb-2 text-sm font-bold text-black-700">Nama Desa / Kelurahan</label>
                             <input type="text" name="nama_desa" id="nama_desa" 
                                    value="{{ old('nama_desa') }}"
-                                   class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5" 
+                                   class="bg-gray-50 border border-gray-300 text-black-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5" 
                                    placeholder="Contoh: Sukorejo" required autofocus>
                             
                             {{-- Pesan Error Validasi --}}
@@ -38,14 +38,14 @@
 
                         {{-- 2. INPUT KECAMATAN (LOGIKA CERDAS) --}}
                         <div class="mb-6">
-                            <label for="kecamatan_id" class="block mb-2 text-sm font-bold text-gray-700">Kecamatan Induk</label>
+                            <label for="kecamatan_id" class="block mb-2 text-sm font-bold text-black-700">Kecamatan Induk</label>
                             
                             @if(Auth::user()->role == 'korcam')
                                 {{-- TAMPILAN KHUSUS KORCAM (READONLY / TERKUNCI) --}}
                                 <div class="relative">
                                     {{-- Input Visual (Hanya untuk dilihat, warna abu-abu) --}}
                                     <input type="text" value="{{ Auth::user()->kecamatan->nama_kecamatan ?? 'Error: Wilayah Tidak Ditemukan' }}" 
-                                           class="bg-gray-100 border border-gray-300 text-gray-500 text-sm rounded-lg block w-full p-2.5 cursor-not-allowed font-bold" 
+                                           class="bg-gray-100 border border-gray-300 text-black-500 text-sm rounded-lg block w-full p-2.5 cursor-not-allowed font-bold" 
                                            readonly>
                                     
                                     {{-- Input Hidden (Nilai Asli yang dikirim ke Controller) --}}
@@ -58,7 +58,7 @@
                                 </div>
                             @else
                                 {{-- TAMPILAN ADMIN (DROPDOWN BEBAS) --}}
-                                <select name="kecamatan_id" id="kecamatan_id" class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5">
+                                <select name="kecamatan_id" id="kecamatan_id" class="bg-white border border-gray-300 text-black-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5">
                                     <option value="">-- Pilih Kecamatan --</option>
                                     @foreach($kecamatans as $kec)
                                         <option value="{{ $kec->id }}" {{ old('kecamatan_id') == $kec->id ? 'selected' : '' }}>
@@ -76,7 +76,7 @@
                         {{-- 3. TOMBOL AKSI --}}
                         <div class="flex items-center justify-end gap-3 pt-4 border-t border-gray-100">
                             {{-- Tombol Batal --}}
-                            <a href="{{ route('desa.index') }}" class="text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-200 font-medium rounded-lg text-sm px-5 py-2.5">
+                            <a href="{{ route('desa.index') }}" class="text-black-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-200 font-medium rounded-lg text-sm px-5 py-2.5">
                                 Batal
                             </a>
                             {{-- Tombol Simpan --}}

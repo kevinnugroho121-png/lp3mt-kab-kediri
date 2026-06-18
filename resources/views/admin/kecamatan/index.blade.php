@@ -1,6 +1,6 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-bold text-xl text-gray-800 leading-tight">
+        <h2 class="font-bold text-xl text-black-800 leading-tight">
             {{ __('Master Data Wilayah') }}
         </h2>
     </x-slot>
@@ -12,11 +12,11 @@
             <div class="flex justify-between items-center mb-4">
                 {{-- Bagian Kiri: Judul --}}
                 <div>
-                    <h3 class="font-bold text-lg text-gray-800">Data Kecamatan & Desa</h3>
+                    <h3 class="font-bold text-lg text-black-800">Data Kecamatan & Desa</h3>
                     @if(Auth::user()->role == 'korcam')
                         <p class="text-xs text-green-600 font-bold">Wilayah Kerja: {{ Auth::user()->kecamatan->nama_kecamatan ?? '-' }}</p>
                     @else
-                        <p class="text-xs text-gray-500">Kelola data wilayah administratif Kabupaten Kediri</p>
+                        <p class="text-xs text-black-500">Kelola data wilayah administratif Kabupaten Kediri</p>
                     @endif
                 </div>
                 
@@ -37,7 +37,7 @@
                             </button>
 
                             {{-- Tombol Reset (Selalu Tampil / Standby) --}}
-                            <a href="{{ route('kecamatan.index') }}" class="bg-gray-100 hover:bg-gray-200 text-gray-600 px-3 py-1.5 rounded-lg text-sm font-bold transition shadow-sm border border-gray-300">
+                            <a href="{{ route('kecamatan.index') }}" class="bg-gray-100 hover:bg-gray-200 text-black-600 px-3 py-1.5 rounded-lg text-sm font-bold transition shadow-sm border border-gray-300">
                                 Reset
                             </a>
                         </form>
@@ -74,7 +74,7 @@
                     <thead>
 
 
-                        <tr class="bg-gray-100 text-gray-700 uppercase text-xs tracking-wider">
+                        <tr class="bg-gray-100 text-black-700 uppercase text-xs tracking-wider">
                             <th class="border border-gray-300 px-2 py-2 text-center w-12 font-bold">No</th>
                             <th class="border border-gray-300 px-3 py-2 text-center font-bold">Nama Kecamatan</th>
                             <th class="border border-gray-300 px-3 py-2 text-center font-bold w-48">Data Desa</th> 
@@ -87,7 +87,7 @@
                     </thead>
                     
                     {{-- BODY --}}
-                    <tbody class="text-gray-600">
+                    <tbody class="text-black-600">
                         @forelse($kecamatans as $index => $kecamatan)
                             <tr class="hover:bg-yellow-50 transition duration-150">
                                 
@@ -97,7 +97,7 @@
                                 </td>
 
                                 {{-- NAMA KECAMATAN --}}
-                                <td class="border border-gray-300 px-3 py-1 font-bold text-gray-800">
+                                <td class="border border-gray-300 px-3 py-1 font-bold text-black-800">
                                     {{ $kecamatan->nama_kecamatan }}
                                 </td>
 
@@ -155,9 +155,9 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="4" class="border border-gray-300 px-4 py-8 text-center text-gray-400 bg-gray-50">
+                                <td colspan="4" class="border border-gray-300 px-4 py-8 text-center text-black-400 bg-gray-50">
                                     <div class="flex flex-col items-center justify-center">
-                                        <svg class="w-8 h-8 text-gray-300 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"></path></svg>
+                                        <svg class="w-8 h-8 text-black-300 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"></path></svg>
                                         <span class="text-xs">Data Belum Ada</span>
                                     </div>
                                 </td>

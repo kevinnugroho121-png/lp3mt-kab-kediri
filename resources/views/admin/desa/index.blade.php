@@ -1,6 +1,6 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-bold text-xl text-gray-800 leading-tight">
+        <h2 class="font-bold text-xl text-black-800 leading-tight">
             {{ __('Data Desa') }}
         </h2>
     </x-slot>
@@ -14,13 +14,13 @@
                 {{-- KIRI: JUDUL & TOMBOL KEMBALI --}}
                 <div class="flex flex-col items-start gap-2">
                     {{-- Tombol Kembali ke Kecamatan --}}
-                    <a href="{{ route('kecamatan.index') }}" class="inline-flex items-center gap-1 text-gray-500 hover:text-gray-700 text-sm font-medium transition mb-1">
+                    <a href="{{ route('kecamatan.index') }}" class="inline-flex items-center gap-1 text-black-500 hover:text-black-700 text-sm font-medium transition mb-1">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
                         Kembali ke Kecamatan
                     </a>
                     <div>
-                        <h3 class="font-bold text-2xl text-gray-800 leading-none">Data Desa / Kelurahan</h3>
-                        <p class="text-xs text-gray-500 mt-1">
+                        <h3 class="font-bold text-2xl text-black-800 leading-none">Data Desa / Kelurahan</h3>
+                        <p class="text-xs text-black-500 mt-1">
                             @if(request('kecamatan_id'))
                                 Menampilkan desa di kecamatan terpilih
                             @else
@@ -53,7 +53,7 @@
                         {{-- Tombol Reset (Standby - Abu-abu) --}}
                         {{-- Logika: Jika ada kecamatan_id, reset hanya search-nya saja, tetap di kecamatan itu --}}
                         <a href="{{ route('desa.index', request('kecamatan_id') ? ['kecamatan_id' => request('kecamatan_id')] : []) }}" 
-                           class="bg-gray-100 hover:bg-gray-200 text-gray-600 px-3 py-1.5 rounded-lg text-sm font-bold transition shadow-sm border border-gray-300">
+                           class="bg-gray-100 hover:bg-gray-200 text-black-600 px-3 py-1.5 rounded-lg text-sm font-bold transition shadow-sm border border-gray-300">
                             Reset
                         </a>
                     </form>
@@ -79,7 +79,7 @@
                 <table class="w-full text-sm border-collapse">
                     {{-- HEADER --}}
                     <thead>
-                        <tr class="bg-gray-100 text-gray-700 uppercase text-xs tracking-wider">
+                        <tr class="bg-gray-100 text-black-700 uppercase text-xs tracking-wider">
                             <th class="border border-gray-300 px-2 py-2 text-center w-12 font-bold">No</th>
                             <th class="border border-gray-300 px-3 py-2 text-center font-bold">Nama Desa</th>
                             <th class="border border-gray-300 px-3 py-2 text-center font-bold w-1/3">Kecamatan</th>
@@ -88,7 +88,7 @@
                     </thead>
                     
                     {{-- BODY --}}
-                    <tbody class="text-gray-600">
+                    <tbody class="text-black-600">
                         @forelse($desas as $index => $desa)
                             <tr class="hover:bg-yellow-50 transition duration-150">
                                 
@@ -98,7 +98,7 @@
                                 </td>
 
                                 {{-- NAMA DESA --}}
-                                <td class="border border-gray-300 px-3 py-1 font-bold text-gray-800">
+                                <td class="border border-gray-300 px-3 py-1 font-bold text-black-800">
                                     {{ $desa->nama_desa }}
                                 </td>
 
@@ -128,9 +128,9 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="4" class="border border-gray-300 px-4 py-8 text-center text-gray-400 bg-gray-50">
+                                <td colspan="4" class="border border-gray-300 px-4 py-8 text-center text-black-400 bg-gray-50">
                                     <div class="flex flex-col items-center justify-center">
-                                        <svg class="w-8 h-8 text-gray-300 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"></path></svg>
+                                        <svg class="w-8 h-8 text-black-300 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"></path></svg>
                                         <span class="text-xs">Data Desa Belum Ada</span>
                                     </div>
                                 </td>

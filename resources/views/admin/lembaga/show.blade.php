@@ -1,6 +1,6 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-bold text-xl text-gray-800 leading-tight">
+        <h2 class="font-bold text-xl text-black-800 leading-tight">
             {{ __('Detail Data Lembaga') }}
         </h2>
     </x-slot>
@@ -11,11 +11,11 @@
             {{-- HEADER NAVIGASI --}}
             <div class="flex justify-between items-center mb-6">
                 <div>
-                    <h1 class="text-2xl font-bold text-gray-800">Detail Lembaga</h1>
-                    <p class="text-sm text-gray-500 mt-1">Mode Hanya Baca (Read Only)</p>
+                    <h1 class="text-2xl font-bold text-black-800">Detail Lembaga</h1>
+                    <p class="text-sm text-black-500 mt-1">Mode Hanya Baca (Read Only)</p>
                 </div>
                 <div class="flex gap-2">
-                    <a href="{{ route('lembaga.index') }}" class="inline-flex items-center px-4 py-2 bg-white border border-gray-300 rounded-md font-semibold text-xs text-gray-700 uppercase tracking-widest shadow-sm hover:bg-gray-50 transition">
+                    <a href="{{ route('lembaga.index') }}" class="inline-flex items-center px-4 py-2 bg-white border border-gray-300 rounded-md font-semibold text-xs text-black-700 uppercase tracking-widest shadow-sm hover:bg-gray-50 transition">
                         &larr; Kembali
                     </a>
                     <a href="{{ route('lembaga.edit', $lembaga->id) }}" class="inline-flex items-center px-4 py-2 bg-yellow-500 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest shadow-sm hover:bg-yellow-600 transition">
@@ -30,45 +30,45 @@
                 <div class="mb-10">
                     <div class="flex items-center gap-2 mb-4 pb-2 border-b border-gray-100">
                         <span class="bg-blue-100 text-blue-700 w-8 h-8 flex items-center justify-center rounded-full font-bold text-sm">A</span>
-                        <h3 class="text-lg font-bold text-gray-800">Identitas & Lokasi</h3>
+                        <h3 class="text-lg font-bold text-black-800">Identitas & Lokasi</h3>
                     </div>
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         {{-- Nama Lembaga --}}
                         <div class="md:col-span-2">
-                            <label class="block text-sm font-semibold text-gray-500 mb-1 text-center">Nama Lembaga</label>
-                            <input type="text" value="{{ $lembaga->nama_lembaga }}" class="w-full bg-gray-50 border-gray-300 rounded-lg text-sm py-2.5 text-center font-bold text-gray-800" readonly>
+                            <label class="block text-sm font-semibold text-black-500 mb-1 text-center">Nama Lembaga</label>
+                            <input type="text" value="{{ $lembaga->nama_lembaga }}" class="w-full bg-gray-50 border-gray-300 rounded-lg text-sm py-2.5 text-center font-bold text-black-800" readonly>
                         </div>
 
                         {{-- Kecamatan & Desa --}}
                         <div>
-                            <label class="block text-sm font-semibold text-gray-500 mb-1 text-center">Kecamatan</label>
-                            <input type="text" value="{{ $lembaga->kecamatan->nama_kecamatan ?? '-' }}" class="w-full bg-gray-50 border-gray-300 rounded-lg text-sm py-2.5 text-center text-gray-700" readonly>
+                            <label class="block text-sm font-semibold text-black-500 mb-1 text-center">Kecamatan</label>
+                            <input type="text" value="{{ $lembaga->kecamatan->nama_kecamatan ?? '-' }}" class="w-full bg-gray-50 border-gray-300 rounded-lg text-sm py-2.5 text-center text-black-700" readonly>
                         </div>
 
                         <div>
-                            <label class="block text-sm font-semibold text-gray-500 mb-1 text-center">Desa / Kelurahan</label>
-                            <input type="text" value="{{ $lembaga->desa->nama_desa ?? '-' }}" class="w-full bg-gray-50 border-gray-300 rounded-lg text-sm py-2.5 text-center text-gray-700" readonly>
+                            <label class="block text-sm font-semibold text-black-500 mb-1 text-center">Desa / Kelurahan</label>
+                            <input type="text" value="{{ $lembaga->desa->nama_desa ?? '-' }}" class="w-full bg-gray-50 border-gray-300 rounded-lg text-sm py-2.5 text-center text-black-700" readonly>
                         </div>
 
                         {{-- Jenis & Ormas --}}
                         <div>
-                            <label class="block text-sm font-semibold text-gray-500 mb-1 text-center">Jenis Lembaga</label>
-                            <input type="text" value="{{ $lembaga->jenis_lembaga }}" class="w-full bg-gray-50 border-gray-300 rounded-lg text-sm py-2.5 text-center text-gray-700" readonly>
+                            <label class="block text-sm font-semibold text-black-500 mb-1 text-center">Jenis Lembaga</label>
+                            <input type="text" value="{{ $lembaga->jenis_lembaga }}" class="w-full bg-gray-50 border-gray-300 rounded-lg text-sm py-2.5 text-center text-black-700" readonly>
                         </div>
                         <div>
-                            <label class="block text-sm font-semibold text-gray-500 mb-1 text-center">Ormas Afiliasi</label>
-                            <input type="text" value="{{ $lembaga->ormas ?? '-' }}" class="w-full bg-gray-50 border-gray-300 rounded-lg text-sm py-2.5 text-center text-gray-700" readonly>
+                            <label class="block text-sm font-semibold text-black-500 mb-1 text-center">Ormas Afiliasi</label>
+                            <input type="text" value="{{ $lembaga->ormas ?? '-' }}" class="w-full bg-gray-50 border-gray-300 rounded-lg text-sm py-2.5 text-center text-black-700" readonly>
                         </div>
 
                         {{-- NSBQ & Alamat --}}
                         <div class="md:col-span-1">
-                            <label class="block text-sm font-semibold text-gray-500 mb-1 text-center">Nomor Statistik (NSBQ)</label>
-                            <input type="text" value="{{ $lembaga->nsbq ?? '-' }}" class="w-full bg-gray-50 border-gray-300 rounded-lg text-sm py-2.5 text-center text-gray-700" readonly>
+                            <label class="block text-sm font-semibold text-black-500 mb-1 text-center">Nomor Statistik (NSBQ)</label>
+                            <input type="text" value="{{ $lembaga->nsbq ?? '-' }}" class="w-full bg-gray-50 border-gray-300 rounded-lg text-sm py-2.5 text-center text-black-700" readonly>
                         </div>
                         <div class="md:col-span-1">
-                            <label class="block text-sm font-semibold text-gray-500 mb-1 text-center">Alamat Lengkap</label>
-                            <input type="text" value="{{ $lembaga->alamat ?? '-' }}" class="w-full bg-gray-50 border-gray-300 rounded-lg text-sm py-2.5 text-center text-gray-700" readonly>
+                            <label class="block text-sm font-semibold text-black-500 mb-1 text-center">Alamat Lengkap</label>
+                            <input type="text" value="{{ $lembaga->alamat ?? '-' }}" class="w-full bg-gray-50 border-gray-300 rounded-lg text-sm py-2.5 text-center text-black-700" readonly>
                         </div>
                     </div>
                 </div>
@@ -77,25 +77,25 @@
                 <div class="mb-10">
                     <div class="flex items-center gap-2 mb-4 pb-2 border-b border-gray-100">
                         <span class="bg-green-100 text-green-700 w-8 h-8 flex items-center justify-center rounded-full font-bold text-sm">B</span>
-                        <h3 class="text-lg font-bold text-gray-800">Statistik & Kontak</h3>
+                        <h3 class="text-lg font-bold text-black-800">Statistik & Kontak</h3>
                     </div>
                     
                     {{-- Grid 4 Kolom Statistik --}}
                     <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
                         <div>
-                            <label class="block text-xs font-bold text-gray-500 uppercase mb-1 text-center">Jml Santri</label>
+                            <label class="block text-xs font-bold text-black-500 uppercase mb-1 text-center">Jml Santri</label>
                             <input type="text" value="{{ $lembaga->jumlah_santri }}" class="w-full bg-blue-50 border-blue-200 rounded-lg text-sm font-bold text-center text-blue-700" readonly>
                         </div>
                         <div>
-                            <label class="block text-xs font-bold text-gray-500 uppercase mb-1 text-center">Total Guru</label>
+                            <label class="block text-xs font-bold text-black-500 uppercase mb-1 text-center">Total Guru</label>
                             <input type="text" value="{{ $lembaga->jumlah_guru }}" class="w-full bg-green-50 border-green-200 rounded-lg text-sm font-bold text-center text-green-700" readonly>
                         </div>
                         <div>
-                            <label class="block text-xs font-bold text-gray-500 uppercase mb-1 text-center">Guru Insentif</label>
+                            <label class="block text-xs font-bold text-black-500 uppercase mb-1 text-center">Guru Insentif</label>
                             <input type="text" value="{{ $lembaga->penerima_insentif }}" class="w-full bg-gray-50 border-gray-300 rounded-lg text-sm text-center" readonly>
                         </div>
                         <div>
-                            <label class="block text-xs font-bold text-gray-500 uppercase mb-1 text-center">Non-Insentif</label>
+                            <label class="block text-xs font-bold text-black-500 uppercase mb-1 text-center">Non-Insentif</label>
                             <input type="text" value="{{ $lembaga->belum_menerima_insentif }}" class="w-full bg-gray-50 border-gray-300 rounded-lg text-sm text-center" readonly>
                         </div>
                     </div>
@@ -103,15 +103,15 @@
                     {{-- Grid 3 Kolom Kontak --}}
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                         <div>
-                            <label class="block text-sm font-semibold text-gray-500 mb-1 text-center">Kepala Lembaga</label>
-                            <input type="text" value="{{ $lembaga->kepala_lembaga }}" class="w-full bg-gray-50 border-gray-300 rounded-lg text-sm py-2.5 text-center text-gray-700" readonly>
+                            <label class="block text-sm font-semibold text-black-500 mb-1 text-center">Kepala Lembaga</label>
+                            <input type="text" value="{{ $lembaga->kepala_lembaga }}" class="w-full bg-gray-50 border-gray-300 rounded-lg text-sm py-2.5 text-center text-black-700" readonly>
                         </div>
                         <div>
-                            <label class="block text-sm font-semibold text-gray-500 mb-1 text-center">No. Telp / WA</label>
-                            <input type="text" value="{{ $lembaga->no_telp }}" class="w-full bg-gray-50 border-gray-300 rounded-lg text-sm py-2.5 text-center text-gray-700" readonly>
+                            <label class="block text-sm font-semibold text-black-500 mb-1 text-center">No. Telp / WA</label>
+                            <input type="text" value="{{ $lembaga->no_telp }}" class="w-full bg-gray-50 border-gray-300 rounded-lg text-sm py-2.5 text-center text-black-700" readonly>
                         </div>
                         <div>
-                            <label class="block text-sm font-semibold text-gray-500 mb-1 text-center">Status</label>
+                            <label class="block text-sm font-semibold text-black-500 mb-1 text-center">Status</label>
                             <input type="text" value="{{ $lembaga->status }}" class="w-full {{ $lembaga->status == 'AKTIF' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' }} border-transparent rounded-lg text-sm py-2.5 text-center font-bold" readonly>
                         </div>
                     </div>
@@ -121,14 +121,14 @@
                 <div class="mb-8">
                     <div class="flex items-center gap-2 mb-4 pb-2 border-b border-gray-100">
                         <span class="bg-purple-100 text-purple-700 w-8 h-8 flex items-center justify-center rounded-full font-bold text-sm">C</span>
-                        <h3 class="text-lg font-bold text-gray-800">Dokumen Legalitas</h3>
+                        <h3 class="text-lg font-bold text-black-800">Dokumen Legalitas</h3>
                     </div>
 
                     <div class="space-y-8">
                         {{-- 1. IJOP --}}
                         <div class="bg-gray-50 p-6 rounded-xl border border-gray-200 shadow-sm">
                             <div class="flex justify-between items-center mb-4">
-                                <label class="block text-base font-bold text-gray-800">1. Izin Operasional (IJOP)</label>
+                                <label class="block text-base font-bold text-black-800">1. Surat Izin Operasional (IJOP)</label>
                                 <span class="px-3 py-1 rounded-full text-xs font-bold {{ ($lembaga->status_ijop == 'Disetujui') ? 'bg-green-100 text-green-700' : (($lembaga->status_ijop == 'Ditolak') ? 'bg-red-100 text-red-700' : 'bg-yellow-100 text-yellow-700') }}">
                                     Status: {{ $lembaga->status_ijop ?? 'Pending' }}
                                 </span>
@@ -140,15 +140,40 @@
                                     <iframe src="{{ asset('storage/' . $lembaga->file_ijop) }}" type="application/pdf" class="w-full h-full rounded-lg"></iframe>
                                 </div>
                                 <div class="mt-4 text-center">
-                                    <p class="text-sm text-gray-600 font-semibold bg-white inline-block px-4 py-1 rounded border">
+                                    <p class="text-sm text-black-600 font-semibold bg-white inline-block px-4 py-1 rounded border">
                                         Masa Berlaku: {{ $lembaga->masa_berlaku_ijop ? $lembaga->masa_berlaku_ijop->format('d F Y') : '-' }} 
                                         s/d 
                                         {{ $lembaga->masa_berlaku_ijop ? $lembaga->masa_berlaku_ijop->addYears(5)->format('d F Y') : '-' }}
                                     </p>
                                 </div>
                             @else
-                                <div class="h-40 flex items-center justify-center bg-white border-2 border-dashed border-gray-300 rounded-lg text-gray-400 italic">
+                                <div class="h-40 flex items-center justify-center bg-white border-2 border-dashed border-gray-300 rounded-lg text-black-400 italic">
                                     File IJOP belum diupload.
+                                </div>
+
+
+                            @endif
+                        </div>
+
+                        {{-- 1B. SKD (Surat Keterangan Domisili) [BARU] --}}
+                        <div class="bg-gray-50 p-6 rounded-xl border border-gray-200 shadow-sm">
+                            <div class="flex justify-between items-center mb-4">
+                                <div>
+                                    <label class="block text-base font-bold text-black-800">2. Surat Keterangan Domisili (SKD)</label>
+                                    <span class="text-xs text-orange-600 italic font-medium">*Pengganti sementara jika IJOP kosong</span>
+                                </div>
+                                <span class="px-3 py-1 rounded-full text-xs font-bold {{ ($lembaga->status_skd == 'Disetujui') ? 'bg-green-100 text-green-700' : (($lembaga->status_skd == 'Ditolak') ? 'bg-red-100 text-red-700' : 'bg-yellow-100 text-yellow-700') }}">
+                                    Status: {{ $lembaga->status_skd ?? 'Pending' }}
+                                </span>
+                            </div>
+                            
+                            @if($lembaga->file_skd)
+                                <div class="w-full h-[600px] bg-white rounded-lg border border-gray-300">
+                                    <iframe src="{{ asset('storage/' . $lembaga->file_skd) }}" type="application/pdf" class="w-full h-full rounded-lg"></iframe>
+                                </div>
+                            @else
+                                <div class="h-40 flex flex-col items-center justify-center bg-white border-2 border-dashed border-gray-300 rounded-lg text-black-400 italic text-center p-4">
+                                    File SKD tidak ada/belum diupload.
                                 </div>
                             @endif
                         </div>
@@ -156,7 +181,7 @@
                         {{-- 2. SUPER --}}
                         <div class="bg-gray-50 p-6 rounded-xl border border-gray-200 shadow-sm">
                             <div class="flex justify-between items-center mb-4">
-                                <label class="block text-base font-bold text-gray-800">2. Surat Pernyataan Tanggung Jawab Mutlak (SPTJM)</label>
+                                <label class="block text-base font-bold text-black-800">3. Surat Pernyataan Tanggung Jawab Mutlak (SPTJM)</label>
                                 <span class="px-3 py-1 rounded-full text-xs font-bold {{ ($lembaga->status_super == 'Disetujui') ? 'bg-green-100 text-green-700' : (($lembaga->status_super == 'Ditolak') ? 'bg-red-100 text-red-700' : 'bg-yellow-100 text-yellow-700') }}">
                                     Status: {{ $lembaga->status_super ?? 'Pending' }}
                                 </span>
@@ -168,7 +193,7 @@
                                     <iframe src="{{ asset('storage/' . $lembaga->file_super) }}" type="application/pdf" class="w-full h-full rounded-lg"></iframe>
                                 </div>
                             @else
-                                <div class="h-40 flex items-center justify-center bg-white border-2 border-dashed border-gray-300 rounded-lg text-gray-400 italic">
+                                <div class="h-40 flex items-center justify-center bg-white border-2 border-dashed border-gray-300 rounded-lg text-black-400 italic">
                                     File SUPER belum diupload.
                                 </div>
                             @endif
@@ -178,7 +203,7 @@
                         {{-- 3. SKAM (BARU) --}}
                         <div class="bg-gray-50 p-6 rounded-xl border border-gray-200 shadow-sm">
                             <div class="flex justify-between items-center mb-4">
-                                <label class="block text-base font-bold text-gray-800">3. Surat Keterangan Aktif Mengajar (SKAM)</label>
+                                <label class="block text-base font-bold text-black-800">4. Surat Keterangan Aktif Mengajar (SKAM)</label>
                                 <span class="px-3 py-1 rounded-full text-xs font-bold {{ ($lembaga->status_skam == 'Disetujui') ? 'bg-green-100 text-green-700' : (($lembaga->status_skam == 'Ditolak') ? 'bg-red-100 text-red-700' : 'bg-yellow-100 text-yellow-700') }}">
                                     Status: {{ $lembaga->status_skam ?? 'Pending' }}
                                 </span>
@@ -189,7 +214,7 @@
                                     <iframe src="{{ asset('storage/' . $lembaga->file_skam) }}" type="application/pdf" class="w-full h-full rounded-lg"></iframe>
                                 </div>
                             @else
-                                <div class="h-40 flex items-center justify-center bg-white border-2 border-dashed border-gray-300 rounded-lg text-gray-400 italic">
+                                <div class="h-40 flex items-center justify-center bg-white border-2 border-dashed border-gray-300 rounded-lg text-black-400 italic">
                                     File SKAM belum diupload.
                                 </div>
                             @endif
@@ -199,54 +224,54 @@
             {{-- 📸 [BARU] PANEL 4 FOTO DOKUMENTASI (LAYOUT GRID 2x2) UNTUK SHOW --}}
             {{-- ================================================================= --}}
             <div class="mt-8 bg-white p-6 rounded-xl border border-gray-300 shadow-sm mb-8">
-                <h3 class="text-sm font-bold text-gray-800 uppercase tracking-wide mb-4 border-b border-gray-200 pb-2">4. Dokumentasi Lembaga (Foto Lapangan)</h3>
+                <h3 class="text-sm font-bold text-black-800 uppercase tracking-wide mb-4 border-b border-gray-200 pb-2">4. Dokumentasi Lembaga (Foto Lapangan)</h3>
                 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     
                     {{-- Kotak A: Profil Lembaga --}}
                     <div class="border border-gray-300 rounded-lg p-3 bg-gray-50 flex flex-col items-center">
-                        <label class="text-[11px] font-bold text-gray-700 uppercase mb-2 w-full text-center">A. Foto Profil Lembaga</label>
+                        <label class="text-[11px] font-bold text-black-700 uppercase mb-2 w-full text-center">A. Foto Profil Lembaga</label>
                         <div class="w-full h-48 bg-gray-200 border border-gray-400 rounded-md mb-2 overflow-hidden flex justify-center items-center">
                             @if($lembaga->foto_lembaga)
                                 <img src="{{ asset('storage/' . $lembaga->foto_lembaga) }}" class="object-cover w-full h-full cursor-pointer hover:scale-105 transition" onclick="bukaModalGambar('{{ asset('storage/' . $lembaga->foto_lembaga) }}', 'A. Foto Profil Lembaga')" title="Klik untuk memperbesar">
                             @else
-                                <span class="text-gray-400 text-[11px]">Belum Ada Gambar</span>
+                                <span class="text-black-400 text-[11px]">Belum Ada Gambar</span>
                             @endif
                         </div>
                     </div>
 
                     {{-- Kotak B: Nambor --}}
                     <div class="border border-gray-300 rounded-lg p-3 bg-gray-50 flex flex-col items-center">
-                        <label class="text-[11px] font-bold text-gray-700 uppercase mb-2 w-full text-center">B. Papan Nama / Nambor</label>
+                        <label class="text-[11px] font-bold text-black-700 uppercase mb-2 w-full text-center">B. Papan Nama / Nambor</label>
                         <div class="w-full h-48 bg-gray-200 border border-gray-400 rounded-md mb-2 overflow-hidden flex justify-center items-center">
                             @if($lembaga->foto_nambor)
                                 <img src="{{ asset('storage/' . $lembaga->foto_nambor) }}" class="object-cover w-full h-full cursor-pointer hover:scale-105 transition" onclick="bukaModalGambar('{{ asset('storage/' . $lembaga->foto_nambor) }}', 'B. Papan Nama / Nambor')" title="Klik untuk memperbesar">
                             @else
-                                <span class="text-gray-400 text-[11px]">Belum Ada Gambar</span>
+                                <span class="text-black-400 text-[11px]">Belum Ada Gambar</span>
                             @endif
                         </div>
                     </div>
 
                     {{-- Kotak C: Gedung --}}
                     <div class="border border-gray-300 rounded-lg p-3 bg-gray-50 flex flex-col items-center">
-                        <label class="text-[11px] font-bold text-gray-700 uppercase mb-2 w-full text-center">C. Gedung / Bangunan</label>
+                        <label class="text-[11px] font-bold text-black-700 uppercase mb-2 w-full text-center">C. Gedung / Bangunan</label>
                         <div class="w-full h-48 bg-gray-200 border border-gray-400 rounded-md mb-2 overflow-hidden flex justify-center items-center">
                             @if($lembaga->foto_bangunan)
                                 <img src="{{ asset('storage/' . $lembaga->foto_bangunan) }}" class="object-cover w-full h-full cursor-pointer hover:scale-105 transition" onclick="bukaModalGambar('{{ asset('storage/' . $lembaga->foto_bangunan) }}', 'C. Gedung / Bangunan')" title="Klik untuk memperbesar">
                             @else
-                                <span class="text-gray-400 text-[11px]">Belum Ada Gambar</span>
+                                <span class="text-black-400 text-[11px]">Belum Ada Gambar</span>
                             @endif
                         </div>
                     </div>
 
                     {{-- Kotak D: KBM --}}
                     <div class="border border-gray-300 rounded-lg p-3 bg-gray-50 flex flex-col items-center">
-                        <label class="text-[11px] font-bold text-gray-700 uppercase mb-2 w-full text-center">D. Aktivitas Belajar (KBM)</label>
+                        <label class="text-[11px] font-bold text-black-700 uppercase mb-2 w-full text-center">D. Aktivitas Belajar (KBM)</label>
                         <div class="w-full h-48 bg-gray-200 border border-gray-400 rounded-md mb-2 overflow-hidden flex justify-center items-center">
                             @if($lembaga->foto_kbm)
                                 <img src="{{ asset('storage/' . $lembaga->foto_kbm) }}" class="object-cover w-full h-full cursor-pointer hover:scale-105 transition" onclick="bukaModalGambar('{{ asset('storage/' . $lembaga->foto_kbm) }}', 'D. Kegiatan Belajar (KBM)')" title="Klik untuk memperbesar">
                             @else
-                                <span class="text-gray-400 text-[11px]">Belum Ada Gambar</span>
+                                <span class="text-black-400 text-[11px]">Belum Ada Gambar</span>
                             @endif
                         </div>
                     </div>
@@ -258,8 +283,8 @@
     <div id="modalGambar" class="fixed inset-0 z-[9999] bg-black bg-opacity-70 hidden flex justify-center items-center p-4 backdrop-blur-sm transition-opacity">
         <div class="relative bg-white rounded-xl shadow-2xl max-w-3xl w-full flex flex-col border border-gray-300 overflow-hidden">
             <div class="flex justify-between items-center p-3 bg-gray-100 border-b border-gray-300">
-                <h3 id="judulModalGambar" class="text-sm font-bold text-gray-800 tracking-wide uppercase">Preview Gambar</h3>
-                <button onclick="tutupModalGambar()" class="text-gray-500 hover:text-red-600 font-black text-xl leading-none px-2 transition">&times;</button>
+                <h3 id="judulModalGambar" class="text-sm font-bold text-black-800 tracking-wide uppercase">Preview Gambar</h3>
+                <button onclick="tutupModalGambar()" class="text-black-500 hover:text-red-600 font-black text-xl leading-none px-2 transition">&times;</button>
             </div>
             <div class="p-4 flex justify-center items-center bg-gray-200">
                 <img id="sumberModalGambar" src="" class="max-w-full max-h-[70vh] object-contain rounded shadow-sm border border-gray-300">
@@ -287,7 +312,7 @@
                 @if($lembaga->keterangan)
                 <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded-r-lg mt-6">
                     <h4 class="font-bold text-yellow-800 text-sm mb-1">Catatan / Keterangan:</h4>
-                    <p class="text-sm text-gray-700">{{ $lembaga->keterangan }}</p>
+                    <p class="text-sm text-black-700">{{ $lembaga->keterangan }}</p>
                 </div>
                 @endif
 

@@ -11,7 +11,7 @@
                     <span class="text-2xl">🕌</span> {{-- Ikon Masjid --}}
                     <div class="flex flex-col">
                         <span class="font-bold text-lg text-green-700 leading-tight">LP3MT</span>
-                        <span class="text-[10px] text-gray-500 uppercase tracking-wider font-semibold">Kabupaten Kediri</span>
+                        <span class="text-[10px] text-black-500 uppercase tracking-wider font-semibold">Kabupaten Kediri</span>
                     </div>
                 </div>
             </div>
@@ -20,7 +20,7 @@
             <div class="flex items-center gap-4">
                 
                 {{-- Teks Sistem (Disembunyikan di HP biar gak sempit) --}}
-                <div class="hidden md:block text-sm text-gray-400 font-medium mr-2">
+                <div class="hidden md:block text-sm text-black-400 font-medium mr-2">
                     Sistem Pendataan Guru Ngaji
                 </div>
 
@@ -32,7 +32,7 @@
                     <button class="flex items-center gap-2 text-sm focus:outline-none transition duration-150 ease-in-out">
                         <div class="text-right hidden md:block">
                             {{-- Nama User --}}
-                            <div class="font-bold text-gray-700">
+                            <div class="font-bold text-black-700">
                                 {{ Auth::user()->name ?? 'Guest' }}
                             </div>
                             {{-- Role User (Otomatis ambil label role dari Model User) --}}
@@ -47,7 +47,7 @@
                         </div>
 
                         {{-- Panah Kecil --}}
-                        <svg class="h-4 w-4 text-gray-400 group-hover:text-gray-600 transition" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                        <svg class="h-4 w-4 text-black-400 group-hover:text-black-600 transition" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
                             <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
                         </svg>
                     </button>
@@ -59,7 +59,7 @@
                             {{-- Tombol Logout --}}
                             <form method="POST" action="{{ route('logout') }}">
                                 @csrf
-                                <button type="submit" class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-red-50 hover:text-red-600 transition">
+                                <button type="submit" class="block w-full text-left px-4 py-2 text-sm text-black-700 hover:bg-red-50 hover:text-red-600 transition">
                                     <div class="flex items-center gap-2">
                                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
                                         Keluar (Logout)

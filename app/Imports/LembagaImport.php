@@ -85,22 +85,30 @@ class LembagaImport implements ToCollection, WithHeadingRow
 
             // C. Validasi Duplikasi Data Internal File Excel (Antar baris Excel)
             $namaLembagaUpper = strtoupper(trim($rawNama));
-            $keyKombinasiUnik = $namaLembagaUpper . '|' . $kecamatan->id . '|' . $desa->id;
+            $jenisLembagaUpper = strtoupper(trim($rawJenis)); // [BARU] Ambil jenis lembaganya
+            
+            // [DIUBAH] Kunci unik sekarang ditambah Jenis Lembaga
+            $keyKombinasiUnik = $namaLembagaUpper . '|' . $jenisLembagaUpper . '|' . $kecamatan->id . '|' . $desa->id;
 
             if (isset($processedRows[$keyKombinasiUnik])) {
-                $this->errors[] = "Baris Ke-{$lineNumber}: Duplikasi terdeteksi di dalam file Excel! Lembaga '{$namaLembagaUpper}' kembar dengan data di Baris Ke-" . $processedRows[$keyKombinasiUnik];
+                $this->errors[] = "Baris Ke-{$lineNumber}: Duplikasi internal Excel! Lembaga '{$namaLembagaUpper}' ({$jenisLembagaUpper}) kembar dengan Baris Ke-" . $processedRows[$keyKombinasiUnik];
             } else {
                 $processedRows[$keyKombinasiUnik] = $lineNumber;
             }
 
+
+
             // D. Validasi Duplikasi dengan Database Utama
             $isDuplicateInDb = Lembaga::where('nama_lembaga', $namaLembagaUpper)
+                                       ->where('jenis_lembaga', $jenisLembagaUpper) // [BARU] Cek juga jenis lembaganya
                                        ->where('kecamatan_id', $kecamatan->id)
                                        ->where('desa_id', $desa->id)
                                        ->exists();
             if ($isDuplicateInDb) {
-                $this->errors[] = "Baris Ke-{$lineNumber}: Lembaga '{$namaLembagaUpper}' di Desa '{$rawDesa}' SUDAH ADA di dalam database aplikasi.";
+                $this->errors[] = "Baris Ke-{$lineNumber}: Lembaga '{$namaLembagaUpper}' ({$jenisLembagaUpper}) di Desa '{$rawDesa}' SUDAH ADA di database.";
             }
+
+
         }
 
         // JIKA DIKETAHUI ADA DOSA DATA, LEMPAR STATUS FAIL-SAFE (BATAL TOTAL)
@@ -152,20 +160,25 @@ class LembagaImport implements ToCollection, WithHeadingRow
                     
                     // Pemetaan Kolom Excel Template Baru Mas Kevin
                     'jumlah_santri'           => (int) ($row['jumlah_santri'] ?? 0),
-                    'jumlah_guru'             => (int) ($row['jumlah_guru'] ?? 0),
-                    'penerima_insentif'       => (int) ($row['penerima_insentif'] ?? 0),
-                    'belum_menerima_insentif' => (int) ($row['belum_menerima'] ?? $row['belum_menerima_insentif'] ?? 0),
-                    'jumlah_pns'              => (int) ($row['pns'] ?? 0),
-                    'jumlah_pppk'             => (int) ($row['pppk'] ?? 0),
-                    'jumlah_sertifikasi'      => (int) ($row['sertifikasi'] ?? 0),
+                    
+                    // [DIUBAH] Semua hitungan guru dipaksa jadi 0, mengabaikan ketikan Korcam di Excel
+                    'jumlah_guru'             => 0, 
+                    'penerima_insentif'       => 0, 
+                    'belum_menerima_insentif' => 0, 
+                    'jumlah_pns'              => 0, 
+                    'jumlah_pppk'             => 0, 
+                    'jumlah_sertifikasi'      => 0, 
                     
                     // Standarisasi Berkas Awal
                     'ijop'                    => strtoupper($row['ijop'] ?? 'TIDAK ADA'),
                     'masa_berlaku_ijop'       => $masaBerlaku,
                     'status_ijop'             => 'Pending',
+                    'status_skd'              => 'Pending', // [BARU] Status awal SKD
                     'status_super'            => 'Pending',
                     'status_skam'             => 'Pending',
                     'keterangan'              => strtoupper($row['keterangan'] ?? ''),
+
+
                 ]);
             }
         });

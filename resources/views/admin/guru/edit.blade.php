@@ -1,6 +1,6 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-bold text-xl text-gray-800 leading-tight">
+        <h2 class="font-bold text-xl text-black-800 leading-tight">
             Edit Data Guru
         </h2>
     </x-slot>
@@ -11,8 +11,8 @@
             {{-- HEADER: Judul & Tombol Kembali --}}
             <div class="flex justify-between items-center mb-6">
                 <div>
-                    <h1 class="text-2xl font-bold text-gray-800">Edit Guru: {{ $guru->nama_lengkap }}</h1>
-                    <p class="text-sm text-gray-500 mt-1">Perbarui data identitas atau upload ulang dokumen.</p>
+                    <h1 class="text-2xl font-bold text-black-800">Edit Guru: {{ $guru->nama_lengkap }}</h1>
+                    <p class="text-sm text-black-500 mt-1">Perbarui data identitas atau upload ulang dokumen.</p>
                 </div>
                 
                 {{-- LOGIKA TOMBOL KEMBALI PINTAR --}}
@@ -22,7 +22,7 @@
                     if($guru->jenis_guru == 'TPQ')   $backRoute = route('guru.tpq');
                     if($guru->jenis_guru == 'PONPES')$backRoute = route('guru.ponpes');
                 @endphp
-                <a href="{{ $backRoute }}" class="inline-flex items-center px-4 py-2 bg-white border border-gray-300 rounded-md font-semibold text-xs text-gray-700 uppercase tracking-widest shadow-sm hover:bg-gray-50 transition">
+                <a href="{{ $backRoute }}" class="inline-flex items-center px-4 py-2 bg-white border border-gray-300 rounded-md font-semibold text-xs text-black-700 uppercase tracking-widest shadow-sm hover:bg-gray-50 transition">
                     &larr; Kembali
                 </a>
             </div>
@@ -36,22 +36,22 @@
                     <div class="mb-10">
                         <div class="flex items-center gap-2 mb-4 pb-2 border-b border-gray-100">
                             <span class="bg-blue-100 text-blue-700 w-8 h-8 flex items-center justify-center rounded-full font-bold text-sm">A</span>
-                            <h3 class="text-lg font-bold text-gray-800">Data Pribadi</h3>
+                            <h3 class="text-lg font-bold text-black-800">Data Pribadi</h3>
                         </div>
 
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div class="md:col-span-2">
-                                <label class="block text-sm font-semibold text-gray-700 mb-1 text-center">Nama Lengkap</label>
+                                <label class="block text-sm font-semibold text-black-700 mb-1 text-center">Nama Lengkap</label>
                                 <input type="text" name="nama_lengkap" value="{{ old('nama_lengkap', $guru->nama_lengkap) }}" class="w-full border-gray-300 rounded-lg shadow-sm text-sm py-2.5 text-center" required>
                             </div>
 
                             <div>
-                                <label class="block text-sm font-semibold text-gray-700 mb-1 text-center">NIK</label>
+                                <label class="block text-sm font-semibold text-black-700 mb-1 text-center">NIK</label>
                                 <input type="number" name="nik" value="{{ old('nik', $guru->nik) }}" class="w-full border-gray-300 rounded-lg shadow-sm text-sm py-2.5 text-center" required>
                             </div>
 
                             <div>
-                                <label class="block text-sm font-semibold text-gray-700 mb-1 text-center">Jenis Kelamin</label>
+                                <label class="block text-sm font-semibold text-black-700 mb-1 text-center">Jenis Kelamin</label>
                                 <select name="jenis_kelamin" class="w-full border-gray-300 rounded-lg shadow-sm text-sm py-2.5 text-center">
                                     <option value="L" {{ $guru->jenis_kelamin == 'L' ? 'selected' : '' }}>Laki-laki</option>
                                     <option value="P" {{ $guru->jenis_kelamin == 'P' ? 'selected' : '' }}>Perempuan</option>
@@ -60,7 +60,7 @@
 
                             {{-- STATUS KEPEGAWAIAN (Ada ID untuk JS) --}}
                             <div>
-                                <label class="block text-sm font-semibold text-gray-700 mb-1 text-center">Status Kepegawaian</label>
+                                <label class="block text-sm font-semibold text-black-700 mb-1 text-center">Status Kepegawaian</label>
                                 <select name="status_kepegawaian" id="status_kepegawaian" class="w-full border-gray-300 rounded-lg shadow-sm text-sm py-2.5 text-center" onchange="checkInsentifEligibility()">
                                     <option value="Non-ASN" {{ $guru->status_kepegawaian == 'Non-ASN' ? 'selected' : '' }}>Non-ASN</option>
                                     <option value="PNS" {{ $guru->status_kepegawaian == 'PNS' ? 'selected' : '' }}>PNS</option>
@@ -70,7 +70,7 @@
 
                             {{-- STATUS SERTIFIKASI (Ada ID untuk JS) --}}
                             <div>
-                                <label class="block text-sm font-semibold text-gray-700 mb-1 text-center">Status Sertifikasi</label>
+                                <label class="block text-sm font-semibold text-black-700 mb-1 text-center">Status Sertifikasi</label>
                                 <select name="status_sertifikasi" id="status_sertifikasi" class="w-full border-gray-300 rounded-lg shadow-sm text-sm py-2.5 text-center" onchange="checkInsentifEligibility()">
                                     <option value="Belum" {{ $guru->status_sertifikasi == 'Belum' ? 'selected' : '' }}>Belum Sertifikasi</option>
                                     <option value="Sertifikasi" {{ $guru->status_sertifikasi == 'Sertifikasi' ? 'selected' : '' }}>Sudah Sertifikasi</option>
@@ -80,29 +80,29 @@
 
                             {{-- [BARU] STATUS INSENTIF OTOMATIS --}}
                             <div class="md:col-span-2 bg-yellow-50 p-4 rounded-lg border border-yellow-200 transition-colors" id="box_insentif">
-                                <label class="block text-sm font-bold text-gray-800 mb-1 text-center">Apakah Menerima Insentif?</label>
-                                <select name="penerima_insentif" id="penerima_insentif" class="w-full border-yellow-400 rounded-lg shadow-sm text-sm py-2.5 text-center font-bold text-gray-700 focus:ring-yellow-500 focus:border-yellow-500">
+                                <label class="block text-sm font-bold text-black-800 mb-1 text-center">Apakah Menerima Insentif?</label>
+                                <select name="penerima_insentif" id="penerima_insentif" class="w-full border-yellow-400 rounded-lg shadow-sm text-sm py-2.5 text-center font-bold text-black-700 focus:ring-yellow-500 focus:border-yellow-500">
                                     <option value="0" {{ $guru->penerima_insentif == 0 ? 'selected' : '' }}>❌ TIDAK / BELUM MENERIMA</option>
                                     <option value="1" {{ $guru->penerima_insentif == 1 ? 'selected' : '' }}>✅ YA, PENERIMA INSENTIF</option>
                                 </select>
-                                <p class="text-[10px] text-gray-500 text-center mt-1" id="msg_insentif">*Ubah ke "YA" jika guru ini berhak menerima insentif.</p>
+                                <p class="text-[10px] text-black-500 text-center mt-1" id="msg_insentif">*Ubah ke "YA" jika guru ini berhak menerima insentif.</p>
                             </div>
 
                             <div>
-                                <label class="block text-sm font-semibold text-gray-700 mb-1 text-center">Tempat Lahir</label>
+                                <label class="block text-sm font-semibold text-black-700 mb-1 text-center">Tempat Lahir</label>
                                 <input type="text" name="tempat_lahir" value="{{ old('tempat_lahir', $guru->tempat_lahir) }}" class="w-full border-gray-300 rounded-lg shadow-sm text-sm py-2.5 text-center">
                             </div>
                             <div>
-                                <label class="block text-sm font-semibold text-gray-700 mb-1 text-center">Tanggal Lahir</label>
+                                <label class="block text-sm font-semibold text-black-700 mb-1 text-center">Tanggal Lahir</label>
                                 <input type="date" name="tanggal_lahir" value="{{ old('tanggal_lahir', optional($guru->tanggal_lahir)->format('Y-m-d')) }}" class="w-full border-gray-300 rounded-lg shadow-sm text-sm py-2.5 text-center">
                             </div>
 
                             <div>
-                                <label class="block text-sm font-semibold text-gray-700 mb-1 text-center">Nama Ibu Kandung</label>
+                                <label class="block text-sm font-semibold text-black-700 mb-1 text-center">Nama Ibu Kandung</label>
                                 <input type="text" name="nama_ibu_kandung" value="{{ old('nama_ibu_kandung', $guru->nama_ibu_kandung) }}" class="w-full border-gray-300 rounded-lg shadow-sm text-sm py-2.5 text-center">
                             </div>
                             <div>
-                                <label class="block text-sm font-semibold text-gray-700 mb-1 text-center">Agama</label>
+                                <label class="block text-sm font-semibold text-black-700 mb-1 text-center">Agama</label>
                                 <select name="agama" class="w-full border-gray-300 rounded-lg shadow-sm text-sm py-2.5 text-center">
                                     <option value="Islam" {{ $guru->agama == 'Islam' ? 'selected' : '' }}>Islam</option>
                                     <option value="Kristen" {{ $guru->agama == 'Kristen' ? 'selected' : '' }}>Kristen</option>
@@ -116,14 +116,14 @@
                     <div class="mb-10">
                         <div class="flex items-center gap-2 mb-4 pb-2 border-b border-gray-100">
                             <span class="bg-green-100 text-green-700 w-8 h-8 flex items-center justify-center rounded-full font-bold text-sm">B</span>
-                            <h3 class="text-lg font-bold text-gray-800">Kelembagaan & Kontak</h3>
+                            <h3 class="text-lg font-bold text-black-800">Kelembagaan & Kontak</h3>
                         </div>
 
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                             
                             {{-- LEMBAGA DENGAN DATALIST --}}
                             <div class="md:col-span-2">
-                                <label class="block text-sm font-semibold text-gray-700 mb-1 text-center">Lembaga Tempat Mengajar <span class="text-red-500">*</span></label>
+                                <label class="block text-sm font-semibold text-black-700 mb-1 text-center">Lembaga Tempat Mengajar <span class="text-red-500">*</span></label>
                                 
                                 {{-- Input Text --}}
                                 <input list="list_lembaga" 
@@ -146,12 +146,12 @@
                             </div>
 
                             <div class="md:col-span-2">
-                                <label class="block text-sm font-semibold text-gray-700 mb-1 text-center">Alamat Lengkap</label>
+                                <label class="block text-sm font-semibold text-black-700 mb-1 text-center">Alamat Lengkap</label>
                                 <input type="text" name="alamat_ktp" value="{{ old('alamat_ktp', $guru->alamat_ktp) }}" class="w-full border-gray-300 rounded-lg shadow-sm text-sm py-2.5 text-center">
                             </div>
 
                             <div>
-                                <label class="block text-sm font-semibold text-gray-700 mb-1 text-center">Kecamatan</label>
+                                <label class="block text-sm font-semibold text-black-700 mb-1 text-center">Kecamatan</label>
                                 <select name="kecamatan" id="kecamatanSelect" class="w-full border-gray-300 rounded-lg shadow-sm text-sm py-2.5 text-center" required>
                                     @foreach($kecamatans as $kec)
                                         <option value="{{ $kec->nama_kecamatan }}" data-id="{{ $kec->id }}" {{ $guru->kecamatan == $kec->nama_kecamatan ? 'selected' : '' }}>{{ $kec->nama_kecamatan }}</option>
@@ -159,7 +159,7 @@
                                 </select>
                             </div>
                             <div>
-                                <label class="block text-sm font-semibold text-gray-700 mb-1 text-center">Desa / Kelurahan</label>
+                                <label class="block text-sm font-semibold text-black-700 mb-1 text-center">Desa / Kelurahan</label>
                                 <select name="desa" id="desaSelect" class="w-full border-gray-300 rounded-lg shadow-sm text-sm py-2.5 text-center" required>
                                     <option value="{{ $guru->desa }}">{{ $guru->desa }}</option>
                                 </select>
@@ -171,16 +171,16 @@
                             </div>
 
                             <div>
-                                <label class="block text-sm font-semibold text-gray-700 mb-1 text-center">Kabupaten</label>
+                                <label class="block text-sm font-semibold text-black-700 mb-1 text-center">Kabupaten</label>
                                 <input type="text" name="kabupaten" value="Kediri" class="w-full border-gray-300 rounded-lg shadow-sm text-sm py-2.5 text-center" readonly>
                             </div>
 
                             <div>
-                                <label class="block text-sm font-semibold text-gray-700 mb-1 text-center">Nomor HP</label>
+                                <label class="block text-sm font-semibold text-black-700 mb-1 text-center">Nomor HP</label>
                                 <input type="number" name="no_hp" value="{{ old('no_hp', $guru->no_hp) }}" class="w-full border-gray-300 rounded-lg shadow-sm text-sm py-2.5 text-center">
                             </div>
                             <div class="md:col-span-2">
-                                <label class="block text-sm font-semibold text-gray-700 mb-1 text-center">Nomor Rekening</label>
+                                <label class="block text-sm font-semibold text-black-700 mb-1 text-center">Nomor Rekening</label>
                                 <input type="number" name="nomor_rekening" value="{{ old('nomor_rekening', $guru->nomor_rekening) }}" class="w-full border-gray-300 rounded-lg shadow-sm text-sm py-2.5 text-center font-bold">
                             </div>
                         </div>
@@ -190,13 +190,13 @@
                     <div class="mb-8">
                         <div class="flex items-center gap-2 mb-4 pb-2 border-b border-gray-100">
                             <span class="bg-purple-100 text-purple-700 w-8 h-8 flex items-center justify-center rounded-full font-bold text-sm">C</span>
-                            <h3 class="text-lg font-bold text-gray-800">Upload Dokumen</h3>
+                            <h3 class="text-lg font-bold text-black-800">Upload Dokumen</h3>
                         </div>
 
                         <div class="space-y-8">
                             {{-- 1. KTP --}}
                             <div class="bg-gray-50 p-6 rounded-xl border border-gray-200">
-                                <label class="block text-base font-bold text-gray-800 mb-3 text-center">1. Scan KTP Asli</label>
+                                <label class="block text-base font-bold text-black-800 mb-3 text-center">1. Scan KTP Asli</label>
                                 @if($guru->file_ktp)
                                     <div class="mb-4 text-center">
                                         <p class="text-xs text-green-600 font-bold mb-2">✓ File Tersimpan</p>
@@ -205,7 +205,7 @@
                                 @endif
                                 <div class="relative group text-center">
                                     <input type="file" name="file_ktp" id="file_ktp" accept="application/pdf"
-                                           class="block w-full text-sm text-gray-500 file:mr-4 file:py-2.5 file:px-6 file:rounded-full file:border-0 file:text-sm file:font-bold file:bg-blue-600 file:text-white hover:file:bg-blue-700 cursor-pointer text-center"
+                                           class="block w-full text-sm text-black-500 file:mr-4 file:py-2.5 file:px-6 file:rounded-full file:border-0 file:text-sm file:font-bold file:bg-blue-600 file:text-white hover:file:bg-blue-700 cursor-pointer text-center"
                                            onchange="handleFileSelect(this, 'preview_ktp_new', 'btn_reset_ktp')">
                                     <button type="button" id="btn_reset_ktp" onclick="resetFile('file_ktp', 'preview_ktp_new', 'btn_reset_ktp')" class="hidden mt-2 text-sm text-red-600 font-bold underline">&times; Batal</button>
                                 </div>
@@ -214,7 +214,7 @@
 
                             {{-- 2. KK --}}
                             <div class="bg-gray-50 p-6 rounded-xl border border-gray-200">
-                                <label class="block text-base font-bold text-gray-800 mb-3 text-center">2. Scan KK</label>
+                                <label class="block text-base font-bold text-black-800 mb-3 text-center">2. Scan KK</label>
                                 @if($guru->file_kk)
                                     <div class="mb-4 text-center">
                                         <p class="text-xs text-green-600 font-bold mb-2">✓ File Tersimpan</p>
@@ -223,7 +223,7 @@
                                 @endif
                                 <div class="relative group text-center">
                                     <input type="file" name="file_kk" id="file_kk" accept="application/pdf"
-                                           class="block w-full text-sm text-gray-500 file:mr-4 file:py-2.5 file:px-6 file:rounded-full file:border-0 file:text-sm file:font-bold file:bg-green-600 file:text-white hover:file:bg-green-700 cursor-pointer text-center"
+                                           class="block w-full text-sm text-black-500 file:mr-4 file:py-2.5 file:px-6 file:rounded-full file:border-0 file:text-sm file:font-bold file:bg-green-600 file:text-white hover:file:bg-green-700 cursor-pointer text-center"
                                            onchange="handleFileSelect(this, 'preview_kk_new', 'btn_reset_kk')">
                                     <button type="button" id="btn_reset_kk" onclick="resetFile('file_kk', 'preview_kk_new', 'btn_reset_kk')" class="hidden mt-2 text-sm text-red-600 font-bold underline">&times; Batal</button>
                                 </div>
@@ -232,7 +232,7 @@
 
                             {{-- 3. REKENING --}}
                             <div class="bg-gray-50 p-6 rounded-xl border border-gray-200">
-                                <label class="block text-base font-bold text-gray-800 mb-3 text-center">3. Scan Rekening</label>
+                                <label class="block text-base font-bold text-black-800 mb-3 text-center">3. Scan Rekening</label>
                                 @if($guru->file_bukurekening)
                                     <div class="mb-4 text-center">
                                         <p class="text-xs text-green-600 font-bold mb-2">✓ File Tersimpan</p>
@@ -241,7 +241,7 @@
                                 @endif
                                 <div class="relative group text-center">
                                     <input type="file" name="file_bukurekening" id="file_bukurekening" accept="application/pdf"
-                                           class="block w-full text-sm text-gray-500 file:mr-4 file:py-2.5 file:px-6 file:rounded-full file:border-0 file:text-sm file:font-bold file:bg-purple-600 file:text-white hover:file:bg-purple-700 cursor-pointer text-center"
+                                           class="block w-full text-sm text-black-500 file:mr-4 file:py-2.5 file:px-6 file:rounded-full file:border-0 file:text-sm file:font-bold file:bg-purple-600 file:text-white hover:file:bg-purple-700 cursor-pointer text-center"
                                            onchange="handleFileSelect(this, 'preview_rekening_new', 'btn_reset_rekening')">
                                     <button type="button" id="btn_reset_rekening" onclick="resetFile('file_bukurekening', 'preview_rekening_new', 'btn_reset_rekening')" class="hidden mt-2 text-sm text-red-600 font-bold underline">&times; Batal</button>
                                 </div>
@@ -251,7 +251,7 @@
                     </div>
 
                     <div class="flex items-center justify-end gap-3 pt-6 border-t border-gray-200">
-                        <a href="{{ $backRoute }}" class="px-5 py-2.5 text-sm font-bold text-gray-600 bg-white border border-gray-300 rounded-lg hover:bg-gray-50">Batal</a>
+                        <a href="{{ $backRoute }}" class="px-5 py-2.5 text-sm font-bold text-black-600 bg-white border border-gray-300 rounded-lg hover:bg-gray-50">Batal</a>
                         <button type="submit" class="px-6 py-2.5 text-sm font-bold text-white bg-blue-600 rounded-lg shadow-md hover:bg-blue-700">Simpan Perubahan</button>
                     </div>
                 </form>
