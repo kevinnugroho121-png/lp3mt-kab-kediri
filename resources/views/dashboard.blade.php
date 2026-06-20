@@ -10,7 +10,7 @@
         {{-- ==================================================== --}}
         {{-- BAGIAN ATAS: 3 KARTU RINGKASAN --}}
         {{-- ==================================================== --}}
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-1 mb-1">
             
             {{-- KARTU 1: DATA LEMBAGA --}}
             <div class="bg-white rounded-2xl border border-gray-300 p-6 shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07)] hover:shadow-lg transition duration-300 flex flex-col justify-between">
@@ -117,7 +117,7 @@
                 </div>
                 <div class="bg-gray-50 rounded-xl p-4 border border-gray-300">
                     <div class="flex justify-between items-center mb-3">
-                        <span class="text-xs text-black-500 font-medium">Kuota Insentif Se-Kabupaten</span>
+                        <span class="text-xs text-black-500 font-medium">JATAH KUOTA INSENTIF</span>
                         <span class="text-xs font-bold bg-gray-200 text-black-700 px-2 py-0.5 rounded-full">{{ number_format($targetInsentif) }} Orang</span>
                     </div>
                     <div class="space-y-3">
@@ -157,7 +157,7 @@
                 </div>
                 <div>
                     <h3 class="font-bold text-black-800 text-lg leading-tight">Status Pemberkasan Dokumen</h3>
-                    <p class="text-[11px] text-black-500 font-medium">Pemantauan kelengkapan file fisik yang sudah diverifikasi & disetujui</p>
+                    <p class="text-[11px] text-black-500 font-medium">Pemantauan Kelengkapan File</p>
                 </div>
             </div>
 
@@ -167,7 +167,7 @@
                     <div class="flex justify-between items-end mb-2">
                         <div>
                             <p class="text-sm font-bold text-black-700">Dokumen Legalitas Lembaga</p>
-                            <p class="text-[10px] text-black-500 mt-0.5"><span class="font-bold text-black-700">{{ number_format($lembagaLengkap) }}</span> dari {{ number_format($totalLembagaBerkas) }} Lembaga Lengkap</p>
+                            <p class="text-[10px] text-black-500 mt-0.5"><span class="font-bold text-black-700">{{ number_format($lembagaLengkap) }}</span> dari {{ number_format($totalLembagaBerkas) }} Lembaga</p>
                         </div>
                         <span class="text-xl font-black {{ $persenLembaga == 100 ? 'text-emerald-500' : 'text-orange-500' }}">{{ $persenLembaga }}%</span>
                     </div>
@@ -178,7 +178,7 @@
                         </div>
                     </div>
                     @if($persenLembaga < 100)
-                        <p class="text-[10px] text-orange-600 font-bold italic">⚠️ Ada {{ number_format($totalLembagaBerkas - $lembagaLengkap) }} lembaga butuh perhatian.</p>
+                        <p class="text-[10px] text-red-500 font-bold italic">* {{ number_format($totalLembagaBerkas - $lembagaLengkap) }} Lembaga Dokumennya Belum Lengkap</p>
                     @else
                         <p class="text-[10px] text-emerald-600 font-bold italic">✅ Sempurna! Seluruh berkas lembaga disetujui.</p>
                     @endif
@@ -189,7 +189,7 @@
                     <div class="flex justify-between items-end mb-2">
                         <div>
                             <p class="text-sm font-bold text-black-700">Dokumen Identitas Guru</p>
-                            <p class="text-[10px] text-black-500 mt-0.5"><span class="font-bold text-black-700">{{ number_format($guruLengkap) }}</span> dari {{ number_format($totalGuruBerkas) }} Guru Lengkap</p>
+                            <p class="text-[10px] text-black-500 mt-0.5"><span class="font-bold text-black-700">{{ number_format($guruLengkap) }}</span> dari {{ number_format($totalGuruBerkas) }} Guru</p>
                         </div>
                         <span class="text-xl font-black {{ $persenGuru == 100 ? 'text-emerald-500' : 'text-orange-500' }}">{{ $persenGuru }}%</span>
                     </div>
@@ -200,7 +200,7 @@
                         </div>
                     </div>
                     @if($persenGuru < 100)
-                        <p class="text-[10px] text-orange-600 font-bold italic">⚠️ Ada {{ number_format($totalGuruBerkas - $guruLengkap) }} guru butuh perhatian.</p>
+                        <p class="text-[10px] text-red-500 font-bold italic">* {{ number_format($totalGuruBerkas - $guruLengkap) }} Guru Dokumennya Belum Lengkap</p>
                     @else
                         <p class="text-[10px] text-emerald-600 font-bold italic">✅ Sempurna! Seluruh berkas guru disetujui.</p>
                     @endif

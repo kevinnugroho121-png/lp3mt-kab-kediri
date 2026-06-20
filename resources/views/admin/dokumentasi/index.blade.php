@@ -20,13 +20,13 @@
                 
                 {{-- FORM TAMBAH FOTO --}}
                 <div class="lg:col-span-1">
-                    <div class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm sticky top-24">
+                    <div class="bg-white p-6 rounded-xl border border-gray-600 shadow-sm sticky top-24">
                         <h3 class="font-bold text-black-800 mb-4">Tambah Foto Baru</h3>
                         <form action="{{ route('dokumentasi.store') }}" method="POST" enctype="multipart/form-data">
                             @csrf
                             <div class="mb-4">
                                 <label class="block text-xs font-bold text-black-500 uppercase mb-1">Judul / Keterangan</label>
-                                <input type="text" name="judul" required class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:border-blue-500 focus:ring-blue-500">
+                                <input type="text" name="judul" required class="w-full border border-gray-600 rounded-md px-3 py-2 text-sm focus:border-blue-500 focus:ring-blue-500">
                             </div>
                             <div class="mb-4">
                                 <label class="block text-xs font-bold text-black-500 uppercase mb-1">Pilih Foto</label>
@@ -39,18 +39,18 @@
 
                 {{-- DAFTAR FOTO --}}
                 <div class="lg:col-span-2">
-                    <div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+                    <div class="bg-white rounded-xl border border-gray-600 shadow-sm overflow-hidden">
                         <table class="w-full text-sm">
-                            <thead class="bg-gray-50 border-b">
+                            <thead class="bg-gray-100 border-b">
                                 <tr>
                                     <th class="px-4 py-3 text-left w-32">Foto</th>
                                     <th class="px-4 py-3 text-left">Judul Keterangan</th>
                                     <th class="px-4 py-3 text-center w-48">Aksi</th>
                                 </tr>
                             </thead>
-                            <tbody class="divide-y divide-gray-200">
+                            <tbody class="divide-y divide-gray-600">
                                 @forelse($dokumentasis as $dok)
-                                    <tr class="hover:bg-gray-50 transition">
+                                    <tr class="hover:bg-gray-100 transition">
                                         {{-- KOLOM FOTO (Bisa diklik untuk Preview) --}}
                                         <td class="px-4 py-3">
                                             <img src="{{ asset('storage/' . $dok->foto_path) }}" alt="Foto" 

@@ -5,14 +5,14 @@
         </h2>
     </x-slot>
 
-    <div class="py-6">
-        <div class="max-w-[1500px] mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="py-1">
+        <div class="max-w-[1500px] mx-auto px-1 sm:px-1 lg:px-1">
             
             {{-- HEADER HALAMAN --}}
-            <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-1 gap-4">
                 <div class="flex items-center gap-4">
                     {{-- TOMBOL KEMBALI --}}
-                    <a href="{{ route('user.index') }}" class="bg-gray-100 text-black-600 hover:bg-gray-200 hover:text-black-900 p-2 rounded-lg transition border border-gray-300 shadow-sm" title="Kembali ke Manajemen User">
+                    <a href="{{ route('user.index') }}" class="bg-gray-100 text-black-600 hover:bg-gray-200 hover:text-black-900 p-2 rounded-lg transition border border-gray-600 shadow-sm" title="Kembali ke Manajemen User">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
                     </a>
                     
@@ -43,71 +43,79 @@
             @endif
 
             {{-- FILTER PENCARIAN LOG --}}
-            <div class="bg-white p-4 rounded-t-xl border-t border-l border-r border-gray-300 shadow-sm">
+            <div class="bg-white px-3 py-2 rounded-t-xl border-t border-l border-r border-gray-600 shadow-sm">
                 <form action="{{ route('activity.log') }}" method="GET" class="flex gap-2 max-w-md">
                     <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari nama operator, aksi, atau nama guru..." 
-                           class="w-full border border-gray-300 rounded-md px-3 py-1.5 text-sm focus:border-blue-500 focus:ring-blue-500 shadow-sm">
-                    <button type="submit" class="bg-gray-800 text-white px-4 py-1.5 rounded-md text-sm font-bold hover:bg-gray-900 transition shadow-sm">Cari</button>
+                           class="w-full border border-gray-600 rounded-md px-2 py-1 h-[32px] text-xs focus:border-blue-500 focus:ring-blue-500 shadow-sm">
+                    <button type="submit" class="bg-gray-800 text-white px-3 py-1 h-[32px] rounded-md text-xs font-bold hover:bg-gray-900 transition shadow-sm">Cari</button>
                     @if(request('search'))
-                        <a href="{{ route('activity.log') }}" class="bg-gray-100 text-black-600 border border-gray-300 px-3 py-1.5 rounded-md text-sm font-bold hover:bg-gray-200 transition flex items-center justify-center">Reset</a>
+                        <a href="{{ route('activity.log') }}" class="bg-gray-100 text-black-600 border border-gray-600 px-3 py-1 h-[32px] rounded-md text-xs font-bold hover:bg-gray-200 transition flex items-center justify-center">Reset</a>
                     @endif
                 </form>
             </div>
 
             {{-- TABEL AUDIT TRAIL / LOG SYSTEM --}}
-            <div class="bg-white border border-gray-400 overflow-hidden shadow-sm rounded-b-xl">
+            <div class="bg-white border border-gray-600 overflow-hidden shadow-sm rounded-b-xl">
                 <table class="w-full text-sm border-collapse">
+
+
                     <thead>
-                        <tr class="bg-slate-100 text-slate-700 uppercase text-[10px] tracking-wider border-b border-gray-300">
-                            <th class="border-r border-gray-300 px-2 py-3 text-center font-bold w-12">No</th>
-                            <th class="border-r border-gray-300 px-4 py-3 text-left font-bold w-48">Waktu Kejadian</th>
-                            <th class="border-r border-gray-300 px-4 py-3 text-left font-bold w-64">Nama Operator</th>
-                            <th class="border-r border-gray-300 px-4 py-3 text-left font-bold w-64">Tindakan / Aksi</th>
-                            <th class="px-4 py-3 text-left font-bold">Target Objek (Data Guru)</th>
+                        <tr class="bg-slate-100 text-slate-700 uppercase text-[10px] tracking-wider border-b border-gray-600">
+                            <th class="border-r border-gray-600 px-2 py-1.5 text-center font-bold w-12">No</th>
+                            <th class="border-r border-gray-600 px-2 py-1.5 text-center font-bold w-48">Waktu Kejadian</th>
+                            <th class="border-r border-gray-600 px-2 py-1.5 text-center font-bold w-64">Nama Operator</th>
+                            <th class="border-r border-gray-600 px-2 py-1.5 text-center font-bold w-64">Tindakan / Aksi</th>
+                            <th class="px-2 py-1.5 text-center font-bold">Target Objek (Data Guru)</th>
                         </tr>
                     </thead>
-                    <tbody class="text-black-700 divide-y divide-gray-200">
+
+
+                   
+                    <tbody class="text-black-700 text-[11px] divide-y divide-gray-400">
                         @forelse($logs as $index => $log)
                             <tr class="hover:bg-slate-50 transition duration-150">
                                 
                                 {{-- NOMOR --}}
-                                <td class="border-r border-gray-200 px-2 py-3 text-center bg-gray-50 font-medium text-black-500">
+                                <td class="border-r border-gray-600 px-2 py-1.5 text-center bg-gray-50 font-medium text-black-500">
                                     {{ $logs->firstItem() + $index }}
                                 </td>
 
                                 {{-- WAKTU (Jam Aktual Kediri) --}}
-                                <td class="border-r border-gray-200 px-4 py-3 text-xs text-black-600 font-mono">
+                                <td class="border-r border-gray-600 px-2 py-1.5 text-[11px] text-black-600 font-mono">
                                     {{ \Carbon\Carbon::parse($log->created_at)->translatedFormat('d M Y (H:i:s)') }}
                                 </td>
 
                                 {{-- NAMA OPERATOR --}}
-                                <td class="border-r border-gray-200 px-4 py-3">
-                                    <span class="font-bold text-black-900">{{ $log->nama_user }}</span>
-                                    <span class="text-[10px] text-black-400 block font-mono">ID: #{{ $log->user_id ?? 'N/A' }}</span>
+                                <td class="border-r border-gray-600 px-2 py-1.5">
+                                    {{-- Tambah leading-tight agar jarak teks atas dan bawah makin mepet --}}
+                                    <div class="leading-tight">
+                                        <span class="font-bold text-[11px] text-black-900 block">{{ $log->nama_user }}</span>
+                                        <span class="text-[9px] text-black-500 block font-mono mt-0.5">ID: #{{ $log->user_id ?? 'N/A' }}</span>
+                                    </div>
                                 </td>
 
-                                {{-- AKSI / TINDAKAN (Diberi warna biar gampang dibaca) --}}
-                                <td class="border-r border-gray-200 px-4 py-3 text-xs">
+                                {{-- AKSI / TINDAKAN --}}
+                                <td class="border-r border-gray-600 px-2 py-1.5 text-[10px]">
                                     @if(str_contains($log->aksi, 'Menghapus'))
-                                        <span class="px-2 py-0.5 rounded font-bold bg-red-100 text-red-700 border border-red-200">{{ $log->aksi }}</span>
+                                        <span class="px-1.5 py-0.5 rounded font-bold bg-red-100 text-red-700 border border-red-200">{{ $log->aksi }}</span>
                                     @elseif(str_contains($log->aksi, 'Mengaktifkan'))
-                                        <span class="px-2 py-0.5 rounded font-bold bg-green-100 text-green-700 border border-green-200">{{ $log->aksi }}</span>
+                                        <span class="px-1.5 py-0.5 rounded font-bold bg-green-100 text-green-700 border border-green-200">{{ $log->aksi }}</span>
                                     @elseif(str_contains($log->aksi, 'Menambah'))
-                                        <span class="px-2 py-0.5 rounded font-bold bg-blue-100 text-blue-700 border border-blue-200">{{ $log->aksi }}</span>
+                                        <span class="px-1.5 py-0.5 rounded font-bold bg-blue-100 text-blue-700 border border-blue-200">{{ $log->aksi }}</span>
                                     @else
-                                        <span class="px-2 py-0.5 rounded font-bold bg-amber-100 text-amber-700 border border-amber-200">{{ $log->aksi }}</span>
+                                        <span class="px-1.5 py-0.5 rounded font-bold bg-amber-100 text-amber-700 border border-amber-200">{{ $log->aksi }}</span>
                                     @endif
                                 </td>
 
                                 {{-- TARGET GURU --}}
-                                <td class="px-4 py-3 font-semibold text-black-800">
+                                <td class="px-2 py-1.5 text-[11px] font-semibold text-black-800">
                                     {{ $log->target }}
                                 </td>
 
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="5" class="border border-gray-300 px-4 py-12 text-center text-black-400 bg-gray-50">
+                                <td colspan="5" class="border border-gray-600 px-4 py-12 text-center text-black-400 bg-gray-50">
                                     <div class="flex flex-col items-center justify-center">
                                         <svg class="w-8 h-8 text-black-300 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path></svg>
                                         <span class="text-xs">Belum ada riwayat aktivitas yang terekam di sistem.</span>

@@ -192,7 +192,7 @@
         </nav>
 
         {{-- MAIN CONTENT --}}
-        <main class="flex-1 w-full pb-8 pt-2 px-2 sm:px-4">
+        <main class="flex-1 w-full pb-8 pt-0 px-0 sm:px-0">
             {{ $slot ?? '' }} 
             @yield('content')
         </main>

@@ -1,57 +1,58 @@
 <x-app-layout>
     {{-- CONTAINER UTAMA --}}
     {{-- CONTAINER UTAMA --}}
-    <div class="pb-4 pt-1 px-1 sm:px-2 w-full">
+    <div class="pb-1 pt-1 px-1 sm:px-1 w-full">
         
-        {{-- JUDUL HALAMAN --}}
-        <div class="mb-4 flex flex-col sm:flex-row justify-between items-end">
-            <div>
-                <h2 class="text-2xl font-bold text-black-800 uppercase tracking-tight leading-none">
-                    Data Lembaga
-                </h2>
-                <p class="text-xs text-black-500 mt-1">Total: {{ $lembagas->total() }} Lembaga</p>
-                @if(Auth::user()->role == 'korcam')
-                    <p class="text-xs text-green-600 font-bold mt-1">Wilayah Kerja: Kec. {{ Auth::user()->kecamatan->nama_kecamatan ?? '-' }}</p>
-                @endif
-            </div>
-            
-            {{-- BUNGKUSAN FLEX UNTUK 2 TOMBOL --}}
-            <div class="mt-2 sm:mt-0 flex flex-wrap items-center gap-2">
+        {{-- ============================================== --}}
+        {{-- 1. HEADER & CONTROL BAR (SATU KOTAK KOMPAK)    --}}
+        {{-- ============================================== --}}
+        <div class="mb-1 bg-white p-1 rounded-lg border border-gray-400 shadow-sm">
+            <form action="{{ url()->current() }}" method="GET"> 
                 
-                {{-- 1. TOMBOL DOWNLOAD EXCEL --}}
-                <a href="{{ route('lembaga.export', request()->all()) }}" class="inline-flex items-center justify-center bg-emerald-600 hover:bg-emerald-700 text-white px-5 py-2 rounded-lg text-sm font-bold shadow-sm gap-2 transition">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
-                    Download Excel
-                </a>
-
-                {{-- 2. TOMBOL TAMBAH LEMBAGA --}}
-                <a href="{{ route('lembaga.create') }}" class="inline-flex items-center justify-center bg-green-600 hover:bg-green-700 text-white px-5 py-2 rounded-lg text-sm font-bold shadow-sm gap-2 transition">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
-                    Tambah Lembaga
-                </a>
-                
-            </div>
-        </div>
-
-        {{-- FILTER BAR (DENGAN SELECT2) --}}
-        <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-400 mb-4">
-            <form action="{{ url()->current() }}" method="GET">
-                <div class="grid grid-cols-1 md:grid-cols-12 gap-3 items-end">
+                {{-- BARIS 1: Judul Sejajar & Tombol Aksi --}}
+                <div class="flex flex-col lg:flex-row justify-between items-start lg:items-end mb-0 pb-0 border-b border-gray-200">
                     
-                    {{-- 1. SEARCH --}}
-                    <div class="md:col-span-3">
-                        <label class="block text-[10px] font-bold text-black-500 uppercase mb-1">Cari Lembaga / Kepala</label>
-                        <div class="relative">
-                            <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-                                <svg class="w-4 h-4 text-black-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
-                            </div>
-                            <input type="text" name="search" value="{{ request('search') }}" class="bg-gray-50 border border-gray-400 text-black-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full pl-9 p-2" placeholder="Ketik nama...">
-                        </div>
+                    {{-- Judul & Total (Diubah jadi sejajar pakai Flexbox) --}}
+                    <div class="flex flex-wrap items-end gap-1 mb-0 lg:mb-0">
+                        <h2 class="text-xl font-bold text-black-800 uppercase tracking-tight leading-none">
+                            Data Lembaga - Jumlah
+                        </h2>
+                        <p class="text-xl font-bold text-black-800 uppercase tracking-tight leading-none">
+                        : <span class="font-bold text-black-700">{{ $lembagas->total() }}</span> Lembaga
+                        </p>
+                        @if(Auth::user()->role == 'korcam')
+                            <p class="text-xl text-green-600 font-bold leading-none mb-0 border-l-2 border-gray-300 pl-1">
+                                WILAYAH KECAMATAN {{ Auth::user()->kecamatan->nama_kecamatan ?? '-' }}
+                            </p>
+                        @endif
+                    </div>
+                    
+                    {{-- Tombol Export & Tambah (Diperkecil sedikit) --}}
+                    <div class="flex flex-wrap items-center gap-2">
+                        <a href="{{ route('lembaga.export', request()->all()) }}" class="inline-flex items-center justify-center bg-emerald-600 hover:bg-emerald-700 text-white px-1 py-1 rounded-md text-sm font-bold shadow-sm gap-1 transition">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                            Download Excel
+                        </a>
+                        <a href="{{ route('lembaga.create') }}" class="inline-flex items-center justify-center bg-green-600 hover:bg-green-700 text-white px-1 py-1 rounded-md text-sm font-bold shadow-sm gap-1 transition">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+                            Tambah Lembaga
+                        </a>
+                    </div>
+                </div>
+
+                {{-- BARIS 2: Jajaran Filter (Grid 7 Kolom Lurus 1 Baris) --}}
+                <div class="grid grid-cols-1 sm:grid-cols-1 lg:grid-cols-7 gap-1 items-end">
+                    
+                    {{-- 1. Search --}}
+                    <div class="w-full">
+                        <label class="text-[10px] font-bold text-black-500 uppercase tracking-wider ml-1">Cari Lembaga</label>
+                        <input type="text" name="search" value="{{ request('search') }}" placeholder="Ketik nama..." 
+                               class="w-full border border-gray-400 rounded-md px-2 py-1 text-sm focus:outline-none focus:border-blue-500 h-8">
                     </div>
 
                     {{-- 2. Filter Kecamatan --}}
-                    <div class="md:col-span-2 w-full">
-                        <label class="block text-[10px] font-bold text-black-500 uppercase tracking-wider mb-1">Kecamatan</label>
+                    <div class="w-full">
+                        <label class="text-[10px] font-bold text-black-500 uppercase tracking-wider ml-1">Kecamatan</label>
                         <select name="filter_kecamatan" id="filter_kecamatan" class="select2-filter w-full border border-gray-400 rounded-md px-1 py-1 text-sm focus:outline-none focus:border-blue-500 h-8">
                             <option value="">- Semua Kec -</option>
                             @if(isset($data_kecamatan))
@@ -65,14 +66,11 @@
                     </div>
 
                     {{-- 3. Filter Desa --}}
-                    <div class="md:col-span-2 w-full">
-                        <label class="block text-[10px] font-bold text-black-500 uppercase tracking-wider mb-1">Desa</label>
+                    <div class="w-full">
+                        <label class="text-[10px] font-bold text-black-500 uppercase tracking-wider ml-1">Desa</label>
                         <select name="filter_desa" id="filter_desa" class="select2-filter w-full border border-gray-400 rounded-md px-1 py-1 text-sm focus:outline-none focus:border-blue-500 h-8">
                             <option value="">- Semua Desa -</option>
-                            {{-- Isinya akan diisi otomatis oleh Javascript di bawah --}}
                         </select>
-                        
-                        {{-- Data Gaib untuk dibaca Javascript --}}
                         <div id="allDesasDataFilter" class="hidden">
                             @if(isset($data_desa))
                                 @foreach($data_desa as $d)
@@ -82,10 +80,10 @@
                         </div>
                     </div>
 
-                    {{-- 4. FILTER JENIS --}}
-                    <div class="md:col-span-2 w-full">
-                        <label class="block text-[10px] font-bold text-black-500 uppercase mb-1">Jenis</label>
-                        <select name="filter_jenis" class="bg-gray-50 border border-gray-400 text-black-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-[7px]">
+                    {{-- 4. Filter Jenis --}}
+                    <div class="w-full">
+                        <label class="text-[10px] font-bold text-black-500 uppercase tracking-wider ml-1">Jenis</label>
+                        <select name="filter_jenis" class="bg-gray-50 border border-gray-400 text-black-900 text-sm rounded-md focus:ring-blue-500 focus:border-blue-500 block w-full h-8 px-1 py-1">
                             <option value="">- Semua -</option>
                             <option value="TPQ" {{ request('filter_jenis') == 'TPQ' ? 'selected' : '' }}>TPQ</option>
                             <option value="MADIN" {{ request('filter_jenis') == 'MADIN' ? 'selected' : '' }}>MADIN</option>
@@ -93,11 +91,11 @@
                         </select>
                     </div>
 
-                    {{-- 5. FILTER ORMAS --}}
-                    <div class="md:col-span-1 w-full">
-                        <label class="block text-[10px] font-bold text-black-500 uppercase mb-1">Ormas</label>
-                        <select name="filter_ormas" class="bg-gray-50 border border-gray-400 text-black-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-[7px]">
-                            <option value="">Semua</option>
+                    {{-- 5. Filter Ormas --}}
+                    <div class="w-full">
+                        <label class="text-[10px] font-bold text-black-500 uppercase tracking-wider ml-1">Ormas</label>
+                        <select name="filter_ormas" class="bg-gray-50 border border-gray-400 text-black-900 text-sm rounded-md focus:ring-blue-500 focus:border-blue-500 block w-full h-8 px-1 py-1">
+                            <option value="">- Semua -</option>
                             <option value="NU" {{ request('filter_ormas') == 'NU' ? 'selected' : '' }}>NU</option>
                             <option value="Muhammadiyah" {{ request('filter_ormas') == 'Muhammadiyah' ? 'selected' : '' }}>Muh</option>
                             <option value="LDII" {{ request('filter_ormas') == 'LDII' ? 'selected' : '' }}>LDII</option>
@@ -105,24 +103,24 @@
                         </select>
                     </div>
 
-
-                    {{-- 6. FILTER BERKAS [REVISI] --}}
-                    <div class="md:col-span-2 w-full">
-                        <label class="block text-[10px] font-bold text-black-500 uppercase mb-1">Status Berkas</label>
-                        <select name="filter_berkas" class="bg-gray-50 border border-gray-400 text-black-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-[7px]">
+                    {{-- 6. Filter Berkas --}}
+                    <div class="w-full">
+                        <label class="text-[10px] font-bold text-black-500 uppercase tracking-wider ml-1">Status Berkas</label>
+                        <select name="filter_berkas" class="bg-gray-50 border border-gray-400 text-black-900 text-sm rounded-md focus:ring-blue-500 focus:border-blue-500 block w-full h-8 px-1 py-1">
                             <option value="">- Semua Status -</option>
-                            <option value="kosong" {{ request('filter_berkas') == 'kosong' ? 'selected' : '' }}>📄 Belum Upload (Kosong)</option>
-                            <option value="pending" {{ request('filter_berkas') == 'pending' ? 'selected' : '' }}>⏳ Pending (Menunggu)</option>
-                            <option value="ditolak" {{ request('filter_berkas') == 'ditolak' ? 'selected' : '' }}>❌ Ditolak (Revisi)</option>
-                            <option value="disetujui" {{ request('filter_berkas') == 'disetujui' ? 'selected' : '' }}>✅ Disetujui (Lengkap)</option>
+                            <option value="kosong" {{ request('filter_berkas') == 'kosong' ? 'selected' : '' }}>📄 Kosong</option>
+                            <option value="pending" {{ request('filter_berkas') == 'pending' ? 'selected' : '' }}>⏳ Pending</option>
+                            <option value="ditolak" {{ request('filter_berkas') == 'ditolak' ? 'selected' : '' }}>❌ Ditolak</option>
+                            <option value="disetujui" {{ request('filter_berkas') == 'disetujui' ? 'selected' : '' }}>✅ Disetujui</option>
                         </select>
                     </div>
 
-                    {{-- 6. TOMBOL RESET --}}
-                    <div class="md:col-span-2 flex gap-2 w-full">
-                        <button type="submit" class="bg-blue-600 text-white px-4 py-[7px] rounded-lg text-sm font-bold hover:bg-blue-700 w-full">Cari</button>
-                        <a href="{{ url()->current() }}" class="bg-gray-100 text-black-600 border border-gray-400 px-3 py-[7px] rounded-lg text-sm font-bold hover:bg-gray-200 flex items-center justify-center">Reset</a>
+                    {{-- 7. Tombol Cari & Reset --}}
+                    <div class="w-full flex gap-1 h-8">
+                        <button type="submit" class="flex-1 bg-blue-600 text-white rounded text-xs font-bold hover:bg-blue-700 flex items-center justify-center gap-1 shadow-sm transition">Cari</button>
+                        <a href="{{ url()->current() }}" class="flex-1 bg-red-50 text-red-600 border border-red-200 rounded text-xs font-bold hover:bg-red-100 flex items-center justify-center shadow-sm transition">Reset</a>
                     </div>
+
                 </div>
             </form>
         </div>
@@ -175,23 +173,24 @@
             </div>
         @endif
 
-        {{-- Kotak Form Hijau --}}
-        <div class="mb-6 bg-green-50 border border-green-200 rounded-lg p-4">
-            <form action="{{ route('lembaga.import') }}" method="POST" enctype="multipart/form-data" class="flex flex-col sm:flex-row items-center justify-between gap-4">
+        {{-- Kotak Form Hijau (Diperkecil & Dirapatkan) --}}
+        <div class="mb-1 bg-emerald-50 border border-emerald-300 rounded-lg py-1 px-1">
+            <form action="{{ route('lembaga.import') }}" method="POST" enctype="multipart/form-data" class="flex flex-col sm:flex-row items-center justify-between gap-2">
                 @csrf
                 <div class="w-full sm:w-auto">
-                    <h4 class="font-bold text-green-800 text-lg">Import Data Lembaga via Excel</h4>
-                    <p class="text-sm text-green-700 mt-1">Pastikan format kolom sesuai template. Sistem akan memblokir NIK/Lembaga ganda.</p>
+                    <h4 class="font-bold italic text-emerald-600 text-sm">* Import Data Lembaga via Excel. Pastikan format sesuai template.</h4>
+
                 </div>
-                <div class="flex items-center space-x-3 w-full sm:w-auto">
-                    <input type="file" name="file" required class="block w-full text-sm text-black-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-bold file:bg-white file:text-green-700 file:border file:border-green-300 hover:file:bg-green-100 cursor-pointer transition">
-                    
-                    <button type="submit" class="bg-green-700 hover:bg-green-800 text-white font-bold py-2 px-6 rounded-md transition shadow-sm whitespace-nowrap">
+                <div class="flex items-center space-x-2 w-full sm:w-auto justify-end">
+                    <input type="file" name="file" required class="block w-full text-xs text-black-500 file:mr-2 file:py-1 file:px-3 file:rounded file:border-0 file:text-xs file:font-bold file:bg-white file:text-emerald-700 file:border file:border-emerald-300 hover:file:bg-emerald-100 cursor-pointer transition">
+                    <button type="submit" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-1.5 px-4 rounded text-xs transition shadow-sm whitespace-nowrap">
                         Impor
                     </button>
                 </div>
             </form>
         </div>
+
+
 
         {{-- =========================== --}}
         {{-- 3. TABEL DATA (FULL COLUMN) --}}
@@ -222,7 +221,9 @@
                             <th class="border-l border-gray-400 px-2 text-center w-24 sticky right-0 bg-gray-100 z-10">Aksi</th>
                         </tr>
                     </thead>
-                    <tbody class="text-black-900 text-[11px] divide-y divide-gray-200">
+                    
+                    {{-- Ubah warna horizontal line (divide) agar setara dengan vertical line (gray-400) --}}
+                    <tbody class="text-black-900 text-[11px] divide-y divide-gray-600">
                         @forelse($lembagas as $index => $lembaga)
                             <tr class="hover:bg-yellow-50 transition duration-75 h-16 align-top">
                                 
@@ -244,12 +245,12 @@
                                     {{-- [BARU] BADGE INDIKATOR STATUS BERKAS LEMBAGA --}}
                                     <div class="mt-1.5 flex flex-wrap gap-1">
                                         @if($lembaga->status_berkas == 'bermasalah')
-                                            <span class="inline-flex items-center bg-orange-50 text-orange-700 text-[9px] font-bold px-1.5 py-0.5 rounded border border-orange-200 tracking-wide">
-                                                BERKAS BELUM LENGKAP
+                                            <span class="inline-flex items-center bg-orange-50 text-orange-700 text-[10px] font-bold px-1 py-0.5 rounded border border-orange-200 tracking-wide">
+                                                File Belum Lengkap
                                             </span>
                                         @elseif($lembaga->status_berkas == 'pending')
-                                            <span class="inline-flex items-center bg-blue-50 text-blue-700 text-[9px] font-bold px-1.5 py-0.5 rounded border border-blue-200 tracking-wide">
-                                                SEDANG DIVERIFIKASI
+                                            <span class="inline-flex items-center bg-blue-50 text-blue-700 text-[10px] font-bold px-1 py-0.5 rounded border border-blue-200 tracking-wide">
+                                                Sedang Diverifikasi
                                             </span>
                                         @endif
                                     </div>
@@ -505,7 +506,7 @@
     
     <style>
         /* CSS Tambahan Biar Select2 Cocok Sama Tailwind */
-        .select2-container .select2-selection--single { height: 36px; border-color: #9ca3af; border-radius: 0.5rem; font-size: 0.875rem; }
+        .select2-container .select2-selection--single { height: 32px; border-color: #9ca3af; border-radius: 0.5rem; font-size: 0.875rem; }
         .select2-container--default .select2-selection--single .select2-selection__rendered { line-height: 34px; color: #374151; }
         .select2-container--default .select2-selection--single .select2-selection__arrow { height: 34px; }
     </style>

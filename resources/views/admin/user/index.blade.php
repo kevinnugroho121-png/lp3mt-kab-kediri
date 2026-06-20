@@ -53,20 +53,20 @@
             {{-- ================================================= --}}
             {{-- 1. [BARU] PANEL FILTER PINTAR --}}
             {{-- ================================================= --}}
-            <div class="bg-white p-4 rounded-t-xl border-t border-l border-r border-gray-300 shadow-sm">
+            <div class="bg-white p-4 rounded-t-xl border-t border-l border-r border-gray-600 shadow-sm">
                 <form action="{{ route('user.index') }}" method="GET" class="grid grid-cols-1 md:grid-cols-12 gap-3 items-end">
                     
                     {{-- Pencarian Nama/Email --}}
                     <div class="md:col-span-4">
                         <label class="block text-[10px] font-bold text-gray-500 uppercase mb-1">Cari Pengguna</label>
                         <input type="text" name="search" value="{{ request('search') }}" placeholder="Ketik nama atau email..." 
-                               class="w-full border border-gray-300 rounded-md px-3 py-1.5 text-sm focus:border-blue-500 focus:ring-blue-500">
+                               class="w-full border border-gray-600 rounded-md px-3 py-1.5 text-sm focus:border-blue-500 focus:ring-blue-500">
                     </div>
 
                     {{-- Filter Role --}}
                     <div class="md:col-span-3">
                         <label class="block text-[10px] font-bold text-gray-500 uppercase mb-1">Filter Jabatan</label>
-                        <select name="filter_role" class="w-full border border-gray-300 rounded-md px-3 py-1.5 text-sm focus:border-blue-500 focus:ring-blue-500">
+                        <select name="filter_role" class="w-full border border-gray-600 rounded-md px-3 py-1.5 text-sm focus:border-blue-500 focus:ring-blue-500">
                             <option value="">- Semua Jabatan -</option>
                             <option value="admin" {{ request('filter_role') == 'admin' ? 'selected' : '' }}>Super Admin</option>
                             <option value="verifikator" {{ request('filter_role') == 'verifikator' ? 'selected' : '' }}>Verifikator Kab</option>
@@ -77,7 +77,7 @@
                     {{-- Filter Kecamatan --}}
                     <div class="md:col-span-3">
                         <label class="block text-[10px] font-bold text-gray-500 uppercase mb-1">Filter Wilayah</label>
-                        <select name="filter_kecamatan" class="w-full border border-gray-300 rounded-md px-3 py-1.5 text-sm focus:border-blue-500 focus:ring-blue-500">
+                        <select name="filter_kecamatan" class="w-full border border-gray-600 rounded-md px-3 py-1.5 text-sm focus:border-blue-500 focus:ring-blue-500">
                             <option value="">- Semua Kecamatan -</option>
                             @foreach($data_kecamatan as $kec)
                                 <option value="{{ $kec->id }}" {{ request('filter_kecamatan') == $kec->id ? 'selected' : '' }}>Kec. {{ $kec->nama_kecamatan }}</option>
@@ -88,7 +88,7 @@
                     {{-- Tombol Filter --}}
                     <div class="md:col-span-2 flex gap-2">
                         <button type="submit" class="bg-gray-800 text-white px-4 py-1.5 rounded-md text-sm font-bold w-full hover:bg-gray-900 transition">Filter</button>
-                        <a href="{{ route('user.index') }}" class="bg-gray-100 text-gray-600 border border-gray-300 px-3 py-1.5 rounded-md text-sm font-bold hover:bg-gray-200 transition text-center flex items-center justify-center">Reset</a>
+                        <a href="{{ route('user.index') }}" class="bg-gray-100 text-gray-600 border border-gray-600 px-3 py-1.5 rounded-md text-sm font-bold hover:bg-gray-400 transition text-center flex items-center justify-center">Reset</a>
                     </div>
                 </form>
             </div>
@@ -96,34 +96,34 @@
             {{-- ================================================= --}}
             {{-- 2. TABEL DATA & INTELIJEN SESI --}}
             {{-- ================================================= --}}
-            <div class="bg-white border border-gray-400 overflow-hidden shadow-sm rounded-b-xl">
+            <div class="bg-white border border-gray-600 overflow-hidden shadow-sm rounded-b-xl">
                 <table class="w-full text-sm border-collapse min-w-[1000px]">
                     <thead>
-                        <tr class="bg-slate-100 text-slate-700 uppercase text-[10px] tracking-wider border-b border-gray-300">
-                            <th class="border-r border-gray-300 px-2 py-3 text-center font-bold w-12">No</th>
-                            <th class="border-r border-gray-300 px-3 py-3 text-left font-bold w-64">Nama & Kontak</th>
-                            <th class="border-r border-gray-300 px-3 py-3 text-center font-bold w-40">Jabatan & Wilayah</th>
+                        <tr class="bg-slate-100 text-slate-700 uppercase text-[10px] tracking-wider border-b border-gray-600">
+                            <th class="border-r border-gray-600 px-2 py-3 text-center font-bold w-12">No</th>
+                            <th class="border-r border-gray-600 px-3 py-3 text-left font-bold w-64">Nama & Kontak</th>
+                            <th class="border-r border-gray-600 px-3 py-3 text-center font-bold w-40">Jabatan & Wilayah</th>
                             
                             {{-- [BARU] Kolom Mata-Mata --}}
-                            <th class="border-r border-gray-300 px-3 py-3 text-left font-bold bg-blue-50/50">Aktivitas Terakhir (Intelijen)</th>
+                            <th class="border-r border-gray-600 px-3 py-3 text-left font-bold bg-blue-50/50">Aktivitas Terakhir (Intelijen)</th>
                             
                             <th class="px-3 py-3 text-center font-bold w-32">Aksi Pengelola</th>
                         </tr>
                     </thead>
-                    <tbody class="text-gray-700 divide-y divide-gray-200">
+                    <tbody class="text-gray-700 divide-y divide-gray-600">
                         @forelse($users as $index => $user)
                             <tr class="hover:bg-yellow-50 transition duration-150 align-top">
                                 
-                                <td class="border-r border-gray-200 px-2 py-3 text-center bg-gray-50 font-medium">
+                                <td class="border-r border-gray-600 px-2 py-3 text-center bg-gray-50 font-medium">
                                     {{ $users->firstItem() + $index }}
                                 </td>
 
-                                <td class="border-r border-gray-200 px-3 py-3">
+                                <td class="border-r border-gray-600 px-3 py-3">
                                     <div class="font-bold text-gray-900">{{ $user->name }}</div>
                                     <div class="text-xs text-gray-500 mt-0.5">{{ $user->email }}</div>
                                 </td>
 
-                                <td class="border-r border-gray-200 px-3 py-3 text-center">
+                                <td class="border-r border-gray-600 px-3 py-3 text-center">
                                     @if($user->role == 'admin')
                                         <div class="inline-block px-2 py-0.5 rounded text-[10px] font-bold bg-purple-100 text-purple-700 border border-purple-200 mb-1">Super Admin</div>
                                     @elseif($user->role == 'verifikator')
@@ -138,7 +138,7 @@
                                 </td>
 
                                 {{-- [BARU] KOLOM INTELIJEN --}}
-                                <td class="border-r border-gray-200 px-3 py-3 bg-blue-50/20">
+                                <td class="border-r border-gray-600 px-3 py-3 bg-blue-50/20">
                                     <div class="flex items-center gap-2 mb-1">
                                         @if($user->is_online)
                                             <span class="relative flex h-3 w-3">
@@ -147,9 +147,9 @@
                                             </span>
                                             <span class="text-xs font-bold text-green-600">SEDANG ONLINE</span>
                                         @else
-                                            <span class="h-2.5 w-2.5 rounded-full bg-gray-400 border border-gray-500"></span>
+                                            <span class="h-2.5 w-2.5 rounded-full bg-gray-600 border border-gray-500"></span>
                                             <span class="text-xs font-bold text-gray-500">Offline</span>
-                                            <span class="text-[10px] text-gray-400 ml-1">({{ $user->last_seen }})</span>
+                                            <span class="text-[10px] text-gray-600 ml-1">({{ $user->last_seen }})</span>
                                         @endif
                                     </div>
                                     
@@ -167,7 +167,7 @@
                                         {{-- 🔑 Tombol Reset Password --}}
                                         <form action="{{ route('user.reset-password', $user->id) }}" method="POST" onsubmit="return confirm('Yakin ingin mereset password user ini menjadi: kediri2026 ?');">
                                             @csrf
-                                            <button type="submit" class="p-1.5 bg-gray-100 text-gray-700 border border-gray-300 rounded hover:bg-gray-700 hover:text-white transition" title="Reset Password ke Default">
+                                            <button type="submit" class="p-1.5 bg-gray-100 text-gray-700 border border-gray-600 rounded hover:bg-gray-700 hover:text-white transition" title="Reset Password ke Default">
                                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"></path></svg>
                                             </button>
                                         </form>
@@ -196,7 +196,7 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="5" class="border border-gray-300 px-4 py-8 text-center text-gray-400 bg-gray-50">
+                                <td colspan="5" class="border border-gray-600 px-4 py-8 text-center text-gray-600 bg-gray-50">
                                     Belum ada data user / Tidak ditemukan.
                                 </td>
                             </tr>
