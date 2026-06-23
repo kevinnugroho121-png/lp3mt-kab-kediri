@@ -5,15 +5,17 @@
         </h2>
     </x-slot>
 
-    <div class="py-10">
-        <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="py-2">
+        <div class="max-w-full mx-auto px-1 sm:px-1 lg:px-1">
             
             {{-- HEADER: Judul & Tombol Kembali --}}
-            <div class="flex justify-between items-center mb-6">
+            <div class="flex justify-between items-center mb-1">
                 <div>
-                    <h1 class="text-2xl font-bold text-black-800">Edit Guru: {{ $guru->nama_lengkap }}</h1>
+                    <h1 class="text-2xl font-bold text-black-800 uppercase">EDIT DATA GURU: {{ $guru->nama_lengkap }}</h1>
                     <p class="text-sm text-black-500 mt-1">Perbarui data identitas atau upload ulang dokumen.</p>
                 </div>
+
+
                 
                 {{-- LOGIKA TOMBOL KEMBALI PINTAR --}}
                 @php
@@ -32,135 +34,115 @@
                     @csrf
                     @method('PUT')
                     
+
+
                     {{-- SECTION A: DATA PRIBADI --}}
-                    <div class="mb-10">
-                        <div class="flex items-center gap-2 mb-4 pb-2 border-b border-gray-100">
+                    <div class="mb-4">
+                        <div class="flex items-center gap-2 mb-4 pb-2 border-b border-gray-600">
                             <span class="bg-blue-100 text-blue-700 w-8 h-8 flex items-center justify-center rounded-full font-bold text-sm">A</span>
-                            <h3 class="text-lg font-bold text-black-800">Data Pribadi</h3>
+                            <h3 class="text-lg font-bold text-black-800">Data Pribadi & Kepegawaian</h3>
                         </div>
 
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3">
                             <div class="md:col-span-2">
-                                <label class="block text-sm font-semibold text-black-700 mb-1 text-center">Nama Lengkap</label>
-                                <input type="text" name="nama_lengkap" value="{{ old('nama_lengkap', $guru->nama_lengkap) }}" class="w-full border-gray-300 rounded-lg shadow-sm text-sm py-2.5 text-center" required>
+                                <label class="block text-[10px] font-bold text-gray-600 uppercase tracking-wider mb-1">Nama Lengkap (Sesuai KTP) <span class="text-red-500">*</span></label>
+                                <input type="text" name="nama_lengkap" value="{{ old('nama_lengkap', $guru->nama_lengkap) }}" class="w-full border border-gray-600 rounded-md px-2 py-1 h-[32px] text-xs font-bold text-black-800 focus:border-blue-500 focus:ring-blue-500 shadow-sm uppercase" required oninput="this.value = this.value.toUpperCase()">
                             </div>
 
-                            <div>
-                                <label class="block text-sm font-semibold text-black-700 mb-1 text-center">NIK</label>
-                                <input type="number" name="nik" value="{{ old('nik', $guru->nik) }}" class="w-full border-gray-300 rounded-lg shadow-sm text-sm py-2.5 text-center" required>
+                            <div class="md:col-span-1">
+                                <label class="block text-[10px] font-bold text-gray-600 uppercase tracking-wider mb-1">NIK (16 Digit) <span class="text-red-500">*</span></label>
+                                <input type="number" name="nik" value="{{ old('nik', $guru->nik) }}" class="w-full border border-gray-600 rounded-md px-2 py-1 h-[32px] text-xs font-bold text-black-800 focus:border-blue-500 focus:ring-blue-500 shadow-sm" required>
                             </div>
 
-                            <div>
-                                <label class="block text-sm font-semibold text-black-700 mb-1 text-center">Jenis Kelamin</label>
-                                <select name="jenis_kelamin" class="w-full border-gray-300 rounded-lg shadow-sm text-sm py-2.5 text-center">
+                            <div class="md:col-span-1">
+                                <label class="block text-[10px] font-bold text-gray-600 uppercase tracking-wider mb-1">Jenis Kelamin <span class="text-red-500">*</span></label>
+                                <select name="jenis_kelamin" class="w-full border border-gray-600 rounded-md px-2 py-1 h-[32px] text-xs font-bold text-black-800 focus:border-blue-500 focus:ring-blue-500 shadow-sm">
                                     <option value="L" {{ $guru->jenis_kelamin == 'L' ? 'selected' : '' }}>Laki-laki</option>
                                     <option value="P" {{ $guru->jenis_kelamin == 'P' ? 'selected' : '' }}>Perempuan</option>
                                 </select>
                             </div>
 
-                            {{-- STATUS KEPEGAWAIAN (Ada ID untuk JS) --}}
-                            <div>
-                                <label class="block text-sm font-semibold text-black-700 mb-1 text-center">Status Kepegawaian</label>
-                                <select name="status_kepegawaian" id="status_kepegawaian" class="w-full border-gray-300 rounded-lg shadow-sm text-sm py-2.5 text-center" onchange="checkInsentifEligibility()">
-                                    <option value="Non-ASN" {{ $guru->status_kepegawaian == 'Non-ASN' ? 'selected' : '' }}>Non-ASN</option>
+                            <div class="md:col-span-1">
+                                <label class="block text-[10px] font-bold text-gray-600 uppercase tracking-wider mb-1">Status Kepegawaian <span class="text-red-500">*</span></label>
+                                <select name="status_kepegawaian" id="status_kepegawaian" class="w-full border border-gray-600 rounded-md px-2 py-1 h-[32px] text-xs font-bold text-black-800 focus:border-blue-500 focus:ring-blue-500 shadow-sm" onchange="checkInsentifEligibility()">
+                                    <option value="Non-ASN" {{ $guru->status_kepegawaian == 'Non-ASN' ? 'selected' : '' }}>Non-ASN (Guru Swasta)</option>
                                     <option value="PNS" {{ $guru->status_kepegawaian == 'PNS' ? 'selected' : '' }}>PNS</option>
                                     <option value="PPPK" {{ $guru->status_kepegawaian == 'PPPK' ? 'selected' : '' }}>PPPK</option>
                                 </select>
                             </div>
 
-                            {{-- STATUS SERTIFIKASI (Ada ID untuk JS) --}}
-                            <div>
-                                <label class="block text-sm font-semibold text-black-700 mb-1 text-center">Status Sertifikasi</label>
-                                <select name="status_sertifikasi" id="status_sertifikasi" class="w-full border-gray-300 rounded-lg shadow-sm text-sm py-2.5 text-center" onchange="checkInsentifEligibility()">
+                            <div class="md:col-span-1">
+                                <label class="block text-[10px] font-bold text-gray-600 uppercase tracking-wider mb-1">Status Sertifikasi <span class="text-red-500">*</span></label>
+                                <select name="status_sertifikasi" id="status_sertifikasi" class="w-full border border-gray-600 rounded-md px-2 py-1 h-[32px] text-xs font-bold text-black-800 focus:border-blue-500 focus:ring-blue-500 shadow-sm" onchange="checkInsentifEligibility()">
                                     <option value="Belum" {{ $guru->status_sertifikasi == 'Belum' ? 'selected' : '' }}>Belum Sertifikasi</option>
                                     <option value="Sertifikasi" {{ $guru->status_sertifikasi == 'Sertifikasi' ? 'selected' : '' }}>Sudah Sertifikasi</option>
                                     <option value="Inpassing" {{ $guru->status_sertifikasi == 'Inpassing' ? 'selected' : '' }}>Sudah Inpassing</option>
                                 </select>
                             </div>
 
-                            {{-- [BARU] STATUS INSENTIF OTOMATIS --}}
-                            <div class="md:col-span-2 bg-yellow-50 p-4 rounded-lg border border-yellow-200 transition-colors" id="box_insentif">
-                                <label class="block text-sm font-bold text-black-800 mb-1 text-center">Apakah Menerima Insentif?</label>
-                                <select name="penerima_insentif" id="penerima_insentif" class="w-full border-yellow-400 rounded-lg shadow-sm text-sm py-2.5 text-center font-bold text-black-700 focus:ring-yellow-500 focus:border-yellow-500">
+                            <div class="md:col-span-2 bg-yellow-50 px-1 py-1 rounded-md border border-yellow-200 transition-colors flex flex-col justify-center" id="box_insentif">
+                                <label class="block text-[10px] font-bold text-black-800 mb-0.5">Apakah Menerima Insentif? <span class="text-red-500">*</span></label>
+                                <select name="penerima_insentif" id="penerima_insentif" class="w-full border-yellow-400 rounded-md px-2 py-1 h-[32px] text-xs font-bold text-black-700 shadow-sm focus:ring-yellow-500 focus:border-yellow-500">
                                     <option value="0" {{ $guru->penerima_insentif == 0 ? 'selected' : '' }}>❌ TIDAK / BELUM MENERIMA</option>
-                                    <option value="1" {{ $guru->penerima_insentif == 1 ? 'selected' : '' }}>✅ YA, PENERIMA INSENTIF</option>
+                                    <option value="1" {{ $guru->penerima_insentif == 1 ? 'selected' : '' }}>✅ YA, BERHAK MENERIMA INSENTIF</option>
                                 </select>
-                                <p class="text-[10px] text-black-500 text-center mt-1" id="msg_insentif">*Ubah ke "YA" jika guru ini berhak menerima insentif.</p>
+                                <p class="text-[9px] text-black-500 mt-1 leading-none" id="msg_insentif">*Ubah ke "YA" jika guru ini berhak menerima insentif.</p>
                             </div>
 
-                            <div>
-                                <label class="block text-sm font-semibold text-black-700 mb-1 text-center">Tempat Lahir</label>
-                                <input type="text" name="tempat_lahir" value="{{ old('tempat_lahir', $guru->tempat_lahir) }}" class="w-full border-gray-300 rounded-lg shadow-sm text-sm py-2.5 text-center">
-                            </div>
-                            <div>
-                                <label class="block text-sm font-semibold text-black-700 mb-1 text-center">Tanggal Lahir</label>
-                                <input type="date" name="tanggal_lahir" value="{{ old('tanggal_lahir', optional($guru->tanggal_lahir)->format('Y-m-d')) }}" class="w-full border-gray-300 rounded-lg shadow-sm text-sm py-2.5 text-center">
+                            <div class="md:col-span-1">
+                                <label class="block text-[10px] font-bold text-gray-600 uppercase tracking-wider mb-1">Tempat Lahir</label>
+                                <input type="text" name="tempat_lahir" value="{{ old('tempat_lahir', $guru->tempat_lahir) }}" class="w-full border border-gray-600 rounded-md px-2 py-1 h-[32px] text-xs font-bold text-black-800 focus:border-blue-500 focus:ring-blue-500 shadow-sm uppercase" oninput="this.value = this.value.toUpperCase()">
                             </div>
 
-                            <div>
-                                <label class="block text-sm font-semibold text-black-700 mb-1 text-center">Nama Ibu Kandung</label>
-                                <input type="text" name="nama_ibu_kandung" value="{{ old('nama_ibu_kandung', $guru->nama_ibu_kandung) }}" class="w-full border-gray-300 rounded-lg shadow-sm text-sm py-2.5 text-center">
+                            <div class="md:col-span-1">
+                                <label class="block text-[10px] font-bold text-gray-600 uppercase tracking-wider mb-1">Tanggal Lahir</label>
+                                <input type="date" name="tanggal_lahir" value="{{ old('tanggal_lahir', optional($guru->tanggal_lahir)->format('Y-m-d')) }}" class="w-full border border-gray-600 rounded-md px-2 py-1 h-[32px] text-xs font-bold text-black-800 focus:border-blue-500 focus:ring-blue-500 shadow-sm">
                             </div>
-                            <div>
-                                <label class="block text-sm font-semibold text-black-700 mb-1 text-center">Agama</label>
-                                <select name="agama" class="w-full border-gray-300 rounded-lg shadow-sm text-sm py-2.5 text-center">
-                                    <option value="Islam" {{ $guru->agama == 'Islam' ? 'selected' : '' }}>Islam</option>
-                                    <option value="Kristen" {{ $guru->agama == 'Kristen' ? 'selected' : '' }}>Kristen</option>
-                                    <option value="Lainnya" {{ $guru->agama == 'Lainnya' ? 'selected' : '' }}>Lainnya</option>
+
+                            <div class="md:col-span-1">
+                                <label class="block text-[10px] font-bold text-gray-600 uppercase tracking-wider mb-1">Nama Ibu Kandung</label>
+                                <input type="text" name="nama_ibu_kandung" value="{{ old('nama_ibu_kandung', $guru->nama_ibu_kandung) }}" class="w-full border border-gray-600 rounded-md px-2 py-1 h-[32px] text-xs font-bold text-black-800 focus:border-blue-500 focus:ring-blue-500 shadow-sm uppercase" oninput="this.value = this.value.toUpperCase()">
+                            </div>
+
+                            <div class="md:col-span-1">
+                                <label class="block text-[10px] font-bold text-gray-600 uppercase tracking-wider mb-1">Agama</label>
+                                <select name="agama" class="w-full border border-gray-600 rounded-md px-2 py-1 h-[32px] text-xs font-bold text-black-800 focus:border-blue-500 focus:ring-blue-500 shadow-sm">
+                                    <option value="Islam" {{ $guru->agama == 'Islam' ? 'selected' : '' }}>ISLAM</option>
+                                    <option value="Kristen" {{ $guru->agama == 'Kristen' ? 'selected' : '' }}>KRISTEN</option>
+                                    <option value="Katholik" {{ $guru->agama == 'Katholik' ? 'selected' : '' }}>KATHOLIK</option>
+                                    <option value="Hindu" {{ $guru->agama == 'Hindu' ? 'selected' : '' }}>HINDU</option>
+                                    <option value="Budha" {{ $guru->agama == 'Budha' ? 'selected' : '' }}>BUDHA</option>
+                                    <option value="Konghucu" {{ $guru->agama == 'Konghucu' ? 'selected' : '' }}>KONGHUCU</option>
                                 </select>
                             </div>
                         </div>
                     </div>
 
                     {{-- SECTION B: KELEMBAGAAN --}}
-                    <div class="mb-10">
-                        <div class="flex items-center gap-2 mb-4 pb-2 border-b border-gray-100">
+                    <div class="mb-4">
+                        <div class="flex items-center gap-2 mb-4 pb-2 border-b border-gray-600">
                             <span class="bg-green-100 text-green-700 w-8 h-8 flex items-center justify-center rounded-full font-bold text-sm">B</span>
-                            <h3 class="text-lg font-bold text-black-800">Kelembagaan & Kontak</h3>
+                            <h3 class="text-lg font-bold text-black-800">Kelembagaan & Wilayah</h3>
                         </div>
 
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            
-                            {{-- LEMBAGA DENGAN DATALIST --}}
-                            <div class="md:col-span-2">
-                                <label class="block text-sm font-semibold text-black-700 mb-1 text-center">Lembaga Tempat Mengajar <span class="text-red-500">*</span></label>
-                                
-                                {{-- Input Text --}}
-                                <input list="list_lembaga" 
-                                       name="lembaga_id_input" 
-                                       class="w-full border-gray-300 rounded-lg shadow-sm text-sm py-2.5 text-center" 
-                                       placeholder="Ketik nama lembaga..." 
-                                       required 
-                                       onchange="setLembagaId(this)"
-                                       value="{{ old('lembaga_id_input', $guru->lembaga->nama_lembaga . ' (' . $guru->lembaga->desa->nama_desa . ')') }}">
-                                
-                                {{-- Datalist --}}
-                                <datalist id="list_lembaga">
-                                    @foreach($lembagas as $l)
-                                        <option data-id="{{ $l->id }}" value="{{ $l->nama_lembaga }} ({{ $l->desa->nama_desa }})"></option>
-                                    @endforeach
-                                </datalist>
-
-                                {{-- Hidden ID --}}
-                                <input type="hidden" name="lembaga_id" id="lembaga_id_hidden" value="{{ old('lembaga_id', $guru->lembaga_id) }}">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3">
+                            <div class="md:col-span-1">
+                                <label class="block text-[10px] font-bold text-gray-600 uppercase tracking-wider mb-1">Jenis Lembaga</label>
+                                <input type="text" value="{{ $guru->jenis_guru }}" class="w-full bg-gray-100 border border-gray-600 rounded-md px-2 py-1 h-[32px] text-xs font-bold text-gray-500 cursor-not-allowed shadow-sm" readonly>
                             </div>
 
-                            <div class="md:col-span-2">
-                                <label class="block text-sm font-semibold text-black-700 mb-1 text-center">Alamat Lengkap</label>
-                                <input type="text" name="alamat_ktp" value="{{ old('alamat_ktp', $guru->alamat_ktp) }}" class="w-full border-gray-300 rounded-lg shadow-sm text-sm py-2.5 text-center">
-                            </div>
-
-                            <div>
-                                <label class="block text-sm font-semibold text-black-700 mb-1 text-center">Kecamatan</label>
-                                <select name="kecamatan" id="kecamatanSelect" class="w-full border-gray-300 rounded-lg shadow-sm text-sm py-2.5 text-center" required>
+                            <div class="md:col-span-1">
+                                <label class="block text-[10px] font-bold text-gray-600 uppercase tracking-wider mb-1">Kecamatan <span class="text-red-500">*</span></label>
+                                <select name="kecamatan" id="kecamatanSelect" class="w-full border border-gray-600 rounded-md px-2 py-1 h-[32px] text-xs font-bold text-black-800 focus:border-blue-500 focus:ring-blue-500 shadow-sm" required>
                                     @foreach($kecamatans as $kec)
                                         <option value="{{ $kec->nama_kecamatan }}" data-id="{{ $kec->id }}" {{ $guru->kecamatan == $kec->nama_kecamatan ? 'selected' : '' }}>{{ $kec->nama_kecamatan }}</option>
                                     @endforeach
                                 </select>
                             </div>
-                            <div>
-                                <label class="block text-sm font-semibold text-black-700 mb-1 text-center">Desa / Kelurahan</label>
-                                <select name="desa" id="desaSelect" class="w-full border-gray-300 rounded-lg shadow-sm text-sm py-2.5 text-center" required>
+
+                            <div class="md:col-span-1">
+                                <label class="block text-[10px] font-bold text-gray-600 uppercase tracking-wider mb-1">Desa / Kelurahan <span class="text-red-500">*</span></label>
+                                <select name="desa" id="desaSelect" class="w-full border border-gray-600 rounded-md px-2 py-1 h-[32px] text-xs font-bold text-black-800 focus:border-blue-500 focus:ring-blue-500 shadow-sm" required>
                                     <option value="{{ $guru->desa }}">{{ $guru->desa }}</option>
                                 </select>
                                 <div id="allDesasData" class="hidden">
@@ -170,83 +152,96 @@
                                 </div>
                             </div>
 
-                            <div>
-                                <label class="block text-sm font-semibold text-black-700 mb-1 text-center">Kabupaten</label>
-                                <input type="text" name="kabupaten" value="Kediri" class="w-full border-gray-300 rounded-lg shadow-sm text-sm py-2.5 text-center" readonly>
+                            <div class="md:col-span-2">
+                                <label class="block text-[10px] font-bold text-green-700 uppercase tracking-wider mb-1">Lembaga Tempat Mengajar <span class="text-red-500">*</span></label>
+                                <input list="list_lembaga" name="lembaga_id_input" value="{{ old('lembaga_id_input', $guru->lembaga->nama_lembaga . ' (' . $guru->lembaga->desa->nama_desa . ')') }}" class="w-full border border-green-500 bg-green-50 rounded-md px-2 py-1 h-[32px] text-xs font-bold text-black-800 shadow-sm focus:ring-green-500" placeholder="Ketik nama lembaga..." required onchange="setLembagaId(this)">
+                                <datalist id="list_lembaga">
+                                    @foreach($lembagas as $l)
+                                        <option data-id="{{ $l->id }}" value="{{ $l->nama_lembaga }} ({{ $l->desa->nama_desa }})"></option>
+                                    @endforeach
+                                </datalist>
+                                <input type="hidden" name="lembaga_id" id="lembaga_id_hidden" value="{{ old('lembaga_id', $guru->lembaga_id) }}">
                             </div>
 
-                            <div>
-                                <label class="block text-sm font-semibold text-black-700 mb-1 text-center">Nomor HP</label>
-                                <input type="number" name="no_hp" value="{{ old('no_hp', $guru->no_hp) }}" class="w-full border-gray-300 rounded-lg shadow-sm text-sm py-2.5 text-center">
-                            </div>
                             <div class="md:col-span-2">
-                                <label class="block text-sm font-semibold text-black-700 mb-1 text-center">Nomor Rekening</label>
-                                <input type="number" name="nomor_rekening" value="{{ old('nomor_rekening', $guru->nomor_rekening) }}" class="w-full border-gray-300 rounded-lg shadow-sm text-sm py-2.5 text-center font-bold">
+                                <label class="block text-[10px] font-bold text-gray-600 uppercase tracking-wider mb-1">Alamat Lengkap (KTP)</label>
+                                <input type="text" name="alamat_ktp" value="{{ old('alamat_ktp', $guru->alamat_ktp) }}" class="w-full border border-gray-600 rounded-md px-2 py-1 h-[32px] text-xs font-bold text-black-800 focus:border-blue-500 focus:ring-blue-500 shadow-sm uppercase" required oninput="this.value = this.value.toUpperCase()">
+                            </div>
+
+                            <div class="md:col-span-1">
+                                <label class="block text-[10px] font-bold text-gray-600 uppercase tracking-wider mb-1">Kabupaten</label>
+                                <input type="text" name="kabupaten" value="KEDIRI" class="w-full border border-gray-600 rounded-md px-2 py-1 h-[32px] text-xs bg-gray-100 shadow-sm" readonly>
+                            </div>
+
+                            <div class="md:col-span-1">
+                                <label class="block text-[10px] font-bold text-gray-600 uppercase tracking-wider mb-1">Nomor HP</label>
+                                <input type="number" name="no_hp" value="{{ old('no_hp', $guru->no_hp) }}" class="w-full border border-gray-600 rounded-md px-2 py-1 h-[32px] text-xs font-bold text-black-800 focus:border-blue-500 focus:ring-blue-500 shadow-sm">
+                            </div>
+
+                            <div class="md:col-span-2">
+                                <label class="block text-[10px] font-bold text-gray-600 uppercase tracking-wider mb-1">Nomor Rekening BANK JATIM</label>
+                                <input type="number" name="nomor_rekening" value="{{ old('nomor_rekening', $guru->nomor_rekening) }}" class="w-full border border-gray-600 rounded-md px-2 py-1 h-[32px] text-xs font-bold focus:border-blue-500 focus:ring-blue-500 shadow-sm">
                             </div>
                         </div>
                     </div>
 
-                    {{-- SECTION C: DOKUMEN --}}
-                    <div class="mb-8">
-                        <div class="flex items-center gap-2 mb-4 pb-2 border-b border-gray-100">
+                    {{-- SECTION C: UPLOAD DOKUMEN --}}
+                    <div class="mb-1">
+                        <div class="flex items-center gap-2 mb-4 pb-2 border-b border-gray-600">
                             <span class="bg-purple-100 text-purple-700 w-8 h-8 flex items-center justify-center rounded-full font-bold text-sm">C</span>
                             <h3 class="text-lg font-bold text-black-800">Upload Dokumen</h3>
                         </div>
 
-                        <div class="space-y-8">
-                            {{-- 1. KTP --}}
-                            <div class="bg-gray-50 p-6 rounded-xl border border-gray-200">
-                                <label class="block text-base font-bold text-black-800 mb-3 text-center">1. Scan KTP Asli</label>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            
+                            {{-- Kotak KTP --}}
+                            <div class="bg-gray-50 p-3 rounded-lg border border-gray-600 shadow-sm flex flex-col items-start">
+                                <label class="block text-xs font-bold text-black-800 mb-2">1. Scan KTP Asli *</label>
                                 @if($guru->file_ktp)
-                                    <div class="mb-4 text-center">
-                                        <p class="text-xs text-green-600 font-bold mb-2">✓ File Tersimpan</p>
-                                        <iframe src="{{ asset('storage/' . $guru->file_ktp) }}" type="application/pdf" class="w-full h-[400px] border border-gray-300 rounded-lg bg-white"></iframe>
-                                    </div>
+                                    <p class="text-[10px] text-green-600 font-bold mb-1">✓ File Tersimpan</p>
                                 @endif
-                                <div class="relative group text-center">
-                                    <input type="file" name="file_ktp" id="file_ktp" accept="application/pdf"
-                                           class="block w-full text-sm text-black-500 file:mr-4 file:py-2.5 file:px-6 file:rounded-full file:border-0 file:text-sm file:font-bold file:bg-blue-600 file:text-white hover:file:bg-blue-700 cursor-pointer text-center"
-                                           onchange="handleFileSelect(this, 'preview_ktp_new', 'btn_reset_ktp')">
-                                    <button type="button" id="btn_reset_ktp" onclick="resetFile('file_ktp', 'preview_ktp_new', 'btn_reset_ktp')" class="hidden mt-2 text-sm text-red-600 font-bold underline">&times; Batal</button>
+                                <div class="w-full text-left">
+                                    <input type="file" name="file_ktp" id="file_ktp" accept="application/pdf" class="block w-full text-[10px] text-black-500 file:mr-2 file:py-1 file:px-3 file:rounded file:border-0 file:text-[10px] file:font-bold file:bg-blue-600 file:text-white hover:file:bg-blue-700 transition cursor-pointer" onchange="handleFileSelect(this, 'preview_ktp_new', 'btn_reset_ktp', 'old_ktp_frame')">
+                                    <button type="button" id="btn_reset_ktp" onclick="resetFile('file_ktp', 'preview_ktp_new', 'btn_reset_ktp', 'old_ktp_frame')" class="hidden mt-1 text-[10px] text-red-600 font-bold underline">&times; Batal Upload Baru</button>
                                 </div>
-                                <div class="mt-4"><iframe id="preview_ktp_new" class="hidden w-full h-[500px] border border-gray-300 rounded-lg bg-white"></iframe></div>
+                                @if($guru->file_ktp)
+                                    <div class="mt-2 w-full" id="old_ktp_frame"><iframe src="{{ asset('storage/' . $guru->file_ktp) }}" type="application/pdf" class="w-full h-[250px] border border-gray-400 rounded bg-white"></iframe></div>
+                                @endif
+                                <div class="mt-2 w-full"><iframe id="preview_ktp_new" type="application/pdf" class="hidden w-full h-[250px] border border-gray-600 rounded bg-white"></iframe></div>
                             </div>
 
-                            {{-- 2. KK --}}
-                            <div class="bg-gray-50 p-6 rounded-xl border border-gray-200">
-                                <label class="block text-base font-bold text-black-800 mb-3 text-center">2. Scan KK</label>
+                            {{-- Kotak KK --}}
+                            <div class="bg-gray-50 p-3 rounded-lg border border-gray-600 shadow-sm flex flex-col items-start">
+                                <label class="block text-xs font-bold text-black-800 mb-2">2. Scan Kartu Keluarga *</label>
                                 @if($guru->file_kk)
-                                    <div class="mb-4 text-center">
-                                        <p class="text-xs text-green-600 font-bold mb-2">✓ File Tersimpan</p>
-                                        <iframe src="{{ asset('storage/' . $guru->file_kk) }}" type="application/pdf" class="w-full h-[400px] border border-gray-300 rounded-lg bg-white"></iframe>
-                                    </div>
+                                    <p class="text-[10px] text-green-600 font-bold mb-1">✓ File Tersimpan</p>
                                 @endif
-                                <div class="relative group text-center">
-                                    <input type="file" name="file_kk" id="file_kk" accept="application/pdf"
-                                           class="block w-full text-sm text-black-500 file:mr-4 file:py-2.5 file:px-6 file:rounded-full file:border-0 file:text-sm file:font-bold file:bg-green-600 file:text-white hover:file:bg-green-700 cursor-pointer text-center"
-                                           onchange="handleFileSelect(this, 'preview_kk_new', 'btn_reset_kk')">
-                                    <button type="button" id="btn_reset_kk" onclick="resetFile('file_kk', 'preview_kk_new', 'btn_reset_kk')" class="hidden mt-2 text-sm text-red-600 font-bold underline">&times; Batal</button>
+                                <div class="w-full text-left">
+                                    <input type="file" name="file_kk" id="file_kk" accept="application/pdf" class="block w-full text-[10px] text-black-500 file:mr-2 file:py-1 file:px-3 file:rounded file:border-0 file:text-[10px] file:font-bold file:bg-green-600 file:text-white hover:file:bg-green-700 transition cursor-pointer" onchange="handleFileSelect(this, 'preview_kk_new', 'btn_reset_kk', 'old_kk_frame')">
+                                    <button type="button" id="btn_reset_kk" onclick="resetFile('file_kk', 'preview_kk_new', 'btn_reset_kk', 'old_kk_frame')" class="hidden mt-1 text-[10px] text-red-600 font-bold underline">&times; Batal Upload Baru</button>
                                 </div>
-                                <div class="mt-4"><iframe id="preview_kk_new" class="hidden w-full h-[500px] border border-gray-300 rounded-lg bg-white"></iframe></div>
+                                @if($guru->file_kk)
+                                    <div class="mt-2 w-full" id="old_kk_frame"><iframe src="{{ asset('storage/' . $guru->file_kk) }}" type="application/pdf" class="w-full h-[250px] border border-gray-400 rounded bg-white"></iframe></div>
+                                @endif
+                                <div class="mt-2 w-full"><iframe id="preview_kk_new" type="application/pdf" class="hidden w-full h-[250px] border border-gray-600 rounded bg-white"></iframe></div>
                             </div>
 
-                            {{-- 3. REKENING --}}
-                            <div class="bg-gray-50 p-6 rounded-xl border border-gray-200">
-                                <label class="block text-base font-bold text-black-800 mb-3 text-center">3. Scan Rekening</label>
+                            {{-- Kotak Rekening --}}
+                            <div class="bg-gray-50 p-3 rounded-lg border border-gray-600 shadow-sm flex flex-col items-start">
+                                <label class="block text-xs font-bold text-black-800 mb-2">3. Scan Buku Rekening</label>
                                 @if($guru->file_bukurekening)
-                                    <div class="mb-4 text-center">
-                                        <p class="text-xs text-green-600 font-bold mb-2">✓ File Tersimpan</p>
-                                        <iframe src="{{ asset('storage/' . $guru->file_bukurekening) }}" type="application/pdf" class="w-full h-[400px] border border-gray-300 rounded-lg bg-white"></iframe>
-                                    </div>
+                                    <p class="text-[10px] text-green-600 font-bold mb-1">✓ File Tersimpan</p>
                                 @endif
-                                <div class="relative group text-center">
-                                    <input type="file" name="file_bukurekening" id="file_bukurekening" accept="application/pdf"
-                                           class="block w-full text-sm text-black-500 file:mr-4 file:py-2.5 file:px-6 file:rounded-full file:border-0 file:text-sm file:font-bold file:bg-purple-600 file:text-white hover:file:bg-purple-700 cursor-pointer text-center"
-                                           onchange="handleFileSelect(this, 'preview_rekening_new', 'btn_reset_rekening')">
-                                    <button type="button" id="btn_reset_rekening" onclick="resetFile('file_bukurekening', 'preview_rekening_new', 'btn_reset_rekening')" class="hidden mt-2 text-sm text-red-600 font-bold underline">&times; Batal</button>
+                                <div class="w-full text-left">
+                                    <input type="file" name="file_bukurekening" id="file_bukurekening" accept="application/pdf" class="block w-full text-[10px] text-black-500 file:mr-2 file:py-1 file:px-3 file:rounded file:border-0 file:text-[10px] file:font-bold file:bg-purple-600 file:text-white hover:file:bg-purple-700 transition cursor-pointer" onchange="handleFileSelect(this, 'preview_rekening_new', 'btn_reset_rekening', 'old_rekening_frame')">
+                                    <button type="button" id="btn_reset_rekening" onclick="resetFile('file_bukurekening', 'preview_rekening_new', 'btn_reset_rekening', 'old_rekening_frame')" class="hidden mt-1 text-[10px] text-red-600 font-bold underline">&times; Batal Upload Baru</button>
                                 </div>
-                                <div class="mt-4"><iframe id="preview_rekening_new" class="hidden w-full h-[500px] border border-gray-300 rounded-lg bg-white"></iframe></div>
+                                @if($guru->file_bukurekening)
+                                    <div class="mt-2 w-full" id="old_rekening_frame"><iframe src="{{ asset('storage/' . $guru->file_bukurekening) }}" type="application/pdf" class="w-full h-[250px] border border-gray-400 rounded bg-white"></iframe></div>
+                                @endif
+                                <div class="mt-2 w-full"><iframe id="preview_rekening_new" type="application/pdf" class="hidden w-full h-[250px] border border-gray-600 rounded bg-white"></iframe></div>
                             </div>
+
                         </div>
                     </div>
 
@@ -357,8 +352,9 @@
         });
 
         // --- 4. File Upload ---
-        function handleFileSelect(input, iframeId, btnId) {
+        function handleFileSelect(input, iframeId, btnId, oldFrameId = null) {
             const iframe = document.getElementById(iframeId); const btnReset = document.getElementById(btnId);
+            if(oldFrameId) { const oldFrame = document.getElementById(oldFrameId); if(oldFrame) oldFrame.classList.add('hidden'); }
             if (input.files && input.files[0]) {
                 if(input.files[0].type !== 'application/pdf'){ alert("Mohon upload PDF!"); input.value = ""; return; }
                 const reader = new FileReader();
@@ -366,8 +362,9 @@
                 reader.readAsDataURL(input.files[0]);
             }
         }
-        function resetFile(inputId, iframeId, btnId) {
+        function resetFile(inputId, iframeId, btnId, oldFrameId = null) {
             const input = document.getElementById(inputId); const iframe = document.getElementById(iframeId); const btnReset = document.getElementById(btnId);
+            if(oldFrameId) { const oldFrame = document.getElementById(oldFrameId); if(oldFrame) oldFrame.classList.remove('hidden'); }
             input.value = ""; iframe.src = ""; iframe.classList.add('hidden'); btnReset.classList.add('hidden');
         }
     </script>

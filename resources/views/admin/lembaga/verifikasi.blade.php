@@ -5,160 +5,137 @@
         </h2>
     </x-slot>
 
-    <div class="py-10">
-        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="py-2">
+        <div class="max-w-full mx-auto px-1 sm:px-1 lg:px-1">
             
             {{-- HEADER INFO --}}
-            <div class="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
+            <div class="flex justify-between items-center mb-2 px-1">
                 <div>
-                    <h1 class="text-2xl font-bold text-black-800">{{ $lembaga->nama_lembaga }}</h1>
-                    <p class="text-sm text-black-500 mt-1">
-                        <span class="font-semibold text-blue-600">{{ $lembaga->jenis_lembaga }}</span> | 
-                        {{ $lembaga->desa->nama_desa }}, Kec. {{ $lembaga->kecamatan->nama_kecamatan }}
+                    <h1 class="text-2xl font-bold text-black-800 uppercase">VERIFIKASI LEMBAGA: {{ $lembaga->nama_lembaga }}</h1>
+                    <p class="text-xs font-bold text-blue-600 mt-0.5">
+                        {{ $lembaga->jenis_lembaga }} | <span class="text-black-500 font-normal">{{ $lembaga->desa->nama_desa }}, Kec. {{ $lembaga->kecamatan->nama_kecamatan }}</span>
                     </p>
                 </div>
-                <a href="{{ route('lembaga.index') }}" class="inline-flex items-center px-4 py-2 bg-white border border-gray-300 rounded-md font-semibold text-xs text-black-700 uppercase tracking-widest shadow-sm hover:bg-gray-50 transition">
+                <a href="{{ route('lembaga.index') }}" class="px-4 py-1.5 bg-white border border-gray-400 rounded-md text-xs font-bold text-black-700 shadow-sm hover:bg-gray-100 transition">
                     &larr; Kembali
                 </a>
             </div>
 
             <form action="{{ route('lembaga.proses_verifikasi', $lembaga->id) }}" method="POST">
+
+
                 @csrf
                 
-                <div class="space-y-8">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-3 px-1">
                     
                     {{-- 1. KARTU VERIFIKASI IJOP --}}
-                    <div class="bg-white rounded-xl shadow-sm border border-blue-200 overflow-hidden">
-                        {{-- Header Kartu --}}
-                        <div class="bg-blue-50 px-6 py-4 border-b border-blue-100 flex flex-col md:flex-row justify-between items-center gap-4">
-                            <div class="flex items-center gap-3">
-                                <span class="bg-blue-600 text-white w-8 h-8 flex items-center justify-center rounded-full font-bold text-sm">1</span>
-                                <h3 class="font-bold text-lg text-black-800">Izin Operasional (IJOP)</h3>
-                            </div>
-                            
-                            {{-- Dropdown Status --}}
+                    <div class="bg-gray-50 rounded-lg shadow-sm border border-blue-200 flex flex-col">
+                        <div class="bg-blue-50 px-3 py-2 border-b border-blue-200 flex justify-between items-center rounded-t-lg">
                             <div class="flex items-center gap-2">
-                                <label class="text-sm font-bold text-black-600">Status:</label>
-                                <select name="status_ijop" class="border-gray-300 rounded-lg text-sm focus:ring-blue-500 focus:border-blue-500 font-bold">
+                                <span class="bg-blue-600 text-white w-5 h-5 flex items-center justify-center rounded-full font-bold text-[10px]">1</span>
+                                <h3 class="font-bold text-xs text-blue-900 uppercase">Izin Operasional (IJOP)</h3>
+                            </div>
+                            <div class="flex items-center gap-1">
+                                <label class="text-[10px] font-bold text-black-600">Status:</label>
+                                <select name="status_ijop" class="border-gray-400 rounded px-2 py-0.5 text-[10px] font-bold focus:ring-blue-500 focus:border-blue-500 bg-white cursor-pointer w-28">
                                     <option value="Pending" {{ $lembaga->status_ijop == 'Pending' ? 'selected' : '' }}>⏳ Pending</option>
-                                    <option value="Disetujui" {{ $lembaga->status_ijop == 'Disetujui' ? 'selected' : '' }}>✅ DISETUJUI</option>
-                                    <option value="Ditolak" {{ $lembaga->status_ijop == 'Ditolak' ? 'selected' : '' }}>❌ DITOLAK</option>
+                                    <option value="Disetujui" {{ $lembaga->status_ijop == 'Disetujui' ? 'selected' : '' }}>✅ Disetujui</option>
+                                    <option value="Ditolak" {{ $lembaga->status_ijop == 'Ditolak' ? 'selected' : '' }}>❌ Ditolak</option>
                                 </select>
                             </div>
                         </div>
-
-                        {{-- Body: Preview PDF --}}
-                        <div class="p-6 bg-gray-50">
+                        <div class="p-2 flex-grow">
                             @if($lembaga->file_ijop)
-                                {{-- [PERBAIKAN] Tambah type="application/pdf" --}}
-                                <iframe src="{{ asset('storage/' . $lembaga->file_ijop) }}" type="application/pdf" class="w-full h-[600px] border border-gray-300 rounded-lg bg-white shadow-inner"></iframe>
-                                <div class="mt-2 text-center text-sm text-black-500">
-                                    Masa Berlaku: <b>{{ $lembaga->masa_berlaku_ijop ? $lembaga->masa_berlaku_ijop->format('d F Y') : '-' }}</b> 
-                                    s/d 
-                                    <b>{{ $lembaga->masa_berlaku_ijop ? $lembaga->masa_berlaku_ijop->addYears(5)->format('d F Y') : '-' }}</b>
+                                <div class="flex justify-between items-center bg-white border border-gray-300 rounded px-2 py-1 mb-2">
+                                    <span class="text-[9px] font-bold text-black-500">Masa Berlaku: <span class="text-black-800">{{ $lembaga->masa_berlaku_ijop ? $lembaga->masa_berlaku_ijop->format('d/m/Y') : '-' }} s.d {{ $lembaga->masa_berlaku_ijop ? $lembaga->masa_berlaku_ijop->addYears(5)->format('d/m/Y') : '-' }}</span></span>
+                                    <span class="text-[9px] font-bold text-black-500">Fisik: <span class="text-black-800">{{ $lembaga->ijop }}</span></span>
                                 </div>
+                                <iframe src="{{ asset('storage/' . $lembaga->file_ijop) }}#view=FitH" type="application/pdf" class="w-full h-[350px] border border-gray-300 rounded bg-white"></iframe>
                             @else
-                                <div class="h-40 flex flex-col items-center justify-center border-2 border-dashed border-gray-300 rounded-lg">
-                                    <svg class="w-10 h-10 text-black-400 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
-                                    <span class="text-black-500 font-medium">File IJOP belum diupload oleh lembaga.</span>
+                                <div class="h-[350px] flex flex-col items-center justify-center border border-dashed border-gray-300 rounded bg-gray-100">
+                                    <span class="text-black-500 font-bold text-xs italic">File IJOP belum diupload.</span>
                                 </div>
-
-
                             @endif
                         </div>
                     </div>
 
-                    {{-- 1B. KARTU VERIFIKASI SKD (Suket Domisili) [BARU] --}}
-                    <div class="bg-white rounded-xl shadow-sm border border-teal-200 overflow-hidden">
-                        <div class="bg-teal-50 px-6 py-4 border-b border-teal-100 flex flex-col md:flex-row justify-between items-center gap-4">
-                            <div class="flex items-center gap-3">
-                                <span class="bg-teal-600 text-white w-8 h-8 flex items-center justify-center rounded-full font-bold text-sm">1B</span>
-                                <h3 class="font-bold text-lg text-black-800">Surat Keterangan Domisili (SKD)</h3>
-                            </div>
+                    {{-- 1B. KARTU VERIFIKASI SKD --}}
+                    <div class="bg-gray-50 rounded-lg shadow-sm border border-teal-200 flex flex-col">
+                        <div class="bg-teal-50 px-3 py-2 border-b border-teal-200 flex justify-between items-center rounded-t-lg">
                             <div class="flex items-center gap-2">
-                                <label class="text-sm font-bold text-black-600">Status:</label>
-                                <select name="status_skd" class="border-gray-300 rounded-lg text-sm focus:ring-teal-500 focus:border-teal-500 font-bold">
+                                <span class="bg-teal-600 text-white w-5 h-5 flex items-center justify-center rounded-full font-bold text-[10px]">1B</span>
+                                <h3 class="font-bold text-xs text-teal-900 uppercase">Surat Ket. Domisili (SKD)</h3>
+                            </div>
+                            <div class="flex items-center gap-1">
+                                <label class="text-[10px] font-bold text-black-600">Status:</label>
+                                <select name="status_skd" class="border-gray-400 rounded px-2 py-0.5 text-[10px] font-bold focus:ring-teal-500 focus:border-teal-500 bg-white cursor-pointer w-28">
                                     <option value="Pending" {{ $lembaga->status_skd == 'Pending' ? 'selected' : '' }}>⏳ Pending</option>
-                                    <option value="Disetujui" {{ $lembaga->status_skd == 'Disetujui' ? 'selected' : '' }}>✅ DISETUJUI</option>
-                                    <option value="Ditolak" {{ $lembaga->status_skd == 'Ditolak' ? 'selected' : '' }}>❌ DITOLAK</option>
+                                    <option value="Disetujui" {{ $lembaga->status_skd == 'Disetujui' ? 'selected' : '' }}>✅ Disetujui</option>
+                                    <option value="Ditolak" {{ $lembaga->status_skd == 'Ditolak' ? 'selected' : '' }}>❌ Ditolak</option>
                                 </select>
                             </div>
                         </div>
-
-                        <div class="p-6 bg-gray-50">
+                        <div class="p-2 flex-grow">
                             @if($lembaga->file_skd)
-                                <iframe src="{{ asset('storage/' . $lembaga->file_skd) }}" type="application/pdf" class="w-full h-[600px] border border-gray-300 rounded-lg bg-white shadow-inner"></iframe>
+                                <iframe src="{{ asset('storage/' . $lembaga->file_skd) }}#view=FitH" type="application/pdf" class="w-full h-[350px] border border-gray-300 rounded bg-white"></iframe>
                             @else
-                                <div class="h-40 flex flex-col items-center justify-center border-2 border-dashed border-gray-300 rounded-lg">
-                                    <svg class="w-10 h-10 text-black-400 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
-                                    <span class="text-black-500 font-medium text-center">File SKD tidak ada/belum diupload.<br><small class="text-xs text-orange-500">*Hanya wajib jika IJOP belum terbit.</small></span>
+                                <div class="h-[350px] flex flex-col items-center justify-center border border-dashed border-gray-300 rounded bg-gray-100 p-4 text-center">
+                                    <span class="text-black-500 font-bold text-xs italic">File SKD tidak ada/belum diupload.</span>
+                                    <span class="text-orange-500 font-bold text-[9px] mt-1">*Hanya wajib jika IJOP belum terbit.</span>
                                 </div>
                             @endif
                         </div>
                     </div>
 
                     {{-- 2. KARTU VERIFIKASI SUPER --}}
-                    <div class="bg-white rounded-xl shadow-sm border border-purple-200 overflow-hidden">
-                        {{-- Header Kartu --}}
-                        <div class="bg-purple-50 px-6 py-4 border-b border-purple-100 flex flex-col md:flex-row justify-between items-center gap-4">
-                            <div class="flex items-center gap-3">
-                                <span class="bg-purple-600 text-white w-8 h-8 flex items-center justify-center rounded-full font-bold text-sm">2</span>
-                                <h3 class="font-bold text-lg text-black-800">Surat Pernyataan Tanggung Jawab Mutlak (SPTJM)</h3>
-                            </div>
-                            
-                            {{-- Dropdown Status --}}
+                    <div class="bg-gray-50 rounded-lg shadow-sm border border-purple-200 flex flex-col">
+                        <div class="bg-purple-50 px-3 py-2 border-b border-purple-200 flex justify-between items-center rounded-t-lg">
                             <div class="flex items-center gap-2">
-                                <label class="text-sm font-bold text-black-600">Status:</label>
-                                <select name="status_super" class="border-gray-300 rounded-lg text-sm focus:ring-purple-500 focus:border-purple-500 font-bold">
+                                <span class="bg-purple-600 text-white w-5 h-5 flex items-center justify-center rounded-full font-bold text-[10px]">2</span>
+                                <h3 class="font-bold text-xs text-purple-900 uppercase">SPTJM Mutlak</h3>
+                            </div>
+                            <div class="flex items-center gap-1">
+                                <label class="text-[10px] font-bold text-black-600">Status:</label>
+                                <select name="status_super" class="border-gray-400 rounded px-2 py-0.5 text-[10px] font-bold focus:ring-purple-500 focus:border-purple-500 bg-white cursor-pointer w-28">
                                     <option value="Pending" {{ $lembaga->status_super == 'Pending' ? 'selected' : '' }}>⏳ Pending</option>
-                                    <option value="Disetujui" {{ $lembaga->status_super == 'Disetujui' ? 'selected' : '' }}>✅ DISETUJUI</option>
-                                    <option value="Ditolak" {{ $lembaga->status_super == 'Ditolak' ? 'selected' : '' }}>❌ DITOLAK</option>
+                                    <option value="Disetujui" {{ $lembaga->status_super == 'Disetujui' ? 'selected' : '' }}>✅ Disetujui</option>
+                                    <option value="Ditolak" {{ $lembaga->status_super == 'Ditolak' ? 'selected' : '' }}>❌ Ditolak</option>
                                 </select>
                             </div>
                         </div>
-
-                        {{-- Body: Preview PDF --}}
-                        <div class="p-6 bg-gray-50">
+                        <div class="p-2 flex-grow">
                             @if($lembaga->file_super)
-                                {{-- [PERBAIKAN] Tambah type="application/pdf" --}}
-                                <iframe src="{{ asset('storage/' . $lembaga->file_super) }}" type="application/pdf" class="w-full h-[600px] border border-gray-300 rounded-lg bg-white shadow-inner"></iframe>
+                                <iframe src="{{ asset('storage/' . $lembaga->file_super) }}#view=FitH" type="application/pdf" class="w-full h-[350px] border border-gray-300 rounded bg-white"></iframe>
                             @else
-                                <div class="h-40 flex flex-col items-center justify-center border-2 border-dashed border-gray-300 rounded-lg">
-                                    <svg class="w-10 h-10 text-black-400 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
-                                    <span class="text-black-500 font-medium">File SUPER belum diupload oleh lembaga.</span>
+                                <div class="h-[350px] flex flex-col items-center justify-center border border-dashed border-gray-300 rounded bg-gray-100">
+                                    <span class="text-black-500 font-bold text-xs italic">File SPTJM belum diupload.</span>
                                 </div>
                             @endif
                         </div>
                     </div>
 
                     {{-- 3. KARTU VERIFIKASI SKAM --}}
-                    <div class="bg-white rounded-xl shadow-sm border border-orange-200 overflow-hidden">
-                        {{-- Header Kartu --}}
-                        <div class="bg-orange-50 px-6 py-4 border-b border-orange-100 flex flex-col md:flex-row justify-between items-center gap-4">
-                            <div class="flex items-center gap-3">
-                                <span class="bg-orange-500 text-white w-8 h-8 flex items-center justify-center rounded-full font-bold text-sm">3</span>
-                                <h3 class="font-bold text-lg text-black-800">Surat Keterangan Aktif Mengajar (SKAM)</h3>
-                            </div>
-                            
-                            {{-- Dropdown Status --}}
+                    <div class="bg-gray-50 rounded-lg shadow-sm border border-orange-200 flex flex-col">
+                        <div class="bg-orange-50 px-3 py-2 border-b border-orange-200 flex justify-between items-center rounded-t-lg">
                             <div class="flex items-center gap-2">
-                                <label class="text-sm font-bold text-black-600">Status:</label>
-                                <select name="status_skam" class="border-gray-300 rounded-lg text-sm focus:ring-orange-500 focus:border-orange-500 font-bold">
+                                <span class="bg-orange-500 text-white w-5 h-5 flex items-center justify-center rounded-full font-bold text-[10px]">3</span>
+                                <h3 class="font-bold text-xs text-orange-900 uppercase">Surat Ket. Aktif Mengajar (SKAM)</h3>
+                            </div>
+                            <div class="flex items-center gap-1">
+                                <label class="text-[10px] font-bold text-black-600">Status:</label>
+                                <select name="status_skam" class="border-gray-400 rounded px-2 py-0.5 text-[10px] font-bold focus:ring-orange-500 focus:border-orange-500 bg-white cursor-pointer w-28">
                                     <option value="Pending" {{ $lembaga->status_skam == 'Pending' ? 'selected' : '' }}>⏳ Pending</option>
-                                    <option value="Disetujui" {{ $lembaga->status_skam == 'Disetujui' ? 'selected' : '' }}>✅ DISETUJUI</option>
-                                    <option value="Ditolak" {{ $lembaga->status_skam == 'Ditolak' ? 'selected' : '' }}>❌ DITOLAK</option>
+                                    <option value="Disetujui" {{ $lembaga->status_skam == 'Disetujui' ? 'selected' : '' }}>✅ Disetujui</option>
+                                    <option value="Ditolak" {{ $lembaga->status_skam == 'Ditolak' ? 'selected' : '' }}>❌ Ditolak</option>
                                 </select>
                             </div>
                         </div>
-
-                        {{-- Body: Preview PDF --}}
-                        <div class="p-6 bg-gray-50">
+                        <div class="p-2 flex-grow">
                             @if($lembaga->file_skam)
-                                <iframe src="{{ asset('storage/' . $lembaga->file_skam) }}" type="application/pdf" class="w-full h-[600px] border border-gray-300 rounded-lg bg-white shadow-inner"></iframe>
+                                <iframe src="{{ asset('storage/' . $lembaga->file_skam) }}#view=FitH" type="application/pdf" class="w-full h-[350px] border border-gray-300 rounded bg-white"></iframe>
                             @else
-                                <div class="h-40 flex flex-col items-center justify-center border-2 border-dashed border-gray-300 rounded-lg">
-                                    <svg class="w-10 h-10 text-black-400 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
-                                    <span class="text-black-500 font-medium">File SKAM belum diupload oleh lembaga.</span>
+                                <div class="h-[350px] flex flex-col items-center justify-center border border-dashed border-gray-300 rounded bg-gray-100">
+                                    <span class="text-black-500 font-bold text-xs italic">File SKAM belum diupload.</span>
                                 </div>
                             @endif
                         </div>
@@ -166,19 +143,20 @@
 
                 </div>
 
-                {{-- FOOTER: CATATAN & SIMPAN --}}
-                <div class="mt-8 bg-white p-6 rounded-xl shadow-lg border border-gray-200 sticky bottom-4 z-50">
-                    <div class="flex flex-col md:flex-row gap-4 items-start md:items-center">
-                        <div class="flex-grow w-full">
-                            <label class="block text-xs font-bold text-black-500 uppercase mb-1">Catatan Verifikator (Jika Ditolak/Revisi)</label>
-                            <input type="text" name="catatan_verifikasi" value="{{ $lembaga->keterangan }}" 
-                                   class="w-full border-gray-300 rounded-lg focus:ring-green-500 focus:border-green-500 placeholder-gray-400" 
-                                   placeholder="Contoh: Scan IJOP buram, mohon upload ulang...">
+                {{-- FOOTER ACTION --}}
+                <div class="mt-4 bg-gray-50 px-4 py-3 rounded-lg shadow-md border border-gray-400 sticky bottom-2 z-50">
+                    <div class="flex flex-col md:flex-row gap-4 items-end justify-between">
+                        <div class="flex-grow w-full md:w-2/3">
+                            <label class="block text-[10px] font-bold text-gray-600 uppercase tracking-wider mb-1">Catatan Verifikasi / Alasan Penolakan (Opsional)</label>
+                            <input type="text" name="catatan_verifikasi" value="{{ $lembaga->keterangan }}" class="w-full border border-gray-400 rounded-md px-2 py-1 h-[32px] text-xs font-bold text-black-800 shadow-sm focus:border-blue-500 focus:ring-blue-500 uppercase" placeholder="Ketik catatan di sini jika ada file yang ditolak..." oninput="this.value = this.value.toUpperCase()">
                         </div>
-                        <button type="submit" class="w-full md:w-auto bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-8 rounded-lg shadow-md transition flex items-center justify-center gap-2 whitespace-nowrap mt-5 md:mt-0">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
-                            SIMPAN HASIL
-                        </button>
+                        <div class="flex gap-2 w-full md:w-auto">
+                            <a href="{{ route('lembaga.index') }}" class="px-5 py-1.5 text-xs font-bold text-gray-700 bg-white border border-gray-400 rounded-md hover:bg-gray-100 transition text-center flex items-center">Batal</a>
+                            <button type="submit" class="px-6 py-1.5 text-xs font-bold text-white bg-green-600 rounded-md shadow-sm hover:bg-green-700 transition flex items-center gap-1">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                                SIMPAN VERIFIKASI
+                            </button>
+                        </div>
                     </div>
                 </div>
                 {{-- Spacer --}}

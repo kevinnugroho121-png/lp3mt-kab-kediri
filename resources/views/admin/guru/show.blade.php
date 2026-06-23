@@ -5,13 +5,15 @@
         </h2>
     </x-slot>
 
-    <div class="py-10">
-        <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="py-2">
+        <div class="max-w-full mx-auto px-1 sm:px-1 lg:px-1">
             
             {{-- HEADER NAVIGATION --}}
-            <div class="flex justify-between items-center mb-6">
+            <div class="flex justify-between items-center mb-2">
                 <div>
-                    <h1 class="text-2xl font-bold text-black-800">{{ $guru->nama_lengkap }}</h1>
+                    <h1 class="text-2xl font-bold text-black-800 uppercase">DETAIL DATA GURU: {{ $guru->nama_lengkap }}</h1>
+
+
                     <p class="text-sm text-black-500 mt-1">
                         {{ $guru->lembaga->nama_lembaga ?? '-' }} &bull; {{ $guru->jenis_guru }}
                     </p>
@@ -40,175 +42,164 @@
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-xl border border-gray-200 p-8">
                 
                 {{-- SECTION A: DATA PRIBADI --}}
-                <div class="mb-10">
-                    <div class="flex items-center gap-2 mb-4 pb-2 border-b border-gray-100">
-                        <span class="bg-gray-200 text-black-700 w-8 h-8 flex items-center justify-center rounded-full font-bold text-sm">A</span>
-                        <h3 class="text-lg font-bold text-black-800">Data Pribadi & Kepegawaian</h3>
+                <div class="mb-6">
+                    <div class="flex items-center gap-2 mb-3 pb-1 border-b border-gray-600">
+                        <span class="bg-gray-200 text-black-700 w-6 h-6 flex items-center justify-center rounded-full font-bold text-[10px]">A</span>
+                        <h3 class="text-base font-bold text-black-800">Data Pribadi & Kepegawaian</h3>
                     </div>
 
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div class="md:col-span-2">
-                            <label class="block text-sm font-semibold text-black-500 mb-1 text-center">Nama Lengkap</label>
-                            <input type="text" value="{{ $guru->nama_lengkap }}" class="w-full bg-gray-50 border-gray-300 rounded-lg text-sm py-2.5 text-center font-bold text-black-800" readonly>
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-y-3 gap-x-4 px-2">
+                        <div class="md:col-span-2 border-b border-gray-200 pb-1">
+                            <span class="block text-[10px] font-bold text-gray-500 uppercase">Nama Lengkap (Sesuai KTP)</span>
+                            <span class="text-sm font-black text-black-800 uppercase">{{ $guru->nama_lengkap }}</span>
+                        </div>
+                        <div class="md:col-span-1 border-b border-gray-200 pb-1">
+                            <span class="block text-[10px] font-bold text-gray-500 uppercase">NIK (16 Digit)</span>
+                            <span class="text-sm font-bold text-black-800">{{ $guru->nik }}</span>
+                        </div>
+                        <div class="md:col-span-1 border-b border-gray-200 pb-1">
+                            <span class="block text-[10px] font-bold text-gray-500 uppercase">Jenis Kelamin</span>
+                            <span class="text-sm font-bold text-black-800">{{ $guru->jenis_kelamin == 'L' ? 'Laki-laki' : 'Perempuan' }}</span>
                         </div>
 
-                        <div>
-                            <label class="block text-sm font-semibold text-black-500 mb-1 text-center">NIK</label>
-                            <input type="text" value="{{ $guru->nik }}" class="w-full bg-gray-50 border-gray-300 rounded-lg text-sm py-2.5 text-center" readonly>
+                        <div class="md:col-span-1 border-b border-gray-200 pb-1">
+                            <span class="block text-[10px] font-bold text-gray-500 uppercase">Status Kepegawaian</span>
+                            <span class="text-sm font-bold text-black-800">{{ $guru->status_kepegawaian }}</span>
                         </div>
-
-                        <div>
-                            <label class="block text-sm font-semibold text-black-500 mb-1 text-center">Jenis Kelamin</label>
-                            <input type="text" value="{{ $guru->jenis_kelamin == 'L' ? 'Laki-laki' : 'Perempuan' }}" class="w-full bg-gray-50 border-gray-300 rounded-lg text-sm py-2.5 text-center" readonly>
+                        <div class="md:col-span-1 border-b border-gray-200 pb-1">
+                            <span class="block text-[10px] font-bold text-gray-500 uppercase">Status Sertifikasi</span>
+                            <span class="text-sm font-bold text-black-800">{{ $guru->status_sertifikasi }}</span>
                         </div>
-
-                        <div>
-                            <label class="block text-sm font-semibold text-black-500 mb-1 text-center">Status Kepegawaian</label>
-                            <input type="text" value="{{ $guru->status_kepegawaian }}" class="w-full bg-gray-50 border-gray-300 rounded-lg text-sm py-2.5 text-center" readonly>
-                        </div>
-
-                        <div>
-                            <label class="block text-sm font-semibold text-black-500 mb-1 text-center">Status Sertifikasi</label>
-                            <input type="text" value="{{ $guru->status_sertifikasi }}" class="w-full bg-gray-50 border-gray-300 rounded-lg text-sm py-2.5 text-center" readonly>
-                        </div>
-
-                        {{-- [BARU] STATUS INSENTIF --}}
-                        <div class="md:col-span-2">
-                            <label class="block text-sm font-semibold text-black-500 mb-1 text-center">Status Penerima Insentif</label>
+                        <div class="md:col-span-2 border-b border-gray-200 pb-1 flex flex-col justify-end">
+                            <span class="block text-[10px] font-bold text-gray-500 uppercase">Status Penerima Insentif</span>
                             @if($guru->penerima_insentif == 1)
-                                <div class="w-full bg-green-50 border border-green-200 text-green-700 rounded-lg text-sm py-2.5 text-center font-bold">
-                                    ✅ YA, MENERIMA INSENTIF
-                                </div>
+                                <span class="text-xs font-black text-green-700">✅ YA, BERHAK MENERIMA INSENTIF</span>
                             @else
-                                <div class="w-full bg-gray-50 border border-gray-300 text-black-500 rounded-lg text-sm py-2.5 text-center font-bold">
-                                    ❌ TIDAK / BELUM MENERIMA
-                                </div>
+                                <span class="text-xs font-black text-gray-500">❌ TIDAK BERHAK MENERIMA INSENTIF</span>
                             @endif
                         </div>
 
-                        <div>
-                            <label class="block text-sm font-semibold text-black-500 mb-1 text-center">Tempat Lahir</label>
-                            <input type="text" value="{{ $guru->tempat_lahir }}" class="w-full bg-gray-50 border-gray-300 rounded-lg text-sm py-2.5 text-center" readonly>
+                        <div class="md:col-span-1 border-b border-gray-200 pb-1">
+                            <span class="block text-[10px] font-bold text-gray-500 uppercase">Tempat Lahir</span>
+                            <span class="text-sm font-bold text-black-800 uppercase">{{ $guru->tempat_lahir }}</span>
                         </div>
-                        <div>
-                            <label class="block text-sm font-semibold text-black-500 mb-1 text-center">Tanggal Lahir</label>
-                            <input type="text" value="{{ $guru->tanggal_lahir ? $guru->tanggal_lahir->format('d-m-Y') : '-' }}" class="w-full bg-gray-50 border-gray-300 rounded-lg text-sm py-2.5 text-center" readonly>
+                        <div class="md:col-span-1 border-b border-gray-200 pb-1">
+                            <span class="block text-[10px] font-bold text-gray-500 uppercase">Tanggal Lahir</span>
+                            <span class="text-sm font-bold text-black-800">{{ $guru->tanggal_lahir ? $guru->tanggal_lahir->format('d-m-Y') : '-' }}</span>
                         </div>
-
-                        <div>
-                            <label class="block text-sm font-semibold text-black-500 mb-1 text-center">Nama Ibu Kandung</label>
-                            <input type="text" value="{{ $guru->nama_ibu_kandung }}" class="w-full bg-gray-50 border-gray-300 rounded-lg text-sm py-2.5 text-center" readonly>
+                        <div class="md:col-span-1 border-b border-gray-200 pb-1">
+                            <span class="block text-[10px] font-bold text-gray-500 uppercase">Nama Ibu Kandung</span>
+                            <span class="text-sm font-bold text-black-800 uppercase">{{ $guru->nama_ibu_kandung }}</span>
                         </div>
-                        <div>
-                            <label class="block text-sm font-semibold text-black-500 mb-1 text-center">Agama</label>
-                            <input type="text" value="{{ $guru->agama }}" class="w-full bg-gray-50 border-gray-300 rounded-lg text-sm py-2.5 text-center" readonly>
+                        <div class="md:col-span-1 border-b border-gray-200 pb-1">
+                            <span class="block text-[10px] font-bold text-gray-500 uppercase">Agama</span>
+                            <span class="text-sm font-bold text-black-800 uppercase">{{ $guru->agama }}</span>
                         </div>
                     </div>
                 </div>
 
                 {{-- SECTION B: KELEMBAGAAN --}}
-                <div class="mb-10">
-                    <div class="flex items-center gap-2 mb-4 pb-2 border-b border-gray-100">
-                        <span class="bg-gray-200 text-black-700 w-8 h-8 flex items-center justify-center rounded-full font-bold text-sm">B</span>
-                        <h3 class="text-lg font-bold text-black-800">Kelembagaan & Kontak</h3>
+                <div class="mb-6">
+                    <div class="flex items-center gap-2 mb-3 pb-1 border-b border-gray-600">
+                        <span class="bg-gray-200 text-black-700 w-6 h-6 flex items-center justify-center rounded-full font-bold text-[10px]">B</span>
+                        <h3 class="text-base font-bold text-black-800">Kelembagaan & Wilayah</h3>
                     </div>
 
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div class="md:col-span-2">
-                            <label class="block text-sm font-semibold text-black-500 mb-1 text-center">Lembaga Tempat Mengajar</label>
-                            <input type="text" value="{{ $guru->lembaga->nama_lembaga ?? '-' }}" class="w-full bg-gray-50 border-gray-300 rounded-lg text-sm py-2.5 text-center font-bold text-blue-800" readonly>
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-y-3 gap-x-4 px-2">
+                        <div class="md:col-span-1 border-b border-gray-200 pb-1">
+                            <span class="block text-[10px] font-bold text-gray-500 uppercase">Jenis Lembaga</span>
+                            <span class="text-sm font-black text-gray-500 uppercase">{{ $guru->jenis_guru }}</span>
+                        </div>
+                        <div class="md:col-span-1 border-b border-gray-200 pb-1">
+                            <span class="block text-[10px] font-bold text-gray-500 uppercase">Kecamatan</span>
+                            <span class="text-sm font-bold text-black-800 uppercase">{{ $guru->kecamatan }}</span>
+                        </div>
+                        <div class="md:col-span-2 border-b border-gray-200 pb-1">
+                            <span class="block text-[10px] font-bold text-gray-500 uppercase">Desa / Kelurahan</span>
+                            <span class="text-sm font-bold text-black-800 uppercase">{{ $guru->desa }}</span>
                         </div>
 
-                        <div class="md:col-span-2">
-                            <label class="block text-sm font-semibold text-black-500 mb-1 text-center">Alamat Lengkap</label>
-                            <input type="text" value="{{ $guru->alamat_ktp }}" class="w-full bg-gray-50 border-gray-300 rounded-lg text-sm py-2.5 text-center" readonly>
+                        <div class="md:col-span-4 border-b border-gray-200 pb-1">
+                            <span class="block text-[10px] font-bold text-green-700 uppercase">Lembaga Tempat Mengajar</span>
+                            <span class="text-sm font-black text-black-800 uppercase">{{ $guru->lembaga->nama_lembaga ?? '-' }}</span>
                         </div>
 
-                        <div>
-                            <label class="block text-sm font-semibold text-black-500 mb-1 text-center">Desa</label>
-                            <input type="text" value="{{ $guru->desa }}" class="w-full bg-gray-50 border-gray-300 rounded-lg text-sm py-2.5 text-center" readonly>
-                        </div>
-                        <div>
-                            <label class="block text-sm font-semibold text-black-500 mb-1 text-center">Kecamatan</label>
-                            <input type="text" value="{{ $guru->kecamatan }}" class="w-full bg-gray-50 border-gray-300 rounded-lg text-sm py-2.5 text-center" readonly>
+                        <div class="md:col-span-4 border-b border-gray-200 pb-1">
+                            <span class="block text-[10px] font-bold text-gray-500 uppercase">Alamat Lengkap (KTP)</span>
+                            <span class="text-sm font-bold text-black-800 uppercase">{{ $guru->alamat_ktp }}</span>
                         </div>
 
-                        <div>
-                            <label class="block text-sm font-semibold text-black-500 mb-1 text-center">Nomor HP</label>
-                            <input type="text" value="{{ $guru->no_hp }}" class="w-full bg-gray-50 border-gray-300 rounded-lg text-sm py-2.5 text-center" readonly>
+                        <div class="md:col-span-1 border-b border-gray-200 pb-1">
+                            <span class="block text-[10px] font-bold text-gray-500 uppercase">Kabupaten</span>
+                            <span class="text-sm font-bold text-black-800 uppercase">KEDIRI</span>
                         </div>
-                        <div>
-                            <label class="block text-sm font-semibold text-black-500 mb-1 text-center">Nomor Rekening</label>
-                            <input type="text" value="{{ $guru->nomor_rekening }}" class="w-full bg-gray-50 border-gray-300 rounded-lg text-sm py-2.5 text-center font-mono font-bold" readonly>
+                        <div class="md:col-span-1 border-b border-gray-200 pb-1">
+                            <span class="block text-[10px] font-bold text-gray-500 uppercase">Nomor HP</span>
+                            <span class="text-sm font-bold text-black-800">{{ $guru->no_hp }}</span>
+                        </div>
+                        <div class="md:col-span-2 border-b border-gray-200 pb-1">
+                            <span class="block text-[10px] font-bold text-gray-500 uppercase">Nomor Rekening BANK JATIM</span>
+                            <span class="text-sm font-black text-black-800">{{ $guru->nomor_rekening }}</span>
                         </div>
                     </div>
                 </div>
 
                 {{-- SECTION C: DOKUMEN --}}
-                <div class="mb-8">
-                    <div class="flex items-center gap-2 mb-4 pb-2 border-b border-gray-100">
-                        <span class="bg-gray-200 text-black-700 w-8 h-8 flex items-center justify-center rounded-full font-bold text-sm">C</span>
-                        <h3 class="text-lg font-bold text-black-800">Dokumen Legalitas</h3>
+                <div class="mb-4">
+                    <div class="flex items-center gap-2 mb-3 pb-1 border-b border-gray-600">
+                        <span class="bg-gray-200 text-black-700 w-6 h-6 flex items-center justify-center rounded-full font-bold text-[10px]">C</span>
+                        <h3 class="text-base font-bold text-black-800">Dokumen Legalitas</h3>
                     </div>
 
-                    <div class="space-y-8">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
                         {{-- 1. KTP --}}
-                        <div class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
-                            <div class="flex justify-between items-center mb-4">
-                                <label class="block text-base font-bold text-black-800">1. Scan KTP Asli</label>
+                        <div class="bg-gray-50 p-2 rounded-lg border border-gray-300 shadow-sm">
+                            <div class="flex justify-between items-center mb-2 border-b border-gray-200 pb-1">
+                                <label class="block text-xs font-bold text-black-800">1. Scan KTP Asli</label>
                                 @php
                                     $sKtp = $guru->status_ktp;
                                     $colorKtp = ($sKtp == 'Disetujui') ? 'bg-green-100 text-green-700' : (($sKtp == 'Ditolak') ? 'bg-red-100 text-red-700' : 'bg-yellow-100 text-yellow-700');
                                 @endphp
-                                <span class="px-3 py-1 rounded-full text-xs font-bold {{ $colorKtp }}">
-                                    Status: {{ $sKtp }}
-                                </span>
+                                <span class="px-2 py-0.5 rounded text-[9px] font-bold {{ $colorKtp }}">Status: {{ $sKtp }}</span>
                             </div>
-                            
                             @if($guru->file_ktp)
-                                <iframe src="{{ asset('storage/' . $guru->file_ktp) }}" type="application/pdf" class="w-full h-[500px] border border-gray-300 rounded-lg bg-white"></iframe>
+                                <iframe src="{{ asset('storage/' . $guru->file_ktp) }}" type="application/pdf" class="w-full h-[250px] border border-gray-300 rounded bg-white"></iframe>
                             @else
-                                <div class="h-32 flex items-center justify-center bg-gray-50 border-2 border-dashed border-gray-300 rounded-lg text-black-400 italic">File KTP belum diupload.</div>
+                                <div class="h-[250px] flex items-center justify-center bg-gray-100 border border-dashed border-gray-400 rounded text-black-400 text-xs italic">Belum diupload</div>
                             @endif
                         </div>
 
                         {{-- 2. KK --}}
-                        <div class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
-                            <div class="flex justify-between items-center mb-4">
-                                <label class="block text-base font-bold text-black-800">2. Scan Kartu Keluarga</label>
+                        <div class="bg-gray-50 p-2 rounded-lg border border-gray-300 shadow-sm">
+                            <div class="flex justify-between items-center mb-2 border-b border-gray-200 pb-1">
+                                <label class="block text-xs font-bold text-black-800">2. Scan Kartu Keluarga</label>
                                 @php
                                     $sKk = $guru->status_kk;
                                     $colorKk = ($sKk == 'Disetujui') ? 'bg-green-100 text-green-700' : (($sKk == 'Ditolak') ? 'bg-red-100 text-red-700' : 'bg-yellow-100 text-yellow-700');
                                 @endphp
-                                <span class="px-3 py-1 rounded-full text-xs font-bold {{ $colorKk }}">
-                                    Status: {{ $sKk }}
-                                </span>
+                                <span class="px-2 py-0.5 rounded text-[9px] font-bold {{ $colorKk }}">Status: {{ $sKk }}</span>
                             </div>
-                            
                             @if($guru->file_kk)
-                                <iframe src="{{ asset('storage/' . $guru->file_kk) }}" type="application/pdf" class="w-full h-[500px] border border-gray-300 rounded-lg bg-white"></iframe>
+                                <iframe src="{{ asset('storage/' . $guru->file_kk) }}" type="application/pdf" class="w-full h-[250px] border border-gray-300 rounded bg-white"></iframe>
                             @else
-                                <div class="h-32 flex items-center justify-center bg-gray-50 border-2 border-dashed border-gray-300 rounded-lg text-black-400 italic">File KK belum diupload.</div>
+                                <div class="h-[250px] flex items-center justify-center bg-gray-100 border border-dashed border-gray-400 rounded text-black-400 text-xs italic">Belum diupload</div>
                             @endif
                         </div>
 
                         {{-- 3. REKENING --}}
-                        <div class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
-                            <div class="flex justify-between items-center mb-4">
-                                <label class="block text-base font-bold text-black-800">3. Scan Buku Rekening</label>
+                        <div class="bg-gray-50 p-2 rounded-lg border border-gray-300 shadow-sm">
+                            <div class="flex justify-between items-center mb-2 border-b border-gray-200 pb-1">
+                                <label class="block text-xs font-bold text-black-800">3. Scan Buku Rekening</label>
                                 @php
                                     $sRek = $guru->status_bukurekening;
                                     $colorRek = ($sRek == 'Disetujui') ? 'bg-green-100 text-green-700' : (($sRek == 'Ditolak') ? 'bg-red-100 text-red-700' : 'bg-yellow-100 text-yellow-700');
                                 @endphp
-                                <span class="px-3 py-1 rounded-full text-xs font-bold {{ $colorRek }}">
-                                    Status: {{ $sRek }}
-                                </span>
+                                <span class="px-2 py-0.5 rounded text-[9px] font-bold {{ $colorRek }}">Status: {{ $sRek }}</span>
                             </div>
-                            
                             @if($guru->file_bukurekening)
-                                <iframe src="{{ asset('storage/' . $guru->file_bukurekening) }}" type="application/pdf" class="w-full h-[500px] border border-gray-300 rounded-lg bg-white"></iframe>
+                                <iframe src="{{ asset('storage/' . $guru->file_bukurekening) }}" type="application/pdf" class="w-full h-[250px] border border-gray-300 rounded bg-white"></iframe>
                             @else
-                                <div class="h-32 flex items-center justify-center bg-gray-50 border-2 border-dashed border-gray-300 rounded-lg text-black-400 italic">File Rekening belum diupload.</div>
+                                <div class="h-[250px] flex items-center justify-center bg-gray-100 border border-dashed border-gray-400 rounded text-black-400 text-xs italic">Belum diupload</div>
                             @endif
                         </div>
                     </div>

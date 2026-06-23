@@ -5,13 +5,15 @@
         </h2>
     </x-slot>
 
-    <div class="py-10">
-        <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="py-2">
+        <div class="max-w-full mx-auto px-1 sm:px-1 lg:px-1">
             
             {{-- HEADER --}}
-            <div class="flex justify-between items-center mb-6">
+            <div class="flex justify-between items-center mb-2">
                 <div>
-                    <h1 class="text-2xl font-bold text-black-800">Edit Lembaga</h1>
+                    <h1 class="text-2xl font-bold text-black-800 uppercase">EDIT DATA LEMBAGA: {{ $lembaga->nama_lembaga }}</h1>
+
+
                     <p class="text-sm text-black-500 mt-1">Perbarui data identitas, statistik, atau dokumen.</p>
                 </div>
                 <a href="{{ route('lembaga.index') }}" class="inline-flex items-center px-4 py-2 bg-white border border-gray-300 rounded-md font-semibold text-xs text-black-700 uppercase tracking-widest shadow-sm hover:bg-gray-50 transition">
@@ -29,368 +31,260 @@
                     @method('PUT')
 
                     {{-- SECTION A: IDENTITAS --}}
-                    <div class="mb-10">
-                        <div class="flex items-center gap-2 mb-4 pb-2 border-b border-gray-100">
-                            <span class="bg-blue-100 text-blue-700 w-8 h-8 flex items-center justify-center rounded-full font-bold text-sm">A</span>
-                            <h3 class="text-lg font-bold text-black-800">Identitas & Lokasi</h3>
+                    <div class="mb-4">
+                        <div class="flex items-center gap-2 mb-3 pb-1 border-b border-gray-600">
+                            <span class="bg-blue-100 text-blue-700 w-6 h-6 flex items-center justify-center rounded-full font-bold text-[10px]">A</span>
+                            <h3 class="text-base font-bold text-black-800">Identitas & Lokasi</h3>
                         </div>
 
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 px-1">
                             <div class="md:col-span-2">
-                                <label class="block text-sm font-semibold text-black-700 mb-1 text-center">Nama Lembaga <span class="text-red-500">*</span></label>
-                                <input type="text" name="nama_lembaga" value="{{ old('nama_lembaga', $lembaga->nama_lembaga) }}" class="w-full border-gray-300 rounded-lg shadow-sm text-sm py-2.5 text-center" required>
+                                <label class="block text-[10px] font-bold text-gray-600 uppercase mb-1">Nama Lembaga <span class="text-red-500">*</span></label>
+                                <input type="text" name="nama_lembaga" value="{{ old('nama_lembaga', $lembaga->nama_lembaga) }}" class="w-full border border-gray-400 rounded-md px-2 py-1 h-[32px] text-xs font-bold text-black-800 focus:border-blue-500 shadow-sm uppercase" required oninput="this.value = this.value.toUpperCase()">
                             </div>
-
-                            {{-- Kecamatan & Desa --}}
-                            <div>
-                                <label class="block text-sm font-semibold text-black-700 mb-1 text-center">Kecamatan</label>
-                                @if(Auth::user()->role == 'korcam')
-                                    <input type="text" value="{{ $lembaga->kecamatan->nama_kecamatan }}" class="w-full bg-gray-100 border-gray-300 rounded-lg text-black-500 text-sm py-2.5 text-center font-bold cursor-not-allowed" readonly>
-                                @else
-                                    <select name="kecamatan_id" id="kecamatanSelect" class="w-full border-gray-300 rounded-lg shadow-sm text-sm py-2.5 text-center">
-                                        @foreach($kecamatans as $kec)
-                                            <option value="{{ $kec->id }}" {{ $lembaga->kecamatan_id == $kec->id ? 'selected' : '' }}>{{ $kec->nama_kecamatan }}</option>
-                                        @endforeach
-                                    </select>
-                                @endif
-                            </div>
-
-                            <div>
-                                <label class="block text-sm font-semibold text-black-700 mb-1 text-center">Desa / Kelurahan</label>
-                                <select name="desa_id" id="desaSelect" class="w-full border-gray-300 rounded-lg shadow-sm text-sm py-2.5 text-center">
-                                    @foreach($desas as $desa)
-                                        <option value="{{ $desa->id }}" {{ $lembaga->desa_id == $desa->id ? 'selected' : '' }}>{{ $desa->nama_desa }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-
-                            <div>
-                                <label class="block text-sm font-semibold text-black-700 mb-1 text-center">Jenis Lembaga</label>
-                                <select name="jenis_lembaga" class="w-full border-gray-300 rounded-lg shadow-sm text-sm py-2.5 text-center">
+                            <div class="md:col-span-1">
+                                <label class="block text-[10px] font-bold text-gray-600 uppercase mb-1">Jenis Lembaga <span class="text-red-500">*</span></label>
+                                <select name="jenis_lembaga" class="w-full border border-gray-400 rounded-md px-2 py-1 h-[32px] text-xs font-bold text-black-800 focus:border-blue-500 shadow-sm">
                                     <option value="TPQ" {{ $lembaga->jenis_lembaga == 'TPQ' ? 'selected' : '' }}>TPQ</option>
                                     <option value="MADIN" {{ $lembaga->jenis_lembaga == 'MADIN' ? 'selected' : '' }}>MADIN</option>
                                     <option value="PONPES" {{ $lembaga->jenis_lembaga == 'PONPES' ? 'selected' : '' }}>PONPES</option>
                                 </select>
                             </div>
-                            <div>
-                                <label class="block text-sm font-semibold text-black-700 mb-1 text-center">Ormas Afiliasi</label>
-                                <select name="ormas" class="w-full border-gray-300 rounded-lg shadow-sm text-sm py-2.5 text-center">
+                            <div class="md:col-span-1">
+                                <label class="block text-[10px] font-bold text-gray-600 uppercase mb-1">Ormas Afiliasi</label>
+                                <select name="ormas" class="w-full border border-gray-400 rounded-md px-2 py-1 h-[32px] text-xs font-bold text-black-800 focus:border-blue-500 shadow-sm">
                                     <option value="">- Tidak Ada -</option>
-                                    <option value="NU" {{ $lembaga->ormas == 'NU' ? 'selected' : '' }}>Nahdlatul Ulama (NU)</option>
+                                    <option value="NU" {{ $lembaga->ormas == 'NU' ? 'selected' : '' }}>NU</option>
                                     <option value="Muhammadiyah" {{ $lembaga->ormas == 'Muhammadiyah' ? 'selected' : '' }}>Muhammadiyah</option>
                                     <option value="LDII" {{ $lembaga->ormas == 'LDII' ? 'selected' : '' }}>LDII</option>
                                 </select>
                             </div>
 
                             <div class="md:col-span-1">
-                                <label class="block text-sm font-semibold text-black-700 mb-1 text-center">Nomor Statistik (NSBQ)</label>
-                                <input type="text" name="nsbq" value="{{ old('nsbq', $lembaga->nsbq) }}" class="w-full border-gray-300 rounded-lg shadow-sm text-sm py-2.5 text-center">
+                                <label class="block text-[10px] font-bold text-gray-600 uppercase mb-1">Kecamatan <span class="text-red-500">*</span></label>
+                                @if(Auth::user()->role == 'korcam')
+                                    <input type="text" value="{{ Auth::user()->kecamatan->nama_kecamatan }}" class="w-full bg-gray-100 border border-gray-400 rounded-md px-2 py-1 h-[32px] text-xs font-bold text-gray-500 cursor-not-allowed shadow-sm" readonly>
+                                    <input type="hidden" name="kecamatan_id" value="{{ Auth::user()->kecamatan_id }}">
+                                @else
+                                    <select name="kecamatan_id" id="kecamatanSelect" class="w-full border border-gray-400 rounded-md px-2 py-1 h-[32px] text-xs font-bold text-black-800 focus:border-blue-500 shadow-sm">
+                                        @foreach($kecamatans as $kec)
+                                            <option value="{{ $kec->id }}" {{ $lembaga->kecamatan_id == $kec->id ? 'selected' : '' }}>{{ $kec->nama_kecamatan }}</option>
+                                        @endforeach
+                                    </select>
+                                @endif
                             </div>
                             <div class="md:col-span-1">
-                                <label class="block text-sm font-semibold text-black-700 mb-1 text-center">Alamat Lengkap</label>
-                                <input type="text" name="alamat" value="{{ old('alamat', $lembaga->alamat) }}" class="w-full border-gray-300 rounded-lg shadow-sm text-sm py-2.5 text-center">
+                                <label class="block text-[10px] font-bold text-gray-600 uppercase mb-1">Desa / Kelurahan <span class="text-red-500">*</span></label>
+                                <select name="desa_id" id="desaSelect" class="w-full border border-gray-400 rounded-md px-2 py-1 h-[32px] text-xs font-bold text-black-800 focus:border-blue-500 shadow-sm">
+                                    @foreach($desas as $desa)
+                                        <option value="{{ $desa->id }}" {{ $lembaga->desa_id == $desa->id ? 'selected' : '' }}>{{ $desa->nama_desa }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="md:col-span-1">
+                                <label class="block text-[10px] font-bold text-gray-600 uppercase mb-1">Nomor Statistik (NSBQ)</label>
+                                <input type="text" name="nsbq" value="{{ old('nsbq', $lembaga->nsbq) }}" class="w-full border border-gray-400 rounded-md px-2 py-1 h-[32px] text-xs font-bold text-black-800 focus:border-blue-500 shadow-sm uppercase" oninput="this.value = this.value.toUpperCase()">
+                            </div>
+                            <div class="md:col-span-1">
+                                <label class="block text-[10px] font-bold text-gray-600 uppercase mb-1">Alamat Lengkap</label>
+                                <input type="text" name="alamat" value="{{ old('alamat', $lembaga->alamat) }}" class="w-full border border-gray-400 rounded-md px-2 py-1 h-[32px] text-xs font-bold text-black-800 focus:border-blue-500 shadow-sm uppercase" oninput="this.value = this.value.toUpperCase()">
                             </div>
                         </div>
                     </div>
 
                     {{-- SECTION B: STATISTIK --}}
-                    <div class="mb-10">
-                        <div class="flex items-center gap-2 mb-4 pb-2 border-b border-gray-100">
-                            <span class="bg-green-100 text-green-700 w-8 h-8 flex items-center justify-center rounded-full font-bold text-sm">B</span>
-                            <h3 class="text-lg font-bold text-black-800">Statistik & Kontak</h3>
+                    <div class="mb-4">
+                        <div class="flex items-center gap-2 mb-3 pb-1 border-b border-gray-600">
+                            <span class="bg-green-100 text-green-700 w-6 h-6 flex items-center justify-center rounded-full font-bold text-[10px]">B</span>
+                            <h3 class="text-base font-bold text-black-800">Statistik & Kontak</h3>
                         </div>
 
-
-                        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-3 px-1">
                             <div>
-                                <label class="block text-xs font-bold text-black-500 uppercase mb-1 text-center">Jml Santri</label>
-                                <input type="number" name="jumlah_santri" value="{{ old('jumlah_santri', $lembaga->jumlah_santri) }}" class="w-full border-gray-300 bg-gray-50 rounded-lg text-sm font-bold text-center">
+                                <label class="block text-[10px] font-bold text-gray-600 uppercase mb-1">Jml Santri</label>
+                                <input type="number" name="jumlah_santri" value="{{ old('jumlah_santri', $lembaga->jumlah_santri) }}" class="w-full border border-gray-400 rounded-md px-2 py-1 h-[32px] text-xs font-bold text-black-800 focus:border-blue-500 bg-gray-50 shadow-sm">
                             </div>
                             <div>
-                                <label class="block text-xs font-bold text-black-500 uppercase mb-1 text-center">Total Guru</label>
-                                <input type="number" name="jumlah_guru" value="{{ old('jumlah_guru', $lembaga->jumlah_guru) }}" class="w-full border-gray-300 bg-gray-50 rounded-lg text-sm font-bold text-center">
+                                <label class="block text-[10px] font-bold text-gray-600 uppercase mb-1">Total Guru</label>
+                                <input type="number" name="jumlah_guru" value="{{ old('jumlah_guru', $lembaga->jumlah_guru) }}" class="w-full border border-gray-400 rounded-md px-2 py-1 h-[32px] text-xs font-bold text-black-800 focus:border-blue-500 bg-gray-50 shadow-sm">
                             </div>
                             <div>
-                                <label class="block text-xs font-bold text-black-500 uppercase mb-1 text-center">Guru Insentif</label>
-                                <input type="number" name="penerima_insentif" value="{{ old('penerima_insentif', $lembaga->penerima_insentif) }}" class="w-full border-gray-300 rounded-lg text-sm text-center">
+                                <label class="block text-[10px] font-bold text-gray-600 uppercase mb-1">Guru Insentif</label>
+                                <input type="number" name="penerima_insentif" value="{{ old('penerima_insentif', $lembaga->penerima_insentif) }}" class="w-full border border-gray-400 rounded-md px-2 py-1 h-[32px] text-xs font-bold text-black-800 focus:border-blue-500 shadow-sm">
                             </div>
                             <div>
-                                <label class="block text-xs font-bold text-black-500 uppercase mb-1 text-center">Non-Insentif</label>
-                                <input type="number" name="belum_menerima_insentif" value="{{ old('belum_menerima_insentif', $lembaga->belum_menerima_insentif) }}" class="w-full border-gray-300 rounded-lg text-sm text-center">
+                                <label class="block text-[10px] font-bold text-gray-600 uppercase mb-1">Non-Insentif</label>
+                                <input type="number" name="belum_menerima_insentif" value="{{ old('belum_menerima_insentif', $lembaga->belum_menerima_insentif) }}" class="w-full border border-gray-400 rounded-md px-2 py-1 h-[32px] text-xs font-bold text-black-800 focus:border-blue-500 shadow-sm">
+                            </div>
+                            
+                            <div>
+                                <label class="block text-[10px] font-bold text-gray-600 uppercase mb-1">Jml PNS</label>
+                                <input type="number" name="jumlah_pns" value="{{ old('jumlah_pns', $lembaga->jumlah_pns) }}" class="w-full border border-gray-400 rounded-md px-2 py-1 h-[32px] text-xs font-bold text-black-800 focus:border-blue-500 shadow-sm">
                             </div>
                             <div>
-                                <label class="block text-xs font-bold text-black-500 uppercase mb-1 text-center">Jml PNS</label>
-                                <input type="number" name="jumlah_pns" value="{{ old('jumlah_pns', $lembaga->jumlah_pns) }}" class="w-full border-gray-300 rounded-lg focus:ring-blue-500 text-sm text-center">
+                                <label class="block text-[10px] font-bold text-gray-600 uppercase mb-1">Jml PPPK</label>
+                                <input type="number" name="jumlah_pppk" value="{{ old('jumlah_pppk', $lembaga->jumlah_pppk) }}" class="w-full border border-gray-400 rounded-md px-2 py-1 h-[32px] text-xs font-bold text-black-800 focus:border-blue-500 shadow-sm">
                             </div>
                             <div>
-                                <label class="block text-xs font-bold text-black-500 uppercase mb-1 text-center">Jml PPPK</label>
-                                <input type="number" name="jumlah_pppk" value="{{ old('jumlah_pppk', $lembaga->jumlah_pppk) }}" class="w-full border-gray-300 rounded-lg focus:ring-blue-500 text-sm text-center">
+                                <label class="block text-[10px] font-bold text-gray-600 uppercase mb-1">Sertifikasi</label>
+                                <input type="number" name="jumlah_sertifikasi" value="{{ old('jumlah_sertifikasi', $lembaga->jumlah_sertifikasi) }}" class="w-full border border-gray-400 rounded-md px-2 py-1 h-[32px] text-xs font-bold text-black-800 focus:border-blue-500 shadow-sm">
                             </div>
                             <div>
-                                <label class="block text-xs font-bold text-black-500 uppercase mb-1 text-center">Sertifikasi</label>
-                                <input type="number" name="jumlah_sertifikasi" value="{{ old('jumlah_sertifikasi', $lembaga->jumlah_sertifikasi) }}" class="w-full border-gray-300 rounded-lg focus:ring-blue-500 text-sm text-center">
-                            </div>
-                        </div>
-                        
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                            <div>
-                                <label class="block text-sm font-semibold text-black-700 mb-1 text-center">Kepala Lembaga</label>
-                                <input type="text" name="kepala_lembaga" value="{{ old('kepala_lembaga', $lembaga->kepala_lembaga) }}" class="w-full border-gray-300 rounded-lg shadow-sm text-sm py-2.5 text-center">
-                            </div>
-                            <div>
-                                <label class="block text-sm font-semibold text-black-700 mb-1 text-center">No. Telp / WA</label>
-                                <input type="text" name="no_telp" value="{{ old('no_telp', $lembaga->no_telp) }}" class="w-full border-gray-300 rounded-lg shadow-sm text-sm py-2.5 text-center">
-                            </div>
-                            <div>
-                                <label class="block text-sm font-semibold text-black-700 mb-1 text-center">Status</label>
-                                <select name="status" class="w-full border-gray-300 rounded-lg shadow-sm text-sm py-2.5 text-center">
+                                <label class="block text-[10px] font-bold text-gray-600 uppercase mb-1">Status Operasional</label>
+                                <select name="status" class="w-full border border-gray-400 rounded-md px-2 py-1 h-[32px] text-xs font-bold text-black-800 focus:border-blue-500 shadow-sm">
                                     <option value="AKTIF" {{ $lembaga->status == 'AKTIF' ? 'selected' : '' }}>AKTIF</option>
                                     <option value="TIDAK AKTIF" {{ $lembaga->status == 'TIDAK AKTIF' ? 'selected' : '' }}>TIDAK AKTIF</option>
                                 </select>
                             </div>
+
+                            <div class="md:col-span-2">
+                                <label class="block text-[10px] font-bold text-gray-600 uppercase mb-1">Kepala Lembaga</label>
+                                <input type="text" name="kepala_lembaga" value="{{ old('kepala_lembaga', $lembaga->kepala_lembaga) }}" class="w-full border border-gray-400 rounded-md px-2 py-1 h-[32px] text-xs font-bold text-black-800 focus:border-blue-500 shadow-sm uppercase" oninput="this.value = this.value.toUpperCase()">
+                            </div>
+                            <div class="md:col-span-2">
+                                <label class="block text-[10px] font-bold text-gray-600 uppercase mb-1">No. Telp / WA</label>
+                                <input type="number" name="no_telp" value="{{ old('no_telp', $lembaga->no_telp) }}" class="w-full border border-gray-400 rounded-md px-2 py-1 h-[32px] text-xs font-bold text-black-800 focus:border-blue-500 shadow-sm">
+                            </div>
                         </div>
                     </div>
 
-                    {{-- SECTION C: DOKUMEN --}}
-                    <div class="mb-8">
-                        <div class="flex items-center gap-2 mb-4 pb-2 border-b border-gray-100">
-                            <span class="bg-purple-100 text-purple-700 w-8 h-8 flex items-center justify-center rounded-full font-bold text-sm">C</span>
-                            <h3 class="text-lg font-bold text-black-800">Dokumen Legalitas</h3>
+                    {{-- SECTION C: DOKUMEN & FOTO --}}
+                    <div class="mb-4">
+                        <div class="flex items-center gap-2 mb-3 pb-1 border-b border-gray-600">
+                            <span class="bg-purple-100 text-purple-700 w-6 h-6 flex items-center justify-center rounded-full font-bold text-[10px]">C</span>
+                            <h3 class="text-base font-bold text-black-800">Dokumen & Foto Lapangan</h3>
                         </div>
 
-                        <div class="space-y-8">
-                            {{-- IJOP --}}
-                            <div class="bg-gray-50 p-6 rounded-xl border border-gray-200 shadow-sm">
-                                <label class="block text-base font-bold text-black-800 mb-3">1. Surat Izin Operasional (IJOP)</label>
+                        {{-- DOKUMEN PDF (GRID 2x2) --}}
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                            
+                            {{-- 1. IJOP --}}
+                            <div class="bg-gray-50 p-3 rounded-lg border border-gray-400 shadow-sm flex flex-col">
+                                <label class="block text-xs font-bold text-black-800 mb-2">1. Scan IJOP Asli</label>
+                                <div class="w-full text-left mb-3">
+                                    <input type="file" name="file_ijop" id="file_ijop" accept="application/pdf" class="block w-full text-[10px] text-black-500 file:mr-2 file:py-1 file:px-3 file:rounded file:border-0 file:text-[10px] file:font-bold file:bg-blue-600 file:text-white hover:file:bg-blue-700 cursor-pointer transition" onchange="handleFileSelect(this, 'preview_ijop_edit', 'btn_reset_ijop_edit', 'old_ijop')">
+                                    <button type="button" id="btn_reset_ijop_edit" onclick="resetFile('file_ijop', 'preview_ijop_edit', 'btn_reset_ijop_edit', 'old_ijop')" class="hidden mt-1 text-[10px] text-red-600 font-bold underline">&times; Batal Upload File Baru</button>
+                                </div>
+                                <div class="grid grid-cols-2 gap-3 mb-3">
+                                    <div>
+                                        <label class="block text-[9px] font-bold text-gray-600 uppercase">Tgl Terbit</label>
+                                        <input type="date" name="masa_berlaku_ijop" id="tgl_ijop" value="{{ old('masa_berlaku_ijop', optional($lembaga->masa_berlaku_ijop)->format('Y-m-d')) }}" class="w-full border border-gray-400 rounded-md h-[28px] text-[10px] font-bold px-2">
+                                    </div>
+                                    <div>
+                                        <label class="block text-[9px] font-bold text-gray-600 uppercase">Fisik IJOP</label>
+                                        <input type="text" name="ijop" value="{{ old('ijop', $lembaga->ijop) }}" class="w-full border border-gray-400 rounded-md h-[28px] text-[10px] font-bold px-2 uppercase" oninput="this.value = this.value.toUpperCase()">
+                                    </div>
+                                    <div class="col-span-2 hidden bg-green-100 text-green-800 text-[10px] py-1.5 rounded text-center font-bold" id="info_masa_berlaku"></div>
+                                </div>
+                                <input type="hidden" name="status_ijop" value="Pending">
                                 
                                 @if($lembaga->file_ijop)
-                                    <div class="mb-4 text-center">
-                                        <p class="text-xs text-green-600 font-bold mb-2">✓ File tersimpan saat ini:</p>
-                                        {{-- ADDED: type="application/pdf" --}}
-                                        <iframe src="{{ asset('storage/' . $lembaga->file_ijop) }}" type="application/pdf" class="w-full h-[600px] border border-gray-300 rounded-lg bg-white shadow-inner"></iframe>
-                                        <p class="text-xs text-black-500 mt-2">Untuk mengganti, silakan upload file baru di bawah ini:</p>
-                                    </div>
-                                @else
-                                    <div class="mb-4 text-center text-black-400 italic border border-dashed border-gray-300 p-4 rounded-lg bg-white">Belum ada file IJOP.</div>
+                                    <iframe id="old_ijop" src="{{ asset('storage/' . $lembaga->file_ijop) }}" class="w-full h-[250px] border border-gray-300 rounded bg-white mt-auto"></iframe>
                                 @endif
+                                <iframe id="preview_ijop_edit" class="hidden w-full h-[250px] border border-gray-300 rounded bg-white mt-auto"></iframe>
+                            </div>
 
-                                <div class="relative group text-center">
-                                    <input type="file" name="file_ijop" id="file_ijop" accept="application/pdf"
-                                           class="block w-full text-sm text-black-500 file:mr-4 file:py-2.5 file:px-6 file:rounded-full file:border-0 file:text-sm file:font-bold file:bg-blue-600 file:text-white hover:file:bg-blue-700 transition cursor-pointer text-center"
-                                           onchange="handleFileSelect(this, 'preview_ijop_edit', 'btn_reset_ijop_edit')">
-                                    
-                                    <button type="button" id="btn_reset_ijop_edit" onclick="resetFile('file_ijop', 'preview_ijop_edit', 'btn_reset_ijop_edit')" 
-                                            class="hidden mt-2 text-sm text-red-600 hover:text-red-800 font-bold underline transition">
-                                        &times; Batal Upload File Baru
-                                    </button>
+                            {{-- 2. SKD --}}
+                            <div class="bg-gray-50 p-3 rounded-lg border border-gray-400 shadow-sm flex flex-col">
+                                <label class="block text-xs font-bold text-black-800 mb-2">2. Scan SKD (Opsional)</label>
+                                <div class="w-full text-left mb-3">
+                                    <input type="file" name="file_skd" id="file_skd" accept="application/pdf" class="block w-full text-[10px] text-black-500 file:mr-2 file:py-1 file:px-3 file:rounded file:border-0 file:text-[10px] file:font-bold file:bg-gray-600 file:text-white hover:file:bg-gray-700 cursor-pointer transition" onchange="handleFileSelect(this, 'preview_skd_edit', 'btn_reset_skd_edit', 'old_skd')">
+                                    <button type="button" id="btn_reset_skd_edit" onclick="resetFile('file_skd', 'preview_skd_edit', 'btn_reset_skd_edit', 'old_skd')" class="hidden mt-1 text-[10px] text-red-600 font-bold underline">&times; Batal Upload File Baru</button>
                                 </div>
-
-                                <div class="mt-4">
-                                    <iframe id="preview_ijop_edit" class="hidden w-full h-[600px] border border-gray-300 rounded-lg bg-white shadow-inner" src=""></iframe>
-                                </div>
-                                
-                                {{-- LOGIKA TANGGAL & ID --}}
-
-                                {{-- [BARU POIN 1] KOTAK UPLOAD SKD --}}
-                            <div class="bg-gray-50 p-6 rounded-xl border border-gray-200 shadow-sm mt-8">
-                                <div class="flex justify-between items-center mb-4">
-                                    <label class="block text-base font-bold text-black-800">2. Surat Keterangan Domisili (SKD)</label>
-                                    <span class="text-[10px] bg-white border border-gray-300 px-2 py-0.5 rounded text-black-500 font-mono">PDF Max 2MB</span>
-                                </div>
-                                <p class="text-xs text-orange-600 mb-4 font-bold italic">*Hanya diisi jika belum memiliki IJOP resmi.</p>
-
                                 @if($lembaga->file_skd)
-                                    <div class="mb-4 text-center">
-                                        <p class="text-xs text-green-600 font-bold mb-2">✓ File tersimpan saat ini:</p>
-                                        <iframe src="{{ asset('storage/' . $lembaga->file_skd) }}" type="application/pdf" class="w-full h-[500px] border border-gray-300 rounded-lg bg-white shadow-inner"></iframe>
-                                    </div>
+                                    <iframe id="old_skd" src="{{ asset('storage/' . $lembaga->file_skd) }}" class="w-full h-[250px] border border-gray-300 rounded bg-white mt-auto"></iframe>
                                 @endif
-
-                                <div class="relative group mb-4">
-                                    <input type="file" name="file_skd" id="file_skd" accept="application/pdf"
-                                           class="block w-full text-sm text-black-500 file:mr-4 file:py-2.5 file:px-6 file:rounded-full file:border-0 file:text-sm file:font-bold file:bg-gray-600 file:text-white hover:file:bg-gray-700 transition cursor-pointer text-center"
-                                           onchange="handleFileSelect(this, 'preview_skd_edit', 'btn_reset_skd_edit')">
-                                    
-                                    <div class="text-center">
-                                        <button type="button" id="btn_reset_skd_edit" onclick="resetFile('file_skd', 'preview_skd_edit', 'btn_reset_skd_edit')" 
-                                                class="hidden mt-2 text-sm text-red-600 hover:text-red-800 font-bold underline transition">
-                                            &times; Batal Upload File Baru
-                                        </button>
-                                    </div>
-                                </div>
-
-                                <div class="mt-4">
-                                    <iframe id="preview_skd_edit" class="hidden w-full h-[500px] border border-gray-300 rounded-lg bg-white shadow-inner" src=""></iframe>
-                                </div>
+                                <iframe id="preview_skd_edit" class="hidden w-full h-[250px] border border-gray-300 rounded bg-white mt-auto"></iframe>
                             </div>
 
-                                <div class="mt-4 pt-4 border-t border-gray-200">
-                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 items-center">
-                                        <div>
-                                            <label class="block text-sm font-bold text-black-600 mb-1 text-center md:text-left">Tanggal Terbit IJOP</label>
-                                            {{-- VALUE MENGGUNAKAN HELPER OLD & OPTIONAL --}}
-                                            <input type="date" name="masa_berlaku_ijop" id="tgl_ijop" 
-                                                   value="{{ old('masa_berlaku_ijop', optional($lembaga->masa_berlaku_ijop)->format('Y-m-d')) }}" 
-                                                   class="w-full border-gray-300 rounded-md text-sm shadow-sm focus:border-blue-500 focus:ring-blue-500 text-center">
-                                        </div>
-                                        <div>
-
-                                            {{-- 1. Div untuk info masa berlaku (tetap hidden, akan muncul via JS) --}}
-                                            <div id="info_masa_berlaku" class="hidden bg-green-50 border border-green-200 text-green-800 text-sm p-3 rounded-lg text-center font-medium mt-4">
-                                            </div>
-
-                                            {{-- 2. Div untuk Input Status Fisik IJOP (Dikeluarkan agar SELALU MUNCUL) --}}
-                                            <div class="mt-4 pt-4 border-t border-gray-200">
-                                                <label class="block text-sm font-bold text-black-600 mb-1">Status Fisik Dokumen IJOP</label>
-                                                <input type="text" name="ijop" 
-                                                    value="{{ old('ijop', $lembaga->ijop) }}" 
-                                                    class="w-full border-gray-300 rounded-md text-sm shadow-sm focus:border-blue-500 focus:ring-blue-500 uppercase" 
-                                                    placeholder="CONTOH: ADA / TIDAK ADA / SUKET DOMISILI" 
-                                                    oninput="this.value = this.value.toUpperCase()">
-                                            </div>
-
-
-                                        </div>
-                                    </div>
+                            {{-- 3. SPTJM --}}
+                            <div class="bg-gray-50 p-3 rounded-lg border border-gray-400 shadow-sm flex flex-col">
+                                <label class="block text-xs font-bold text-black-800 mb-2">3. Scan SPTJM Mutlak</label>
+                                <div class="w-full text-left mb-3">
+                                    <input type="file" name="file_super" id="file_super" accept="application/pdf" class="block w-full text-[10px] text-black-500 file:mr-2 file:py-1 file:px-3 file:rounded file:border-0 file:text-[10px] file:font-bold file:bg-purple-600 file:text-white hover:file:bg-purple-700 cursor-pointer transition" onchange="handleFileSelect(this, 'preview_super_edit', 'btn_reset_super_edit', 'old_super')">
+                                    <button type="button" id="btn_reset_super_edit" onclick="resetFile('file_super', 'preview_super_edit', 'btn_reset_super_edit', 'old_super')" class="hidden mt-1 text-[10px] text-red-600 font-bold underline">&times; Batal Upload File Baru</button>
                                 </div>
-                            </div>
-
-                            {{-- SUPER --}}
-                            <div class="bg-gray-50 p-6 rounded-xl border border-gray-200 shadow-sm">
-                                <label class="block text-base font-bold text-black-800 mb-3">3. Surat Pernyataan Tanggung Jawab Mutlak (SPTJM)</label>
-                                
+                                <input type="hidden" name="status_super" value="Pending">
                                 @if($lembaga->file_super)
-                                    <div class="mb-4 text-center">
-                                        <p class="text-xs text-green-600 font-bold mb-2">✓ File tersimpan saat ini:</p>
-                                        {{-- ADDED: type="application/pdf" --}}
-                                        <iframe src="{{ asset('storage/' . $lembaga->file_super) }}" type="application/pdf" class="w-full h-[600px] border border-gray-300 rounded-lg bg-white shadow-inner"></iframe>
-                                        <p class="text-xs text-black-500 mt-2">Untuk mengganti, silakan upload file baru di bawah ini:</p>
-                                    </div>
-                                @else
-                                    <div class="mb-4 text-center text-black-400 italic border border-dashed border-gray-300 p-4 rounded-lg bg-white">Belum ada file SUPER.</div>
+                                    <iframe id="old_super" src="{{ asset('storage/' . $lembaga->file_super) }}" class="w-full h-[250px] border border-gray-300 rounded bg-white mt-auto"></iframe>
                                 @endif
-
-                                <div class="relative group text-center">
-                                    <input type="file" name="file_super" id="file_super" accept="application/pdf"
-                                           class="block w-full text-sm text-black-500 file:mr-4 file:py-2.5 file:px-6 file:rounded-full file:border-0 file:text-sm file:font-bold file:bg-purple-600 file:text-white hover:file:bg-purple-700 transition cursor-pointer text-center"
-                                           onchange="handleFileSelect(this, 'preview_super_edit', 'btn_reset_super_edit')">
-                                    
-                                    <button type="button" id="btn_reset_super_edit" onclick="resetFile('file_super', 'preview_super_edit', 'btn_reset_super_edit')" 
-                                            class="hidden mt-2 text-sm text-red-600 hover:text-red-800 font-bold underline transition">
-                                        &times; Batal Upload File Baru
-                                    </button>
-                                </div>
-
-                                <div class="mt-4">
-                                    <iframe id="preview_super_edit" class="hidden w-full h-[600px] border border-gray-300 rounded-lg bg-white shadow-inner" src=""></iframe>
-                                </div>
+                                <iframe id="preview_super_edit" class="hidden w-full h-[250px] border border-gray-300 rounded bg-white mt-auto"></iframe>
                             </div>
-                        </div>
-                    </div>
 
-                    {{-- 3. SKAM (BARU) --}}
-                            <div class="bg-gray-50 p-6 rounded-xl border border-gray-200 shadow-sm mt-8">
-                                <label class="block text-base font-bold text-black-800 mb-3">4. Surat Keterangan Aktif Mengajar (SKAM)</label>
-                                
+                            {{-- 4. SKAM --}}
+                            <div class="bg-gray-50 p-3 rounded-lg border border-gray-400 shadow-sm flex flex-col">
+                                <label class="block text-xs font-bold text-black-800 mb-2">4. Scan SKAM</label>
+                                <div class="w-full text-left mb-3">
+                                    <input type="file" name="file_skam" id="file_skam" accept="application/pdf" class="block w-full text-[10px] text-black-500 file:mr-2 file:py-1 file:px-3 file:rounded file:border-0 file:text-[10px] file:font-bold file:bg-teal-600 file:text-white hover:file:bg-teal-700 cursor-pointer transition" onchange="handleFileSelect(this, 'preview_skam_edit', 'btn_reset_skam_edit', 'old_skam')">
+                                    <button type="button" id="btn_reset_skam_edit" onclick="resetFile('file_skam', 'preview_skam_edit', 'btn_reset_skam_edit', 'old_skam')" class="hidden mt-1 text-[10px] text-red-600 font-bold underline">&times; Batal Upload File Baru</button>
+                                </div>
+                                <input type="hidden" name="status_skam" value="Pending">
                                 @if($lembaga->file_skam)
-                                    <div class="mb-4 text-center">
-                                        <p class="text-xs text-green-600 font-bold mb-2">✓ File tersimpan saat ini:</p>
-                                        <iframe src="{{ asset('storage/' . $lembaga->file_skam) }}" type="application/pdf" class="w-full h-[600px] border border-gray-300 rounded-lg bg-white shadow-inner"></iframe>
-                                        <p class="text-xs text-black-500 mt-2">Untuk mengganti, silakan upload file baru di bawah ini:</p>
-                                    </div>
-                                @else
-                                    <div class="mb-4 text-center text-black-400 italic border border-dashed border-gray-300 p-4 rounded-lg bg-white">Belum ada file SKAM.</div>
+                                    <iframe id="old_skam" src="{{ asset('storage/' . $lembaga->file_skam) }}" class="w-full h-[250px] border border-gray-300 rounded bg-white mt-auto"></iframe>
                                 @endif
-
-                                <div class="relative group text-center">
-                                    <input type="file" name="file_skam" id="file_skam" accept="application/pdf"
-                                           class="block w-full text-sm text-black-500 file:mr-4 file:py-2.5 file:px-6 file:rounded-full file:border-0 file:text-sm file:font-bold file:bg-orange-500 file:text-white hover:file:bg-orange-600 transition cursor-pointer text-center"
-                                           onchange="handleFileSelect(this, 'preview_skam_edit', 'btn_reset_skam_edit')">
-                                    
-                                    <button type="button" id="btn_reset_skam_edit" onclick="resetFile('file_skam', 'preview_skam_edit', 'btn_reset_skam_edit')" 
-                                            class="hidden mt-2 text-sm text-red-600 hover:text-red-800 font-bold underline transition">
-                                        &times; Batal Upload File Baru
-                                    </button>
-                                </div>
-
-                                <div class="mt-4">
-                                    <iframe id="preview_skam_edit" class="hidden w-full h-[600px] border border-gray-300 rounded-lg bg-white shadow-inner" src=""></iframe>
-                                </div>
-
-
+                                <iframe id="preview_skam_edit" class="hidden w-full h-[250px] border border-gray-300 rounded bg-white mt-auto"></iframe>
                             </div>
 
-                        {{-- ================================================================= --}}
-                        {{-- 📸 [BARU - FASE 3] PANEL 4 FOTO EDIT DENGAN PREVIEW DATABASE      --}}
-                        {{-- ================================================================= --}}
-                        <div class="mt-8 bg-white p-6 rounded-xl border border-gray-300 shadow-sm">
-                            <h3 class="text-sm font-bold text-black-800 uppercase tracking-wide mb-1">4. Perbarui Dokumentasi Lembaga (Foto Lapangan)</h3>
-                            <p class="text-[11px] text-black-500 mb-4">Abaikan jika tidak ingin mengganti foto lama.</p>
+                        </div>
+
+                        {{-- FOTO LAMA (Jika Ada) --}}
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="border border-gray-300 rounded-lg p-3 bg-gray-50 flex flex-col items-center">
+                                <label class="text-xs font-bold text-black-700 uppercase mb-2">A. Profil Lembaga</label>
+                                <div class="w-full h-40 bg-gray-200 border border-gray-400 rounded-md mb-3 overflow-hidden flex justify-center items-center relative">
+                                    <img id="preview_lembaga" src="{{ $lembaga->foto_lembaga ? asset('storage/' . $lembaga->foto_lembaga) : '#' }}" class="{{ $lembaga->foto_lembaga ? '' : 'hidden' }} object-cover w-full h-full absolute inset-0 z-10" />
+                                    <span class="text-black-400 text-[11px] z-0">Tidak Ada Foto</span>
+                                </div>
+                                <input type="file" name="foto_lembaga" accept="image/*" onchange="previewImageFase3(this, 'preview_lembaga')" class="text-[10px] w-full file:mr-2 file:py-1 file:px-2 file:rounded file:border-0 file:text-[10px] file:font-bold file:bg-orange-500 file:text-white hover:file:bg-orange-600 cursor-pointer transition">
+                            </div>
                             
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                
-                                {{-- Kotak A: Profil Lembaga --}}
-                                <div class="border border-gray-300 rounded-lg p-3 bg-gray-50 flex flex-col items-center">
-                                    <label class="text-[11px] font-bold text-black-700 uppercase mb-1 w-full text-center">A. Foto Profil Lembaga</label>
-                                    <div class="w-full h-32 bg-gray-200 border border-gray-400 rounded-md mb-2 overflow-hidden flex justify-center items-center relative">
-                                        <img id="preview_lembaga" src="{{ $lembaga->foto_lembaga ? asset('storage/' . $lembaga->foto_lembaga) : '#' }}" 
-                                             class="{{ $lembaga->foto_lembaga ? '' : 'hidden' }} object-cover w-full h-full absolute inset-0 z-10" />
-                                        <span class="text-black-400 text-[11px] z-0">Tidak Ada Foto Terunggah</span>
-                                    </div>
-                                    <input type="file" name="foto_lembaga" accept="image/*" onchange="previewImageFase3(this, 'preview_lembaga')" class="text-[10px] w-full file:mr-2 file:py-1 file:px-2 file:rounded file:border-0 file:text-[10px] file:font-bold file:bg-orange-500 file:text-white hover:file:bg-orange-600 cursor-pointer">
+                            <div class="border border-gray-300 rounded-lg p-3 bg-gray-50 flex flex-col items-center">
+                                <label class="text-xs font-bold text-black-700 uppercase mb-2">B. Papan Nama / Nambor</label>
+                                <div class="w-full h-40 bg-gray-200 border border-gray-400 rounded-md mb-3 overflow-hidden flex justify-center items-center relative">
+                                    <img id="preview_nambor" src="{{ $lembaga->foto_nambor ? asset('storage/' . $lembaga->foto_nambor) : '#' }}" class="{{ $lembaga->foto_nambor ? '' : 'hidden' }} object-cover w-full h-full absolute inset-0 z-10" />
+                                    <span class="text-black-400 text-[11px] z-0">Tidak Ada Foto</span>
                                 </div>
-
-                                {{-- Kotak B: Papan Nama --}}
-                                <div class="border border-gray-300 rounded-lg p-3 bg-gray-50 flex flex-col items-center">
-                                    <label class="text-[11px] font-bold text-black-700 uppercase mb-1 w-full text-center">B. Papan Nama / Nambor</label>
-                                    <div class="w-full h-32 bg-gray-200 border border-gray-400 rounded-md mb-2 overflow-hidden flex justify-center items-center relative">
-                                        <img id="preview_nambor" src="{{ $lembaga->foto_nambor ? asset('storage/' . $lembaga->foto_nambor) : '#' }}" 
-                                             class="{{ $lembaga->foto_nambor ? '' : 'hidden' }} object-cover w-full h-full absolute inset-0 z-10" />
-                                        <span class="text-black-400 text-[11px] z-0">Tidak Ada Foto Terunggah</span>
-                                    </div>
-                                    <input type="file" name="foto_nambor" accept="image/*" onchange="previewImageFase3(this, 'preview_nambor')" class="text-[10px] w-full file:mr-2 file:py-1 file:px-2 file:rounded file:border-0 file:text-[10px] file:font-bold file:bg-orange-500 file:text-white hover:file:bg-orange-600 cursor-pointer">
+                                <input type="file" name="foto_nambor" accept="image/*" onchange="previewImageFase3(this, 'preview_nambor')" class="text-[10px] w-full file:mr-2 file:py-1 file:px-2 file:rounded file:border-0 file:text-[10px] file:font-bold file:bg-orange-500 file:text-white hover:file:bg-orange-600 cursor-pointer transition">
+                            </div>
+                            
+                            <div class="border border-gray-300 rounded-lg p-3 bg-gray-50 flex flex-col items-center">
+                                <label class="text-xs font-bold text-black-700 uppercase mb-2">C. Gedung / Bangunan</label>
+                                <div class="w-full h-40 bg-gray-200 border border-gray-400 rounded-md mb-3 overflow-hidden flex justify-center items-center relative">
+                                    <img id="preview_bangunan" src="{{ $lembaga->foto_bangunan ? asset('storage/' . $lembaga->foto_bangunan) : '#' }}" class="{{ $lembaga->foto_bangunan ? '' : 'hidden' }} object-cover w-full h-full absolute inset-0 z-10" />
+                                    <span class="text-black-400 text-[11px] z-0">Tidak Ada Foto</span>
                                 </div>
-
-                                {{-- Kotak C: Gedung --}}
-                                <div class="border border-gray-300 rounded-lg p-3 bg-gray-50 flex flex-col items-center">
-                                    <label class="text-[11px] font-bold text-black-700 uppercase mb-1 w-full text-center">C. Gedung / Bangunan</label>
-                                    <div class="w-full h-32 bg-gray-200 border border-gray-400 rounded-md mb-2 overflow-hidden flex justify-center items-center relative">
-                                        <img id="preview_bangunan" src="{{ $lembaga->foto_bangunan ? asset('storage/' . $lembaga->foto_bangunan) : '#' }}" 
-                                             class="{{ $lembaga->foto_bangunan ? '' : 'hidden' }} object-cover w-full h-full absolute inset-0 z-10" />
-                                        <span class="text-black-400 text-[11px] z-0">Tidak Ada Foto Terunggah</span>
-                                    </div>
-                                    <input type="file" name="foto_bangunan" accept="image/*" onchange="previewImageFase3(this, 'preview_bangunan')" class="text-[10px] w-full file:mr-2 file:py-1 file:px-2 file:rounded file:border-0 file:text-[10px] file:font-bold file:bg-orange-500 file:text-white hover:file:bg-orange-600 cursor-pointer">
+                                <input type="file" name="foto_bangunan" accept="image/*" onchange="previewImageFase3(this, 'preview_bangunan')" class="text-[10px] w-full file:mr-2 file:py-1 file:px-2 file:rounded file:border-0 file:text-[10px] file:font-bold file:bg-orange-500 file:text-white hover:file:bg-orange-600 cursor-pointer transition">
+                            </div>
+                            
+                            <div class="border border-gray-300 rounded-lg p-3 bg-gray-50 flex flex-col items-center">
+                                <label class="text-xs font-bold text-black-700 uppercase mb-2">D. Aktivitas KBM</label>
+                                <div class="w-full h-40 bg-gray-200 border border-gray-400 rounded-md mb-3 overflow-hidden flex justify-center items-center relative">
+                                    <img id="preview_kbm" src="{{ $lembaga->foto_kbm ? asset('storage/' . $lembaga->foto_kbm) : '#' }}" class="{{ $lembaga->foto_kbm ? '' : 'hidden' }} object-cover w-full h-full absolute inset-0 z-10" />
+                                    <span class="text-black-400 text-[11px] z-0">Tidak Ada Foto</span>
                                 </div>
-
-                                {{-- Kotak D: KBM --}}
-                                <div class="border border-gray-300 rounded-lg p-3 bg-gray-50 flex flex-col items-center">
-                                    <label class="text-[11px] font-bold text-black-700 uppercase mb-1 w-full text-center">D. Aktivitas Belajar (KBM)</label>
-                                    <div class="w-full h-32 bg-gray-200 border border-gray-400 rounded-md mb-2 overflow-hidden flex justify-center items-center relative">
-                                        <img id="preview_kbm" src="{{ $lembaga->foto_kbm ? asset('storage/' . $lembaga->foto_kbm) : '#' }}" 
-                                             class="{{ $lembaga->foto_kbm ? '' : 'hidden' }} object-cover w-full h-full absolute inset-0 z-10" />
-                                        <span class="text-black-400 text-[11px] z-0">Tidak Ada Foto Terunggah</span>
-                                    </div>
-                                    <input type="file" name="foto_kbm" accept="image/*" onchange="previewImageFase3(this, 'preview_kbm')" class="text-[10px] w-full file:mr-2 file:py-1 file:px-2 file:rounded file:border-0 file:text-[10px] file:font-bold file:bg-orange-500 file:text-white hover:file:bg-orange-600 cursor-pointer">
-                                </div>
-
+                                <input type="file" name="foto_kbm" accept="image/*" onchange="previewImageFase3(this, 'preview_kbm')" class="text-[10px] w-full file:mr-2 file:py-1 file:px-2 file:rounded file:border-0 file:text-[10px] file:font-bold file:bg-orange-500 file:text-white hover:file:bg-orange-600 cursor-pointer transition">
                             </div>
                         </div>
-                            
-                            <div class="mt-8 bg-gray-50 p-6 rounded-xl border border-gray-200 shadow-sm">
-                                <label class="block text-sm font-semibold text-black-700 mb-1 text-center">Catatan Tambahan / Keterangan</label>
-                                
-                                
-                                <textarea name="keterangan" rows="2" class="w-full border-gray-300 rounded-lg shadow-sm text-sm text-center uppercase" placeholder="TULIS CATATAN JIKA ADA..." oninput="this.value = this.value.toUpperCase()">{{ old('keterangan', $lembaga->keterangan) }}</textarea>
-                            </div>
 
-                    <div class="flex items-center justify-end gap-3 pt-6 border-t border-gray-200">
-                        <a href="{{ route('lembaga.index') }}" class="px-5 py-2.5 text-sm font-bold text-black-600 bg-white border border-gray-300 rounded-lg hover:bg-gray-50">Batal</a>
-                        <button type="submit" class="px-6 py-2.5 text-sm font-bold text-white bg-blue-600 rounded-lg shadow-md hover:bg-blue-700 flex items-center gap-2">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg>
-                            Simpan Perubahan
-                        </button>
                     </div>
+
+                    {{-- FOOTER ACTION DENGAN CATATAN --}}
+                    <div class="mt-4 bg-gray-50 px-4 py-3 rounded-lg shadow-sm border border-gray-400 flex flex-col md:flex-row gap-4 items-end justify-between">
+                        <div class="flex-grow w-full md:w-1/2">
+                            <label class="block text-[10px] font-bold text-gray-600 uppercase mb-1">Catatan Tambahan (Opsional)</label>
+                            <input type="text" name="keterangan" value="{{ old('keterangan', $lembaga->keterangan) }}" class="w-full border border-gray-400 rounded-md px-2 py-1 h-[32px] text-xs font-bold text-black-800 shadow-sm focus:border-blue-500 uppercase" placeholder="TULIS JIKA ADA..." oninput="this.value = this.value.toUpperCase()">
+                        </div>
+                        <div class="flex gap-2 w-full md:w-auto">
+                            <a href="{{ route('lembaga.index') }}" class="px-5 py-1.5 text-xs font-bold text-gray-700 bg-white border border-gray-400 rounded-md hover:bg-gray-100 transition flex items-center">Batal</a>
+                            <button type="submit" class="px-6 py-1.5 text-xs font-bold text-white bg-blue-600 rounded-md shadow-sm hover:bg-blue-700 transition flex items-center gap-1">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg>
+                                SIMPAN PERUBAHAN
+                            </button>
+                        </div>
+                    </div>
+
                 </form>
+
             </div>
         </div>
     </div>
@@ -430,34 +324,21 @@
             }
         });
 
-        // 2. PREVIEW PDF
-        function handleFileSelect(input, iframeId, btnId) {
-            const iframe = document.getElementById(iframeId);
-            const btnReset = document.getElementById(btnId);
+        // 2. PREVIEW & RESET PDF (Disesuaikan untuk form EDIT)
+        function handleFileSelect(input, iframeId, btnId, oldFrameId = null) {
+            const iframe = document.getElementById(iframeId); const btnReset = document.getElementById(btnId);
+            if(oldFrameId) { const oldFrame = document.getElementById(oldFrameId); if(oldFrame) oldFrame.classList.add('hidden'); }
             if (input.files && input.files[0]) {
-                if(input.files[0].type !== 'application/pdf'){
-                    alert("Mohon upload file berformat PDF!");
-                    input.value = ""; 
-                    return;
-                }
+                if(input.files[0].type !== 'application/pdf'){ alert("Mohon upload PDF!"); input.value = ""; return; }
                 const reader = new FileReader();
-                reader.onload = function(e) {
-                    iframe.src = e.target.result;
-                    iframe.classList.remove('hidden'); 
-                    btnReset.classList.remove('hidden'); 
-                }
+                reader.onload = function(e) { iframe.src = e.target.result; iframe.classList.remove('hidden'); btnReset.classList.remove('hidden'); }
                 reader.readAsDataURL(input.files[0]);
             }
         }
-
-        function resetFile(inputId, iframeId, btnId) {
-            const input = document.getElementById(inputId);
-            const iframe = document.getElementById(iframeId);
-            const btnReset = document.getElementById(btnId);
-            input.value = ""; 
-            iframe.src = "";  
-            iframe.classList.add('hidden'); 
-            btnReset.classList.add('hidden'); 
+        function resetFile(inputId, iframeId, btnId, oldFrameId = null) {
+            const input = document.getElementById(inputId); const iframe = document.getElementById(iframeId); const btnReset = document.getElementById(btnId);
+            if(oldFrameId) { const oldFrame = document.getElementById(oldFrameId); if(oldFrame) oldFrame.classList.remove('hidden'); }
+            input.value = ""; iframe.src = ""; iframe.classList.add('hidden'); btnReset.classList.add('hidden');
         }
 
         // [BARU] FUNGSI PREVIEW GAMBAR UNTUK MENU EDIT

@@ -6,21 +6,19 @@
         <p class="text-sm text-black-500 mt-1">Wilayah Data: <b>{{ $wilayahKerja }}</b></p>
     </x-slot>
 
-    <div class="py-8">
+    <div class="py-0">
         {{-- ==================================================== --}}
         {{-- BAGIAN ATAS: 3 KARTU RINGKASAN --}}
         {{-- ==================================================== --}}
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-1 mb-1">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-0 mb-0">
             
             {{-- KARTU 1: DATA LEMBAGA --}}
             <div class="bg-white rounded-2xl border border-gray-300 p-6 shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07)] hover:shadow-lg transition duration-300 flex flex-col justify-between">
                 <div>
-                    <div class="flex items-center justify-between mb-4">
+                    <div class="flex items-center justify-center mb-4">
                         <div>
-                            <h3 class="font-bold text-black-800 text-lg">Komposisi Lembaga</h3>
-                            <p class="text-xs text-black-400">Sebaran Jenis Lembaga</p>
+                            <h3 class="font-bold text-black-800 text-lg">KOMPOSISI JENIS LEMBAGA</h3>
                         </div>
-                        <div class="w-8 h-8 bg-green-50 text-green-600 rounded-lg flex items-center justify-center text-lg">🕌</div>
                     </div>
                     <div class="relative h-48 w-full mb-6">
                         <canvas id="chartLembaga"></canvas>
@@ -67,12 +65,10 @@
             {{-- KARTU 2: STATUS GURU --}}
             <div class="bg-white rounded-2xl border border-black-800 p-6 shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07)] hover:shadow-lg transition duration-300 flex flex-col justify-between">
                 <div>
-                    <div class="flex items-center justify-between mb-4">
+                    <div class="flex items-center justify-center mb-4">
                         <div>
-                            <h3 class="font-bold text-black-800 text-lg">Status Kepegawaian</h3>
-                            <p class="text-xs text-black-400">Klasifikasi Status Guru</p>
+                            <h3 class="font-bold text-black-800 text-lg">STATUS KEPEGAWAIAN GURU</h3>
                         </div>
-                        <div class="w-8 h-8 bg-blue-50 text-blue-600 rounded-lg flex items-center justify-center text-lg">👨‍🏫</div>
                     </div>
                     <div class="relative h-48 w-full mb-6">
                         <canvas id="chartGuru"></canvas>
@@ -104,12 +100,10 @@
             {{-- KARTU 3: STATUS INSENTIF --}}
             <div class="bg-white rounded-2xl border border-gray-300 p-6 shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07)] hover:shadow-lg transition duration-300 flex flex-col justify-between">
                 <div>
-                    <div class="flex items-center justify-between mb-4">
+                    <div class="flex items-center justify-center mb-4">
                         <div>
-                            <h3 class="font-bold text-black-800 text-lg">Penyaluran Insentif</h3>
-                            <p class="text-xs text-black-400">Progres Penerima Bantuan</p>
+                            <h3 class="font-bold text-black-800 text-lg">RASIO PENYALURAN INSENTIF</h3>
                         </div>
-                        <div class="w-8 h-8 bg-yellow-50 text-yellow-600 rounded-lg flex items-center justify-center text-lg">🤲</div>
                     </div>
                     <div class="relative h-48 w-full mb-6">
                         <canvas id="chartInsentif"></canvas>
@@ -150,7 +144,7 @@
         {{-- ==================================================== --}}
         {{-- BAGIAN TENGAH: PROGRESS PEMBERKASAN (BARU) --}}
         {{-- ==================================================== --}}
-        <div class="bg-white rounded-2xl border border-gray-300 p-6 shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07)] mb-8 transition duration-300 hover:shadow-lg">
+        <div class="bg-white rounded-2xl border border-gray-300 p-6 shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07)] mb-0 transition duration-300 hover:shadow-lg">
             <div class="flex items-center gap-3 mb-5 border-b border-gray-300 pb-4">
                 <div class="p-2.5 bg-indigo-50 text-indigo-600 rounded-xl">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
@@ -212,7 +206,7 @@
         {{-- BAGIAN BAWAH 1: GRAFIK SEBARAN KECAMATAN --}}
         {{-- ==================================================== --}}
         <div class="bg-white rounded-2xl border border-gray-300 p-6 shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07)]">
-            <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-6 gap-4">
+            <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-0 gap-4">
                 <div>
                     <h3 class="font-bold text-black-800 text-lg">Peta Sebaran Lembaga</h3>
                     <p class="text-sm text-black-400">Statistik Total Lembaga per Kecamatan</p>
@@ -241,8 +235,8 @@
         {{-- ==================================================== --}}
         {{-- BAGIAN BAWAH 2: GRAFIK SEBARAN GURU PER DESA (BARU) --}}
         {{-- ==================================================== --}}
-        <div class="bg-white rounded-2xl border border-gray-300 p-6 shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07)] mt-8">
-            <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-6 gap-4">
+        <div class="bg-white rounded-2xl border border-gray-300 p-6 shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07)] ">
+            <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-1 gap-4">
                 <div>
                     <h3 class="font-bold text-black-800 text-lg">Distribusi Guru per Desa/Kelurahan</h3>
                     <p class="text-sm text-black-400">Statistik Rinci Tenaga Pendidik</p>
@@ -394,45 +388,80 @@
                 return;
             }
 
+
+
             const chartData = {
                 labels: dataKec.labels, // Menampilkan nama-nama Desa
                 datasets: [
                     {
                         type: 'line', label: 'Total Guru', data: dataKec.total,
-                        borderColor: '#fb923c', backgroundColor: '#fb923c', borderWidth: 3,
-                        pointBackgroundColor: '#fff', pointBorderColor: '#fb923c', pointRadius: 5, tension: 0.4, order: 0 
+                        borderColor: '#f97316', backgroundColor: '#f97316', borderWidth: 2, // Garis dipertipis jadi 2
+                        pointBackgroundColor: '#ffffff', pointBorderColor: '#f97316', 
+                        pointRadius: 4, pointHoverRadius: 6, tension: 0.4, order: 0 // Titik diperkecil jadi 4
                     },
                     {
                         type: 'bar', label: 'Guru TPQ', data: dataKec.tpq,
-                        backgroundColor: '#10b981', borderRadius: 4, barPercentage: 0.6, order: 1
+                        backgroundColor: '#10b981', borderRadius: 4, 
+                        barPercentage: 0.4, maxBarThickness: 30, order: 1 // Balok dirampingkan (0.4) dan dibatasi max 30px
                     },
                     {
                         type: 'bar', label: 'Guru Madin', data: dataKec.madin,
-                        backgroundColor: '#3b82f6', borderRadius: 4, barPercentage: 0.6, order: 1
+                        backgroundColor: '#3b82f6', borderRadius: 4, 
+                        barPercentage: 0.4, maxBarThickness: 30, order: 1 // Balok dirampingkan (0.4) dan dibatasi max 30px
                     }
                 ]
             };
 
-            if(chartGuruDesaObj) {
+
+
+           if(chartGuruDesaObj) {
                 chartGuruDesaObj.data = chartData;
                 chartGuruDesaObj.update();
             } else {
                 chartGuruDesaObj = new Chart(ctxGuruDesa, {
                     type: 'bar',
                     data: chartData,
+                    // BAGIAN OPTIONS SUDAH DIPERBARUI DENGAN GAYA RECHARTS
                     options: {
-                        responsive: true, maintainAspectRatio: false, interaction: { mode: 'index', intersect: false },
+                        responsive: true, 
+                        maintainAspectRatio: false, 
+                        interaction: { mode: 'index', intersect: false },
                         plugins: {
                             legend: { display: false },
-                            tooltip: { backgroundColor: 'rgba(255,255,255,0.95)', titleColor: '#1e293b', bodyColor: '#475569', borderColor: '#e2e8f0', borderWidth: 1, padding: 10, usePointStyle: true }
+                            // --- Kustomisasi Tooltip Gaya Recharts ---
+                            tooltip: { 
+                                backgroundColor: 'rgba(255, 255, 255, 0.98)', 
+                                titleColor: '#0f172a', 
+                                bodyColor: '#475569', 
+                                borderColor: '#cbd5e1', 
+                                borderWidth: 1, 
+                                padding: 12, 
+                                usePointStyle: true,
+                                boxPadding: 6,
+                                titleFont: { size: 13, family: "'Inter', sans-serif", weight: 'bold' },
+                                bodyFont: { size: 12, family: "'Inter', sans-serif" },
+                                caretSize: 6,
+                                cornerRadius: 8
+                            }
                         },
                         scales: {
-                            y: { beginAtZero: true, grid: { color: '#f1f5f9', drawBorder: false }, ticks: { font: { size: 11 }, stepSize: 1 } },
-                            x: { grid: { display: false }, ticks: { font: { size: 11 } } }
+                            y: { 
+                                beginAtZero: true, 
+                                border: { dash: [5, 5], display: false }, 
+                                grid: { color: '#e2e8f0', tickLength: 0 }, 
+                                ticks: { font: { size: 11 }, padding: 10, stepSize: 1 } 
+                            },
+                            x: { 
+                                border: { display: false }, 
+                                grid: { display: false }, 
+                                ticks: { font: { size: 11 }, maxRotation: 45, minRotation: 45 } 
+                            }
                         }
                     }
                 });
             }
+
+            
         }
 
         // Trigger Event saat halaman dimuat

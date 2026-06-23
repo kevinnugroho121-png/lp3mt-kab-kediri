@@ -28,7 +28,7 @@
                             
                             {{-- Input Pencarian --}}
                             <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari Kecamatan..." 
-                                   class="w-48 sm:w-64 border border-gray-300 rounded-md px-3 py-1.5 text-sm focus:outline-none focus:border-green-500 focus:ring-1 focus:ring-green-500 shadow-sm h-9">
+                                   class="w-48 sm:w-64 border border-gray-600 rounded-md px-3 py-1.5 text-sm focus:outline-none focus:border-green-500 focus:ring-1 focus:ring-green-500 shadow-sm h-9">
                             
                             {{-- Tombol Cari (Biru) --}}
                             <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white px-3 rounded-md text-sm font-bold shadow-sm transition h-9 flex items-center gap-1">
@@ -37,7 +37,7 @@
                             </button>
 
                             {{-- Tombol Reset (Selalu Tampil / Standby) --}}
-                            <a href="{{ route('kecamatan.index') }}" class="bg-gray-100 hover:bg-gray-200 text-black-600 px-3 py-1.5 rounded-lg text-sm font-bold transition shadow-sm border border-gray-300">
+                            <a href="{{ route('kecamatan.index') }}" class="bg-gray-100 hover:bg-gray-200 text-black-600 px-3 py-1.5 rounded-lg text-sm font-bold transition shadow-sm border border-gray-600">
                                 Reset
                             </a>
                         </form>
@@ -68,19 +68,19 @@
             @endif
 
             {{-- TABEL ALA EXCEL (BORDERED & COMPACT) --}}
-            <div class="bg-white border border-gray-400 overflow-hidden shadow-sm">
+            <div class="bg-white border border-gray-600 overflow-hidden shadow-sm">
                 <table class="w-full text-sm border-collapse">
                     {{-- HEADER --}}
                     <thead>
 
 
                         <tr class="bg-gray-100 text-black-700 uppercase text-xs tracking-wider">
-                            <th class="border border-gray-300 px-2 py-2 text-center w-12 font-bold">No</th>
-                            <th class="border border-gray-300 px-3 py-2 text-center font-bold">Nama Kecamatan</th>
-                            <th class="border border-gray-300 px-3 py-2 text-center font-bold w-48">Data Desa</th> 
+                            <th class="border border-gray-600 px-2 py-2 text-center w-12 font-bold">No</th>
+                            <th class="border border-gray-600 px-3 py-2 text-center font-bold">Nama Kecamatan</th>
+                            <th class="border border-gray-600 px-3 py-2 text-center font-bold w-48">Data Desa</th> 
                             {{-- [BARU] Sisipkan kolom kuota insentif di sini --}}
-                            <th class="border border-gray-300 px-3 py-2 text-center font-bold w-64">Jatah Kuota Insentif</th> 
-                            <th class="border border-gray-300 px-3 py-2 text-center font-bold w-32">Aksi</th>
+                            <th class="border border-gray-600 px-3 py-2 text-center font-bold w-64">Jatah Kuota Insentif</th> 
+                            <th class="border border-gray-600 px-3 py-2 text-center font-bold w-32">Aksi</th>
                         </tr>
 
 
@@ -92,17 +92,17 @@
                             <tr class="hover:bg-yellow-50 transition duration-150">
                                 
                                 {{-- NO --}}
-                                <td class="border border-gray-300 px-2 py-1 text-center bg-gray-50 font-medium">
+                                <td class="border border-gray-600 px-2 py-1 text-center bg-gray-50 font-medium">
                                     {{ $kecamatans->firstItem() + $index }}
                                 </td>
 
                                 {{-- NAMA KECAMATAN --}}
-                                <td class="border border-gray-300 px-3 py-1 font-bold text-black-800">
+                                <td class="border border-gray-600 px-3 py-1 font-bold text-black-800">
                                     {{ $kecamatan->nama_kecamatan }}
                                 </td>
 
                                 {{-- JUMLAH DESA (LINK KHUSUS) --}}
-                                <td class="border border-gray-300 px-2 py-1 text-center p-0">
+                                <td class="border border-gray-600 px-2 py-1 text-center p-0">
                                     <a href="{{ route('desa.index', ['kecamatan_id' => $kecamatan->id]) }}" class="group flex items-center justify-between w-full h-full px-3 py-1 text-xs hover:bg-blue-50 transition cursor-pointer">
                                         <span class="font-bold text-blue-600 group-hover:underline">
                                             {{ $kecamatan->desa_count ?? 0 }} Desa
@@ -112,14 +112,14 @@
                                 </td>
 
                                 {{-- [BARU - FASE 2] LOGIKA FORM INPUT KUOTA DINAMIS --}}
-                                <td class="border border-gray-300 px-3 py-1 text-center">
+                                <td class="border border-gray-600 px-3 py-1 text-center">
                                     @if(Auth::user()->role == 'admin' || Auth::user()->role == 'verifikator')
                                         {{-- Jika Superadmin/Verifikator, tampilkan Form Input Instan --}}
                                         <form action="{{ route('kecamatan.update_kuota', $kecamatan->id) }}" method="POST" class="flex items-center gap-1 justify-center">
                                             @csrf
                                             @method('PUT')
                                             <input type="number" name="kuota_insentif" value="{{ old('kuota_insentif', $kecamatan->kuota_insentif ?? 0) }}" min="0"
-                                                   class="w-20 border border-gray-300 rounded px-2 py-0.5 text-center text-xs font-bold text-blue-800 focus:ring-1 focus:ring-blue-500 focus:border-blue-500">
+                                                   class="w-20 border border-gray-600 rounded px-2 py-0.5 text-center text-xs font-bold text-blue-800 focus:ring-1 focus:ring-blue-500 focus:border-blue-500">
                                             <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white text-[10px] font-bold px-2 py-1 rounded shadow-sm transition">
                                                 Simpan
                                             </button>
@@ -133,7 +133,7 @@
                                 </td>
 
                                 {{-- AKSI --}}
-                                <td class="border border-gray-300 px-2 py-1 text-center">
+                                <td class="border border-gray-600 px-2 py-1 text-center">
                                     <div class="flex justify-center items-center gap-1">
                                         {{-- Edit (Korcam Boleh Edit Kecamatannya Sendiri) --}}
                                         <a href="{{ route('kecamatan.edit', $kecamatan->id) }}" class="p-1 rounded hover:bg-orange-100 text-orange-500 transition" title="Edit">
@@ -155,7 +155,7 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="4" class="border border-gray-300 px-4 py-8 text-center text-black-400 bg-gray-50">
+                                <td colspan="4" class="border border-gray-600 px-4 py-8 text-center text-black-400 bg-gray-50">
                                     <div class="flex flex-col items-center justify-center">
                                         <svg class="w-8 h-8 text-black-300 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"></path></svg>
                                         <span class="text-xs">Data Belum Ada</span>
