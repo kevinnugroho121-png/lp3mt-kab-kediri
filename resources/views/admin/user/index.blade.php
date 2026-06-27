@@ -18,9 +18,9 @@
                 <div class="flex flex-wrap gap-2">
                     
                     {{-- 💾 TOMBOL BACKUP DATABASE (FLEX UNTUK SIDANG) --}}
-                    <form action="{{ route('backup.database') }}" method="POST" class="inline">
+                    <form id="form-backup-db" action="{{ route('backup.database') }}" method="POST" class="inline">
                         @csrf
-                        <button type="submit" onclick="return confirm('Proses ini akan mengunduh seluruh database sistem. Lanjutkan?');" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-md text-sm font-medium flex items-center gap-2 shadow-sm transition">
+                        <button type="button" onclick="triggerStatusUpdate('Proses ini akan mengunduh seluruh database sistem. Lanjutkan?', 'form-backup-db')" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-md text-sm font-medium flex items-center gap-2 shadow-sm transition">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
                             Backup Database
                         </button>
@@ -165,28 +165,28 @@
                                     <div class="flex items-center justify-center gap-1.5 flex-wrap">
                                         
                                         {{-- 🔑 Tombol Reset Password --}}
-                                        <form action="{{ route('user.reset-password', $user->id) }}" method="POST" onsubmit="return confirm('Yakin ingin mereset password user ini menjadi: kediri2026 ?');">
+                                        <form id="form-reset-pw-{{ $user->id }}" action="{{ route('user.reset-password', $user->id) }}" method="POST">
                                             @csrf
-                                            <button type="submit" class="p-1.5 bg-gray-100 text-gray-700 border border-gray-600 rounded hover:bg-gray-700 hover:text-white transition" title="Reset Password ke Default">
+                                            <button type="button" onclick="triggerStatusUpdate('Yakin ingin mereset password user ini menjadi: kediri2026 ?', 'form-reset-pw-{{ $user->id }}')" class="p-1.5 bg-gray-100 text-gray-700 border border-gray-600 rounded hover:bg-gray-700 hover:text-white transition" title="Reset Password ke Default">
                                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"></path></svg>
                                             </button>
                                         </form>
 
                                         {{-- 📱 Tombol Sapu Jagat (Hanya Korcam) --}}
                                         @if($user->role == 'korcam')
-                                            <form action="{{ route('user.reset-device', $user->id) }}" method="POST" onsubmit="return confirm('Yakin logout paksa seluruh perangkat Korcam ini?');">
+                                            <form id="form-reset-device-{{ $user->id }}" action="{{ route('user.reset-device', $user->id) }}" method="POST">
                                                 @csrf
-                                                <button type="submit" class="p-1.5 bg-amber-100 text-amber-700 border border-amber-300 rounded hover:bg-amber-600 hover:text-white transition" title="Kosongkan Slot Login">
+                                                <button type="button" onclick="triggerStatusUpdate('Yakin logout paksa seluruh perangkat Korcam ini?', 'form-reset-device-{{ $user->id }}')" class="p-1.5 bg-amber-100 text-amber-700 border border-amber-300 rounded hover:bg-amber-600 hover:text-white transition" title="Kosongkan Slot Login">
                                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
                                                 </button>
                                             </form>
                                         @endif
 
                                         {{-- 🗑️ Tombol Hapus --}}
-                                        <form action="{{ route('user.destroy', $user->id) }}" method="POST" onsubmit="return confirm('Yakin hapus user ini permanen?');">
+                                        <form id="form-delete-user-{{ $user->id }}" action="{{ route('user.destroy', $user->id) }}" method="POST">
                                             @csrf
                                             @method('DELETE')
-                                            <button type="submit" class="p-1.5 bg-red-50 text-red-500 border border-red-200 rounded hover:bg-red-500 hover:text-white transition" title="Hapus User">
+                                            <button type="button" onclick="triggerStatusUpdate('Yakin hapus user ini permanen?', 'form-delete-user-{{ $user->id }}')" class="p-1.5 bg-red-50 text-red-500 border border-red-200 rounded hover:bg-red-500 hover:text-white transition" title="Hapus User">
                                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
                                             </button>
                                         </form>
@@ -208,4 +208,63 @@
             <div class="mt-4">{{ $users->withQueryString()->links() }}</div>
         </div>
     </div>
+
+    {{-- ================================================================= --}}
+    {{-- 🧩 [MODAL & SCRIPT] CUSTOM CONFIRM UNTUK TOMBOL AKSI              --}}
+    {{-- ================================================================= --}}
+    
+    <div id="custom-confirm-modal" class="hidden fixed inset-0 z-[9999] flex items-center justify-center bg-black/50 backdrop-blur-sm px-4">
+        <div class="bg-white rounded-md border border-gray-400 shadow-xl w-full max-w-sm p-4 transform scale-95 transition-transform duration-200">
+            <div class="flex items-center gap-2 mb-3 pb-1 border-b border-gray-600">
+                <span class="flex items-center justify-center w-5 h-5 rounded-full border border-gray-800 text-[10px] font-bold text-gray-800">?</span>
+                <span class="block text-xs font-bold text-black-800 uppercase">Konfirmasi Tindakan</span>
+            </div>
+            <p id="custom-confirm-message" class="text-xs font-bold text-gray-700 mb-5"></p>
+            <div class="flex justify-end gap-2">
+                <button id="custom-confirm-cancel" type="button" class="px-3 py-1 h-[32px] border border-gray-400 rounded-md text-[10px] font-bold text-gray-600 hover:bg-gray-100 uppercase transition">Batal</button>
+                <button id="custom-confirm-ok" type="button" class="px-3 py-1 h-[32px] border border-green-600 bg-green-600 rounded-md text-[10px] font-bold text-white hover:bg-green-700 uppercase shadow-sm transition">Ya, Lanjutkan</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function showConfirmDialog(message, onConfirmCallback) {
+            const modal = document.getElementById('custom-confirm-modal');
+            const msgEl = document.getElementById('custom-confirm-message');
+            const btnCancel = document.getElementById('custom-confirm-cancel');
+            const btnOk = document.getElementById('custom-confirm-ok');
+
+            msgEl.textContent = message;
+
+            modal.classList.remove('hidden');
+            setTimeout(() => { modal.firstElementChild.classList.replace('scale-95', 'scale-100'); }, 10);
+
+            const closeModal = () => {
+                modal.firstElementChild.classList.replace('scale-100', 'scale-95');
+                setTimeout(() => { modal.classList.add('hidden'); }, 150);
+                btnCancel.removeEventListener('click', handleCancel);
+                btnOk.removeEventListener('click', handleOk);
+            };
+
+            const handleCancel = () => closeModal();
+            const handleOk = () => {
+                closeModal();
+                if (typeof onConfirmCallback === 'function') onConfirmCallback(); 
+            };
+
+            btnCancel.addEventListener('click', handleCancel);
+            btnOk.addEventListener('click', handleOk);
+        }
+
+        function triggerStatusUpdate(pesan, formId) {
+            showConfirmDialog(pesan, function() {
+                const formToSubmit = document.getElementById(formId);
+                if(formToSubmit) {
+                    formToSubmit.submit();
+                } else {
+                    console.error("Gagal: Form dengan ID '" + formId + "' tidak ditemukan.");
+                }
+            });
+        }
+    </script>
 </x-app-layout>

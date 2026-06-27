@@ -182,7 +182,8 @@
 
                 </div>
                 <div class="flex items-center space-x-2 w-full sm:w-auto justify-end">
-                    <input type="file" name="file" required class="block w-full text-xs text-black-500 file:mr-2 file:py-1 file:px-3 file:rounded file:border-0 file:text-xs file:font-bold file:bg-white file:text-emerald-700 file:border file:border-emerald-300 hover:file:bg-emerald-100 cursor-pointer transition">
+
+                    <input type="file" name="file" accept=".xlsx, .xls" required class="block w-full text-xs text-black-500 file:mr-2 file:py-1 file:px-3 file:rounded file:border-0 file:text-xs file:font-bold file:bg-white file:text-emerald-700 file:border file:border-emerald-300 hover:file:bg-emerald-100 cursor-pointer transition">
                     <button type="submit" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-1.5 px-4 rounded text-xs transition shadow-sm whitespace-nowrap">
                         Impor
                     </button>
@@ -213,10 +214,10 @@
                             <th class="border-r border-gray-400 px-3 text-center w-32">Status Insentif</th>
                             
                             {{-- KOLOM LEGALITAS --}}
-                            <th class="border-r border-gray-400 px-3 text-center w-32 bg-blue-50">Surat IJOP Lembaga</th>
+                            <th class="border-r border-gray-400 px-3 text-center w-32 bg-teal-50">Surat IJOP Lembaga</th>
                             <th class="border-r border-gray-400 px-3 text-center w-32 bg-teal-50">Surat Keterangan Domisili</th> {{-- [BARU] Kolom SKD --}}
-                            <th class="border-r border-gray-400 px-3 text-center w-32 bg-purple-50">Surat Pernyataan Tanggung Jawab Mutlak</th>
-                            <th class="border-r border-gray-400 px-3 text-center w-32 bg-orange-50">SK Aktif Mengajar</th>
+                            <th class="border-r border-gray-400 px-3 text-center w-32 bg-teal-50">Surat Pernyataan Tanggung Jawab Mutlak</th>
+                            <th class="border-r border-gray-400 px-3 text-center w-32 bg-teal-50">SK Aktif Mengajar</th>
                             
                             <th class="border-l border-gray-400 px-2 text-center w-24 sticky right-0 bg-gray-100 z-10">Aksi</th>
                         </tr>
@@ -228,18 +229,18 @@
                             <tr class="hover:bg-yellow-50 transition duration-75 h-16 align-top">
                                 
                                 {{-- 1. NO --}}
-                                <td class="border-r border-gray-400 text-center font-medium bg-gray-50 py-3 sticky left-0 z-10">{{ $lembagas->firstItem() + $index }}</td>
+                                <td class="border-r border-gray-400 text-center font-medium bg-gray-50 py-1 sticky left-0 z-10">{{ $lembagas->firstItem() + $index }}</td>
                                 
 
 
                                 {{-- 2. IDENTITAS --}}
-                                <td class="border-r border-gray-400 px-3 py-2 sticky left-10 bg-white z-10 hover:bg-yellow-50">
-                                    <div class="font-bold text-sm text-black-800 uppercase mb-1 leading-tight flex items-center gap-2">
+                                <td class="border-r border-gray-400 px-0.5 py-0.5 sticky left-10 bg-white z-10 hover:bg-yellow-50">
+                                    <div class="font-bold text-sm text-black-800 uppercase mb-0.5 leading-tight flex items-center gap-2">
                                         {{ $lembaga->nama_lembaga }}                                       
                                     </div>
                                     <div class="text-[10px] text-black-500 leading-tight">
-                                        <div class="mb-0.5"><span class="font-semibold">Kepala :</span> {{ $lembaga->kepala_lembaga ?? '-' }}</div>
-                                        <div>No. Hp : {{ $lembaga->no_telp ?? '-' }}</div>
+                                        <div class="mb-0.5 text-[11px] font-semibold"><span class="font-semibold text-[11px]">Kepala :</span> {{ $lembaga->kepala_lembaga ?? '-' }}</div>
+                                        <div class="mb-0.5 text-[11px] font-semibold">No.Hp : {{ $lembaga->no_telp ?? '-' }}</div>
                                     </div>
 
                                     {{-- [BARU] BADGE INDIKATOR STATUS BERKAS LEMBAGA --}}
@@ -258,17 +259,14 @@
 
 
 
-                                    {{-- Keterangan --}}
-                                    @if($lembaga->keterangan)
-                                        <div class="text-[9px] text-black-400 mt-1 italic leading-tight border-t border-gray-400 pt-1">Ket : {{ \Illuminate\Support\Str::limit($lembaga->keterangan, 40) }}</div>
-                                    @endif
+                                   
                                 </td>
 
 
 
 
                                 {{-- 3. JENIS --}}
-                                <td class="border-r border-gray-400 text-center px-1">
+                                <td class="border-r border-gray-400 text-center px-1 py-1">
                                     @php
                                         $j = $lembaga->jenis_lembaga;
                                         $color = match($j) {
@@ -280,12 +278,13 @@
                                     @endphp
                                     <div class="px-2 py-1 rounded text-[10px] font-bold mb-1 border {{ $color }}">{{ $j }}</div>
                                     <div class="text-[9px] border border-gray-400 rounded px-1">{{ $lembaga->ormas ?? '-' }}</div>
+                                    
                                 </td>
 
                                 {{-- 4. LOKASI --}}
-                                <td class="border-r border-gray-400 px-3 py-2">
-                                    <div class="font-bold mb-0.5">{{ $lembaga->desa->nama_desa ?? '-' }}</div>
-                                    <div class="text-black-500 text-[10px] mb-1.5 border-b border-gray-400 pb-1">Kec. {{ $lembaga->kecamatan->nama_kecamatan ?? '-' }}</div>
+                                <td class="border-r border-gray-400 px-1 py-1">
+                                    <div class="font-semibold text-[12px] mb-0.5">{{ $lembaga->desa->nama_desa ?? '-' }}</div>
+                                    <div class="text-black-500 text-[12px] mb-1 border-b border-gray-400 pb-0 font-semibold">KEC. {{ $lembaga->kecamatan->nama_kecamatan ?? '-' }}</div>
                                     
                                     {{-- Badge Status Aktif Dipindah ke Sini --}}
                                     <div class="flex items-center">
@@ -293,6 +292,8 @@
                                             {{ $lembaga->status ?? 'AKTIF' }}
                                         </span>
                                     </div>
+
+                                    
                                 </td>
 
 
@@ -333,38 +334,43 @@
 
 
                                 {{-- 5. SANTRI --}}
-                                <td class="border-r border-gray-400 text-center font-bold text-blue-600 text-sm">
+                                <td class="border-r border-gray-400 py-0 text-center font-bold text-blue-600 text-sm">
                                     {{ $lembaga->jumlah_santri }}
                                 </td>
 
                                 {{-- 6. GURU --}}
-                                <td class="border-r border-gray-400 px-3 py-2">
-                                    <div class="flex justify-between font-bold text-blue-700 border-b border-gray-400 pb-1 mb-1">
-                                        <span>Total:</span> <span>{{ $lembaga->jumlah_guru }}</span>
+                                <td class="border-r border-gray-400 px-1 py-0">
+                                    <div class="flex justify-between font-bold text-blue-700 border-b border-gray-400 mb-1">
+                                        <span>TOTAL :</span> <span>{{ $lembaga->jumlah_guru }}</span>
                                     </div>
-                                    <div class="flex justify-between text-black-500 text-[9px] mb-0.5">
-                                        <span>PNS:</span> <span class="font-semibold">{{ $lembaga->jumlah_pns }}</span>
+                                    <div class="flex justify-between text-black-500 font-semibold text-[10px]">
+                                        <span>PNS :</span> <span class="font-bold">{{ $lembaga->jumlah_pns }}</span>
                                     </div>
-                                    <div class="flex justify-between text-black-500 text-[9px] mb-0.5">
-                                        <span>PPPK:</span> <span class="font-semibold">{{ $lembaga->jumlah_pppk }}</span>
+                                    <div class="flex justify-between text-black-500 font-semibold text-[10px]">
+                                        <span>PPPK :</span> <span class="font-bold">{{ $lembaga->jumlah_pppk }}</span>
                                     </div>
-                                    <div class="flex justify-between text-black-500 text-[9px]">
-                                        <span>Memenuhi Kriteria:</span> <span class="font-semibold">{{ $lembaga->jumlah_sertifikasi }}</span>
+                                    <div class="flex justify-between text-black-500 font-semibold text-[10px]">
+                                        <span>Sesuai Kriteria :</span> <span class="font-bold">{{ $lembaga->jumlah_sertifikasi }}</span>
                                     </div>
                                 </td>
 
                                 {{-- 7. INSENTIF [REVISI POIN 7] --}}
-                                <td class="border-r border-gray-400 px-3 text-[10px]">
+                                <td class="border-r border-gray-400 px-1 text-[10px]">
                                     <div class="flex flex-col gap-1">
-                                        <div class="text-green-600">Diajukan: <b>{{ $lembaga->hitung_guru_diajukan }}</b></div>
-                                        <div class="text-red-500">Tidak Diajukan: <b>{{ $lembaga->hitung_guru_tidak_diajukan }}</b></div>
+                                        <div class="text-green-600 font-semibold text-[10px]">Diajukan : <b>{{ $lembaga->hitung_guru_diajukan }}</b></div>
+                                        <div class="text-red-500 font-semibold text-[10px]">Tidak Diajukan : <b>{{ $lembaga->hitung_guru_tidak_diajukan }}</b></div>
                                     </div>
+
+                                    {{-- Keterangan --}}
+                                    @if($lembaga->keterangan)
+                                        <div class="text-[10px] text-black-400 mt-1 italic leading-tight border-t border-gray-400 pt-1 font-semibold">Ket : {{ \Illuminate\Support\Str::limit($lembaga->keterangan, 40) }}</div>
+                                    @endif
                                 </td>
 
 
 
                                 {{-- 8. LEGALITAS IJOP (MURNI) --}}
-                                <td class="border-r border-gray-400 px-2 py-2 text-center align-top bg-blue-50/30">
+                                <td class="border-r border-gray-400 py-1 text-center align-top bg-blue-50/30">
                                     <div class="flex flex-col items-center gap-1">
                                         @if($lembaga->file_ijop)
                                             <button onclick="bukaModalPdf('{{ asset('storage/' . $lembaga->file_ijop) }}', 'IJOP - {{ addslashes($lembaga->nama_lembaga) }}')" class="flex items-center gap-1 text-green-600 text-[10px] font-bold bg-green-50 px-2 py-1 rounded border border-green-300 hover:bg-green-600 hover:text-white transition shadow-sm" title="Lihat IJOP">
@@ -382,16 +388,18 @@
                                         @endphp
                                         <span class="text-[9px] font-bold px-1.5 py-0.5 rounded {{ $badgeIjop }}">{{ $lembaga->status_ijop ?? 'Pending' }}</span>
                                         <div class="mt-1 pt-1 border-t border-blue-100 text-[8px] text-black-500 leading-tight w-full">
-                                            <div>Exp: <span class="font-bold text-black-700">{{ $lembaga->masa_berlaku_ijop ? \Carbon\Carbon::parse($lembaga->masa_berlaku_ijop)->format('d/m/Y') : '-' }}</span></div>
+                                            <div class="text-[10px] font-semibold"">Exp: <span class="font-bold text-black-600">{{ $lembaga->masa_berlaku_ijop ? \Carbon\Carbon::parse($lembaga->masa_berlaku_ijop)->format('d/m/Y') : '-' }}</span></div>
                                         </div>
                                     </div>
+
+                                 
                                 </td>
 
                                 {{-- 8B. LEGALITAS SKD SEMENTARA [BARU] --}}
-                                <td class="border-r border-gray-400 px-2 py-2 text-center align-top bg-teal-50/30">
+                                <td class="border-r border-gray-400 py-1 text-center align-top bg-teal-50/30">
                                     <div class="flex flex-col items-center gap-1">
                                         @if($lembaga->file_skd)
-                                            <button onclick="bukaModalPdf('{{ asset('storage/' . $lembaga->file_skd) }}', 'SKD - {{ addslashes($lembaga->nama_lembaga) }}')" class="flex items-center gap-1 text-teal-600 text-[10px] font-bold bg-teal-50 px-2 py-1 rounded border border-teal-300 hover:bg-teal-600 hover:text-white transition shadow-sm" title="Lihat SKD">
+                                            <button onclick="bukaModalPdf('{{ asset('storage/' . $lembaga->file_skd) }}', 'SKD - {{ addslashes($lembaga->nama_lembaga) }}')" class="flex items-center gap-1 text-green-600 text-[10px] font-bold bg-green-50 px-2 py-1 rounded border border-green-300 hover:bg-green-600 hover:text-white transition shadow-sm" title="Lihat SKD">
                                                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg> Cek File
                                             </button>
                                         @else
@@ -409,10 +417,10 @@
                                 </td>
 
                                 {{-- 9. LEGALITAS SUPER (SPTJM) --}}
-                                <td class="border-r border-gray-400 px-2 py-2 text-center align-top bg-purple-50/30">
+                                <td class="border-r border-gray-400 py-1 text-center align-top bg-purple-50/30">
                                     <div class="flex flex-col items-center gap-1">
                                         @if($lembaga->file_super)
-                                            <button onclick="bukaModalPdf('{{ asset('storage/' . $lembaga->file_super) }}', 'SPTJM - {{ addslashes($lembaga->nama_lembaga) }}')" class="flex items-center gap-1 text-purple-600 text-[10px] font-bold bg-purple-50 px-2 py-1 rounded border border-purple-300 hover:bg-purple-600 hover:text-white transition shadow-sm" title="Lihat SPTJM">
+                                            <button onclick="bukaModalPdf('{{ asset('storage/' . $lembaga->file_super) }}', 'SPTJM - {{ addslashes($lembaga->nama_lembaga) }}')" class="flex items-center gap-1 text-green-600 text-[10px] font-bold bg-green-50 px-2 py-1 rounded border border-green-300 hover:bg-green-600 hover:text-white transition shadow-sm" title="Lihat SPTJM">
                                                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg> Cek File
                                             </button>
                                         @else
@@ -430,15 +438,15 @@
                                 </td>
 
                                 {{-- 10. LEGALITAS SKAM --}}
-                                <td class="border-r border-gray-400 px-2 py-2 text-center align-top bg-orange-50/30">
+                                <td class="border-r border-gray-400 py-1 text-center align-top bg-orange-50/30">
                                     <div class="flex flex-col items-center gap-1">
                                         @if($lembaga->file_skam)
-                                            <button onclick="bukaModalPdf('{{ asset('storage/' . $lembaga->file_skam) }}', 'SKAM - {{ addslashes($lembaga->nama_lembaga) }}')" class="flex items-center gap-1 text-orange-600 text-[10px] font-bold bg-orange-50 px-2 py-1 rounded border border-orange-300 hover:bg-orange-600 hover:text-white transition shadow-sm" title="Lihat SKAM">
+                                            <button onclick="bukaModalPdf('{{ asset('storage/' . $lembaga->file_skam) }}', 'SKAM - {{ addslashes($lembaga->nama_lembaga) }}')" class="flex items-center gap-1 text-green-600 text-[10px] font-bold bg-green-50 px-2 py-1 rounded border border-green-300 hover:bg-green-600 hover:text-white transition shadow-sm" title="Lihat SKAM">
                                                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg> Cek File
                                             </button>
                                         @else
                                             <div class="flex items-center gap-1 text-red-500 text-[10px] font-bold bg-red-50 px-1.5 py-0.5 rounded border border-red-200">
-                                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path></svg> Kosong
+                                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path></svg>Kosong
                                             </div>
                                         @endif
                                         @php
@@ -475,9 +483,9 @@
 
                                         {{-- 4. Tombol HAPUS (Sampah) - HANYA ADMIN --}}
                                         @if(Auth::user()->role == 'admin')
-                                            <form action="{{ route('lembaga.destroy', $lembaga->id) }}" method="POST" onsubmit="return confirm('Yakin hapus?');" class="w-full">
+                                            <form id="form-delete-lembaga-{{ $lembaga->id }}" action="{{ route('lembaga.destroy', $lembaga->id) }}" method="POST" class="w-full">
                                                 @csrf @method('DELETE')
-                                                <button type="submit" class="flex items-center justify-center w-full p-1.5 bg-red-100 text-red-600 rounded hover:bg-red-200 transition border border-red-200" title="Hapus">
+                                                <button type="button" onclick="triggerStatusUpdate('Yakin hapus lembaga ini beserta dokumennya?', 'form-delete-lembaga-{{ $lembaga->id }}')" class="flex items-center justify-center w-full p-1.5 bg-red-100 text-red-600 rounded hover:bg-red-200 transition border border-red-200" title="Hapus">
                                                     <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
                                                 </button>
                                             </form>
@@ -645,6 +653,78 @@
         function tutupModalPdf() {
             document.getElementById('modalPdf').classList.add('hidden');
             document.getElementById('sumberModalPdf').src = ""; // Clear memori iframe
+        }
+    </script>
+
+    {{-- ================================================================= --}}
+    {{-- 🧩 [MODAL & SCRIPT] CUSTOM CONFIRM UNTUK TOMBOL AKSI              --}}
+    {{-- ================================================================= --}}
+    
+    <div id="custom-confirm-modal" class="hidden fixed inset-0 z-[9999] flex items-center justify-center bg-black/50 backdrop-blur-sm px-4">
+        <div class="bg-white rounded-md border border-gray-400 shadow-xl w-full max-w-sm p-4 transform scale-95 transition-transform duration-200">
+            <div class="flex items-center gap-2 mb-3 pb-1 border-b border-gray-600">
+                <span class="flex items-center justify-center w-5 h-5 rounded-full border border-gray-800 text-[10px] font-bold text-gray-800">?</span>
+                <span class="block text-xs font-bold text-black-800 uppercase">Konfirmasi Tindakan</span>
+            </div>
+            <p id="custom-confirm-message" class="text-xs font-bold text-gray-700 mb-5"></p>
+            <div class="flex justify-end gap-2">
+                <button id="custom-confirm-cancel" type="button" class="px-3 py-1 h-[32px] border border-gray-400 rounded-md text-[10px] font-bold text-gray-600 hover:bg-gray-100 uppercase transition">Batal</button>
+                <button id="custom-confirm-ok" type="button" class="px-3 py-1 h-[32px] border border-green-600 bg-green-600 rounded-md text-[10px] font-bold text-white hover:bg-green-700 uppercase shadow-sm transition">Ya, Lanjutkan</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 1. Fungsi Inti untuk Membangun & Menampilkan Modal
+        function showConfirmDialog(message, onConfirmCallback) {
+            const modal = document.getElementById('custom-confirm-modal');
+            const msgEl = document.getElementById('custom-confirm-message');
+            const btnCancel = document.getElementById('custom-confirm-cancel');
+            const btnOk = document.getElementById('custom-confirm-ok');
+
+            // Set pesan teks secara dinamis
+            msgEl.textContent = message;
+
+            // Tampilkan modal
+            modal.classList.remove('hidden');
+            setTimeout(() => {
+                modal.firstElementChild.classList.replace('scale-95', 'scale-100');
+            }, 10);
+
+            // Fungsi untuk menutup modal
+            const closeModal = () => {
+                modal.firstElementChild.classList.replace('scale-100', 'scale-95');
+                setTimeout(() => {
+                    modal.classList.add('hidden');
+                }, 150);
+                
+                // Hapus event listener agar tidak menumpuk
+                btnCancel.removeEventListener('click', handleCancel);
+                btnOk.removeEventListener('click', handleOk);
+            };
+
+            const handleCancel = () => closeModal();
+            const handleOk = () => {
+                closeModal();
+                if (typeof onConfirmCallback === 'function') {
+                    onConfirmCallback(); // Eksekusi submit form
+                }
+            };
+
+            btnCancel.addEventListener('click', handleCancel);
+            btnOk.addEventListener('click', handleOk);
+        }
+
+        // 2. Fungsi Pemicu (Trigger) yang dipanggil oleh Tombol HTML
+        function triggerStatusUpdate(pesan, formId) {
+            showConfirmDialog(pesan, function() {
+                const formToSubmit = document.getElementById(formId);
+                if(formToSubmit) {
+                    formToSubmit.submit();
+                } else {
+                    console.error("Gagal: Form dengan ID '" + formId + "' tidak ditemukan.");
+                }
+            });
         }
     </script>
 
