@@ -170,7 +170,7 @@
 
                             <div class="md:col-span-1">
                                 <label class="block text-[10px] font-bold text-gray-600 uppercase tracking-wider mb-1">Kabupaten</label>
-                                <input type="text" name="kabupaten" value="KEDIRI" class="w-full border border-gray-600 rounded-md px-2 py-1 h-[32px] text-xs bg-gray-100 shadow-sm" readonly>
+                                <input type="text" name="kabupaten" value="KEDIRI" class="w-full border border-gray-600 rounded-md px-2 py-1 h-[32px] font-bold text-xs bg-gray-100 shadow-sm" readonly>
                             </div>
 
                             <div class="md:col-span-1">

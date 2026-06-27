@@ -234,20 +234,139 @@
                 {{-- PERLEBAR TABEL AGAR MUAT BANYAK KOLOM --}}
                 <table class="w-full text-xs border-collapse min-w-[3000px]"> 
                     
+
+
+                
                     {{-- HEADER TABEL --}}
+
+
+                    {{-- HEADER TABEL DENGAN FILTER ALA EXCEL --}}
+                    <style>
+                        /* CSS kecil untuk styling scrollbar pop-up jika kepanjangan */
+                        .excel-filter-popup { display: none; }
+                        .excel-filter-popup.show { display: block; }
+                    </style>
+
                     <thead>
                         <tr class="bg-gray-100 text-gray-800 uppercase text-[10px] tracking-wider font-bold h-9">
-                            <th class="border border-gray-600 w-10 text-center sticky left-0 bg-gray-100 z-10">No</th>
-                            <th class="border border-gray-600 px-2 text-center w-48 sticky left-10 bg-gray-100 z-10 shadow-r">Nama Lengkap</th>
-                            <th class="border border-gray-600 px-2 text-center w-32">NIK</th>
-                            <th class="border border-gray-600 px-2 text-center w-32">Status Guru</th>
+                            <th class="border border-gray-600 w-10 text-center sticky left-0 bg-gray-100 z-30">No</th>
+                            
+                            {{-- 1. NAMA LENGKAP (Dengan Filter) --}}
+                            <th class="border border-gray-600 px-2 text-left w-48 sticky left-10 bg-gray-100 z-30 shadow-r relative">
+                                <div class="flex items-center justify-between cursor-pointer hover:text-blue-600 transition" onclick="toggleExcelFilter('filter-nama')">
+                                    <span>Nama Lengkap</span>
+                                    <svg class="w-3 h-3 {{ request('col_nama') || (request('sort_col') == 'nama_lengkap') ? 'text-blue-600' : 'text-gray-500' }}" fill="currentColor" viewBox="0 0 20 20"><path d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3 5a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm2 5a1 1 0 011-1h2a1 1 0 110 2h-2a1 1 0 01-1-1z"></path></svg>
+                                </div>
+                                <div id="filter-nama" class="excel-filter-popup absolute top-full left-0 mt-1 w-48 bg-white border border-gray-400 shadow-2xl rounded-md z-[99] p-2 text-left font-normal normal-case">
+                                    <form action="{{ url()->current() }}" method="GET">
+                                        {{-- Pertahankan filter atas yang sedang aktif --}}
+                                        @foreach(request()->except(['col_nama', 'sort_col', 'sort_dir', 'page']) as $key => $value) <input type="hidden" name="{{ $key }}" value="{{ $value }}"> @endforeach
+                                        
+                                        <div class="mb-2 pb-2 border-b border-gray-300 flex flex-col gap-1">
+                                            <button type="submit" name="sort_dir" value="asc" onclick="document.getElementById('sort_nama').value='nama_lengkap'" class="w-full text-left px-2 py-1 hover:bg-blue-50 text-[10px] rounded flex items-center gap-2"><span class="text-blue-600 font-bold">A↓</span> Urutkan A-Z</button>
+                                            <button type="submit" name="sort_dir" value="desc" onclick="document.getElementById('sort_nama').value='nama_lengkap'" class="w-full text-left px-2 py-1 hover:bg-blue-50 text-[10px] rounded flex items-center gap-2"><span class="text-blue-600 font-bold">Z↑</span> Urutkan Z-A</button>
+                                            <input type="hidden" id="sort_nama" name="sort_col" value="{{ request('sort_col') }}">
+                                        </div>
+                                        <div>
+                                            <label class="text-[9px] font-bold text-gray-500 uppercase mb-1 block">Cari Nama Spesifik:</label>
+                                            <input type="text" name="col_nama" value="{{ request('col_nama') }}" class="w-full border border-gray-400 rounded px-2 py-1 text-xs focus:border-blue-500" placeholder="Ketik nama...">
+                                        </div>
+                                        <div class="mt-2 flex gap-1">
+                                            <button type="submit" class="bg-blue-600 text-white px-2 py-1 rounded text-[10px] w-full font-bold hover:bg-blue-700">Terapkan</button>
+                                            @if(request('col_nama') || request('sort_col') == 'nama_lengkap')
+                                                <a href="{{ request()->fullUrlWithQuery(['col_nama' => null, 'sort_col' => null, 'sort_dir' => null]) }}" class="bg-red-50 text-red-600 border border-red-200 px-2 py-1 rounded text-[10px] font-bold hover:bg-red-100 text-center">Clear</a>
+                                            @endif
+                                        </div>
+                                    </form>
+                                </div>
+                            </th>
+
+                            {{-- 2. NIK (Dengan Filter) --}}
+                            <th class="border border-gray-600 px-2 text-left w-32 relative">
+                                <div class="flex items-center justify-between cursor-pointer hover:text-blue-600 transition" onclick="toggleExcelFilter('filter-nik')">
+                                    <span>NIK</span>
+                                    <svg class="w-3 h-3 {{ request('col_nik') || (request('sort_col') == 'nik') ? 'text-blue-600' : 'text-gray-500' }}" fill="currentColor" viewBox="0 0 20 20"><path d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3 5a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm2 5a1 1 0 011-1h2a1 1 0 110 2h-2a1 1 0 01-1-1z"></path></svg>
+                                </div>
+                                <div id="filter-nik" class="excel-filter-popup absolute top-full left-0 mt-1 w-48 bg-white border border-gray-400 shadow-2xl rounded-md z-[99] p-2 text-left font-normal normal-case">
+                                    <form action="{{ url()->current() }}" method="GET">
+                                        @foreach(request()->except(['col_nik', 'sort_col', 'sort_dir', 'page']) as $key => $value) <input type="hidden" name="{{ $key }}" value="{{ $value }}"> @endforeach
+                                        <div class="mb-2 pb-2 border-b border-gray-300 flex flex-col gap-1">
+                                            <button type="submit" name="sort_dir" value="asc" onclick="document.getElementById('sort_nik').value='nik'" class="w-full text-left px-2 py-1 hover:bg-blue-50 text-[10px] rounded flex items-center gap-2"><span class="text-blue-600 font-bold">0↓</span> Urutkan 0-9</button>
+                                            <button type="submit" name="sort_dir" value="desc" onclick="document.getElementById('sort_nik').value='nik'" class="w-full text-left px-2 py-1 hover:bg-blue-50 text-[10px] rounded flex items-center gap-2"><span class="text-blue-600 font-bold">9↑</span> Urutkan 9-0</button>
+                                            <input type="hidden" id="sort_nik" name="sort_col" value="{{ request('sort_col') }}">
+                                        </div>
+                                        <div>
+                                            <label class="text-[9px] font-bold text-gray-500 uppercase mb-1 block">Cari NIK Spesifik:</label>
+                                            <input type="text" name="col_nik" value="{{ request('col_nik') }}" class="w-full border border-gray-400 rounded px-2 py-1 text-xs focus:border-blue-500" placeholder="Ketik NIK...">
+                                        </div>
+                                        <div class="mt-2 flex gap-1">
+                                            <button type="submit" class="bg-blue-600 text-white px-2 py-1 rounded text-[10px] w-full font-bold hover:bg-blue-700">Terapkan</button>
+                                            @if(request('col_nik') || request('sort_col') == 'nik')
+                                                <a href="{{ request()->fullUrlWithQuery(['col_nik' => null, 'sort_col' => null, 'sort_dir' => null]) }}" class="bg-red-50 text-red-600 border border-red-200 px-2 py-1 rounded text-[10px] font-bold hover:bg-red-100 text-center">Clear</a>
+                                            @endif
+                                        </div>
+                                    </form>
+                                </div>
+                            </th>
+
+                            {{-- 3. STATUS GURU (Dengan Filter) --}}
+                            <th class="border border-gray-600 px-2 text-left w-32 relative">
+                                <div class="flex items-center justify-between cursor-pointer hover:text-blue-600 transition" onclick="toggleExcelFilter('filter-status')">
+                                    <span>Status Pegawai</span>
+                                    <svg class="w-3 h-3 {{ request('col_status_pegawai') || (request('sort_col') == 'status_kepegawaian') ? 'text-blue-600' : 'text-gray-500' }}" fill="currentColor" viewBox="0 0 20 20"><path d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3 5a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm2 5a1 1 0 011-1h2a1 1 0 110 2h-2a1 1 0 01-1-1z"></path></svg>
+                                </div>
+                                <div id="filter-status" class="excel-filter-popup absolute top-full left-0 mt-1 w-48 bg-white border border-gray-400 shadow-2xl rounded-md z-[99] p-2 text-left font-normal normal-case">
+                                    <form action="{{ url()->current() }}" method="GET">
+                                        @foreach(request()->except(['col_status_pegawai', 'sort_col', 'sort_dir', 'page']) as $key => $value) <input type="hidden" name="{{ $key }}" value="{{ $value }}"> @endforeach
+                                        <div class="mb-2 pb-2 border-b border-gray-300 flex flex-col gap-1">
+                                            <button type="submit" name="sort_dir" value="asc" onclick="document.getElementById('sort_status').value='status_kepegawaian'" class="w-full text-left px-2 py-1 hover:bg-blue-50 text-[10px] rounded flex items-center gap-2"><span class="text-blue-600 font-bold">A↓</span> Urutkan A-Z</button>
+                                            <button type="submit" name="sort_dir" value="desc" onclick="document.getElementById('sort_status').value='status_kepegawaian'" class="w-full text-left px-2 py-1 hover:bg-blue-50 text-[10px] rounded flex items-center gap-2"><span class="text-blue-600 font-bold">Z↑</span> Urutkan Z-A</button>
+                                            <input type="hidden" id="sort_status" name="sort_col" value="{{ request('sort_col') }}">
+                                        </div>
+                                        <div>
+                                            <label class="text-[9px] font-bold text-gray-500 uppercase mb-1 block">Cari Status (PNS/NON-ASN DLL):</label>
+                                            <input type="text" name="col_status_pegawai" value="{{ request('col_status_pegawai') }}" class="w-full border border-gray-400 rounded px-2 py-1 text-xs focus:border-blue-500" placeholder="Ketik status...">
+                                        </div>
+                                        <div class="mt-2 flex gap-1">
+                                            <button type="submit" class="bg-blue-600 text-white px-2 py-1 rounded text-[10px] w-full font-bold hover:bg-blue-700">Terapkan</button>
+                                            @if(request('col_status_pegawai') || request('sort_col') == 'status_kepegawaian')
+                                                <a href="{{ request()->fullUrlWithQuery(['col_status_pegawai' => null, 'sort_col' => null, 'sort_dir' => null]) }}" class="bg-red-50 text-red-600 border border-red-200 px-2 py-1 rounded text-[10px] font-bold hover:bg-red-100 text-center">Clear</a>
+                                            @endif
+                                        </div>
+                                    </form>
+                                </div>
+                            </th>
+
                             <th class="border border-gray-600 px-2 text-center w-24">Insentif</th>
                             <th class="border border-gray-600 px-2 text-center w-48">Nama Lembaga</th>
                             <th class="border border-gray-600 px-2 text-center w-24">Jenis</th>
                             <th class="border border-gray-600 px-2 text-center w-32">File KTP</th> 
                             <th class="border border-gray-600 px-2 text-center w-32">File KK</th> 
                             <th class="border border-gray-600 px-2 text-center w-32">File Rekening</th> 
-                            <th class="border border-gray-600 px-2 text-center w-64">Alamat (Sesuai KTP)</th>
+
+                            {{-- 4. ALAMAT KTP (Dengan Filter) --}}
+                            <th class="border border-gray-600 px-2 text-left w-64 relative">
+                                <div class="flex items-center justify-between cursor-pointer hover:text-blue-600 transition" onclick="toggleExcelFilter('filter-alamat')">
+                                    <span>Alamat (Sesuai KTP)</span>
+                                    <svg class="w-3 h-3 {{ request('col_alamat') ? 'text-blue-600' : 'text-gray-500' }}" fill="currentColor" viewBox="0 0 20 20"><path d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3 5a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm2 5a1 1 0 011-1h2a1 1 0 110 2h-2a1 1 0 01-1-1z"></path></svg>
+                                </div>
+                                <div id="filter-alamat" class="excel-filter-popup absolute top-full right-0 mt-1 w-48 bg-white border border-gray-400 shadow-2xl rounded-md z-[99] p-2 text-left font-normal normal-case">
+                                    <form action="{{ url()->current() }}" method="GET">
+                                        @foreach(request()->except(['col_alamat', 'page']) as $key => $value) <input type="hidden" name="{{ $key }}" value="{{ $value }}"> @endforeach
+                                        <div>
+                                            <label class="text-[9px] font-bold text-gray-500 uppercase mb-1 block">Cari Alamat Spesifik:</label>
+                                            <input type="text" name="col_alamat" value="{{ request('col_alamat') }}" class="w-full border border-gray-400 rounded px-2 py-1 text-xs focus:border-blue-500" placeholder="Ketik jalan/dusun...">
+                                        </div>
+                                        <div class="mt-2 flex gap-1">
+                                            <button type="submit" class="bg-blue-600 text-white px-2 py-1 rounded text-[10px] w-full font-bold hover:bg-blue-700">Terapkan</button>
+                                            @if(request('col_alamat'))
+                                                <a href="{{ request()->fullUrlWithQuery(['col_alamat' => null]) }}" class="bg-red-50 text-red-600 border border-red-200 px-2 py-1 rounded text-[10px] font-bold hover:bg-red-100 text-center">Clear</a>
+                                            @endif
+                                        </div>
+                                    </form>
+                                </div>
+                            </th>
+
                             <th class="border border-gray-600 px-2 text-center w-32">Tempat Tanggal Lahir</th>
                             <th class="border border-gray-600 px-2 text-center w-10">L/P</th>
                             <th class="border border-gray-600 px-2 text-center w-32">Desa</th>
@@ -258,7 +377,7 @@
                             <th class="border border-gray-600 px-2 text-center w-40">Nama Ibu Kandung</th>
                             <th class="border border-gray-600 px-2 text-center w-40">Nomor Rekening</th>
                             <th class="border border-gray-600 px-2 text-center w-40">Keterangan</th>
-                            <th class="border border-gray-600 px-2 text-center w-40 sticky right-0 bg-gray-100 z-10">Aksi</th>
+                            <th class="border border-gray-600 px-2 text-center w-40 sticky right-0 bg-gray-100 z-30">Aksi</th>
                         </tr>
                     </thead>
                     
@@ -679,5 +798,30 @@
                 }
             });
         }
+    </script>
+
+    <script>
+        // Fungsi buka tutup pop-up per kolom
+        function toggleExcelFilter(id) {
+            // Tutup semua popup lain yang sedang terbuka
+            document.querySelectorAll('.excel-filter-popup').forEach(el => {
+                if(el.id !== id) el.classList.remove('show');
+            });
+            
+            // Toggle (Buka/Tutup) popup yang diklik
+            const popup = document.getElementById(id);
+            popup.classList.toggle('show');
+        }
+
+        // Fungsi otomatis tutup popup jika user klik area kosong di luar tabel
+        document.addEventListener('click', function(event) {
+            // Cek apakah area yang diklik bukan bagian dari header filter
+            const isClickInside = event.target.closest('th');
+            if (!isClickInside) {
+                document.querySelectorAll('.excel-filter-popup').forEach(el => {
+                    el.classList.remove('show');
+                });
+            }
+        });
     </script>
 </x-app-layout>

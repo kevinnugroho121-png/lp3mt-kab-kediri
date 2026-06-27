@@ -338,27 +338,59 @@
                                     {{ $lembaga->jumlah_santri }}
                                 </td>
 
+                                {{-- LOGIKA PENGHITUNGAN REAL-TIME DARI RELASI (SINKRONISASI ABSOLUT) --}}
+                                @php
+                                    $gurus = $lembaga->gurus ?? collect(); 
+
+                                    $total_guru = $gurus->count();
+                                    
+                                    // 1. Hitung PNS murni
+                                    $pns = $gurus->where('status_kepegawaian', 'PNS')->count();
+                                    
+                                    // 2. Hitung PPPK (Gabungkan PPPK biasa dan PPPK Paruh Waktu)
+                                    $pppk = $gurus->filter(function($g) {
+                                        $status = strtoupper($g->status_kepegawaian);
+                                        return $status === 'PPPK' || $status === 'PPPK PARUH WAKTU';
+                                    })->count();
+                                    
+                                    // 3. Logika Sesuai Kriteria (Guru Berhak)
+                                    // Syarat: BUKAN PNS, BUKAN PPPK/PPPK Paruh Waktu, dan BUKAN Inpassing
+                                    $kumpulan_sesuai_kriteria = $gurus->filter(function($g) {
+                                        $statusPegawai = strtoupper($g->status_kepegawaian);
+                                        $statusSertifikasi = strtoupper($g->status_sertifikasi);
+                                        
+                                        $isTidakBerhak = in_array($statusPegawai, ['PNS', 'PPPK', 'PPPK PARUH WAKTU']) || $statusSertifikasi === 'INPASSING';
+                                        return !$isTidakBerhak;
+                                    });
+                                    
+                                    $sesuai_kriteria = $kumpulan_sesuai_kriteria->count();
+                                    
+                                    // 4. Sinkronisasi Kuota Mutlak (Seperti permintaan Notepad)
+                                    $diajukan = $kumpulan_sesuai_kriteria->where('penerima_insentif', 1)->count();
+                                    $tidak_diajukan = $sesuai_kriteria - $diajukan; // RUMUS ABSOLUT: Sisa dari Sesuai Kriteria
+                                @endphp
+
                                 {{-- 6. GURU --}}
                                 <td class="border-r border-gray-400 px-1 py-0">
                                     <div class="flex justify-between font-bold text-blue-700 border-b border-gray-400 mb-1">
-                                        <span>TOTAL :</span> <span>{{ $lembaga->jumlah_guru }}</span>
+                                        <span>TOTAL :</span> <span>{{ $total_guru }}</span>
                                     </div>
                                     <div class="flex justify-between text-black-500 font-semibold text-[10px]">
-                                        <span>PNS :</span> <span class="font-bold">{{ $lembaga->jumlah_pns }}</span>
+                                        <span>PNS :</span> <span class="font-bold">{{ $pns }}</span>
                                     </div>
                                     <div class="flex justify-between text-black-500 font-semibold text-[10px]">
-                                        <span>PPPK :</span> <span class="font-bold">{{ $lembaga->jumlah_pppk }}</span>
+                                        <span>PPPK :</span> <span class="font-bold">{{ $pppk }}</span>
                                     </div>
                                     <div class="flex justify-between text-black-500 font-semibold text-[10px]">
-                                        <span>Sesuai Kriteria :</span> <span class="font-bold">{{ $lembaga->jumlah_sertifikasi }}</span>
+                                        <span>Sesuai Kriteria :</span> <span class="font-bold">{{ $sesuai_kriteria }}</span>
                                     </div>
                                 </td>
 
-                                {{-- 7. INSENTIF [REVISI POIN 7] --}}
+                                {{-- 7. INSENTIF --}}
                                 <td class="border-r border-gray-400 px-1 text-[10px]">
                                     <div class="flex flex-col gap-1">
-                                        <div class="text-green-600 font-semibold text-[10px]">Diajukan : <b>{{ $lembaga->hitung_guru_diajukan }}</b></div>
-                                        <div class="text-red-500 font-semibold text-[10px]">Tidak Diajukan : <b>{{ $lembaga->hitung_guru_tidak_diajukan }}</b></div>
+                                        <div class="text-green-600 font-semibold text-[10px]">Diajukan : <b>{{ $diajukan }}</b></div>
+                                        <div class="text-red-500 font-semibold text-[10px]">Tidak Diajukan : <b>{{ $tidak_diajukan }}</b></div>
                                     </div>
 
                                     {{-- Keterangan --}}

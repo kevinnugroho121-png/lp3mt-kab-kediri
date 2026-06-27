@@ -161,8 +161,33 @@ class GuruController extends Controller
             $kuotaSistem['sisa'] = $kuotaSistem['total'] - $kuotaSistem['terpakai'];
         }
 
-        // [DIPERBAIKI] Panggil query paginasi cukup 1x saja di bawah
-        $gurus = $query->latest()->paginate(20)->withQueryString();
+        // ========================================================
+        // 🔍 [BARU] FILTER & SORTING SPESIFIK PER-KOLOM (ALA EXCEL)
+        // ========================================================
+        
+        // A. Penangkap Pencarian Spesifik di Kolom Tertentu
+        if ($request->filled('col_nama')) $query->where('nama_lengkap', 'like', '%' . $request->col_nama . '%');
+        if ($request->filled('col_nik')) $query->where('nik', 'like', '%' . $request->col_nik . '%');
+        if ($request->filled('col_status_pegawai')) $query->where('status_kepegawaian', 'like', '%' . $request->col_status_pegawai . '%');
+        if ($request->filled('col_alamat')) $query->where('alamat_ktp', 'like', '%' . $request->col_alamat . '%');
+        // (Kamu bisa tambahkan kolom lain di sini jika dibutuhkan nanti)
+
+        // B. Penangkap Perintah Sorting (A-Z / Z-A)
+        if ($request->filled('sort_col') && $request->filled('sort_dir')) {
+            // Daftar kolom yang diizinkan untuk di-sort (Demi keamanan mencegah SQL Injection)
+            $allowedSorts = ['nama_lengkap', 'nik', 'status_kepegawaian', 'jenis_guru'];
+            
+            if (in_array($request->sort_col, $allowedSorts)) {
+                $query->orderBy($request->sort_col, $request->sort_dir);
+            } else {
+                $query->latest(); // Fallback keamanan
+            }
+        } else {
+            $query->latest(); // Default urutan jika tidak ada yang di-klik
+        }
+
+        // [DIPERBAIKI] Panggil query paginasi (Hapus 'latest()' karena sudah diatur di atas)
+        $gurus = $query->paginate(20)->withQueryString();
 
         // [DIPERBAIKI] Return view cukup 1x saja
         return view('admin.guru.index', compact('gurus', 'title', 'data_kecamatan', 'data_desa', 'filterType', 'list_lembaga', 'kuotaSistem'));
