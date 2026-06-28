@@ -1,86 +1,91 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="max-w-4xl mx-auto p-6">
+
+
+<div class="py-2">
+    <div class="max-w-full mx-auto px-1 sm:px-1 lg:px-1">
     
-    <div class="flex justify-between items-center mb-6">
-        <div>
-            <h2 class="text-2xl font-bold text-gray-800">Tambah Pengguna Baru</h2>
-            <p class="text-sm text-gray-500">Buat akun untuk akses sistem LP3MT</p>
-        </div>
-        <a href="{{ route('user.index') }}" class="text-gray-600 hover:text-gray-900 font-medium flex items-center gap-2 transition">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
-            Kembali
-        </a>
-    </div>
-
-    <div class="bg-white rounded-xl shadow-md border border-gray-100 overflow-hidden">
-        <div class="bg-blue-50 px-8 py-4 border-b border-blue-100 flex justify-between items-center">
-            <h3 class="font-bold text-blue-800">Formulir Data User</h3>
-            <div class="p-2 bg-blue-100 rounded-full text-blue-600">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"></path></svg>
+        {{-- HEADER EDGE-TO-EDGE --}}
+        <div class="flex justify-between items-end mb-2">
+            <div>
+                <h1 class="text-2xl font-bold text-black-800 uppercase leading-none">Tambah Pengguna Baru</h1>
+                <p class="text-[10px] font-bold text-gray-500 uppercase mt-1">Buat akun untuk akses sistem LP3MT</p>
             </div>
+            <a href="{{ route('user.index') }}" class="text-xs font-bold text-gray-600 hover:text-gray-900 flex items-center gap-1 transition mb-1">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+                KEMBALI
+            </a>
         </div>
 
-        <div class="p-8">
+        <div class="bg-white border border-gray-600 shadow-sm p-3">
+
+
+
+
             <form action="{{ route('user.store') }}" method="POST" id="userForm">
                 @csrf
 
-                {{-- FORM UTAMA --}}
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+
+                {{-- SECTION A: DATA LOGIN --}}
+                <div class="flex items-center gap-2 mb-3 pb-1 border-b border-gray-600 mt-2">
+                    <span class="bg-blue-100 text-blue-700 w-5 h-5 flex items-center justify-center rounded-full font-bold text-[10px]">A</span>
+                    <h3 class="text-xs font-bold text-black-800 uppercase tracking-wide">Data Akun (Login)</h3>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-3 px-1 mb-4">
                     <div>
-                        <label class="block text-sm font-bold text-gray-700 mb-2">Nama Lengkap</label>
-                        <input type="text" name="name" value="{{ old('name') }}" required placeholder="Contoh: Ahmad Admin" class="w-full border-gray-300 rounded-lg shadow-sm focus:border-blue-500 focus:ring-blue-500 px-4 py-2.5">
-                        @error('name') <span class="text-red-500 text-xs font-bold mt-1 block">{{ $message }}</span> @enderror
+                        <label class="block text-[10px] font-bold text-gray-600 uppercase mb-1">Nama Lengkap</label>
+                        <input type="text" name="name" value="{{ old('name') }}" required placeholder="Contoh: Ahmad Admin" class="w-full border border-gray-600 rounded-md px-2 py-1 h-[32px] text-xs font-bold text-black-800 focus:border-blue-500 shadow-sm uppercase">
+                        @error('name') <span class="text-red-500 text-[10px] font-bold mt-1 block">{{ $message }}</span> @enderror
                     </div>
                     
                     <div>
-                        <label class="block text-sm font-bold text-gray-700 mb-2">Email (Login)</label>
-                        <input type="email" name="email" value="{{ old('email') }}" required placeholder="nama@lp3mt.com" class="w-full border-gray-300 rounded-lg shadow-sm focus:border-blue-500 focus:ring-blue-500 px-4 py-2.5">
-                        {{-- INI YANG AKAN MEMUNCULKAN PESAN ERROR EMAIL GANDA --}}
-                        @error('email') <span class="text-red-500 text-xs font-bold mt-1 block">⚠️ {{ $message }}</span> @enderror
+                        <label class="block text-[10px] font-bold text-gray-600 uppercase mb-1">Email (Login)</label>
+                        <input type="email" name="email" value="{{ old('email') }}" required placeholder="nama@lp3mt.com" class="w-full border border-gray-600 rounded-md px-2 py-1 h-[32px] text-xs font-bold text-black-800 focus:border-blue-500 shadow-sm lowercase">
+                        @error('email') <span class="text-red-500 text-[10px] font-bold mt-1 block">⚠️ {{ $message }}</span> @enderror
                     </div>
                     
                     <div>
-                        <label class="block text-sm font-bold text-gray-700 mb-2">Password</label>
+                        <label class="block text-[10px] font-bold text-gray-600 uppercase mb-1">Password</label>
                         <div class="relative">
-                            <input id="new_password" type="password" name="password" required placeholder="Minimal 6 karakter" class="w-full border-gray-300 rounded-lg shadow-sm focus:border-blue-500 focus:ring-blue-500 px-4 py-2.5 pr-10">
-                            <button type="button" onclick="toggleUserPassword()" class="absolute inset-y-0 right-0 px-3 flex items-center text-gray-400 hover:text-blue-600 transition focus:outline-none">
-                                <svg id="eye_icon_user" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
+                            <input id="new_password" type="password" name="password" required placeholder="Min 6 Karakter" class="w-full border border-gray-600 rounded-md px-2 py-1 h-[32px] text-xs font-bold text-black-800 focus:border-blue-500 shadow-sm pr-8">
+                            <button type="button" onclick="toggleUserPassword()" class="absolute inset-y-0 right-0 px-2 flex items-center text-gray-600 hover:text-blue-600 transition h-[32px]">
+                                <svg id="eye_icon_user" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
                             </button>
                         </div>
-                        @error('password') <span class="text-red-500 text-xs font-bold mt-1 block">{{ $message }}</span> @enderror
+                        @error('password') <span class="text-red-500 text-[10px] font-bold mt-1 block">{{ $message }}</span> @enderror
                     </div>
                     
                     <div>
-                        <label class="block text-sm font-bold text-gray-700 mb-2">Jabatan / Role</label>
-                        <select name="role" id="roleSelect" required class="w-full border-gray-300 rounded-lg shadow-sm focus:border-blue-500 focus:ring-blue-500 px-4 py-2.5 bg-white">
-                            <option value="" disabled {{ old('role') ? '' : 'selected' }}>-- Pilih Jabatan --</option>
-                            <option value="admin" {{ old('role') == 'admin' ? 'selected' : '' }}>Super Admin (Pusat)</option>
-                            <option value="verifikator" {{ old('role') == 'verifikator' ? 'selected' : '' }}>Verifikator Kabupaten</option>
-                            <option value="korcam" {{ old('role') == 'korcam' ? 'selected' : '' }}>Koordinator Kecamatan (Korcam)</option>
+                        <label class="block text-[10px] font-bold text-gray-600 uppercase mb-1">Jabatan / Role</label>
+                        <select name="role" id="roleSelect" required class="w-full border border-gray-600 rounded-md px-1 py-1 h-[32px] text-xs font-bold text-black-800 focus:border-blue-500 shadow-sm bg-white uppercase">
+                            <option value="" disabled {{ old('role') ? '' : 'selected' }}>- PILIH JABATAN -</option>
+                            <option value="admin" {{ old('role') == 'admin' ? 'selected' : '' }}>SUPER ADMIN</option>
+                            <option value="verifikator" {{ old('role') == 'verifikator' ? 'selected' : '' }}>VERIFIKATOR</option>
+                            <option value="korcam" {{ old('role') == 'korcam' ? 'selected' : '' }}>KORCAM</option>
                         </select>
-                        @error('role') <span class="text-red-500 text-xs font-bold mt-1 block">{{ $message }}</span> @enderror
+                        @error('role') <span class="text-red-500 text-[10px] font-bold mt-1 block">{{ $message }}</span> @enderror
                     </div>
                 </div>
 
-                {{-- AREA KORCAM --}}
-                <div id="areaKorcam" class="hidden bg-blue-50 rounded-xl p-6 border border-blue-100 mb-6 transition-all duration-300">
-                    <h4 class="font-bold text-blue-900 mb-4 flex items-center gap-2 border-b border-blue-200 pb-2">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
-                        Detail Penugasan Wilayah
-                    </h4>
 
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        
+
+                {{-- AREA KORCAM (SECTION B) --}}
+                <div id="areaKorcam" class="hidden bg-gray-50 border border-gray-600 p-2 mb-4">
+                    <div class="flex items-center gap-2 mb-2 pb-1 border-b border-gray-600">
+                        <span class="bg-blue-100 text-blue-700 w-5 h-5 flex items-center justify-center rounded-full font-bold text-[10px]">B</span>
+                        <h3 class="text-xs font-bold text-black-800 uppercase tracking-wide">Penugasan Wilayah (Khusus Korcam)</h3>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3 px-1">
                         {{-- Kecamatan --}}
                         <div>
-                            <label class="block text-sm font-bold text-blue-900 mb-2">Bertugas di Kecamatan</label>
-                            <select name="kecamatan_id" id="kecamatanSelect" class="w-full border-blue-300 rounded-lg shadow-sm focus:border-blue-500 focus:ring-blue-500" style="width: 100%;">
-                                <option value="" disabled selected>-- Cari & Pilih Wilayah --</option>
+                            <label class="block text-[10px] font-bold text-gray-600 uppercase mb-1">Bertugas di Kecamatan</label>
+                            <select name="kecamatan_id" id="kecamatanSelect" class="w-full border border-gray-600 rounded-md px-1 py-1 h-[32px] text-xs font-bold text-black-800 focus:border-blue-500 shadow-sm" style="width: 100%;">
+                                <option value="" disabled selected>- CARI WILAYAH -</option>
                                 @foreach($kecamatans as $kec)
                                     @php
-                                        // Cek ketersediaan dari relasi user (Pastikan Controller sudah pakai with('users'))
                                         $hasKetua = $kec->users->where('jabatan_korcam', 'Ketua')->isNotEmpty() ? 'true' : 'false';
                                         $hasA1 = $kec->users->where('jabatan_korcam', 'Anggota 1')->isNotEmpty() ? 'true' : 'false';
                                         $hasA2 = $kec->users->where('jabatan_korcam', 'Anggota 2')->isNotEmpty() ? 'true' : 'false';
@@ -97,50 +102,50 @@
 
                         {{-- Posisi (3 Tombol) --}}
                         <div>
-                            <label class="block text-sm font-bold text-blue-900 mb-2">Posisi dalam Tim (Maks 3 Orang)</label>
-                            <div class="grid grid-cols-3 gap-2">
+                            <label class="block text-[10px] font-bold text-gray-600 uppercase mb-1">Posisi Tim (Maks 3)</label>
+                            <div class="grid grid-cols-3 gap-1 h-[32px]">
                                 {{-- Ketua --}}
                                 <label class="cursor-pointer relative group">
                                     <input type="radio" name="jabatan_korcam" value="Ketua" class="peer sr-only korcam-radio">
-                                    <div class="p-2 rounded-lg border border-blue-200 bg-white hover:bg-blue-50 peer-checked:bg-blue-600 peer-checked:text-white peer-checked:border-blue-600 transition text-center shadow-sm flex flex-col justify-center h-full">
-                                        <span class="block font-bold text-sm">Ketua</span>
+                                    <div class="border border-gray-600 bg-white hover:bg-blue-50 peer-checked:bg-blue-600 peer-checked:text-white peer-checked:border-blue-600 transition text-center shadow-sm flex items-center justify-center h-full rounded-md">
+                                        <span class="block font-bold text-[10px] uppercase">Ketua</span>
                                     </div>
                                 </label>
                                 {{-- Anggota 1 --}}
                                 <label class="cursor-pointer relative group">
                                     <input type="radio" name="jabatan_korcam" value="Anggota 1" class="peer sr-only korcam-radio">
-                                    <div class="p-2 rounded-lg border border-blue-200 bg-white hover:bg-blue-50 peer-checked:bg-blue-600 peer-checked:text-white peer-checked:border-blue-600 transition text-center shadow-sm flex flex-col justify-center h-full">
-                                        <span class="block font-bold text-sm">Anggota 1</span>
+                                    <div class="border border-gray-600 bg-white hover:bg-blue-50 peer-checked:bg-blue-600 peer-checked:text-white peer-checked:border-blue-600 transition text-center shadow-sm flex items-center justify-center h-full rounded-md">
+                                        <span class="block font-bold text-[10px] uppercase">Anggota 1</span>
                                     </div>
                                 </label>
                                 {{-- Anggota 2 --}}
                                 <label class="cursor-pointer relative group">
                                     <input type="radio" name="jabatan_korcam" value="Anggota 2" class="peer sr-only korcam-radio">
-                                    <div class="p-2 rounded-lg border border-blue-200 bg-white hover:bg-blue-50 peer-checked:bg-blue-600 peer-checked:text-white peer-checked:border-blue-600 transition text-center shadow-sm flex flex-col justify-center h-full">
-                                        <span class="block font-bold text-sm">Anggota 2</span>
+                                    <div class="border border-gray-600 bg-white hover:bg-blue-50 peer-checked:bg-blue-600 peer-checked:text-white peer-checked:border-blue-600 transition text-center shadow-sm flex items-center justify-center h-full rounded-md">
+                                        <span class="block font-bold text-[10px] uppercase">Anggota 2</span>
                                     </div>
                                 </label>
                             </div>
                             
-                            {{-- PESAN ERROR (Hanya Muncul Jika Dobel) --}}
-                            <div id="availabilityMessage" class="mt-3 hidden p-2 rounded-md text-xs font-bold text-center bg-red-100 text-red-700 border border-red-200">
-                                ⚠️ Posisi ini sudah terisi! Pilih yang lain.
+                            {{-- PESAN ERROR --}}
+                            <div id="availabilityMessage" class="mt-1 hidden px-2 py-0.5 rounded text-[10px] font-bold text-center bg-red-100 text-red-700 border border-red-300 uppercase">
+                                ⚠️ Posisi Terisi! Pilih Lain.
                             </div>
                         </div>
-
                     </div>
-                </div>
-
-                {{-- TOMBOL SUBMIT --}}
-                <div class="flex justify-end pt-4 border-t border-gray-100">
-                    <button type="submit" id="btnSubmit" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2.5 px-6 rounded-lg shadow-lg hover:shadow-xl transition transform hover:-translate-y-0.5 flex items-center gap-2">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
-                        Simpan Pengguna
-                    </button>
                 </div>
 
             </form>
         </div>
+
+        {{-- STICKY FOOTER ACTION --}}
+        <div class="mt-2 bg-gray-100 px-3 py-2 rounded-md border border-gray-600 sticky bottom-2 z-50 flex justify-end">
+            <button type="button" onclick="document.getElementById('userForm').submit();" id="btnSubmit" class="px-6 py-1 h-[32px] text-xs font-bold text-white bg-green-600 rounded-md shadow-sm border border-green-700 hover:bg-green-700 uppercase transition flex items-center gap-1">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                SIMPAN
+            </button>
+        </div>
+
     </div>
 </div>
 
@@ -153,16 +158,23 @@
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
 <style>
-    /* Menyesuaikan gaya Select2 dengan form Tailwind bawaan */
-    .select2-container .select2-selection--single {
-        height: 46px; 
-        border: 1px solid #93C5FD; /* border-blue-300 */
-        border-radius: 0.5rem; /* rounded-lg */
-        padding-top: 8px;
+    /* CSS Select2 - Pakem Compact Grid UI */
+    .select2-container .select2-selection--single { 
+        height: 32px; 
+        border-color: #9ca3af; /* border-gray-600 */
+        border-radius: 0.375rem; /* rounded-md */
+        font-size: 0.75rem; /* text-xs */
+        font-weight: bold;
+        text-transform: uppercase;
+        color: #1f2937;
+    }
+    .select2-container--default .select2-selection--single .select2-selection__rendered { 
+        line-height: 30px; 
+        color: #1f2937; 
         padding-left: 8px;
     }
-    .select2-container--default .select2-selection--single .select2-selection__arrow { top: 10px; right: 10px; }
-    .select2-dropdown { border: 1px solid #93C5FD; border-radius: 0.5rem; overflow: hidden; }
+    .select2-container--default .select2-selection--single .select2-selection__arrow { height: 30px; }
+    .select2-dropdown { border-color: #9ca3af; font-size: 0.75rem; font-weight: bold; text-transform: uppercase;}
 </style>
 
 <script>

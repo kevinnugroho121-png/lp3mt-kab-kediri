@@ -5,17 +5,17 @@
         </h2>
     </x-slot>
 
-    <div class="py-6">
-        <div class="max-w-[1500px] mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="py-0">
+        <div class="mx-auto px-1 sm:px-1 lg:px-1">
             
             {{-- HEADER: JUDUL & TOMBOL --}}
-            <div class="flex flex-col md:flex-row justify-between items-end mb-4 gap-4">
+            <div class="flex flex-col md:flex-row justify-between items-end mb-1 gap-1">
                 <div>
                     <h3 class="font-bold text-lg text-gray-800">Daftar Pengguna & Pemantauan</h3>
-                    <p class="text-xs text-gray-500">Kelola akun dan pantau aktivitas perangkat secara Real-Time.</p>
+                    <p class="text-[11px] font-semibold text-gray-800">Kelola akun dan pantau aktivitas user</p>
                 </div>
                 
-                <div class="flex flex-wrap gap-2">
+                <div class="flex flex-wrap gap-1">
                     
                     {{-- 💾 TOMBOL BACKUP DATABASE (FLEX UNTUK SIDANG) --}}
                     <form id="form-backup-db" action="{{ route('backup.database') }}" method="POST" class="inline">
@@ -53,19 +53,19 @@
             {{-- ================================================= --}}
             {{-- 1. [BARU] PANEL FILTER PINTAR --}}
             {{-- ================================================= --}}
-            <div class="bg-white p-4 rounded-t-xl border-t border-l border-r border-gray-600 shadow-sm">
+            <div class="bg-white p-1 rounded-t-xl border-t border-l border-r border-gray-600 shadow-sm">
                 <form action="{{ route('user.index') }}" method="GET" class="grid grid-cols-1 md:grid-cols-12 gap-3 items-end">
                     
                     {{-- Pencarian Nama/Email --}}
-                    <div class="md:col-span-4">
-                        <label class="block text-[10px] font-bold text-gray-500 uppercase mb-1">Cari Pengguna</label>
+                    <div class="md:col-span-3">
+                        <label class="block text-[10px] font-bold text-black-600 uppercase mb-1">Cari Pengguna</label>
                         <input type="text" name="search" value="{{ request('search') }}" placeholder="Ketik nama atau email..." 
                                class="w-full border border-gray-600 rounded-md px-3 py-1.5 text-sm focus:border-blue-500 focus:ring-blue-500">
                     </div>
 
                     {{-- Filter Role --}}
-                    <div class="md:col-span-3">
-                        <label class="block text-[10px] font-bold text-gray-500 uppercase mb-1">Filter Jabatan</label>
+                    <div class="md:col-span-2">
+                        <label class="block text-[10px] font-bold text-black-600 uppercase mb-1">Filter Jabatan</label>
                         <select name="filter_role" class="w-full border border-gray-600 rounded-md px-3 py-1.5 text-sm focus:border-blue-500 focus:ring-blue-500">
                             <option value="">- Semua Jabatan -</option>
                             <option value="admin" {{ request('filter_role') == 'admin' ? 'selected' : '' }}>Super Admin</option>
@@ -75,8 +75,8 @@
                     </div>
 
                     {{-- Filter Kecamatan --}}
-                    <div class="md:col-span-3">
-                        <label class="block text-[10px] font-bold text-gray-500 uppercase mb-1">Filter Wilayah</label>
+                    <div class="md:col-span-2">
+                        <label class="block text-[10px] font-bold text-black-600 uppercase mb-1">Filter Wilayah</label>
                         <select name="filter_kecamatan" class="w-full border border-gray-600 rounded-md px-3 py-1.5 text-sm focus:border-blue-500 focus:ring-blue-500">
                             <option value="">- Semua Kecamatan -</option>
                             @foreach($data_kecamatan as $kec)
@@ -88,7 +88,7 @@
                     {{-- Tombol Filter --}}
                     <div class="md:col-span-2 flex gap-2">
                         <button type="submit" class="bg-gray-800 text-white px-4 py-1.5 rounded-md text-sm font-bold w-full hover:bg-gray-900 transition">Filter</button>
-                        <a href="{{ route('user.index') }}" class="bg-gray-100 text-gray-600 border border-gray-600 px-3 py-1.5 rounded-md text-sm font-bold hover:bg-gray-400 transition text-center flex items-center justify-center">Reset</a>
+                        <a href="{{ route('user.index') }}" class="bg-gray-100 text-gray-800 border border-gray-600 px-3 py-1.5 rounded-md text-sm font-bold hover:bg-gray-400 transition text-center flex items-center justify-center">Reset</a>
                     </div>
                 </form>
             </div>
@@ -97,78 +97,83 @@
             {{-- 2. TABEL DATA & INTELIJEN SESI --}}
             {{-- ================================================= --}}
             <div class="bg-white border border-gray-600 overflow-hidden shadow-sm rounded-b-xl">
-                <table class="w-full text-sm border-collapse min-w-[1000px]">
+
+
+
+
+                <table class="w-full text-xs border-collapse">
                     <thead>
-                        <tr class="bg-slate-100 text-slate-700 uppercase text-[10px] tracking-wider border-b border-gray-600">
-                            <th class="border-r border-gray-600 px-2 py-3 text-center font-bold w-12">No</th>
-                            <th class="border-r border-gray-600 px-3 py-3 text-left font-bold w-64">Nama & Kontak</th>
-                            <th class="border-r border-gray-600 px-3 py-3 text-center font-bold w-40">Jabatan & Wilayah</th>
+                        <tr class="bg-gray-100 text-gray-800 uppercase text-[10px] tracking-wider border-b border-gray-600 h-8">
+                            <th class="border-r border-gray-600 px-1 py-1 text-center font-bold w-10">No</th>
+                            <th class="border-r border-gray-600 px-2 py-1 text-center font-bold w-56">Nama User & Email</th>
+                            <th class="border-r border-gray-600 px-2 py-1 text-center font-bold w-40">Jabatan & Wilayah</th>
                             
-                            {{-- [BARU] Kolom Mata-Mata --}}
-                            <th class="border-r border-gray-600 px-3 py-3 text-left font-bold bg-blue-50/50">Aktivitas Terakhir (Intelijen)</th>
+                            {{-- Kolom Mata-Mata (Diperketat Padding-nya) --}}
+                            <th class="border-r border-gray-600 px-2 py-1 text-center font-bold bg-blue-50/50">Aktivitas</th>
                             
-                            <th class="px-3 py-3 text-center font-bold w-32">Aksi Pengelola</th>
+                            <th class="px-1 py-1 text-center font-bold w-24">Aksi</th>
                         </tr>
                     </thead>
-                    <tbody class="text-gray-700 divide-y divide-gray-600">
+                    <tbody class="text-gray-800 divide-y divide-gray-600">
                         @forelse($users as $index => $user)
                             <tr class="hover:bg-yellow-50 transition duration-150 align-top">
                                 
-                                <td class="border-r border-gray-600 px-2 py-3 text-center bg-gray-50 font-medium">
+                                <td class="border-r border-gray-600 px-1 py-1 text-center bg-gray-50 font-medium">
                                     {{ $users->firstItem() + $index }}
                                 </td>
 
-                                <td class="border-r border-gray-600 px-3 py-3">
-                                    <div class="font-bold text-gray-900">{{ $user->name }}</div>
-                                    <div class="text-xs text-gray-500 mt-0.5">{{ $user->email }}</div>
+                                <td class="border-r border-gray-600 px-1 py-1">
+                                    <div class="font-bold text-gray-800 text-[15px] ">{{ $user->name }}</div>
+                                    <div class="text-[12px] text-gray-800  py-2"><i>e-mail :</i> <i>{{ $user->email }}</i></div>
                                 </td>
 
-                                <td class="border-r border-gray-600 px-3 py-3 text-center">
+                                <td class="border-r border-gray-600 px-2 py-1.5 text-center leading-tight">
                                     @if($user->role == 'admin')
-                                        <div class="inline-block px-2 py-0.5 rounded text-[10px] font-bold bg-purple-100 text-purple-700 border border-purple-200 mb-1">Super Admin</div>
+                                        <div class="inline-block px-1.5 py-0.5 rounded text-[9px] font-bold bg-purple-100 text-purple-700 border border-purple-200 mb-0.5">Super Admin</div>
                                     @elseif($user->role == 'verifikator')
-                                        <div class="inline-block px-2 py-0.5 rounded text-[10px] font-bold bg-blue-100 text-blue-700 border border-blue-200 mb-1">Verifikator Kab</div>
+                                        <div class="inline-block px-1.5 py-0.5 rounded text-[9px] font-bold bg-blue-100 text-blue-700 border border-blue-200 mb-0.5">Verifikator Kab</div>
                                     @elseif($user->role == 'korcam')
-                                        <div class="inline-block px-2 py-0.5 rounded text-[10px] font-bold bg-orange-100 text-orange-700 border border-orange-200 mb-1">Korcam - {{ $user->jabatan_korcam ?? 'Tim' }}</div>
+                                        <div class="inline-block px-1.5 py-0.5 rounded text-[9px] font-bold bg-orange-100 text-orange-700 border border-orange-200 mb-0.5">Korcam - {{ $user->jabatan_korcam ?? 'Tim' }}</div>
                                     @endif
                                     
-                                    <div class="text-[10px] text-gray-600 font-semibold mt-1">
-                                        {{ $user->kecamatan ? 'Kec. ' . $user->kecamatan->nama_kecamatan : 'Pusat Kabupaten' }}
+                                    <div class="text-[9px] text-gray-800 font-bold uppercase mt-0.5">
+                                        {{ $user->kecamatan ? 'KEC. ' . $user->kecamatan->nama_kecamatan : 'PUSAT KABUPATEN' }}
                                     </div>
                                 </td>
 
-                                {{-- [BARU] KOLOM INTELIJEN --}}
-                                <td class="border-r border-gray-600 px-3 py-3 bg-blue-50/20">
+                                {{-- KOLOM INTELIJEN (Teks Dirapatkan) --}}
+                                <td class="border-r border-gray-600 px-2 py-1.5 bg-blue-50/20 leading-tight">
                                     <div class="flex items-center gap-2 mb-1">
                                         @if($user->is_online)
-                                            <span class="relative flex h-3 w-3">
+                                            <span class="relative flex h-2.5 w-2.5">
                                               <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
-                                              <span class="relative inline-flex rounded-full h-3 w-3 bg-green-500"></span>
+                                              <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-green-500"></span>
                                             </span>
-                                            <span class="text-xs font-bold text-green-600">SEDANG ONLINE</span>
+                                            <span class="text-[11px] font-bold text-green-600">SEDANG ONLINE</span>
                                         @else
-                                            <span class="h-2.5 w-2.5 rounded-full bg-gray-600 border border-gray-500"></span>
-                                            <span class="text-xs font-bold text-gray-500">Offline</span>
-                                            <span class="text-[10px] text-gray-600 ml-1">({{ $user->last_seen }})</span>
+                                            <span class="h-2 w-2 rounded-full bg-gray-500"></span>
+                                            <span class="text-[11px] font-bold text-gray-800">Offline</span>
+                                            <span class="text-[11px] text-gray-800 ml-1">({{ $user->last_seen }})</span>
                                         @endif
                                     </div>
                                     
                                     @if($user->last_seen != 'Offline')
-                                        <div class="text-[10px] text-gray-500 mt-1">
-                                            <span class="font-semibold text-gray-700">Device:</span> {{ $user->perangkat }} <br>
-                                            <span class="font-semibold text-gray-700">IP:</span> {{ $user->ip_address }}
+                                        <div class="text-[11px] text-gray-800">
+                                            <span class="font-bold text-gray-800">Device :</span> {{ $user->perangkat }} <br>
+                                            <span class="font-bold text-gray-800">IP     :</span> {{ $user->ip_address }}
                                         </div>
                                     @endif
                                 </td>
 
-                                <td class="px-2 py-3 text-center align-middle">
-                                    <div class="flex items-center justify-center gap-1.5 flex-wrap">
+                                {{-- KOLOM AKSI (Padding Tombol Dikecilkan) --}}
+                                <td class="px-1 py-1.5 text-center align-middle">
+                                    <div class="flex items-center justify-center gap-1 flex-wrap">
                                         
                                         {{-- 🔑 Tombol Reset Password --}}
                                         <form id="form-reset-pw-{{ $user->id }}" action="{{ route('user.reset-password', $user->id) }}" method="POST">
                                             @csrf
-                                            <button type="button" onclick="triggerStatusUpdate('Yakin ingin mereset password user ini menjadi: kediri2026 ?', 'form-reset-pw-{{ $user->id }}')" class="p-1.5 bg-gray-100 text-gray-700 border border-gray-600 rounded hover:bg-gray-700 hover:text-white transition" title="Reset Password ke Default">
-                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"></path></svg>
+                                            <button type="button" onclick="triggerStatusUpdate('Yakin ingin mereset password user ini menjadi: kediri2026 ?', 'form-reset-pw-{{ $user->id }}')" class="p-1 bg-gray-100 text-gray-800 border border-gray-600 rounded hover:bg-gray-700 hover:text-white transition" title="Reset Password ke Default">
+                                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"></path></svg>
                                             </button>
                                         </form>
 
@@ -176,8 +181,8 @@
                                         @if($user->role == 'korcam')
                                             <form id="form-reset-device-{{ $user->id }}" action="{{ route('user.reset-device', $user->id) }}" method="POST">
                                                 @csrf
-                                                <button type="button" onclick="triggerStatusUpdate('Yakin logout paksa seluruh perangkat Korcam ini?', 'form-reset-device-{{ $user->id }}')" class="p-1.5 bg-amber-100 text-amber-700 border border-amber-300 rounded hover:bg-amber-600 hover:text-white transition" title="Kosongkan Slot Login">
-                                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+                                                <button type="button" onclick="triggerStatusUpdate('Yakin logout paksa seluruh perangkat Korcam ini?', 'form-reset-device-{{ $user->id }}')" class="p-1 bg-amber-100 text-amber-700 border border-amber-400 rounded hover:bg-amber-600 hover:text-white transition" title="Kosongkan Slot Login">
+                                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
                                                 </button>
                                             </form>
                                         @endif
@@ -186,8 +191,8 @@
                                         <form id="form-delete-user-{{ $user->id }}" action="{{ route('user.destroy', $user->id) }}" method="POST">
                                             @csrf
                                             @method('DELETE')
-                                            <button type="button" onclick="triggerStatusUpdate('Yakin hapus user ini permanen?', 'form-delete-user-{{ $user->id }}')" class="p-1.5 bg-red-50 text-red-500 border border-red-200 rounded hover:bg-red-500 hover:text-white transition" title="Hapus User">
-                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                                            <button type="button" onclick="triggerStatusUpdate('Yakin hapus user ini permanen?', 'form-delete-user-{{ $user->id }}')" class="p-1 bg-red-50 text-red-500 border border-red-300 rounded hover:bg-red-500 hover:text-white transition" title="Hapus User">
+                                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
                                             </button>
                                         </form>
 
@@ -196,13 +201,18 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="5" class="border border-gray-600 px-4 py-8 text-center text-gray-600 bg-gray-50">
+                                <td colspan="5" class="border border-gray-600 px-4 py-8 text-center text-gray-800 font-bold bg-gray-50">
                                     Belum ada data user / Tidak ditemukan.
                                 </td>
                             </tr>
                         @endforelse
                     </tbody>
                 </table>
+
+
+
+
+
             </div>
             
             <div class="mt-4">{{ $users->withQueryString()->links() }}</div>
@@ -214,14 +224,14 @@
     {{-- ================================================================= --}}
     
     <div id="custom-confirm-modal" class="hidden fixed inset-0 z-[9999] flex items-center justify-center bg-black/50 backdrop-blur-sm px-4">
-        <div class="bg-white rounded-md border border-gray-400 shadow-xl w-full max-w-sm p-4 transform scale-95 transition-transform duration-200">
+        <div class="bg-white rounded-md border border-gray-600 shadow-xl w-full max-w-sm p-4 transform scale-95 transition-transform duration-200">
             <div class="flex items-center gap-2 mb-3 pb-1 border-b border-gray-600">
                 <span class="flex items-center justify-center w-5 h-5 rounded-full border border-gray-800 text-[10px] font-bold text-gray-800">?</span>
                 <span class="block text-xs font-bold text-black-800 uppercase">Konfirmasi Tindakan</span>
             </div>
-            <p id="custom-confirm-message" class="text-xs font-bold text-gray-700 mb-5"></p>
+            <p id="custom-confirm-message" class="text-xs font-bold text-gray-800 mb-5"></p>
             <div class="flex justify-end gap-2">
-                <button id="custom-confirm-cancel" type="button" class="px-3 py-1 h-[32px] border border-gray-400 rounded-md text-[10px] font-bold text-gray-600 hover:bg-gray-100 uppercase transition">Batal</button>
+                <button id="custom-confirm-cancel" type="button" class="px-3 py-1 h-[32px] border border-gray-600 rounded-md text-[10px] font-bold text-gray-800 hover:bg-gray-100 uppercase transition">Batal</button>
                 <button id="custom-confirm-ok" type="button" class="px-3 py-1 h-[32px] border border-green-600 bg-green-600 rounded-md text-[10px] font-bold text-white hover:bg-green-700 uppercase shadow-sm transition">Ya, Lanjutkan</button>
             </div>
         </div>
