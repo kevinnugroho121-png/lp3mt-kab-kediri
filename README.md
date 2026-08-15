@@ -60,16 +60,3 @@ Sistem ini memfasilitasi sinkronisasi data berjenjang dari tingkat desa, kecamat
 | **Authentication** | Laravel Breeze / Custom Guard | Role-Based Access Control |
 
 ---
-
-## 🚀 Panduan Instalasi Lokal
-
-### 1. Prasyarat Sistem
-* PHP `>= 8.2`
-* Composer `>= 2.x`
-* Node.js `>= 18.x` & NPM
-* MySQL / MariaDB Server
-
-### 2. Kloning Repositori
-```bash
-git clone [https://github.com/USERNAME/lp3mt_app.git](https://github.com/USERNAME/lp3mt_app.git)
-cd lp3mt_app
