@@ -145,7 +145,7 @@
                     <div class="mb-4">
                         <div class="flex items-center gap-2 mb-3 pb-1 border-b border-gray-600">
                             <span class="bg-purple-100 text-purple-700 w-6 h-6 flex items-center justify-center rounded-full font-bold text-[10px]">C</span>
-                            <h3 class="text-base font-bold text-black-800">Upload Dokumen & Foto</h3>
+                            <h3 class="text-base font-bold text-black-800 ">Upload Dokumen & Foto</h3>
                         </div>
 
                         {{-- DOKUMEN PDF (GRID 2x2) --}}

@@ -40,7 +40,7 @@
                     <div class="mb-4">
                         <div class="flex items-center gap-2 mb-4 pb-2 border-b border-gray-600">
                             <span class="bg-blue-100 text-blue-700 w-8 h-8 flex items-center justify-center rounded-full font-bold text-sm">A</span>
-                            <h3 class="text-lg font-bold text-black-800">Data Pribadi & Kepegawaian</h3>
+                            <h3 class="text-lg font-bold text-black-800 uppercase">Data Diri Guru</h3>
                         </div>
 
                         <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3">
@@ -57,15 +57,15 @@
                             <div class="md:col-span-1">
                                 <label class="block text-[10px] font-bold text-gray-600 uppercase tracking-wider mb-1">Jenis Kelamin <span class="text-red-500">*</span></label>
                                 <select name="jenis_kelamin" class="w-full border border-gray-600 rounded-md px-2 py-1 h-[32px] text-xs font-bold text-black-800 focus:border-blue-500 focus:ring-blue-500 shadow-sm">
-                                    <option value="L" {{ $guru->jenis_kelamin == 'L' ? 'selected' : '' }}>Laki-laki</option>
-                                    <option value="P" {{ $guru->jenis_kelamin == 'P' ? 'selected' : '' }}>Perempuan</option>
+                                    <option value="L" {{ $guru->jenis_kelamin == 'L' ? 'selected' : '' }}>LAKI-LAKI</option>
+                                    <option value="P" {{ $guru->jenis_kelamin == 'P' ? 'selected' : '' }}>PEREMPUAN</option>
                                 </select>
                             </div>
 
                             <div class="md:col-span-1">
-                                <label class="block text-[10px] font-bold text-gray-600 uppercase tracking-wider mb-1">Status Kepegawaian <span class="text-red-500">*</span></label>
+                                <label class="block text-[10px] font-bold text-gray-600 uppercase tracking-wider mb-1">Status Guru <span class="text-red-500">*</span></label>
                                 <select name="status_kepegawaian" id="status_kepegawaian" class="w-full border border-gray-600 rounded-md px-2 py-1 h-[32px] text-xs font-bold text-black-800 focus:border-blue-500 focus:ring-blue-500 shadow-sm" onchange="checkInsentifEligibility()">
-                                    <option value="Non-ASN" {{ $guru->status_kepegawaian == 'Non-ASN' ? 'selected' : '' }}>Non-ASN (Guru Swasta)</option>
+                                    <option value="Non-ASN" {{ $guru->status_kepegawaian == 'Non-ASN' ? 'selected' : '' }}>NON-ASN</option>
                                     <option value="PNS" {{ $guru->status_kepegawaian == 'PNS' ? 'selected' : '' }}>PNS</option>
                                     <option value="PPPK" {{ $guru->status_kepegawaian == 'PPPK' ? 'selected' : '' }}>PPPK</option>
                                 </select>
@@ -74,9 +74,9 @@
                             <div class="md:col-span-1">
                                 <label class="block text-[10px] font-bold text-gray-600 uppercase tracking-wider mb-1">Status Sertifikasi <span class="text-red-500">*</span></label>
                                 <select name="status_sertifikasi" id="status_sertifikasi" class="w-full border border-gray-600 rounded-md px-2 py-1 h-[32px] text-xs font-bold text-black-800 focus:border-blue-500 focus:ring-blue-500 shadow-sm" onchange="checkInsentifEligibility()">
-                                    <option value="Belum" {{ $guru->status_sertifikasi == 'Belum' ? 'selected' : '' }}>Belum Sertifikasi</option>
-                                    <option value="Sertifikasi" {{ $guru->status_sertifikasi == 'Sertifikasi' ? 'selected' : '' }}>Sudah Sertifikasi</option>
-                                    <option value="Inpassing" {{ $guru->status_sertifikasi == 'Inpassing' ? 'selected' : '' }}>Sudah Inpassing</option>
+                                    <option value="Belum" {{ $guru->status_sertifikasi == 'Belum' ? 'selected' : '' }}>BELUM SERTIFIKASI</option>
+                                    <option value="Sertifikasi" {{ $guru->status_sertifikasi == 'Sertifikasi' ? 'selected' : '' }}>SUDAH SERTIFIKASI</option>
+                                    <option value="Inpassing" {{ $guru->status_sertifikasi == 'Inpassing' ? 'selected' : '' }}>SUDAH INPASING</option>
                                 </select>
                             </div>
 
@@ -88,6 +88,10 @@
                                 </select>
                                 <p class="text-[9px] text-black-500 mt-1 leading-none" id="msg_insentif">*Ubah ke "YA" jika guru ini berhak menerima insentif.</p>
                             </div>
+
+                            
+
+
 
                             <div class="md:col-span-1">
                                 <label class="block text-[10px] font-bold text-gray-600 uppercase tracking-wider mb-1">Tempat Lahir</label>
@@ -115,57 +119,31 @@
                                     <option value="Konghucu" {{ $guru->agama == 'Konghucu' ? 'selected' : '' }}>KONGHUCU</option>
                                 </select>
                             </div>
-                        </div>
-                    </div>
 
-                    {{-- SECTION B: KELEMBAGAAN --}}
-                    <div class="mb-4">
-                        <div class="flex items-center gap-2 mb-4 pb-2 border-b border-gray-600">
-                            <span class="bg-green-100 text-green-700 w-8 h-8 flex items-center justify-center rounded-full font-bold text-sm">B</span>
-                            <h3 class="text-lg font-bold text-black-800">Kelembagaan & Wilayah</h3>
-                        </div>
-
-                        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3">
+                            {{-- [BARU/FIX] Dropdown Desa untuk KTP --}}
                             <div class="md:col-span-1">
-                                <label class="block text-[10px] font-bold text-gray-600 uppercase tracking-wider mb-1">Jenis Lembaga</label>
-                                <input type="text" value="{{ $guru->jenis_guru }}" class="w-full bg-gray-100 border border-gray-600 rounded-md px-2 py-1 h-[32px] text-xs font-bold text-gray-500 cursor-not-allowed shadow-sm" readonly>
-                            </div>
-
-                            <div class="md:col-span-1">
-                                <label class="block text-[10px] font-bold text-gray-600 uppercase tracking-wider mb-1">Kecamatan <span class="text-red-500">*</span></label>
-                                <select name="kecamatan" id="kecamatanSelect" class="w-full border border-gray-600 rounded-md px-2 py-1 h-[32px] text-xs font-bold text-black-800 focus:border-blue-500 focus:ring-blue-500 shadow-sm" required>
-                                    @foreach($kecamatans as $kec)
-                                        <option value="{{ $kec->nama_kecamatan }}" data-id="{{ $kec->id }}" {{ $guru->kecamatan == $kec->nama_kecamatan ? 'selected' : '' }}>{{ $kec->nama_kecamatan }}</option>
-                                    @endforeach
+                                <label class="block text-[10px] font-bold text-gray-600 uppercase tracking-wider mb-1">Desa / Kelurahan (KTP) <span class="text-red-500">*</span></label>
+                                <select name="desa_ktp" id="desaKtpSelect" class="w-full border border-gray-600 rounded-md px-2 py-1 h-[32px] text-xs font-bold text-black-800 focus:border-blue-500 focus:ring-blue-500 shadow-sm" required>
+                                    <option value="">-- Pilih Kecamatan Dulu --</option>
                                 </select>
-                            </div>
 
-                            <div class="md:col-span-1">
-                                <label class="block text-[10px] font-bold text-gray-600 uppercase tracking-wider mb-1">Desa / Kelurahan <span class="text-red-500">*</span></label>
-                                <select name="desa" id="desaSelect" class="w-full border border-gray-600 rounded-md px-2 py-1 h-[32px] text-xs font-bold text-black-800 focus:border-blue-500 focus:ring-blue-500 shadow-sm" required>
-                                    <option value="{{ $guru->desa }}">{{ $guru->desa }}</option>
-                                </select>
-                                <div id="allDesasData" class="hidden">
-                                    @foreach($desas as $d)
+                                
+                                <div id="allDesasDataKtp" class="hidden">
+                                    @foreach($semua_desa_kediri as $d)
                                         <div data-kecamatan-id="{{ $d->kecamatan_id }}" data-nama="{{ $d->nama_desa }}"></div>
                                     @endforeach
                                 </div>
                             </div>
 
-                            <div class="md:col-span-2">
-                                <label class="block text-[10px] font-bold text-green-700 uppercase tracking-wider mb-1">Lembaga Tempat Mengajar <span class="text-red-500">*</span></label>
-                                <input list="list_lembaga" name="lembaga_id_input" value="{{ old('lembaga_id_input', $guru->lembaga->nama_lembaga . ' (' . $guru->lembaga->desa->nama_desa . ')') }}" class="w-full border border-green-500 bg-green-50 rounded-md px-2 py-1 h-[32px] text-xs font-bold text-black-800 shadow-sm focus:ring-green-500" placeholder="Ketik nama lembaga..." required onchange="setLembagaId(this)">
-                                <datalist id="list_lembaga">
-                                    @foreach($lembagas as $l)
-                                        <option data-id="{{ $l->id }}" value="{{ $l->nama_lembaga }} ({{ $l->desa->nama_desa }})"></option>
+                            {{-- [BARU/FIX] Dropdown Kecamatan untuk KTP (Bebas se-Kabupaten) --}}
+                            <div class="md:col-span-1">
+                                <label class="block text-[10px] font-bold text-gray-600 uppercase tracking-wider mb-1">Kecamatan (KTP) <span class="text-red-500">*</span></label>
+                                <select name="kecamatan_ktp" id="kecamatanKtpSelect" class="w-full border border-gray-600 rounded-md px-2 py-1 h-[32px] text-xs font-bold text-black-800 focus:border-blue-500 focus:ring-blue-500 shadow-sm" required>
+                                    <option value="">-- Pilih --</option>
+                                    @foreach($semua_kecamatan_kediri as $kec)
+                                        <option value="{{ $kec->nama_kecamatan }}" data-id="{{ $kec->id }}" {{ old('kecamatan_ktp') == $kec->nama_kecamatan ? 'selected' : '' }}>{{ $kec->nama_kecamatan }}</option>
                                     @endforeach
-                                </datalist>
-                                <input type="hidden" name="lembaga_id" id="lembaga_id_hidden" value="{{ old('lembaga_id', $guru->lembaga_id) }}">
-                            </div>
-
-                            <div class="md:col-span-2">
-                                <label class="block text-[10px] font-bold text-gray-600 uppercase tracking-wider mb-1">Alamat Lengkap (KTP)</label>
-                                <input type="text" name="alamat_ktp" value="{{ old('alamat_ktp', $guru->alamat_ktp) }}" class="w-full border border-gray-600 rounded-md px-2 py-1 h-[32px] text-xs font-bold text-black-800 focus:border-blue-500 focus:ring-blue-500 shadow-sm uppercase" required oninput="this.value = this.value.toUpperCase()">
+                                </select>
                             </div>
 
                             <div class="md:col-span-1">
@@ -178,10 +156,77 @@
                                 <input type="number" name="no_hp" value="{{ old('no_hp', $guru->no_hp) }}" class="w-full border border-gray-600 rounded-md px-2 py-1 h-[32px] text-xs font-bold text-black-800 focus:border-blue-500 focus:ring-blue-500 shadow-sm">
                             </div>
 
-                            <div class="md:col-span-2">
+                            <div class="md:col-span-3">
+                                <label class="block text-[10px] font-bold text-gray-600 uppercase tracking-wider mb-1">Alamat Lengkap (KTP)</label>
+                                <input type="text" name="alamat_ktp" value="{{ old('alamat_ktp', $guru->alamat_ktp) }}" class="w-full border border-gray-600 rounded-md px-2 py-1 h-[32px] text-xs font-bold text-black-800 focus:border-blue-500 focus:ring-blue-500 shadow-sm uppercase" required oninput="this.value = this.value.toUpperCase()">
+                            </div>
+
+                            
+
+                            <div class="md:col-span-1">
                                 <label class="block text-[10px] font-bold text-gray-600 uppercase tracking-wider mb-1">Nomor Rekening BANK JATIM</label>
                                 <input type="number" name="nomor_rekening" value="{{ old('nomor_rekening', $guru->nomor_rekening) }}" class="w-full border border-gray-600 rounded-md px-2 py-1 h-[32px] text-xs font-bold focus:border-blue-500 focus:ring-blue-500 shadow-sm">
                             </div>
+
+                        </div>
+                    </div>
+
+                    {{-- SECTION B: KELEMBAGAAN --}}
+                    <div class="mb-4">
+                        <div class="flex items-center gap-2 mb-4 pb-2 border-b border-gray-600">
+                            <span class="bg-green-100 text-green-700 w-8 h-8 flex items-center justify-center rounded-full font-bold text-sm">B</span>
+                            <h3 class="text-lg font-bold text-black-800 uppercase">Lembaga Tempat Mengajar</h3>
+                        </div>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
+                            <div class="md:col-span-1">
+                                <label class="block text-[10px] font-bold text-gray-600 uppercase tracking-wider mb-1">Jenis Lembaga</label>
+                                <input type="text" value="{{ $guru->jenis_guru }}" class="w-full bg-gray-100 border border-gray-600 rounded-md px-2 py-1 h-[32px] text-xs font-bold text-black-800 cursor-not-allowed shadow-sm" readonly>
+                            </div>
+
+                            
+
+                            <div class="md:col-span-1">
+                                <label class="block text-[10px] font-bold text-gray-600 uppercase tracking-wider mb-1">Desa / Kelurahan Lembaga <span class="text-red-500">*</span></label>
+                                <select name="desa_lembaga" id="desaSelect" class="w-full border border-gray-600 rounded-md px-2 py-1 h-[32px] text-xs font-bold text-black-800 focus:border-blue-500 focus:ring-blue-500 shadow-sm" required>
+                                    {{-- [FIX] Langsung memunculkan nama desa instansi asal guru --}}
+                                    <option value="{{ $guru->lembaga->desa->nama_desa ?? '' }}" selected>{{ $guru->lembaga->desa->nama_desa ?? '-- Pilih Kecamatan Dulu --' }}</option>
+                                </select>
+
+
+                                <div id="allDesasData" class="hidden">
+                                    @foreach($desas as $d)
+                                        <div data-id="{{ $d->id }}" data-kecamatan-id="{{ $d->kecamatan_id }}" data-nama="{{ $d->nama_desa }}"></div>
+                                    @endforeach
+                                </div>
+                            </div>
+
+                            <div class="md:col-span-1">
+                                <label class="block text-[10px] font-bold text-gray-600 uppercase tracking-wider mb-1">Kecamatan Lembaga <span class="text-red-500">*</span></label>
+                                <select name="kecamatan_lembaga" id="kecamatanSelect" class="w-full border border-gray-600 rounded-md px-2 py-1 h-[32px] text-xs font-bold text-black-800 focus:border-blue-500 focus:ring-blue-500 shadow-sm" required>
+                                    <option value="">-- Pilih Kecamatan --</option>
+                                    @foreach($kecamatans as $kec)
+                                        {{-- [FIX] Mengunci otomatis pilihan berdasarkan id kecamatan instansi asal guru --}}
+                                        <option value="{{ $kec->nama_kecamatan }}" data-id="{{ $kec->id }}" {{ $guru->lembaga->kecamatan_id == $kec->id ? 'selected' : '' }}>{{ $kec->nama_kecamatan }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+
+                            <div class="md:col-span-1">
+                                <label class="block text-[10px] font-bold text-green-700 uppercase tracking-wider mb-1">Lembaga Tempat Mengajar <span class="text-red-500">*</span></label>
+                                <input list="list_lembaga" name="lembaga_id_input" value="{{ old('lembaga_id_input', $guru->lembaga->nama_lembaga . ' (' . $guru->lembaga->desa->nama_desa . ')') }}" class="w-full border border-green-500 bg-green-50 rounded-md px-2 py-1 h-[32px] text-xs font-bold text-black-800 shadow-sm focus:ring-green-500" placeholder="Ketik nama lembaga..." required onchange="setLembagaId(this)">
+                                <datalist id="list_lembaga">
+                                    @foreach($lembagas as $l)
+                                        <option data-id="{{ $l->id }}" value="{{ $l->nama_lembaga }} ({{ $l->desa->nama_desa }})"></option>
+                                    @endforeach
+                                </datalist>
+                                <input type="hidden" name="lembaga_id" id="lembaga_id_hidden" value="{{ old('lembaga_id', $guru->lembaga_id) }}">
+                            </div>
+
+                            
+
+                            
+                            
                         </div>
                     </div>
 
@@ -189,7 +234,7 @@
                     <div class="mb-1">
                         <div class="flex items-center gap-2 mb-4 pb-2 border-b border-gray-600">
                             <span class="bg-purple-100 text-purple-700 w-8 h-8 flex items-center justify-center rounded-full font-bold text-sm">C</span>
-                            <h3 class="text-lg font-bold text-black-800">Upload Dokumen</h3>
+                            <h3 class="text-lg font-bold text-black-800 uppercase">Upload Dokumen</h3>
                         </div>
 
                         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -310,46 +355,65 @@
             }
         }
 
+
+
+
         // --- 3. Wilayah ---
         document.addEventListener('DOMContentLoaded', function() {
-            const kecamatanSelect = document.getElementById('kecamatanSelect');
-            const desaSelect = document.getElementById('desaSelect');
-            const allDesas = Array.from(document.querySelectorAll('#allDesasData div')).map(div => ({ kecamatan_id: div.getAttribute('data-kecamatan-id'), nama: div.getAttribute('data-nama') }));
-            const oldDesa = "{{ $guru->desa }}";
-            const oldKecamatan = "{{ $guru->kecamatan }}"; 
-
-            // Set Initial Kecamatan value
-            for(let i=0; i<kecamatanSelect.options.length; i++){
-                if(kecamatanSelect.options[i].value === oldKecamatan) { kecamatanSelect.selectedIndex = i; break; }
-            }
-
-            function populateDesa() {
-                const selectedOption = kecamatanSelect.options[kecamatanSelect.selectedIndex];
-                const selectedKecId = selectedOption ? selectedOption.getAttribute('data-id') : null;
-                desaSelect.innerHTML = '<option value="">-- Pilih Desa --</option>'; 
-                if(selectedKecId) {
-                    const filteredDesas = allDesas.filter(d => d.kecamatan_id == selectedKecId);
-                    filteredDesas.forEach(d => {
-                        const option = document.createElement('option');
-                        option.value = d.nama; 
-                        option.text = d.nama;
-                        
-                        // [FIX] Samakan jadi huruf besar semua saat dicocokkan
-                        if(d.nama.toUpperCase() === oldDesa.toUpperCase()) {
-                            option.selected = true; 
-                        }
-                        
-                        desaSelect.appendChild(option);
-                    });
-                }
-            }
-            
-            kecamatanSelect.addEventListener('change', populateDesa);
-            populateDesa(); 
             
             // JALANKAN CEK INSENTIF SAAT PERTAMA LOAD
             checkInsentifEligibility();
+
+            // ====================================================================
+            // 🚀 LOGIKA DROPDOWN KECAMATAN -> DESA UNTUK ALAMAT DOMISILI KTP
+            // ====================================================================
+            const kecamatanKtpSelect = document.getElementById('kecamatanKtpSelect');
+            const desaKtpSelect = document.getElementById('desaKtpSelect');
+            
+            if (kecamatanKtpSelect && desaKtpSelect) {
+                const allDesasKtp = Array.from(document.querySelectorAll('#allDesasDataKtp div')).map(div => ({ 
+                    kecamatan_id: div.getAttribute('data-kecamatan-id'), 
+                    nama: div.getAttribute('data-nama') 
+                }));
+                const oldDesaKtp = "{{ old('desa', $guru->desa ?? '') }}";
+                const oldKecamatanKtp = "{{ old('kecamatan', $guru->kecamatan ?? '') }}"; 
+
+                // Set Initial Kecamatan value (Membaca data database saat halaman dimuat)
+                for(let i=0; i<kecamatanKtpSelect.options.length; i++){
+                    if(kecamatanKtpSelect.options[i].value === oldKecamatanKtp) { kecamatanKtpSelect.selectedIndex = i; break; }
+                }
+
+                function populateDesaKtp() {
+                    const selectedOption = kecamatanKtpSelect.options[kecamatanKtpSelect.selectedIndex];
+                    const selectedKecId = selectedOption ? selectedOption.getAttribute('data-id') : null;
+                    
+                    desaKtpSelect.innerHTML = '<option value="">-- Pilih Desa --</option>'; 
+                    
+                    if(selectedKecId) {
+                        const filteredDesas = allDesasKtp.filter(d => d.kecamatan_id == selectedKecId);
+                        filteredDesas.forEach(d => {
+                            const option = document.createElement('option');
+                            option.value = d.nama; 
+                            option.text = d.nama;
+                            
+                            // Samakan huruf besar/kecil agar 'selected' bekerja
+                            if(d.nama.toUpperCase() === oldDesaKtp.toUpperCase()) {
+                                option.selected = true; 
+                            }
+                            
+                            desaKtpSelect.appendChild(option);
+                        });
+                    }
+                }
+                
+                kecamatanKtpSelect.addEventListener('change', populateDesaKtp);
+                populateDesaKtp(); // Jalankan otomatis saat halaman pertama dimuat
+            }
+            // ====================================================================
         });
+
+
+
 
         // --- 4. File Upload ---
         function handleFileSelect(input, iframeId, btnId, oldFrameId = null) {

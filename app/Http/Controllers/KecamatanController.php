@@ -154,6 +154,11 @@ class KecamatanController extends Controller
             'kuota_insentif' => $request->kuota_insentif
         ]);
 
+        // Cek apakah ada request 'current_page_url' dari form
+        if ($request->filled('current_page_url')) {
+            return redirect($request->current_page_url)->with('success', "Alhamdulillah! Kuota untuk Kecamatan {$kecamatan->nama_kecamatan} berhasil diatur menjadi {$request->kuota_insentif} jatah.");
+        }
+
         return redirect()->route('kecamatan.index')->with('success', "Alhamdulillah! Kuota untuk Kecamatan {$kecamatan->nama_kecamatan} berhasil diatur menjadi {$request->kuota_insentif} jatah.");
     }
 }

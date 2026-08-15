@@ -9,13 +9,13 @@
 
     {{-- 1. FONTS --}}
     <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 
     {{-- 2. VITE --}}
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
     {{-- 3. LIBRARY --}}
-    <script src="https://cdn.tailwindcss.com"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
@@ -42,7 +42,9 @@
                     {{-- 1. LOGO KIRI --}}
                     <a href="{{ route('dashboard') }}" class="transform hover:scale-105 transition duration-200">
                         <img src="{{ asset('images/logo_lp3mt.png') }}" 
-                             alt="Logo LP3MT" 
+                             alt="Logo LP3MT Kabupaten Kediri" 
+                             width="48" 
+                             height="48" 
                              class="h-12 w-auto object-contain">
                     </a>
 
@@ -146,12 +148,12 @@
                         <div class="relative" x-data="{ open: false }">
                             <button @click="open = !open" @click.outside="open = false" class="flex items-center gap-2 focus:outline-none group">
                                 <div class="text-right hidden xl:block">
-                                    <p class="text-sm font-bold text-black-700 group-hover:text-green-700 transition">{{ Auth::user()->name }}</p>
+                                    <p class="text-sm font-bold text-slate-700 group-hover:text-green-700 transition">{{ Auth::user()->name }}</p>
                                 </div>
                                 <div class="relative">
-                                    <img class="h-10 w-10 rounded-full object-cover border-2 border-white ring-2 ring-gray-100 group-hover:ring-green-200 transition shadow-sm" 
+                                    <img width="40" height="40" class="h-10 w-10 rounded-full object-cover border-2 border-white ring-2 ring-gray-100 group-hover:ring-green-200 transition shadow-sm" 
                                          src="https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->name) }}&background=10b981&color=fff&bold=true&size=128" 
-                                         alt="Profile" />
+                                         alt="Foto Profil {{ Auth::user()->name }}" />
                                     <span class="absolute bottom-0 right-0 block h-2.5 w-2.5 rounded-full bg-green-500 ring-2 ring-white"></span>
                                 </div>
                             </button>
@@ -160,13 +162,13 @@
                                 
                                 {{-- Info User --}}
                                 <div class="px-4 py-3 border-b border-gray-100 bg-gray-50/50 rounded-t-xl">
-                                    <p class="text-sm font-bold text-black-800 truncate">{{ Auth::user()->name }}</p>
-                                    <p class="text-xs text-black-500 truncate">{{ Auth::user()->email }}</p>
+                                    <p class="text-sm font-bold text-slate-800 truncate">{{ Auth::user()->name }}</p>
+                                    <p class="text-xs text-slate-500 truncate">{{ Auth::user()->email }}</p>
                                 </div>
 
                                 {{-- Tombol Profil --}}
                                 <div class="p-1 border-b border-gray-50">
-                                    <a href="{{ route('profile.edit') }}" class="flex items-center gap-2 px-4 py-2.5 text-sm text-black-700 rounded-lg hover:bg-blue-50 hover:text-blue-700 transition font-medium">
+                                    <a href="{{ route('profile.edit') }}" class="flex items-center gap-2 px-4 py-2.5 text-sm text-slate-700 rounded-lg hover:bg-blue-50 hover:text-blue-700 transition font-medium">
                                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
                                         Edit Profil & Password
                                     </a>
@@ -197,7 +199,7 @@
             @yield('content')
         </main>
         
-        <footer class="py-6 text-center text-xs text-black-400 border-t border-gray-100 mt-auto">
+        <footer class="py-6 text-center text-xs text-slate-500 border-t border-gray-100 mt-auto">
             &copy; {{ date('Y') }} LP3MT Kabupaten Kediri. All rights reserved.
         </footer>
 

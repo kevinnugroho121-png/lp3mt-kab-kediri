@@ -114,16 +114,24 @@
                                 {{-- [BARU - FASE 2] LOGIKA FORM INPUT KUOTA DINAMIS --}}
                                 <td class="border border-gray-600 px-3 py-1 text-center">
                                     @if(Auth::user()->role == 'admin' || Auth::user()->role == 'verifikator')
+
+
                                         {{-- Jika Superadmin/Verifikator, tampilkan Form Input Instan --}}
                                         <form action="{{ route('kecamatan.update_kuota', $kecamatan->id) }}" method="POST" class="flex items-center gap-1 justify-center">
                                             @csrf
                                             @method('PUT')
+                                            
+                                            {{-- [BARU] Menyimpan page saat ini agar tidak terlempar ke page 1 --}}
+                                            <input type="hidden" name="current_page_url" value="{{ request()->fullUrl() }}">
+                                            
                                             <input type="number" name="kuota_insentif" value="{{ old('kuota_insentif', $kecamatan->kuota_insentif ?? 0) }}" min="0"
-                                                   class="w-20 border border-gray-600 rounded px-2 py-0.5 text-center text-xs font-bold text-blue-800 focus:ring-1 focus:ring-blue-500 focus:border-blue-500">
+                                                class="w-20 border border-gray-600 rounded px-2 py-0.5 text-center text-xs font-bold text-blue-800 focus:ring-1 focus:ring-blue-500 focus:border-blue-500">
                                             <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white text-[10px] font-bold px-2 py-1 rounded shadow-sm transition">
                                                 Simpan
                                             </button>
                                         </form>
+
+
                                     @else
                                         {{-- Jika Korcam, Cukup Kunci & Tampilkan Angkanya Saja (Read-Only) --}}
                                         <span class="px-2.5 py-0.5 rounded-full bg-blue-50 border border-blue-300 text-blue-700 font-bold text-xs">

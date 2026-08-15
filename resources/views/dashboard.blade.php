@@ -1,9 +1,9 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-bold text-xl text-black-800 leading-tight">
+        <h2 class="font-bold text-xl text-slate-800 leading-tight">
             {{ __('Dashboard Eksekutif') }}
         </h2>
-        <p class="text-sm text-black-500 mt-1">Wilayah Data: <b>{{ $wilayahKerja }}</b></p>
+        <p class="text-sm text-slate-500 mt-1">Wilayah Data: <b>{{ $wilayahKerja }}</b></p>
     </x-slot>
 
     <div class="py-0">
@@ -17,7 +17,7 @@
                 <div>
                     <div class="flex items-center justify-center mb-4">
                         <div>
-                            <h3 class="font-bold text-black-800 text-lg">KOMPOSISI JENIS LEMBAGA</h3>
+                            <h3 class="font-bold text-slate-800 text-lg">KOMPOSISI JENIS LEMBAGA</h3>
                         </div>
                     </div>
                     <div class="relative h-48 w-full mb-6">
@@ -27,15 +27,15 @@
                 <div class="bg-gray-50 rounded-xl p-4 border border-gray-300">
                     <div class="grid grid-cols-3 gap-2 mb-4 text-center border-b border-gray-200 pb-4">
                         <div>
-                            <span class="block text-[10px] text-black-400 font-bold uppercase">TPQ</span>
+                            <span class="block text-[10px] text-slate-500 font-bold uppercase">TPQ</span>
                             <span class="text-lg font-bold text-green-600">{{ number_format($lembagaTPQ) }}</span>
                         </div>
                         <div class="border-x border-gray-200">
-                            <span class="block text-[10px] text-black-400 font-bold uppercase">Madin</span>
+                            <span class="block text-[10px] text-slate-500 font-bold uppercase">Madin</span>
                             <span class="text-lg font-bold text-blue-600">{{ number_format($lembagaMadin) }}</span>
                         </div>
                         <div>
-                            <span class="block text-[10px] text-black-400 font-bold uppercase">Ponpes</span>
+                            <span class="block text-[10px] text-slate-500 font-bold uppercase">Ponpes</span>
                             <span class="text-lg font-bold text-purple-600">{{ number_format($lembagaPonpes) }}</span>
                         </div>
                     </div>
@@ -45,8 +45,8 @@
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
                             </div>
                             <div>
-                                <p class="text-[10px] text-black-500 font-bold">TOTAL GURU</p>
-                                <p class="text-sm font-extrabold text-black-800">{{ number_format($totalGuru) }}</p>
+                                <p class="text-[10px] text-slate-600 font-bold">TOTAL GURU</p>
+                                <p class="text-sm font-extrabold text-slate-800">{{ number_format($totalGuru) }}</p>
                             </div>
                         </div>
                         <div class="flex items-center gap-2">
@@ -54,8 +54,8 @@
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
                             </div>
                             <div>
-                                <p class="text-[10px] text-black-500 font-bold">TOTAL SANTRI</p>
-                                <p class="text-sm font-extrabold text-black-800">{{ number_format($totalSantri) }}</p>
+                                <p class="text-[10px] text-slate-600 font-bold">TOTAL SANTRI</p>
+                                <p class="text-sm font-extrabold text-slate-800">{{ number_format($totalSantri) }}</p>
                             </div>
                         </div>
                     </div>
@@ -63,11 +63,11 @@
             </div>
 
             {{-- KARTU 2: STATUS GURU --}}
-            <div class="bg-white rounded-2xl border border-black-800 p-6 shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07)] hover:shadow-lg transition duration-300 flex flex-col justify-between">
+            <div class="bg-white rounded-2xl border border-gray-300 p-6 shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07)] hover:shadow-lg transition duration-300 flex flex-col justify-between">
                 <div>
                     <div class="flex items-center justify-center mb-4">
                         <div>
-                            <h3 class="font-bold text-black-800 text-lg">STATUS KEPEGAWAIAN GURU</h3>
+                            <h3 class="font-bold text-slate-800 text-lg">STATUS KEPEGAWAIAN GURU</h3>
                         </div>
                     </div>
                     <div class="relative h-48 w-full mb-6">
@@ -77,23 +77,23 @@
                 <div class="bg-gray-50 rounded-xl p-4 border border-gray-300">
                     <div class="grid grid-cols-2 gap-3">
                         <div class="flex items-center justify-between bg-white p-2 rounded border border-gray-300">
-                            <span class="text-[10px] text-black-500 font-bold">PNS</span>
+                            <span class="text-[10px] text-slate-600 font-bold">PNS</span>
                             <span class="text-sm font-bold text-blue-600">{{ number_format($guruPNS) }}</span>
                         </div>
                         <div class="flex items-center justify-between bg-white p-2 rounded border border-gray-300">
-                            <span class="text-[10px] text-black-500 font-bold">PPPK</span>
+                            <span class="text-[10px] text-slate-600 font-bold">PPPK</span>
                             <span class="text-sm font-bold text-emerald-600">{{ number_format($guruP3KFull) }}</span>
                         </div>
                         <div class="flex items-center justify-between bg-white p-2 rounded border border-gray-300">
-                            <span class="text-[10px] text-black-500 font-bold">P3K Paruh</span>
+                            <span class="text-[10px] text-slate-600 font-bold">P3K Paruh</span>
                             <span class="text-sm font-bold text-amber-600">{{ number_format($guruP3KParuh) }}</span>
                         </div>
                         <div class="flex items-center justify-between bg-white p-2 rounded border border-gray-300">
-                            <span class="text-[10px] text-black-500 font-bold">Non ASN</span>
+                            <span class="text-[10px] text-slate-600 font-bold">Non ASN</span>
                             <span class="text-sm font-bold text-purple-600">{{ number_format($guruNonASN) }}</span>
                         </div>
                     </div>
-                    <p class="text-[10px] text-center text-black-400 mt-3 italic">*Data Non-ASN lainnya: {{ number_format($guruNonASN) }}</p>
+                    <p class="text-[10px] text-center text-slate-500 mt-3 italic">*Data Non-ASN lainnya: {{ number_format($guruNonASN) }}</p>
                 </div>
             </div>
 
@@ -102,7 +102,7 @@
                 <div>
                     <div class="flex items-center justify-center mb-4">
                         <div>
-                            <h3 class="font-bold text-black-800 text-lg">RASIO PENYALURAN INSENTIF</h3>
+                            <h3 class="font-bold text-slate-800 text-lg">RASIO PENYALURAN INSENTIF</h3>
                         </div>
                     </div>
                     <div class="relative h-48 w-full mb-6">
@@ -111,16 +111,16 @@
                 </div>
                 <div class="bg-gray-50 rounded-xl p-4 border border-gray-300">
                     <div class="flex justify-between items-center mb-3">
-                        <span class="text-xs text-black-500 font-medium">JATAH KUOTA INSENTIF</span>
-                        <span class="text-xs font-bold bg-gray-200 text-black-700 px-2 py-0.5 rounded-full">{{ number_format($targetInsentif) }} Orang</span>
+                        <span class="text-xs text-slate-600 font-medium">JATAH KUOTA INSENTIF</span>
+                        <span class="text-xs font-bold bg-gray-200 text-slate-700 px-2 py-0.5 rounded-full">{{ number_format($targetInsentif) }} Orang</span>
                     </div>
                     <div class="space-y-3">
                         <div class="flex justify-between items-end">
                             <div class="flex items-center gap-2">
                                 <div class="w-2.5 h-2.5 rounded-full bg-emerald-500"></div>
                                 <div>
-                                    <p class="text-[10px] text-black-400 font-bold uppercase">Guru yang diajukan</p>
-                                    <p class="text-sm font-bold text-black-800">{{ number_format($sudahTerimaInsentif) }} <span class="text-[10px] font-normal text-black-400">Guru</span></p>
+                                    <p class="text-[10px] text-slate-500 font-bold uppercase">Guru yang diajukan</p>
+                                    <p class="text-sm font-bold text-slate-800">{{ number_format($sudahTerimaInsentif) }} <span class="text-[10px] font-normal text-slate-500">Guru</span></p>
                                 </div>
                             </div>
                             <span class="text-xs font-bold text-emerald-600">{{ $persenSudah }}%</span>
@@ -129,8 +129,8 @@
                             <div class="flex items-center gap-2">
                                 <div class="w-2.5 h-2.5 rounded-full bg-red-400"></div>
                                 <div>
-                                    <p class="text-[10px] text-black-400 font-bold uppercase">tidak terpilih untuk diajukan</p>
-                                    <p class="text-sm font-bold text-black-800">{{ number_format($belumTerimaInsentif) }} <span class="text-[10px] font-normal text-black-400">Guru</span></p>
+                                    <p class="text-[10px] text-slate-500 font-bold uppercase">tidak terpilih untuk diajukan</p>
+                                    <p class="text-sm font-bold text-slate-800">{{ number_format($belumTerimaInsentif) }} <span class="text-[10px] font-normal text-slate-500">Guru</span></p>
                                 </div>
                             </div>
                             <span class="text-xs font-bold text-red-500">{{ $persenBelum }}%</span>
@@ -150,8 +150,8 @@
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
                 </div>
                 <div>
-                    <h3 class="font-bold text-black-800 text-lg leading-tight">Status Pemberkasan Dokumen</h3>
-                    <p class="text-[11px] text-black-500 font-medium">Pemantauan Kelengkapan File</p>
+                    <h3 class="font-bold text-slate-800 text-lg leading-tight">Status Pemberkasan Dokumen</h3>
+                    <p class="text-[11px] text-slate-500 font-medium">Pemantauan Kelengkapan File</p>
                 </div>
             </div>
 
@@ -160,8 +160,8 @@
                 <div>
                     <div class="flex justify-between items-end mb-2">
                         <div>
-                            <p class="text-sm font-bold text-black-700">Dokumen Legalitas Lembaga</p>
-                            <p class="text-[10px] text-black-500 mt-0.5"><span class="font-bold text-black-700">{{ number_format($lembagaLengkap) }}</span> dari {{ number_format($totalLembagaBerkas) }} Lembaga</p>
+                            <p class="text-sm font-bold text-slate-700">Dokumen Legalitas Lembaga</p>
+                            <p class="text-[10px] text-slate-500 mt-0.5"><span class="font-bold text-slate-700">{{ number_format($lembagaLengkap) }}</span> dari {{ number_format($totalLembagaBerkas) }} Lembaga</p>
                         </div>
                         <span class="text-xl font-black {{ $persenLembaga == 100 ? 'text-emerald-500' : 'text-orange-500' }}">{{ $persenLembaga }}%</span>
                     </div>
@@ -182,8 +182,8 @@
                 <div>
                     <div class="flex justify-between items-end mb-2">
                         <div>
-                            <p class="text-sm font-bold text-black-700">Dokumen Identitas Guru</p>
-                            <p class="text-[10px] text-black-500 mt-0.5"><span class="font-bold text-black-700">{{ number_format($guruLengkap) }}</span> dari {{ number_format($totalGuruBerkas) }} Guru</p>
+                            <p class="text-sm font-bold text-slate-700">Dokumen Identitas Guru</p>
+                            <p class="text-[10px] text-slate-500 mt-0.5"><span class="font-bold text-slate-700">{{ number_format($guruLengkap) }}</span> dari {{ number_format($totalGuruBerkas) }} Guru</p>
                         </div>
                         <span class="text-xl font-black {{ $persenGuru == 100 ? 'text-emerald-500' : 'text-orange-500' }}">{{ $persenGuru }}%</span>
                     </div>
@@ -208,21 +208,21 @@
         <div class="bg-white rounded-2xl border border-gray-300 p-6 shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07)]">
             <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-0 gap-4">
                 <div>
-                    <h3 class="font-bold text-black-800 text-lg">Peta Sebaran Lembaga</h3>
-                    <p class="text-sm text-black-400">Statistik Total Lembaga per Kecamatan</p>
+                    <h3 class="font-bold text-slate-800 text-lg">Peta Sebaran Lembaga</h3>
+                    <p class="text-sm text-slate-500">Statistik Total Lembaga per Kecamatan</p>
                 </div>
                 <div class="flex gap-4">
                     <div class="flex items-center gap-2">
                         <span class="w-3 h-3 rounded bg-green-500"></span>
-                        <span class="text-xs text-black-500">TPQ</span>
+                        <span class="text-xs text-slate-600">TPQ</span>
                     </div>
                     <div class="flex items-center gap-2">
                         <span class="w-3 h-3 rounded bg-blue-500"></span>
-                        <span class="text-xs text-black-500">Madin</span>
+                        <span class="text-xs text-slate-600">Madin</span>
                     </div>
                     <div class="flex items-center gap-2">
                         <span class="w-8 h-1 rounded bg-orange-400"></span>
-                        <span class="text-xs text-black-500">Total</span>
+                        <span class="text-xs text-slate-600">Total</span>
                     </div>
                 </div>
             </div>
@@ -238,8 +238,8 @@
         <div class="bg-white rounded-2xl border border-gray-300 p-6 shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07)] ">
             <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-1 gap-4">
                 <div>
-                    <h3 class="font-bold text-black-800 text-lg">Distribusi Guru per Desa/Kelurahan</h3>
-                    <p class="text-sm text-black-400">Statistik Rinci Tenaga Pendidik</p>
+                    <h3 class="font-bold text-slate-800 text-lg">Distribusi Guru per Desa/Kelurahan</h3>
+                    <p class="text-sm text-slate-500">Statistik Rinci Tenaga Pendidik</p>
                 </div>
                 
                 <div class="flex flex-col sm:flex-row items-center gap-4 w-full sm:w-auto">
@@ -247,7 +247,7 @@
                     {{-- FILTER KECAMATAN (Hanya Admin yang bisa ubah) --}}
                     @if(Auth::user()->role != 'korcam')
                         <div class="w-full sm:w-48">
-                            <select id="filterKecamatanGuru" class="w-full border-gray-300 rounded-lg shadow-sm text-sm py-2 font-semibold text-black-700 focus:ring-blue-500 focus:border-blue-500 bg-slate-50 cursor-pointer hover:bg-slate-100 transition">
+                            <select id="filterKecamatanGuru" aria-label="Pilih Kecamatan" class="w-full border-gray-300 rounded-lg shadow-sm text-sm py-2 font-semibold text-slate-700 focus:ring-blue-500 focus:border-blue-500 bg-slate-50 cursor-pointer hover:bg-slate-100 transition">
                                 @foreach($kecamatans as $kec)
                                     <option value="{{ $kec->id }}">{{ $kec->nama_kecamatan }}</option>
                                 @endforeach
@@ -263,17 +263,23 @@
                     <div class="flex gap-4">
                         <div class="flex items-center gap-2">
                             <span class="w-3 h-3 rounded bg-green-500"></span>
-                            <span class="text-xs text-black-500">Guru TPQ</span>
+                            <span class="text-xs text-slate-600">Guru TPQ</span>
                         </div>
                         <div class="flex items-center gap-2">
                             <span class="w-3 h-3 rounded bg-blue-500"></span>
-                            <span class="text-xs text-black-500">Guru Madin</span>
+                            <span class="text-xs text-slate-600">Guru Madin</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <span class="w-3 h-3 rounded bg-purple-600"></span>
+                            <span class="text-xs text-slate-600">Guru Ponpes</span>
                         </div>
                         <div class="flex items-center gap-2">
                             <span class="w-8 h-1 rounded bg-orange-400"></span>
-                            <span class="text-xs text-black-500">Total</span>
+                            <span class="text-xs text-slate-600">Total</span>
                         </div>
                     </div>
+
+
                 </div>
             </div>
 
@@ -352,9 +358,16 @@
                     {
                         type: 'bar', label: 'Madin', data: {!! json_encode($dataMadinSebaran) !!},
                         backgroundColor: '#3b82f6', borderRadius: 4, barPercentage: 0.6, order: 1
+                    },
+                    {
+                        type: 'bar', label: 'Ponpes', data: {!! json_encode($dataPonpesSebaran ?? []) !!},
+                        backgroundColor: '#9333ea', borderRadius: 4, barPercentage: 0.6, order: 1
                     }
                 ]
             },
+
+
+
             options: {
                 responsive: true, maintainAspectRatio: false, interaction: { mode: 'index', intersect: false },
                 plugins: {
@@ -362,7 +375,11 @@
                     tooltip: { backgroundColor: 'rgba(255,255,255,0.95)', titleColor: '#1e293b', bodyColor: '#475569', borderColor: '#e2e8f0', borderWidth: 1, padding: 10, usePointStyle: true }
                 },
                 scales: {
-                    y: { beginAtZero: true, grid: { color: '#f1f5f9', drawBorder: false }, ticks: { font: { size: 11 }, stepSize: 1 } },
+                    y: { 
+                        beginAtZero: true, 
+                        grid: { color: '#f1f5f9', drawBorder: false }, 
+                        ticks: { font: { size: 11 }, stepSize: 5 } // <-- Ubah angka ini sesuai kelipatan jangkauan datamu
+                    },
                     x: { grid: { display: false }, ticks: { font: { size: 11 } } }
                 }
             }
@@ -402,12 +419,17 @@
                     {
                         type: 'bar', label: 'Guru TPQ', data: dataKec.tpq,
                         backgroundColor: '#10b981', borderRadius: 4, 
-                        barPercentage: 0.4, maxBarThickness: 30, order: 1 // Balok dirampingkan (0.4) dan dibatasi max 30px
+                        barPercentage: 0.4, maxBarThickness: 30, order: 1
                     },
                     {
                         type: 'bar', label: 'Guru Madin', data: dataKec.madin,
                         backgroundColor: '#3b82f6', borderRadius: 4, 
-                        barPercentage: 0.4, maxBarThickness: 30, order: 1 // Balok dirampingkan (0.4) dan dibatasi max 30px
+                        barPercentage: 0.4, maxBarThickness: 30, order: 1
+                    },
+                    {
+                        type: 'bar', label: 'Guru Ponpes', data: dataKec.ponpes || [],
+                        backgroundColor: '#9333ea', borderRadius: 4, 
+                        barPercentage: 0.4, maxBarThickness: 30, order: 1
                     }
                 ]
             };

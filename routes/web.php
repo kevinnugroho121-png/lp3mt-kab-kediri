@@ -10,6 +10,7 @@ use App\Models\Lembaga;
 use App\Models\Guru;
 use App\Models\Kecamatan;
 use App\Models\Desa;
+use App\Models\Dokumentasi;
 
 // Import Controller
 use App\Http\Controllers\ProfileController;
@@ -33,9 +34,13 @@ Route::get('/', function () {
     $guruMadin = Guru::where('jenis_guru', 'MADIN')->count();
     $guruPonpes = Guru::where('jenis_guru', 'PONPES')->count();
 
+    // Mengambil data dokumentasi galeri terbaru
+    $dokumentasis = Dokumentasi::latest()->get();
+
     return view('welcome', compact(
         'lembagaTPQ', 'lembagaMadin', 'lembagaPonpes',
-        'guruTPQ', 'guruMadin', 'guruPonpes'
+        'guruTPQ', 'guruMadin', 'guruPonpes',
+        'dokumentasis'
     ));
 });
 

@@ -45,13 +45,13 @@
                 <div class="mb-6">
                     <div class="flex items-center gap-2 mb-3 pb-1 border-b border-gray-600">
                         <span class="bg-gray-200 text-black-700 w-6 h-6 flex items-center justify-center rounded-full font-bold text-[10px]">A</span>
-                        <h3 class="text-base font-bold text-black-800">Data Pribadi & Kepegawaian</h3>
+                        <h3 class="text-base font-bold text-black-800">DATA DIRI GURU</h3>
                     </div>
 
                     <div class="grid grid-cols-2 md:grid-cols-4 gap-y-3 gap-x-4 px-2">
                         <div class="md:col-span-2 border-b border-gray-200 pb-1">
                             <span class="block text-[10px] font-bold text-gray-500 uppercase">Nama Lengkap (Sesuai KTP)</span>
-                            <span class="text-sm font-black text-black-800 uppercase">{{ $guru->nama_lengkap }}</span>
+                            <span class="text-sm font-bold text-black-800 uppercase">{{ $guru->nama_lengkap }}</span>
                         </div>
                         <div class="md:col-span-1 border-b border-gray-200 pb-1">
                             <span class="block text-[10px] font-bold text-gray-500 uppercase">NIK (16 Digit)</span>
@@ -59,23 +59,23 @@
                         </div>
                         <div class="md:col-span-1 border-b border-gray-200 pb-1">
                             <span class="block text-[10px] font-bold text-gray-500 uppercase">Jenis Kelamin</span>
-                            <span class="text-sm font-bold text-black-800">{{ $guru->jenis_kelamin == 'L' ? 'Laki-laki' : 'Perempuan' }}</span>
+                            <span class="text-sm font-bold text-black-800">{{ $guru->jenis_kelamin == 'L' ? 'LAKI-LAKI' : 'PEREMPUAN' }}</span>
                         </div>
 
                         <div class="md:col-span-1 border-b border-gray-200 pb-1">
-                            <span class="block text-[10px] font-bold text-gray-500 uppercase">Status Kepegawaian</span>
+                            <span class="block text-[10px] font-bold text-gray-500 uppercase">Status Guru</span>
                             <span class="text-sm font-bold text-black-800">{{ $guru->status_kepegawaian }}</span>
                         </div>
                         <div class="md:col-span-1 border-b border-gray-200 pb-1">
                             <span class="block text-[10px] font-bold text-gray-500 uppercase">Status Sertifikasi</span>
                             <span class="text-sm font-bold text-black-800">{{ $guru->status_sertifikasi }}</span>
                         </div>
-                        <div class="md:col-span-2 border-b border-gray-200 pb-1 flex flex-col justify-end">
+                        <div class="md:col-span-2 border-b border-gray-200 pb-1 ">
                             <span class="block text-[10px] font-bold text-gray-500 uppercase">Status Penerima Insentif</span>
                             @if($guru->penerima_insentif == 1)
-                                <span class="text-xs font-black text-green-700">✅ YA, BERHAK MENERIMA INSENTIF</span>
+                                <span class="text-xs font-bold text-green-600">✅ YA, BERHAK MENERIMA INSENTIF</span>
                             @else
-                                <span class="text-xs font-black text-gray-500">❌ TIDAK BERHAK MENERIMA INSENTIF</span>
+                                <span class="text-xs font-bold text-red-600">❌ TIDAK BERHAK MENERIMA INSENTIF</span>
                             @endif
                         </div>
 
@@ -85,7 +85,10 @@
                         </div>
                         <div class="md:col-span-1 border-b border-gray-200 pb-1">
                             <span class="block text-[10px] font-bold text-gray-500 uppercase">Tanggal Lahir</span>
-                            <span class="text-sm font-bold text-black-800">{{ $guru->tanggal_lahir ? $guru->tanggal_lahir->format('d-m-Y') : '-' }}</span>
+
+                            <span class="text-sm font-bold text-black-800">
+                                {{ $guru->tanggal_lahir ? \Carbon\Carbon::parse($guru->tanggal_lahir)->format('d-m-Y') : '-' }}
+                            </span>
                         </div>
                         <div class="md:col-span-1 border-b border-gray-200 pb-1">
                             <span class="block text-[10px] font-bold text-gray-500 uppercase">Nama Ibu Kandung</span>
@@ -95,52 +98,83 @@
                             <span class="block text-[10px] font-bold text-gray-500 uppercase">Agama</span>
                             <span class="text-sm font-bold text-black-800 uppercase">{{ $guru->agama }}</span>
                         </div>
-                    </div>
-                </div>
 
-                {{-- SECTION B: KELEMBAGAAN --}}
-                <div class="mb-6">
-                    <div class="flex items-center gap-2 mb-3 pb-1 border-b border-gray-600">
-                        <span class="bg-gray-200 text-black-700 w-6 h-6 flex items-center justify-center rounded-full font-bold text-[10px]">B</span>
-                        <h3 class="text-base font-bold text-black-800">Kelembagaan & Wilayah</h3>
-                    </div>
-
-                    <div class="grid grid-cols-2 md:grid-cols-4 gap-y-3 gap-x-4 px-2">
                         <div class="md:col-span-1 border-b border-gray-200 pb-1">
-                            <span class="block text-[10px] font-bold text-gray-500 uppercase">Jenis Lembaga</span>
-                            <span class="text-sm font-black text-gray-500 uppercase">{{ $guru->jenis_guru }}</span>
-                        </div>
-                        <div class="md:col-span-1 border-b border-gray-200 pb-1">
-                            <span class="block text-[10px] font-bold text-gray-500 uppercase">Kecamatan</span>
-                            <span class="text-sm font-bold text-black-800 uppercase">{{ $guru->kecamatan }}</span>
-                        </div>
-                        <div class="md:col-span-2 border-b border-gray-200 pb-1">
-                            <span class="block text-[10px] font-bold text-gray-500 uppercase">Desa / Kelurahan</span>
+                            <span class="block text-[10px] font-bold text-gray-500 uppercase">Desa / Kelurahan (KTP)</span>
                             <span class="text-sm font-bold text-black-800 uppercase">{{ $guru->desa }}</span>
                         </div>
 
-                        <div class="md:col-span-4 border-b border-gray-200 pb-1">
-                            <span class="block text-[10px] font-bold text-green-700 uppercase">Lembaga Tempat Mengajar</span>
-                            <span class="text-sm font-black text-black-800 uppercase">{{ $guru->lembaga->nama_lembaga ?? '-' }}</span>
+                        <div class="md:col-span-1 border-b border-gray-200 pb-1">
+                            <span class="block text-[10px] font-bold text-gray-500 uppercase">Kecamatan (KTP)</span>
+                            <span class="text-sm font-bold text-black-800 uppercase">{{ $guru->kecamatan }}</span>
                         </div>
-
-                        <div class="md:col-span-4 border-b border-gray-200 pb-1">
-                            <span class="block text-[10px] font-bold text-gray-500 uppercase">Alamat Lengkap (KTP)</span>
-                            <span class="text-sm font-bold text-black-800 uppercase">{{ $guru->alamat_ktp }}</span>
-                        </div>
+                        
+                        
 
                         <div class="md:col-span-1 border-b border-gray-200 pb-1">
                             <span class="block text-[10px] font-bold text-gray-500 uppercase">Kabupaten</span>
                             <span class="text-sm font-bold text-black-800 uppercase">KEDIRI</span>
                         </div>
+
                         <div class="md:col-span-1 border-b border-gray-200 pb-1">
                             <span class="block text-[10px] font-bold text-gray-500 uppercase">Nomor HP</span>
                             <span class="text-sm font-bold text-black-800">{{ $guru->no_hp }}</span>
                         </div>
-                        <div class="md:col-span-2 border-b border-gray-200 pb-1">
-                            <span class="block text-[10px] font-bold text-gray-500 uppercase">Nomor Rekening BANK JATIM</span>
-                            <span class="text-sm font-black text-black-800">{{ $guru->nomor_rekening }}</span>
+
+                        
+
+                        <div class="md:col-span-3  border-b border-gray-200 pb-1">
+                            <span class="block text-[10px] font-bold text-gray-500 uppercase">Alamat Lengkap (KTP)</span>
+                            <span class="text-sm font-bold text-black-800 uppercase">{{ $guru->alamat_ktp }}</span>
                         </div>
+
+
+
+                        
+                        <div class="md:col-span-1 border-b border-gray-200 pb-1">
+                            <span class="block text-[10px] font-bold text-gray-500 uppercase">Nomor Rekening BANK JATIM</span>
+                            <span class="text-sm font-bold text-black-800">{{ $guru->nomor_rekening }}</span>
+                        </div>
+
+
+                    </div>
+                </div>
+
+
+
+                {{-- SECTION B: KELEMBAGAAN --}}
+                <div class="mb-6">
+                    <div class="flex items-center gap-2 mb-3 pb-1 border-b border-gray-600">
+                        <span class="bg-gray-200 text-black-700 w-6 h-6 flex items-center justify-center rounded-full font-bold text-[10px]">B</span>
+                        <h3 class="text-base font-bold text-black-800">LEMBAGA TEMPAT MENGAJAR</h3>
+                    </div>
+
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-y-3 gap-x-4 px-2">
+                        <div class="md:col-span-1 border-b border-gray-200 pb-1">
+                            <span class="block text-[10px] font-bold text-gray-500 uppercase">Jenis Lembaga</span>
+                            <span class="text-sm font-bold text-black-800 uppercase">{{ $guru->jenis_guru }}</span>
+                        </div>
+
+                        <div class="md:col-span-1 border-b border-gray-200 pb-1">
+                            <span class="block text-[10px] font-bold text-gray-500 uppercase">Lembaga Tempat Mengajar</span>
+                            <span class="text-sm font-bold text-black-800 uppercase">{{ $guru->lembaga->nama_lembaga ?? '-' }}</span>
+                        </div>
+
+                        <div class="md:col-span-1 border-b border-gray-200 pb-1">
+                            <span class="block text-[10px] font-bold text-gray-500 uppercase">Desa / Kelurahan Lembaga</span>
+                            <span class="text-sm font-bold text-black-800 uppercase">{{ $guru->lembaga->desa->nama_desa ?? '-' }}</span>
+                        </div>    
+
+                        <div class="md:col-span-1 border-b border-gray-200 pb-1">
+                            <span class="block text-[10px] font-bold text-gray-500 uppercase">Kecamatan Lembaga</span>
+                            <span class="text-sm font-bold text-black-800 uppercase">{{ $guru->lembaga->kecamatan->nama_kecamatan ?? '-' }}</span>
+                        </div>
+
+                                           
+
+
+
+
                     </div>
                 </div>
 
@@ -148,7 +182,7 @@
                 <div class="mb-4">
                     <div class="flex items-center gap-2 mb-3 pb-1 border-b border-gray-600">
                         <span class="bg-gray-200 text-black-700 w-6 h-6 flex items-center justify-center rounded-full font-bold text-[10px]">C</span>
-                        <h3 class="text-base font-bold text-black-800">Dokumen Legalitas</h3>
+                        <h3 class="text-base font-bold text-black-800">DOKUMEN LEGALITAS</h3>
                     </div>
 
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-3">

@@ -212,15 +212,18 @@ class GuruController extends Controller
         $lembagas = $query->get();
 
         // 3. Data Wilayah
+        $semua_kecamatan_kediri = Kecamatan::orderBy('nama_kecamatan')->get();
+        $semua_desa_kediri = Desa::orderBy('nama_desa')->get();
+
         if ($user->role == 'korcam') {
             $kecamatans = Kecamatan::where('id', $user->kecamatan_id)->orderBy('nama_kecamatan')->get();
             $desas = Desa::where('kecamatan_id', $user->kecamatan_id)->orderBy('nama_desa')->get();
         } else {
-            $kecamatans = Kecamatan::orderBy('nama_kecamatan')->get();
-            $desas = Desa::orderBy('nama_desa')->get();
+            $kecamatans = $semua_kecamatan_kediri;
+            $desas = $semua_desa_kediri;
         }
 
-        return view('admin.guru.create', compact('lembagas', 'kecamatans', 'desas', 'type'));
+        return view('admin.guru.create', compact('lembagas', 'kecamatans', 'desas', 'semua_kecamatan_kediri', 'semua_desa_kediri', 'type'));
     }
 
     public function store(Request $request)
@@ -241,10 +244,13 @@ class GuruController extends Controller
             
             'nama_ibu_kandung'  => 'required|string',
             'agama'             => 'required|string',
+            
             'alamat_ktp'        => 'required|string',
-            'kecamatan'         => 'required|string', 
-            'desa'              => 'required|string', 
+            'kecamatan_ktp'     => 'required|string', 
+            'desa_ktp'          => 'required|string', 
             'kabupaten'         => 'required|string',
+
+
             'no_hp'             => 'required|numeric',
             'nomor_rekening'    => 'nullable|numeric',
             
@@ -276,8 +282,8 @@ class GuruController extends Controller
             'penerima_insentif' => $request->penerima_insentif, 
 
             'alamat_ktp'        => strtoupper($request->alamat_ktp),
-            'desa'              => strtoupper($request->desa),
-            'kecamatan'         => strtoupper($request->kecamatan),
+            'desa'              => strtoupper($request->desa_ktp), // Ambil dari input_ktp unik
+            'kecamatan'         => strtoupper($request->kecamatan_ktp), // Ambil dari input_ktp unik
             'kabupaten'         => strtoupper($request->kabupaten),
 
 
@@ -338,18 +344,22 @@ class GuruController extends Controller
             abort(403, 'Akses Ditolak.');
         }
         
-        // Filter Dropdown di Halaman Edit
+        // Data Wilayah Bebas untuk Alamat KTP
+        $semua_kecamatan_kediri = Kecamatan::orderBy('nama_kecamatan')->get();
+        $semua_desa_kediri = Desa::orderBy('nama_desa')->get();
+
+        // Filter Dropdown Lembaga & Wilayah Kerja di Halaman Edit
         if ($user->role == 'korcam') {
             $lembagas = Lembaga::where('kecamatan_id', $user->kecamatan_id)->orderBy('nama_lembaga')->get();
             $kecamatans = Kecamatan::where('id', $user->kecamatan_id)->orderBy('nama_kecamatan')->get();
             $desas = Desa::where('kecamatan_id', $user->kecamatan_id)->orderBy('nama_desa')->get();
         } else {
             $lembagas = Lembaga::orderBy('nama_lembaga')->get();
-            $kecamatans = Kecamatan::orderBy('nama_kecamatan')->get();
-            $desas = Desa::orderBy('nama_desa')->get();
+            $kecamatans = $semua_kecamatan_kediri;
+            $desas = $semua_desa_kediri;
         }
 
-        return view('admin.guru.edit', compact('guru', 'lembagas', 'kecamatans', 'desas'));
+        return view('admin.guru.edit', compact('guru', 'lembagas', 'kecamatans', 'desas', 'semua_kecamatan_kediri', 'semua_desa_kediri'));
     }
 
     public function update(Request $request, $id)
@@ -362,11 +372,20 @@ class GuruController extends Controller
             'nik'               => 'required|numeric|digits:16|unique:gurus,nik,' . $id,
             'status_kepegawaian'=> 'required|string',
             'status_sertifikasi'=> 'required|string',
-            'penerima_insentif' => 'required|boolean', // [BARU] Validasi Update
+            'penerima_insentif' => 'required|boolean',
+            'kecamatan_ktp'     => 'required|string', // [BARU] Validasi unik KTP
+            'desa_ktp'          => 'required|string', // [BARU] Validasi unik KTP
             'file_ktp'          => 'nullable|mimes:pdf|max:2048',
             'file_kk'           => 'nullable|mimes:pdf|max:2048',
             'file_bukurekening' => 'nullable|mimes:pdf|max:2048',
         ]);
+
+        // Ambil semua data input kecuali file dan input wilayah KTP khusus
+        $data = $request->except(['file_ktp', 'file_kk', 'file_bukurekening', 'kecamatan_ktp', 'desa_ktp']);
+        
+        // Petakan manual hasil input unik ke kolom asli database
+        $data['kecamatan'] = $request->kecamatan_ktp;
+        $data['desa'] = $request->desa_ktp;
 
         // Ambil semua data input kecuali file
         $data = $request->except(['file_ktp', 'file_kk', 'file_bukurekening']);
