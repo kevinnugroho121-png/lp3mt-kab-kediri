@@ -155,6 +155,7 @@ class LembagaImport implements ToCollection, WithHeadingRow
                     'ormas'                   => strtoupper($row['ormas'] ?? 'NU'),
                     'status'                  => strtoupper($row['status'] ?? 'AKTIF'),
                     'alamat'                  => strtoupper($row['alamat'] ?? ''),
+                    'link_gmaps'              => !empty($row['link_google_maps'] ?? $row['link_gmaps'] ?? $row['google_maps'] ?? null) ? trim($row['link_google_maps'] ?? $row['link_gmaps'] ?? $row['google_maps']) : null,
                     'kepala_lembaga'          => strtoupper($row['kepala_lembaga'] ?? ''),
                     'no_telp'                 => $row['no_hp'] ?? $row['no_telp'] ?? null,
                     

@@ -53,15 +53,38 @@
                             <span class="block text-[10px] font-bold text-gray-500 uppercase">Desa / Kelurahan</span>
                             <span class="text-sm font-bold text-black-800 uppercase">{{ $lembaga->desa->nama_desa ?? '-' }}</span>
                         </div>
-                        <div class="md:col-span-1 border-b border-gray-200 pb-1">
+                        {{-- NSBQ dibuat 2 kolom agar seimbang --}}
+                        <div class="md:col-span-2 border-b border-gray-200 pb-1">
                             <span class="block text-[10px] font-bold text-gray-500 uppercase">Nomor Statistik (NSBQ)</span>
                             <span class="text-sm font-bold text-black-800 uppercase">{{ $lembaga->nsbq ?? '-' }}</span>
                         </div>
-                        <div class="md:col-span-1 border-b border-gray-200 pb-1">
+
+                        {{-- Alamat Lengkap (2 Kolom) --}}
+                        <div class="md:col-span-2 border-b border-gray-200 pb-1">
                             <span class="block text-[10px] font-bold text-gray-500 uppercase">Alamat Lengkap</span>
                             <span class="text-sm font-bold text-black-800 uppercase">
                                 {{ (!empty($lembaga->alamat) && $lembaga->alamat !== '-') ? $lembaga->alamat : (($lembaga->desa->nama_desa ?? '-') . ', KEC. ' . ($lembaga->kecamatan->nama_kecamatan ?? '-')) }}
                             </span>
+                        </div>
+
+                        {{-- [BARU] Titik Lokasi / Link Google Maps (2 Kolom) --}}
+                        <div class="md:col-span-2 border-b border-gray-200 pb-1">
+                            <span class="block text-[10px] font-bold text-gray-500 uppercase">Titik Lokasi (Google Maps)</span>
+                            @if(!empty($lembaga->link_gmaps) && $lembaga->link_gmaps !== '-')
+                                @php
+                                    $urlMaps = str_starts_with($lembaga->link_gmaps, 'http') 
+                                        ? $lembaga->link_gmaps 
+                                        : 'https://www.google.com/maps/search/?api=1&query=' . urlencode($lembaga->link_gmaps);
+                                @endphp
+                                <div class="flex items-center gap-2 mt-0.5">
+                                    <a href="{{ $urlMaps }}" target="_blank" class="inline-flex items-center gap-1 text-xs font-bold text-blue-600 hover:text-blue-800 bg-blue-50 px-2 py-0.5 rounded border border-blue-200 hover:bg-blue-100 transition shadow-sm">
+                                        📍 Buka di Google Maps
+                                    </a>
+                                    <span class="text-[10px] text-gray-500 font-medium truncate max-w-[200px]" title="{{ $lembaga->link_gmaps }}">({{ $lembaga->link_gmaps }})</span>
+                                </div>
+                            @else
+                                <span class="text-xs font-bold text-gray-400 italic">Belum Diisi</span>
+                            @endif
                         </div>
                     </div>
                 </div>

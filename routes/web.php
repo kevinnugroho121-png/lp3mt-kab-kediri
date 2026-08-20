@@ -132,16 +132,24 @@ Route::get('/dashboard', function () {
         $dataTotalSebaran[] = $jmlTpq + $jmlMadin;
     }
 
+    // Inisialisasi Penampung Data Sebaran Guru & Lembaga per Kecamatan
     $sebaranGuruPerKecamatan = [];
+    $sebaranLembagaPerKecamatan = [];
+
     foreach ($kecamatans as $kec) {
         $sebaranGuruPerKecamatan[$kec->id] = [
             'nama_kecamatan' => $kec->nama_kecamatan,
-            'labels' => [], 'tpq' => [], 'madin' => [], 'total' => []
+            'labels' => [], 'tpq' => [], 'madin' => [], 'ponpes' => [], 'total' => []
+        ];
+        $sebaranLembagaPerKecamatan[$kec->id] = [
+            'nama_kecamatan' => $kec->nama_kecamatan,
+            'labels' => [], 'tpq' => [], 'madin' => [], 'ponpes' => [], 'total' => []
         ];
     }
 
     $desaList = Desa::whereIn('kecamatan_id', $kecamatans->pluck('id'))->orderBy('nama_desa')->get();
     
+    // 1. Ambil Hitungan Guru per Desa
     $guruCounts = DB::table('gurus')
         ->join('lembagas', 'gurus.lembaga_id', '=', 'lembagas.id')
         ->select('lembagas.desa_id', 'gurus.jenis_guru', DB::raw('count(*) as total'))
@@ -153,14 +161,40 @@ Route::get('/dashboard', function () {
         $mappedCounts[$gc->desa_id][$gc->jenis_guru] = $gc->total;
     }
 
+    // 2. [BARU] Ambil Hitungan Lembaga per Desa
+    $lembagaCounts = DB::table('lembagas')
+        ->select('desa_id', 'jenis_lembaga', DB::raw('count(*) as total'))
+        ->groupBy('desa_id', 'jenis_lembaga')
+        ->get();
+
+    $mappedLembagaCounts = [];
+    foreach ($lembagaCounts as $lc) {
+        $mappedLembagaCounts[$lc->desa_id][$lc->jenis_lembaga] = $lc->total;
+    }
+
+    // 3. Masukkan Data ke Tiap Desa
     foreach ($desaList as $desa) {
-        $tpq = $mappedCounts[$desa->id]['TPQ'] ?? 0;
-        $madin = $mappedCounts[$desa->id]['MADIN'] ?? 0;
+        // Data Guru
+        $gTpq = $mappedCounts[$desa->id]['TPQ'] ?? 0;
+        $gMadin = $mappedCounts[$desa->id]['MADIN'] ?? 0;
+        $gPonpes = $mappedCounts[$desa->id]['PONPES'] ?? 0;
         
         $sebaranGuruPerKecamatan[$desa->kecamatan_id]['labels'][] = $desa->nama_desa;
-        $sebaranGuruPerKecamatan[$desa->kecamatan_id]['tpq'][] = $tpq;
-        $sebaranGuruPerKecamatan[$desa->kecamatan_id]['madin'][] = $madin;
-        $sebaranGuruPerKecamatan[$desa->kecamatan_id]['total'][] = $tpq + $madin;
+        $sebaranGuruPerKecamatan[$desa->kecamatan_id]['tpq'][] = $gTpq;
+        $sebaranGuruPerKecamatan[$desa->kecamatan_id]['madin'][] = $gMadin;
+        $sebaranGuruPerKecamatan[$desa->kecamatan_id]['ponpes'][] = $gPonpes;
+        $sebaranGuruPerKecamatan[$desa->kecamatan_id]['total'][] = $gTpq + $gMadin + $gPonpes;
+
+        // Data Lembaga
+        $lTpq = $mappedLembagaCounts[$desa->id]['TPQ'] ?? 0;
+        $lMadin = $mappedLembagaCounts[$desa->id]['MADIN'] ?? 0;
+        $lPonpes = $mappedLembagaCounts[$desa->id]['PONPES'] ?? 0;
+
+        $sebaranLembagaPerKecamatan[$desa->kecamatan_id]['labels'][] = $desa->nama_desa;
+        $sebaranLembagaPerKecamatan[$desa->kecamatan_id]['tpq'][] = $lTpq;
+        $sebaranLembagaPerKecamatan[$desa->kecamatan_id]['madin'][] = $lMadin;
+        $sebaranLembagaPerKecamatan[$desa->kecamatan_id]['ponpes'][] = $lPonpes;
+        $sebaranLembagaPerKecamatan[$desa->kecamatan_id]['total'][] = $lTpq + $lMadin + $lPonpes;
     }
 
     return view('dashboard', compact(
@@ -169,9 +203,9 @@ Route::get('/dashboard', function () {
         'guruPNS', 'guruP3KFull', 'guruP3KParuh', 'guruInpassing', 'guruNonASN',
         'targetInsentif', 'sudahTerimaInsentif', 'belumTerimaInsentif', 'persenSudah', 'persenBelum',
         'kecamatanLabels', 'dataTpqSebaran', 'dataMadinSebaran', 'dataTotalSebaran',
-        'kecamatans', 'sebaranGuruPerKecamatan',
-        'totalLembagaBerkas', 'lembagaLengkap', 'persenLembaga', // [BARU]
-        'totalGuruBerkas', 'guruLengkap', 'persenGuru' // [BARU]
+        'kecamatans', 'sebaranGuruPerKecamatan', 'sebaranLembagaPerKecamatan',
+        'totalLembagaBerkas', 'lembagaLengkap', 'persenLembaga',
+        'totalGuruBerkas', 'guruLengkap', 'persenGuru'
     ));
 
 

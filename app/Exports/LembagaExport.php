@@ -52,7 +52,7 @@ class LembagaExport implements FromQuery, WithHeadings, WithMapping, ShouldAutoS
     public function headings(): array
     {
         return [
-            'NO.', 'NAMA LEMBAGA', 'JENIS LEMBAGA', 'ORMAS', 'KEC', 'DESA',
+            'NO.', 'NAMA LEMBAGA', 'JENIS LEMBAGA', 'ORMAS', 'KEC', 'DESA', 'LINK GOOGLE MAPS',
             'JUMLAH SANTRI', 'JUMLAH GURU', 'PENERIMA INSENTIF', 'BELUM MENERIMA',
             'IJOP', 'MASA BERLAKU IJOP', 'STATUS', 'KEPALA LEMBAGA', 'NO HP',
             'PNS', 'PPPK', 'SERTIFIKASI', 'KETERANGAN'
@@ -71,6 +71,7 @@ class LembagaExport implements FromQuery, WithHeadings, WithMapping, ShouldAutoS
             $lembaga->ormas,
             $lembaga->kecamatan->nama_kecamatan ?? '-',
             $lembaga->desa->nama_desa ?? '-',
+            $lembaga->link_gmaps ?? '-',
             $lembaga->jumlah_santri,
             $lembaga->jumlah_guru,
             $lembaga->penerima_insentif,

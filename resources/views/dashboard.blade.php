@@ -206,23 +206,46 @@
         {{-- BAGIAN BAWAH 1: GRAFIK SEBARAN KECAMATAN --}}
         {{-- ==================================================== --}}
         <div class="bg-white rounded-2xl border border-gray-300 p-6 shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07)]">
-            <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-0 gap-4">
+            <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-2 gap-4">
                 <div>
                     <h3 class="font-bold text-slate-800 text-lg">Peta Sebaran Lembaga</h3>
-                    <p class="text-sm text-slate-500">Statistik Total Lembaga per Kecamatan</p>
+                    <p class="text-sm text-slate-500">Statistik Total Lembaga per Wilayah</p>
                 </div>
-                <div class="flex gap-4">
-                    <div class="flex items-center gap-2">
-                        <span class="w-3 h-3 rounded bg-green-500"></span>
-                        <span class="text-xs text-slate-600">TPQ</span>
-                    </div>
-                    <div class="flex items-center gap-2">
-                        <span class="w-3 h-3 rounded bg-blue-500"></span>
-                        <span class="text-xs text-slate-600">Madin</span>
-                    </div>
-                    <div class="flex items-center gap-2">
-                        <span class="w-8 h-1 rounded bg-orange-400"></span>
-                        <span class="text-xs text-slate-600">Total</span>
+                
+                <div class="flex flex-col sm:flex-row items-center gap-4 w-full sm:w-auto">
+                    {{-- FILTER KECAMATAN LEMBAGA --}}
+                    @if(Auth::user()->role != 'korcam')
+                        <div class="w-full sm:w-48">
+                            <select id="filterKecamatanLembaga" aria-label="Pilih Kecamatan Lembaga" class="w-full border-gray-300 rounded-lg shadow-sm text-sm py-2 font-semibold text-slate-700 focus:ring-blue-500 focus:border-blue-500 bg-slate-50 cursor-pointer hover:bg-slate-100 transition">
+                                <option value="ALL" selected>SEMUA KECAMATAN</option>
+                                @foreach($kecamatans as $kec)
+                                    <option value="{{ $kec->id }}">{{ $kec->nama_kecamatan }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                    @else
+                        <input type="hidden" id="filterKecamatanLembaga" value="{{ Auth::user()->kecamatan_id }}">
+                        <span class="bg-blue-50 border border-blue-100 text-blue-700 font-bold px-4 py-2 rounded-lg text-sm shadow-sm">Kec. {{ $kecamatanLabels[0] ?? '' }}</span>
+                    @endif
+
+                    {{-- Legend Custom --}}
+                    <div class="flex gap-4">
+                        <div class="flex items-center gap-2">
+                            <span class="w-3 h-3 rounded bg-green-500"></span>
+                            <span class="text-xs text-slate-600">TPQ</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <span class="w-3 h-3 rounded bg-blue-500"></span>
+                            <span class="text-xs text-slate-600">Madin</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <span class="w-3 h-3 rounded bg-purple-600"></span>
+                            <span class="text-xs text-slate-600">Ponpes</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <span class="w-8 h-1 rounded bg-orange-400"></span>
+                            <span class="text-xs text-slate-600">Total</span>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -248,6 +271,7 @@
                     @if(Auth::user()->role != 'korcam')
                         <div class="w-full sm:w-48">
                             <select id="filterKecamatanGuru" aria-label="Pilih Kecamatan" class="w-full border-gray-300 rounded-lg shadow-sm text-sm py-2 font-semibold text-slate-700 focus:ring-blue-500 focus:border-blue-500 bg-slate-50 cursor-pointer hover:bg-slate-100 transition">
+                                <option value="ALL" selected>SEMUA KECAMATAN</option>
                                 @foreach($kecamatans as $kec)
                                     <option value="{{ $kec->id }}">{{ $kec->nama_kecamatan }}</option>
                                 @endforeach
@@ -338,52 +362,143 @@
             options: { responsive: true, maintainAspectRatio: false, cutout: '75%', plugins: { legend: { display: false } } }
         });
 
+
+
         // ==========================================
-        // 4. CHART LEMBAGA PER KECAMATAN (ATAS)
+        // 4. CHART LEMBAGA (DINAMIS: FILTER SEMUA & PER KECAMATAN)
         // ==========================================
-        new Chart(document.getElementById('chartSebaranLembaga'), {
-            type: 'bar', 
-            data: {
-                labels: {!! json_encode($kecamatanLabels) !!},
-                datasets: [
-                    {
-                        type: 'line', label: 'Total Lembaga', data: {!! json_encode($dataTotalSebaran) !!},
-                        borderColor: '#fb923c', backgroundColor: '#fb923c', borderWidth: 3,
-                        pointBackgroundColor: '#fff', pointBorderColor: '#fb923c', pointRadius: 5, tension: 0.4, order: 0 
-                    },
-                    {
-                        type: 'bar', label: 'TPQ', data: {!! json_encode($dataTpqSebaran) !!},
-                        backgroundColor: '#10b981', borderRadius: 4, barPercentage: 0.6, order: 1
-                    },
-                    {
-                        type: 'bar', label: 'Madin', data: {!! json_encode($dataMadinSebaran) !!},
-                        backgroundColor: '#3b82f6', borderRadius: 4, barPercentage: 0.6, order: 1
-                    },
-                    {
-                        type: 'bar', label: 'Ponpes', data: {!! json_encode($dataPonpesSebaran ?? []) !!},
-                        backgroundColor: '#9333ea', borderRadius: 4, barPercentage: 0.6, order: 1
+        const dataLembagaDesa = {!! json_encode($sebaranLembagaPerKecamatan ?? []) !!};
+        const defaultLembagaSemua = {
+            labels: {!! json_encode($kecamatanLabels) !!},
+            total: {!! json_encode($dataTotalSebaran) !!},
+            tpq: {!! json_encode($dataTpqSebaran) !!},
+            madin: {!! json_encode($dataMadinSebaran) !!},
+            ponpes: {!! json_encode($dataPonpesSebaran ?? []) !!}
+        };
+
+        const ctxSebaranLembaga = document.getElementById('chartSebaranLembaga');
+        let chartLembagaObj;
+
+        function updateLembagaChart(kecamatanId) {
+            let chartData;
+
+            // 1. JIKA PILIH "SEMUA KECAMATAN" -> TAMPILKAN DATA SE-KABUPATEN
+            if (kecamatanId === 'ALL') {
+                chartData = {
+                    labels: defaultLembagaSemua.labels,
+                    datasets: [
+                        {
+                            type: 'line', label: 'Total Lembaga', data: defaultLembagaSemua.total,
+                            borderColor: '#fb923c', backgroundColor: '#fb923c', borderWidth: 2,
+                            pointBackgroundColor: '#fff', pointBorderColor: '#fb923c', pointRadius: 4, pointHoverRadius: 6, tension: 0.4, order: 0 
+                        },
+                        {
+                            type: 'bar', label: 'TPQ', data: defaultLembagaSemua.tpq,
+                            backgroundColor: '#10b981', borderRadius: 4, barPercentage: 0.4, maxBarThickness: 30, order: 1
+                        },
+                        {
+                            type: 'bar', label: 'Madin', data: defaultLembagaSemua.madin,
+                            backgroundColor: '#3b82f6', borderRadius: 4, barPercentage: 0.4, maxBarThickness: 30, order: 1
+                        },
+                        {
+                            type: 'bar', label: 'Ponpes', data: defaultLembagaSemua.ponpes,
+                            backgroundColor: '#9333ea', borderRadius: 4, barPercentage: 0.4, maxBarThickness: 30, order: 1
+                        }
+                    ]
+                };
+            } else {
+                // 2. JIKA PILIH KECAMATAN TERTENTU -> TAMPILKAN RINCIAN PER DESA
+                const dataKec = dataLembagaDesa[kecamatanId];
+                
+                if (!dataKec) {
+                    if (chartLembagaObj) {
+                        chartLembagaObj.data.labels = [];
+                        chartLembagaObj.data.datasets.forEach(ds => ds.data = []);
+                        chartLembagaObj.update();
                     }
-                ]
-            },
-
-
-
-            options: {
-                responsive: true, maintainAspectRatio: false, interaction: { mode: 'index', intersect: false },
-                plugins: {
-                    legend: { display: false },
-                    tooltip: { backgroundColor: 'rgba(255,255,255,0.95)', titleColor: '#1e293b', bodyColor: '#475569', borderColor: '#e2e8f0', borderWidth: 1, padding: 10, usePointStyle: true }
-                },
-                scales: {
-                    y: { 
-                        beginAtZero: true, 
-                        grid: { color: '#f1f5f9', drawBorder: false }, 
-                        ticks: { font: { size: 11 }, stepSize: 5 } // <-- Ubah angka ini sesuai kelipatan jangkauan datamu
-                    },
-                    x: { grid: { display: false }, ticks: { font: { size: 11 } } }
+                    return;
                 }
+
+                chartData = {
+                    labels: dataKec.labels,
+                    datasets: [
+                        {
+                            type: 'line', label: 'Total Lembaga', data: dataKec.total,
+                            borderColor: '#fb923c', backgroundColor: '#fb923c', borderWidth: 2,
+                            pointBackgroundColor: '#fff', pointBorderColor: '#fb923c', pointRadius: 4, pointHoverRadius: 6, tension: 0.4, order: 0 
+                        },
+                        {
+                            type: 'bar', label: 'TPQ', data: dataKec.tpq,
+                            backgroundColor: '#10b981', borderRadius: 4, barPercentage: 0.4, maxBarThickness: 30, order: 1
+                        },
+                        {
+                            type: 'bar', label: 'Madin', data: dataKec.madin,
+                            backgroundColor: '#3b82f6', borderRadius: 4, barPercentage: 0.4, maxBarThickness: 30, order: 1
+                        },
+                        {
+                            type: 'bar', label: 'Ponpes', data: dataKec.ponpes || [],
+                            backgroundColor: '#9333ea', borderRadius: 4, barPercentage: 0.4, maxBarThickness: 30, order: 1
+                        }
+                    ]
+                };
             }
-        });
+
+            if (chartLembagaObj) {
+                chartLembagaObj.data = chartData;
+                chartLembagaObj.update();
+            } else {
+                chartLembagaObj = new Chart(ctxSebaranLembaga, {
+                    type: 'bar',
+                    data: chartData,
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        interaction: { mode: 'index', intersect: false },
+                        plugins: {
+                            legend: { display: false },
+                            tooltip: {
+                                backgroundColor: 'rgba(255, 255, 255, 0.98)',
+                                titleColor: '#0f172a',
+                                bodyColor: '#475569',
+                                borderColor: '#cbd5e1',
+                                borderWidth: 1,
+                                padding: 12,
+                                usePointStyle: true,
+                                boxPadding: 6,
+                                titleFont: { size: 13, family: "'Inter', sans-serif", weight: 'bold' },
+                                bodyFont: { size: 12, family: "'Inter', sans-serif" },
+                                caretSize: 6,
+                                cornerRadius: 8
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                border: { dash: [5, 5], display: false },
+                                grid: { color: '#e2e8f0', tickLength: 0 },
+                                ticks: { font: { size: 11 }, padding: 10, stepSize: 5 }
+                            },
+                            x: {
+                                border: { display: false },
+                                grid: { display: false },
+                                ticks: { font: { size: 11 }, maxRotation: 45, minRotation: 45 }
+                            }
+                        }
+                    }
+                });
+            }
+        }
+
+        // Listener Filter Lembaga
+        const selectKecamatanLembaga = document.getElementById('filterKecamatanLembaga');
+        if (selectKecamatanLembaga) {
+            updateLembagaChart(selectKecamatanLembaga.value);
+            if (selectKecamatanLembaga.tagName.toLowerCase() === 'select') {
+                selectKecamatanLembaga.addEventListener('change', function() {
+                    updateLembagaChart(this.value);
+                });
+            }
+        }
 
         // ==========================================
         // 5. CHART GURU PER DESA (BAWAH)
@@ -392,47 +507,106 @@
         const ctxGuruDesa = document.getElementById('chartGuruDesa');
         let chartGuruDesaObj; // Variable penampung grafik
 
+
+
         function updateGuruChart(kecamatanId) {
-            const dataKec = dataGuruDesa[kecamatanId];
-            
-            // Handle jika data kecamatan tidak ditemukan/kosong
-            if(!dataKec) {
-                if(chartGuruDesaObj) {
-                    chartGuruDesaObj.data.labels = [];
-                    chartGuruDesaObj.data.datasets.forEach(ds => ds.data = []);
-                    chartGuruDesaObj.update();
+            let chartData;
+
+            // JIKA PILIH "SEMUA KECAMATAN" -> TAMPILKAN DATA SE-KABUPATEN
+            if (kecamatanId === 'ALL') {
+                const allKecLabels = [];
+                const allTpq = [];
+                const allMadin = [];
+                const allPonpes = [];
+                const allTotal = [];
+
+                const selectEl = document.getElementById('filterKecamatanGuru');
+                if (selectEl && selectEl.tagName.toLowerCase() === 'select') {
+                    Array.from(selectEl.options).forEach(opt => {
+                        if (opt.value !== 'ALL' && dataGuruDesa[opt.value]) {
+                            const dKec = dataGuruDesa[opt.value];
+                            allKecLabels.push(opt.text);
+                            
+                            // Akumulasi total guru per kecamatan
+                            const sumTpq = (dKec.tpq || []).reduce((a, b) => a + Number(b), 0);
+                            const sumMadin = (dKec.madin || []).reduce((a, b) => a + Number(b), 0);
+                            const sumPonpes = (dKec.ponpes || []).reduce((a, b) => a + Number(b), 0);
+                            const sumTotal = (dKec.total || []).reduce((a, b) => a + Number(b), 0);
+
+                            allTpq.push(sumTpq);
+                            allMadin.push(sumMadin);
+                            allPonpes.push(sumPonpes);
+                            allTotal.push(sumTotal);
+                        }
+                    });
                 }
-                return;
-            }
 
-
-
-            const chartData = {
-                labels: dataKec.labels, // Menampilkan nama-nama Desa
-                datasets: [
-                    {
-                        type: 'line', label: 'Total Guru', data: dataKec.total,
-                        borderColor: '#f97316', backgroundColor: '#f97316', borderWidth: 2, // Garis dipertipis jadi 2
-                        pointBackgroundColor: '#ffffff', pointBorderColor: '#f97316', 
-                        pointRadius: 4, pointHoverRadius: 6, tension: 0.4, order: 0 // Titik diperkecil jadi 4
-                    },
-                    {
-                        type: 'bar', label: 'Guru TPQ', data: dataKec.tpq,
-                        backgroundColor: '#10b981', borderRadius: 4, 
-                        barPercentage: 0.4, maxBarThickness: 30, order: 1
-                    },
-                    {
-                        type: 'bar', label: 'Guru Madin', data: dataKec.madin,
-                        backgroundColor: '#3b82f6', borderRadius: 4, 
-                        barPercentage: 0.4, maxBarThickness: 30, order: 1
-                    },
-                    {
-                        type: 'bar', label: 'Guru Ponpes', data: dataKec.ponpes || [],
-                        backgroundColor: '#9333ea', borderRadius: 4, 
-                        barPercentage: 0.4, maxBarThickness: 30, order: 1
+                chartData = {
+                    labels: allKecLabels, // Sumbu X: Nama-nama Kecamatan
+                    datasets: [
+                        {
+                            type: 'line', label: 'Total Guru', data: allTotal,
+                            borderColor: '#f97316', backgroundColor: '#f97316', borderWidth: 2,
+                            pointBackgroundColor: '#ffffff', pointBorderColor: '#f97316',
+                            pointRadius: 4, pointHoverRadius: 6, tension: 0.4, order: 0
+                        },
+                        {
+                            type: 'bar', label: 'Guru TPQ', data: allTpq,
+                            backgroundColor: '#10b981', borderRadius: 4,
+                            barPercentage: 0.4, maxBarThickness: 30, order: 1
+                        },
+                        {
+                            type: 'bar', label: 'Guru Madin', data: allMadin,
+                            backgroundColor: '#3b82f6', borderRadius: 4,
+                            barPercentage: 0.4, maxBarThickness: 30, order: 1
+                        },
+                        {
+                            type: 'bar', label: 'Guru Ponpes', data: allPonpes,
+                            backgroundColor: '#9333ea', borderRadius: 4,
+                            barPercentage: 0.4, maxBarThickness: 30, order: 1
+                        }
+                    ]
+                };
+            } else {
+                // JIKA PILIH KECAMATAN TERTENTU -> TAMPILKAN PER DESA
+                const dataKec = dataGuruDesa[kecamatanId];
+                
+                if(!dataKec) {
+                    if(chartGuruDesaObj) {
+                        chartGuruDesaObj.data.labels = [];
+                        chartGuruDesaObj.data.datasets.forEach(ds => ds.data = []);
+                        chartGuruDesaObj.update();
                     }
-                ]
-            };
+                    return;
+                }
+
+                chartData = {
+                    labels: dataKec.labels, // Sumbu X: Nama-nama Desa
+                    datasets: [
+                        {
+                            type: 'line', label: 'Total Guru', data: dataKec.total,
+                            borderColor: '#f97316', backgroundColor: '#f97316', borderWidth: 2,
+                            pointBackgroundColor: '#ffffff', pointBorderColor: '#f97316', 
+                            pointRadius: 4, pointHoverRadius: 6, tension: 0.4, order: 0
+                        },
+                        {
+                            type: 'bar', label: 'Guru TPQ', data: dataKec.tpq,
+                            backgroundColor: '#10b981', borderRadius: 4, 
+                            barPercentage: 0.4, maxBarThickness: 30, order: 1
+                        },
+                        {
+                            type: 'bar', label: 'Guru Madin', data: dataKec.madin,
+                            backgroundColor: '#3b82f6', borderRadius: 4, 
+                            barPercentage: 0.4, maxBarThickness: 30, order: 1
+                        },
+                        {
+                            type: 'bar', label: 'Guru Ponpes', data: dataKec.ponpes || [],
+                            backgroundColor: '#9333ea', borderRadius: 4, 
+                            barPercentage: 0.4, maxBarThickness: 30, order: 1
+                        }
+                    ]
+                };
+            }
 
 
 

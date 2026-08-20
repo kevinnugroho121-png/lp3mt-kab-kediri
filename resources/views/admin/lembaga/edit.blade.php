@@ -81,16 +81,25 @@
                                     @endforeach
                                 </select>
                             </div>
-                            <div class="md:col-span-1">
+                            {{-- NSBQ dibuat 2 kolom agar seimbang --}}
+                            <div class="md:col-span-2">
                                 <label class="block text-[10px] font-bold text-gray-600 uppercase mb-1">Nomor Statistik (NSBQ)</label>
-                                <input type="text" name="nsbq" value="{{ old('nsbq', $lembaga->nsbq) }}" class="w-full border border-gray-400 rounded-md px-2 py-1 h-[32px] text-xs font-bold text-black-800 focus:border-blue-500 shadow-sm uppercase" oninput="this.value = this.value.toUpperCase()">
+                                <input type="text" name="nsbq" value="{{ old('nsbq', $lembaga->nsbq) }}" class="w-full border border-gray-400 rounded-md px-2 py-1 h-[32px] text-xs font-bold text-black-800 focus:border-blue-500 shadow-sm uppercase" placeholder="OPSIONAL" oninput="this.value = this.value.toUpperCase()">
                             </div>
-                            <div class="md:col-span-1">
+
+                            {{-- Alamat Lengkap (2 Kolom) --}}
+                            <div class="md:col-span-2">
                                 <label class="block text-[10px] font-bold text-gray-600 uppercase mb-1">Alamat Lengkap</label>
                                 @php
                                     $valAlamat = old('alamat', (!empty($lembaga->alamat) && $lembaga->alamat !== '-') ? $lembaga->alamat : (($lembaga->desa->nama_desa ?? '') . ', KEC. ' . ($lembaga->kecamatan->nama_kecamatan ?? '')));
                                 @endphp
-                                <input type="text" name="alamat" value="{{ $valAlamat }}" class="w-full border border-gray-400 rounded-md px-2 py-1 h-[32px] text-xs font-bold text-black-800 focus:border-blue-500 shadow-sm uppercase" oninput="this.value = this.value.toUpperCase()">
+                                <input type="text" name="alamat" value="{{ $valAlamat }}" class="w-full border border-gray-400 rounded-md px-2 py-1 h-[32px] text-xs font-bold text-black-800 focus:border-blue-500 shadow-sm uppercase" placeholder="DUSUN / JL / RT RW (OPSIONAL)" oninput="this.value = this.value.toUpperCase()">
+                            </div>
+
+                            {{-- [BARU] Input Titik Koordinat / Link Google Maps (2 Kolom) --}}
+                            <div class="md:col-span-2">
+                                <label class="block text-[10px] font-bold text-gray-600 uppercase mb-1">Titik Koordinat / Link Google Maps</label>
+                                <input type="text" name="link_gmaps" value="{{ old('link_gmaps', $lembaga->link_gmaps) }}" class="w-full border border-gray-400 rounded-md px-2 py-1 h-[32px] text-xs font-bold text-black-800 focus:border-blue-500 shadow-sm" placeholder="CONTOH: https://maps.app.goo.gl/... ATAU -7.8123, 112.0123 (OPSIONAL)">
                             </div>
                         </div>
                     </div>

@@ -2,18 +2,17 @@
 
 namespace App\Http\Controllers;
 
-use Maatwebsite\Excel\Validators\ValidationException;
-
 use Illuminate\Http\Request;
 use App\Models\Lembaga;
-
 use App\Models\Kecamatan;
 use App\Models\Desa;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Storage; // Tambahan untuk hapus file nanti
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\DB;
 
-// [TAMBAHAN BARU] Wajib panggil library Excel
+// Import Library Excel (Export & Import)
 use App\Imports\LembagaImport;
+use App\Exports\LembagaExport;
 use Maatwebsite\Excel\Facades\Excel;
 
 class LembagaController extends Controller
@@ -137,10 +136,12 @@ class LembagaController extends Controller
             'jenis_lembaga'      => 'required',
             'kecamatan_id'       => 'required|exists:kecamatans,id',
             'desa_id'            => 'required|exists:desas,id',
+            'alamat'             => 'nullable|string',
+            'link_gmaps'         => 'nullable|string', // <-- Tambahkan baris ini
             'jumlah_santri'      => 'required|integer|min:0',
             'jumlah_guru'        => 'required|integer|min:0',
-            
-            
+
+
             // Validasi File PDF
             'file_ijop'          => 'nullable|mimes:pdf|max:2048', 
             'file_skd'           => 'nullable|mimes:pdf|max:2048', // [BARU Poin 1] Validasi SKD
@@ -311,6 +312,8 @@ class LembagaController extends Controller
 
         $request->validate([
             'nama_lembaga'       => 'required|string|max:255',
+            'alamat'             => 'nullable|string',
+            'link_gmaps'         => 'nullable|string', // <-- Tambahkan baris ini
             'file_ijop'          => 'nullable|mimes:pdf|max:2048',
             'file_skd'           => 'nullable|mimes:pdf|max:2048', // [BARU] Validasi SKD
             'file_super'         => 'nullable|mimes:pdf|max:2048',
@@ -466,18 +469,19 @@ class LembagaController extends Controller
 
 
 
+        $import = new LembagaImport(Auth::user());
+
         try {
-            $import = new LembagaImport(Auth::user());
             Excel::import($import, $request->file('file'));
-            
+
             return redirect()->back()->with('success', 'Alhamdulillah! Seluruh data Lembaga dari file Excel berhasil diproses tanpa ada yang cacat/ganda.');
-        
+
         } catch (\Exception $e) {
             if ($e->getMessage() === 'excel_validation_failed') {
                 // Lempar data array string error buatan kita ke session khusus
                 return redirect()->back()->with('custom_excel_errors', $import->errors);
             }
-            
+
             // Tangkap error tidak terduga lainnya
             return redirect()->back()->with('error', $e->getMessage());
         }
@@ -498,6 +502,6 @@ class LembagaController extends Controller
             'created_at' => now(),
         ]);
 
-        return \Maatwebsite\Excel\Facades\Excel::download(new \App\Exports\LembagaExport($request), $namaFile);
+        return Excel::download(new LembagaExport($request), $namaFile);
     }
 }

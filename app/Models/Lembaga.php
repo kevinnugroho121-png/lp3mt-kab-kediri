@@ -27,6 +27,7 @@ class Lembaga extends Model
 
         // 3. Detail & Kontak
         'alamat',
+        'link_gmaps',
         'kepala_lembaga',
         'no_telp',
         'jumlah_santri',

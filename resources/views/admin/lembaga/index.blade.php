@@ -286,14 +286,33 @@
                                     <div class="font-semibold text-[12px] mb-0.5">{{ $lembaga->desa->nama_desa ?? '-' }}</div>
                                     <div class="text-black-500 text-[12px] mb-1 border-b border-gray-400 pb-0 font-semibold">KEC. {{ $lembaga->kecamatan->nama_kecamatan ?? '-' }}</div>
                                     
-                                    {{-- Badge Status Aktif Dipindah ke Sini --}}
-                                    <div class="flex items-center">
-                                        <span class="text-[9px] px-1.5 py-0.5 rounded font-bold tracking-wider w-full text-center border {{ strtoupper($lembaga->status) == 'AKTIF' ? 'bg-green-50 text-green-700 border-green-200' : 'bg-red-50 text-red-700 border-red-200' }}">
+                                    {{-- Badge Status & Indikator Google Maps (Posisi Atas-Bawah) --}}
+                                    <div class="flex flex-col gap-1 w-full mt-1">
+                                        
+                                        {{-- 2. Tombol Google Maps (Bawah) --}}
+                                        @if(!empty($lembaga->link_gmaps) && $lembaga->link_gmaps !== '-')
+                                            @php
+                                                $urlMaps = str_starts_with($lembaga->link_gmaps, 'http') 
+                                                    ? $lembaga->link_gmaps 
+                                                    : 'https://www.google.com/maps/search/?api=1&query=' . urlencode($lembaga->link_gmaps);
+                                            @endphp
+                                            {{-- Status: MENYALA TERANG (Bisa diklik) --}}
+                                            <a href="{{ $urlMaps }}" target="_blank" title="Buka Titik Lokasi Google Maps" class="flex items-center justify-center gap-1 w-full py-0.5 rounded text-[9px] font-bold bg-blue-600 text-white border border-blue-700 hover:bg-blue-700 transition shadow-sm">
+                                                📍 Lokasi Maps
+                                            </a>
+                                        @else
+                                            {{-- Status: MEMUDAR / MATI (Belum diisi) --}}
+                                            <span title="Titik koordinat / link Google Maps belum diisi" class="flex items-center justify-center gap-1 w-full py-0.5 rounded text-[9px] font-bold bg-gray-100 text-gray-400 border border-gray-300 opacity-60 cursor-not-allowed">
+                                                📍 Belum Ada Maps
+                                            </span>
+                                        @endif
+
+
+                                        {{-- Badge Status Operasional (Atas) --}}
+                                        <span class="text-[9px] px-1 py-0.5 rounded font-bold tracking-wider w-full text-center border {{ strtoupper($lembaga->status) == 'AKTIF' ? 'bg-green-50 text-green-700 border-green-200' : 'bg-red-50 text-red-700 border-red-200' }}">
                                             {{ $lembaga->status ?? 'AKTIF' }}
                                         </span>
                                     </div>
-
-                                    
                                 </td>
 
 
