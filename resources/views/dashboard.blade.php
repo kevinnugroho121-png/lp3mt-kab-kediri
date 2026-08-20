@@ -312,6 +312,39 @@
             </div>
         </div>
 
+        {{-- ==================================================== --}}
+        {{-- BAGIAN BAWAH 3: PETA SEBARAN LEMBAGA (LEAFLET GIS)  --}}
+        {{-- ==================================================== --}}
+        <div class="bg-white rounded-2xl border border-gray-300 p-6 shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07)] mt-6">
+            <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-4 gap-4">
+                <div>
+                    <h3 class="font-bold text-slate-800 text-lg">Pemetaan Geografis Sebaran Lembaga</h3>
+                    <p class="text-sm text-slate-500">Titik Koordinat Lembaga Se-Kabupaten Kediri (Bisa Mode Citra Satelit)</p>
+                </div>
+                
+                {{-- Legend Warna Pin --}}
+                <div class="flex flex-wrap gap-4 text-xs font-semibold">
+                    <div class="flex items-center gap-1.5">
+                        <span class="w-3.5 h-3.5 rounded-full bg-emerald-500 border border-white shadow-sm"></span>
+                        <span class="text-slate-700">TPQ</span>
+                    </div>
+                    <div class="flex items-center gap-1.5">
+                        <span class="w-3.5 h-3.5 rounded-full bg-blue-500 border border-white shadow-sm"></span>
+                        <span class="text-slate-700">Madin</span>
+                    </div>
+                    <div class="flex items-center gap-1.5">
+                        <span class="w-3.5 h-3.5 rounded-full bg-purple-600 border border-white shadow-sm"></span>
+                        <span class="text-slate-700">Ponpes</span>
+                    </div>
+                </div>
+            </div>
+
+            {{-- Container Peta Leaflet --}}
+            <div class="relative w-full rounded-xl overflow-hidden border border-gray-300 shadow-inner z-0" style="height: 500px;">
+                <div id="mapLembaga" style="height: 500px; min-height: 500px; width: 100%;"></div>
+            </div>
+        </div>
+
     </div>
 
     {{-- SCRIPT CHART --}}
@@ -672,6 +705,137 @@
                     updateGuruChart(this.value);
                 });
             }
+        }
+    </script>
+
+    {{-- ======================================================== --}}
+    {{-- LEAFLET CSS & JS (100% GRATIS TANPA API KEY)             --}}
+    {{-- ======================================================== --}}
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+    @php
+        $markerData = [];
+        if (isset($petaLembagas)) {
+            foreach ($petaLembagas as $pl) {
+                $raw = $pl->link_gmaps;
+                $lat = null;
+                $lng = null;
+
+                // Ekstrak angka koordinat (contoh: -7.81234, 112.01234)
+                if (preg_match('/([-+]?[0-9]+\.[0-9]+)[\s,]+([-+]?[0-9]+\.[0-9]+)/', $raw, $match)) {
+                    $lat = (float)$match[1];
+                    $lng = (float)$match[2];
+                }
+
+                if ($lat && $lng) {
+                    $markerData[] = [
+                        'nama'      => $pl->nama_lembaga,
+                        'jenis'     => $pl->jenis_lembaga,
+                        'kecamatan' => $pl->kecamatan->nama_kecamatan ?? '-',
+                        'desa'      => $pl->desa->nama_desa ?? '-',
+                        'santri'    => $pl->jumlah_santri ?? 0,
+                        'status'    => $pl->status ?? 'AKTIF',
+                        'lat'       => $lat,
+                        'lng'       => $lng
+                    ];
+                }
+            }
+        }
+    @endphp
+
+    <script>
+        function inisialisasiPeta() {
+            const mapContainer = document.getElementById('mapLembaga');
+            if (!mapContainer || typeof L === 'undefined') return;
+
+            // 1. Koordinat Pusat: Kabupaten Kediri (-7.8480, 112.0178)
+            const map = L.map('mapLembaga', {
+                center: [-7.8480, 112.0178],
+                zoom: 11,
+                scrollWheelZoom: true
+            });
+
+            // Refresh kalkulasi ukuran peta agar ubin satelit langsung muncul penuh
+            setTimeout(() => {
+                map.invalidateSize();
+            }, 300);
+
+            // 2. Definisi Layer Tampilan Peta
+            // A. Peta Jalan Standar (OpenStreetMap)
+            const osmLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                maxZoom: 19,
+                attribution: '&copy; OpenStreetMap contributors'
+            });
+
+            // B. Citra Satelit Asli (Esri World Imagery)
+            const satelliteLayer = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+                maxZoom: 19,
+                attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community'
+            });
+
+            // C. Satelit Hibrida Google (Satelit + Nama Jalan & Batas Wilayah)
+            const googleHybridLayer = L.tileLayer('https://mt1.google.com/vt/lyrs=y&x={x}&y={y}&z={z}', {
+                maxZoom: 20,
+                attribution: '&copy; Google Maps'
+            });
+
+            // Pasang Layer Google Hybrid sebagai default
+            googleHybridLayer.addTo(map);
+
+            // 3. Tombol Pemilih Layer di Kanan Atas
+            const baseMaps = {
+                "🛰️ Satelit + Nama Jalan (Google)": googleHybridLayer,
+                "🌍 Citra Satelit Murni (Esri)": satelliteLayer,
+                "🗺️ Peta Jalan Bersih (OSM)": osmLayer
+            };
+            L.control.layers(baseMaps, null, { position: 'topright' }).addTo(map);
+
+            // 4. Render Marker Lembaga
+            const listLembaga = {!! json_encode($markerData) !!};
+
+            listLembaga.forEach(item => {
+                let markerColor = '#10b981'; // Hijau (TPQ)
+                if (item.jenis === 'MADIN') markerColor = '#3b82f6'; // Biru
+                if (item.jenis === 'PONPES') markerColor = '#9333ea'; // Ungu
+
+                // Marker Circle Interaktif
+                const circle = L.circleMarker([item.lat, item.lng], {
+                    radius: 7,
+                    fillColor: markerColor,
+                    color: '#ffffff',
+                    weight: 2,
+                    opacity: 1,
+                    fillOpacity: 0.9
+                }).addTo(map);
+
+                // Popup Info Saat Marker Diklik
+                const popupContent = `
+                    <div style="font-family: 'Inter', sans-serif; font-size: 11px; min-width: 170px;">
+                        <span style="display:inline-block; padding: 2px 6px; border-radius: 4px; font-weight: bold; font-size: 9px; color: #fff; background-color: ${markerColor}; margin-bottom: 4px;">
+                            ${item.jenis}
+                        </span>
+                        <strong style="display:block; font-size: 12px; color: #1e293b; text-transform: uppercase; margin-bottom: 2px;">
+                            ${item.nama}
+                        </strong>
+                        <span style="color: #64748b; font-weight: 600; display: block; margin-bottom: 6px;">
+                            Desa ${item.desa}, Kec. ${item.kecamatan}
+                        </span>
+                        <div style="border-top: 1px solid #e2e8f0; padding-top: 4px; display: flex; justify-content: space-between; color: #334155;">
+                            <span>Santri: <b>${item.santri}</b></span>
+                            <span style="color: ${item.status === 'AKTIF' ? '#16a34a' : '#dc2626'}; font-weight: bold;">${item.status}</span>
+                        </div>
+                    </div>
+                `;
+                circle.bindPopup(popupContent);
+            });
+        }
+
+        // Jalankan saat DOM dan library siap
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', inisialisasiPeta);
+        } else {
+            inisialisasiPeta();
         }
     </script>
 </x-app-layout>

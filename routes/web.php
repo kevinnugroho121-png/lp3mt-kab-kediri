@@ -197,6 +197,14 @@ Route::get('/dashboard', function () {
         $sebaranLembagaPerKecamatan[$desa->kecamatan_id]['total'][] = $lTpq + $lMadin + $lPonpes;
     }
 
+    // [BARU] Ambil data lembaga yang sudah terisi koordinat / maps untuk peta sebaran
+    $petaLembagas = (clone $queryLembaga)
+        ->whereNotNull('link_gmaps')
+        ->where('link_gmaps', '!=', '')
+        ->where('link_gmaps', '!=', '-')
+        ->with(['kecamatan', 'desa'])
+        ->get();
+
     return view('dashboard', compact(
         'wilayahKerja', 'lembagaTPQ', 'lembagaMadin', 'lembagaPonpes',
         'totalSantri', 'totalGuru', 
@@ -205,7 +213,8 @@ Route::get('/dashboard', function () {
         'kecamatanLabels', 'dataTpqSebaran', 'dataMadinSebaran', 'dataTotalSebaran',
         'kecamatans', 'sebaranGuruPerKecamatan', 'sebaranLembagaPerKecamatan',
         'totalLembagaBerkas', 'lembagaLengkap', 'persenLembaga',
-        'totalGuruBerkas', 'guruLengkap', 'persenGuru'
+        'totalGuruBerkas', 'guruLengkap', 'persenGuru',
+        'petaLembagas' // <-- Variabel baru untuk peta
     ));
 
 
