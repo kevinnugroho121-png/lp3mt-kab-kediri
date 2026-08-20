@@ -157,7 +157,7 @@
                             </div>
 
                             <div class="md:col-span-3">
-                                <label class="block text-[10px] font-bold text-gray-600 uppercase tracking-wider mb-1">Alamat Lengkap (KTP)</label>
+                                <label class="block text-[10px] font-bold text-gray-600 uppercase tracking-wider mb-1">Alamat Guru (Sesuai KTP)</label>
                                 <input type="text" name="alamat_ktp" value="{{ old('alamat_ktp', $guru->alamat_ktp) }}" class="w-full border border-gray-600 rounded-md px-2 py-1 h-[32px] text-xs font-bold text-black-800 focus:border-blue-500 focus:ring-blue-500 shadow-sm uppercase" required oninput="this.value = this.value.toUpperCase()">
                             </div>
 
@@ -184,6 +184,18 @@
                                 <input type="text" value="{{ $guru->jenis_guru }}" class="w-full bg-gray-100 border border-gray-600 rounded-md px-2 py-1 h-[32px] text-xs font-bold text-black-800 cursor-not-allowed shadow-sm" readonly>
                             </div>
 
+
+                            <div class="md:col-span-1">
+                                <label class="block text-[10px] font-bold text-gray-600 uppercase tracking-wider mb-1">Kecamatan Lembaga <span class="text-red-500">*</span></label>
+                                <select name="kecamatan_lembaga" id="kecamatanSelect" class="w-full border border-gray-600 rounded-md px-2 py-1 h-[32px] text-xs font-bold text-black-800 focus:border-blue-500 focus:ring-blue-500 shadow-sm" required>
+                                    <option value="">-- Pilih Kecamatan --</option>
+                                    @foreach($kecamatans as $kec)
+                                        {{-- [FIX] Mengunci otomatis pilihan berdasarkan id kecamatan instansi asal guru --}}
+                                        <option value="{{ $kec->nama_kecamatan }}" data-id="{{ $kec->id }}" {{ $guru->lembaga->kecamatan_id == $kec->id ? 'selected' : '' }}>{{ $kec->nama_kecamatan }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+
                             
 
                             <div class="md:col-span-1">
@@ -201,16 +213,7 @@
                                 </div>
                             </div>
 
-                            <div class="md:col-span-1">
-                                <label class="block text-[10px] font-bold text-gray-600 uppercase tracking-wider mb-1">Kecamatan Lembaga <span class="text-red-500">*</span></label>
-                                <select name="kecamatan_lembaga" id="kecamatanSelect" class="w-full border border-gray-600 rounded-md px-2 py-1 h-[32px] text-xs font-bold text-black-800 focus:border-blue-500 focus:ring-blue-500 shadow-sm" required>
-                                    <option value="">-- Pilih Kecamatan --</option>
-                                    @foreach($kecamatans as $kec)
-                                        {{-- [FIX] Mengunci otomatis pilihan berdasarkan id kecamatan instansi asal guru --}}
-                                        <option value="{{ $kec->nama_kecamatan }}" data-id="{{ $kec->id }}" {{ $guru->lembaga->kecamatan_id == $kec->id ? 'selected' : '' }}>{{ $kec->nama_kecamatan }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
+                            
 
                             <div class="md:col-span-1">
                                 <label class="block text-[10px] font-bold text-green-700 uppercase tracking-wider mb-1">Lembaga Tempat Mengajar <span class="text-red-500">*</span></label>

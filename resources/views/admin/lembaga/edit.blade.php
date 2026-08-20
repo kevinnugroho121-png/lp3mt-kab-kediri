@@ -87,7 +87,10 @@
                             </div>
                             <div class="md:col-span-1">
                                 <label class="block text-[10px] font-bold text-gray-600 uppercase mb-1">Alamat Lengkap</label>
-                                <input type="text" name="alamat" value="{{ old('alamat', $lembaga->alamat) }}" class="w-full border border-gray-400 rounded-md px-2 py-1 h-[32px] text-xs font-bold text-black-800 focus:border-blue-500 shadow-sm uppercase" oninput="this.value = this.value.toUpperCase()">
+                                @php
+                                    $valAlamat = old('alamat', (!empty($lembaga->alamat) && $lembaga->alamat !== '-') ? $lembaga->alamat : (($lembaga->desa->nama_desa ?? '') . ', KEC. ' . ($lembaga->kecamatan->nama_kecamatan ?? '')));
+                                @endphp
+                                <input type="text" name="alamat" value="{{ $valAlamat }}" class="w-full border border-gray-400 rounded-md px-2 py-1 h-[32px] text-xs font-bold text-black-800 focus:border-blue-500 shadow-sm uppercase" oninput="this.value = this.value.toUpperCase()">
                             </div>
                         </div>
                     </div>

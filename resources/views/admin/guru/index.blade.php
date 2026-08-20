@@ -339,15 +339,16 @@
 
                             <th class="border border-gray-600 px-2 text-center w-24">Insentif</th>
                             <th class="border border-gray-600 px-2 text-center w-48">Nama Lembaga</th>
+                            <th class="border border-gray-600 px-2 text-center w-56">Alamat Lembaga</th>
                             <th class="border border-gray-600 px-2 text-center w-24">Jenis</th>
                             <th class="border border-gray-600 px-2 text-center w-32">File KTP</th> 
                             <th class="border border-gray-600 px-2 text-center w-32">File KK</th> 
                             <th class="border border-gray-600 px-2 text-center w-32">File Rekening</th> 
 
-                            {{-- 4. ALAMAT KTP (Dengan Filter) --}}
+                            {{-- 4. ALAMAT GURU (Dengan Filter) --}}
                             <th class="border border-gray-600 px-2 text-left w-64 relative">
                                 <div class="flex items-center justify-between cursor-pointer hover:text-blue-600 transition" onclick="toggleExcelFilter('filter-alamat')">
-                                    <span>Alamat (Sesuai KTP)</span>
+                                    <span>Alamat Guru (Sesuai KTP)</span>
                                     <svg class="w-3 h-3 {{ request('col_alamat') ? 'text-blue-600' : 'text-gray-500' }}" fill="currentColor" viewBox="0 0 20 20"><path d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3 5a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm2 5a1 1 0 011-1h2a1 1 0 110 2h-2a1 1 0 01-1-1z"></path></svg>
                                 </div>
                                 <div id="filter-alamat" class="excel-filter-popup absolute top-full right-0 mt-1 w-48 bg-white border border-gray-400 shadow-2xl rounded-md z-[99] p-2 text-left font-normal normal-case">
@@ -516,6 +517,15 @@
                                     {{ $guru->lembaga->nama_lembaga ?? '-' }}
                                 </td>
 
+                                {{-- [BARU] ALAMAT LEMBAGA --}}
+                                <td class="border border-gray-600 px-2 py-1 truncate max-w-xs" title="{{ $guru->lembaga ? ($guru->lembaga->desa->nama_desa ?? '') . ', KEC. ' . ($guru->lembaga->kecamatan->nama_kecamatan ?? '') : '-' }}">
+                                    @if($guru->lembaga)
+                                        DS. {{ $guru->lembaga->desa->nama_desa ?? '-' }}, KEC. {{ $guru->lembaga->kecamatan->nama_kecamatan ?? '-' }}
+                                    @else
+                                        -
+                                    @endif
+                                </td>
+
                                 {{-- 7. JENIS LEMBAGA --}}
                                 <td class="border border-gray-600 px-2 py-1 text-center">
                                     @php
@@ -649,7 +659,7 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="22" class="border border-gray-600 px-4 py-8 text-center bg-gray-50 text-gray-400">
+                                <td colspan="23" class="border border-gray-600 px-4 py-8 text-center bg-gray-50 text-gray-400">
                                     <div class="flex flex-col items-center">
                                         <span class="text-2xl mb-1">📂</span>
                                         <p>Belum ada data guru. Silakan klik tombol+ Tambah.</p>

@@ -73,13 +73,26 @@ class GuruExport implements FromQuery, WithHeadings, WithMapping, ShouldAutoSize
         return $query->latest();
     }
 
-    // [DIUBAH] NAMA KOLOM SAMA PERSIS DENGAN TEMPLATE IMPORT LAMA
     public function headings(): array
     {
         return [
-            'No', 'NAMA LENGKAP (tanpa gelar)', 'TEMPAT TANGGAL LAHIR', 'JENIS KELAMIN', 'NIK',
-            'NAMA LEMBAGA', 'JENIS LEMBAGA', 'ALAMAT SESUAI KTP', 'DESA', 'KEC', 'KAB', 
-            'AGAMA', 'NO HP', 'NAMA IBU KANDUNG', 'NOMER REKENING', 'KETERANGAN'
+            'NO', 
+            'NAMA LENGKAP (tanpa gelar)', 
+            'TEMPAT TANGGAL LAHIR', 
+            'JENIS KELAMIN', 
+            'NIK',
+            'NAMA LEMBAGA', 
+            'ALAMAT LEMBAGA',           // <-- 1. Kolom baru diselipkan di sini
+            'JENIS LEMBAGA', 
+            'ALAMAT GURU SESUAI KTP',   // <-- 2. Nama kolom disesuaikan
+            'DESA', 
+            'KEC', 
+            'KAB', 
+            'AGAMA', 
+            'NO HP', 
+            'NAMA IBU KANDUNG', 
+            'NOMER REKENING', 
+            'KETERANGAN'
         ];
     }
 
@@ -92,6 +105,11 @@ class GuruExport implements FromQuery, WithHeadings, WithMapping, ShouldAutoSize
         $tgl_lahir = $guru->tanggal_lahir ? \Carbon\Carbon::parse($guru->tanggal_lahir)->format('d-m-Y') : '';
         $ttl_gabungan = $guru->tempat_lahir . ($tgl_lahir ? ', ' . $tgl_lahir : '');
 
+        // Susun alamat lembaga otomatis dari Desa & Kecamatan Lembaga
+        $alamatLembagaOtomatis = $guru->lembaga 
+            ? (($guru->lembaga->desa->nama_desa ?? '-') . ', KEC. ' . ($guru->lembaga->kecamatan->nama_kecamatan ?? '-'))
+            : '-';
+
         return [
             $rowNumber,
             $guru->nama_lengkap,
@@ -99,19 +117,16 @@ class GuruExport implements FromQuery, WithHeadings, WithMapping, ShouldAutoSize
             $guru->jenis_kelamin,
             "'" . $guru->nik, 
             $guru->lembaga->nama_lembaga ?? '-',
+            $alamatLembagaOtomatis,         // <-- [SUDAH OTOMATIS TERISI DESA & KEC LEMBAGA]
             $guru->jenis_guru,
-            $guru->alamat_ktp,
+            $guru->alamat_ktp,             
             $guru->lembaga->desa->nama_desa ?? '-',
             $guru->lembaga->kecamatan->nama_kecamatan ?? '-',
             $guru->kabupaten ?? 'KEDIRI',
             $guru->agama,
-
-
             "'" . $guru->no_hp,
             $guru->nama_ibu_kandung,
             "'" . $guru->nomor_rekening,
-            // [BARU - Poin 4] Otomatisasi status keterangan Excel
-            // PNS, PPPK, dan Guru Non-Aktif otomatis terkelompok menjadi "TIDAK"
             ($guru->penerima_insentif == 1) ? 'YA DIAJUKAN' : 'TIDAK'
         ];
     }

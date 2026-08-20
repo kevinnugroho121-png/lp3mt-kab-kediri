@@ -59,7 +59,9 @@
                         </div>
                         <div class="md:col-span-1 border-b border-gray-200 pb-1">
                             <span class="block text-[10px] font-bold text-gray-500 uppercase">Alamat Lengkap</span>
-                            <span class="text-sm font-bold text-black-800 uppercase">{{ $lembaga->alamat ?? '-' }}</span>
+                            <span class="text-sm font-bold text-black-800 uppercase">
+                                {{ (!empty($lembaga->alamat) && $lembaga->alamat !== '-') ? $lembaga->alamat : (($lembaga->desa->nama_desa ?? '-') . ', KEC. ' . ($lembaga->kecamatan->nama_kecamatan ?? '-')) }}
+                            </span>
                         </div>
                     </div>
                 </div>

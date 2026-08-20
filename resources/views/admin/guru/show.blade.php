@@ -124,7 +124,7 @@
                         
 
                         <div class="md:col-span-3  border-b border-gray-200 pb-1">
-                            <span class="block text-[10px] font-bold text-gray-500 uppercase">Alamat Lengkap (KTP)</span>
+                            <span class="block text-[10px] font-bold text-gray-500 uppercase">Alamat Guru (Sesuai KTP)</span>
                             <span class="text-sm font-bold text-black-800 uppercase">{{ $guru->alamat_ktp }}</span>
                         </div>
 
@@ -161,14 +161,16 @@
                         </div>
 
                         <div class="md:col-span-1 border-b border-gray-200 pb-1">
+                            <span class="block text-[10px] font-bold text-gray-500 uppercase">Kecamatan Lembaga</span>
+                            <span class="text-sm font-bold text-black-800 uppercase">{{ $guru->lembaga->kecamatan->nama_kecamatan ?? '-' }}</span>
+                        </div>
+
+                        <div class="md:col-span-1 border-b border-gray-200 pb-1">
                             <span class="block text-[10px] font-bold text-gray-500 uppercase">Desa / Kelurahan Lembaga</span>
                             <span class="text-sm font-bold text-black-800 uppercase">{{ $guru->lembaga->desa->nama_desa ?? '-' }}</span>
                         </div>    
 
-                        <div class="md:col-span-1 border-b border-gray-200 pb-1">
-                            <span class="block text-[10px] font-bold text-gray-500 uppercase">Kecamatan Lembaga</span>
-                            <span class="text-sm font-bold text-black-800 uppercase">{{ $guru->lembaga->kecamatan->nama_kecamatan ?? '-' }}</span>
-                        </div>
+                        
 
                                            
 

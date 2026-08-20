@@ -161,9 +161,9 @@
                             
 
                             <div class="md:col-span-3">
-                                <label class="block text-[10px] font-bold text-gray-600 uppercase tracking-wider mb-1">Alamat Lengkap (KTP)</label>
+                                <label class="block text-[10px] font-bold text-gray-600 uppercase tracking-wider mb-1">Alamat Guru (Sesuai KTP) <span class="text-red-500">*</span></label>
                                 <input type="text" name="alamat_ktp" value="{{ old('alamat_ktp') }}" class="w-full border border-gray-600 rounded-md px-2 py-1 h-[32px] text-xs font-bold text-black-800 focus:border-blue-500 focus:ring-blue-500 shadow-sm uppercase" required oninput="this.value = this.value.toUpperCase()">
-                            </div>                      
+                            </div>                     
 
                             
 
@@ -197,6 +197,16 @@
                             </div>
 
                             <div class="md:col-span-1">
+                                <label class="block text-[10px] font-bold text-gray-600 uppercase tracking-wider mb-1">Kecamatan Lembaga <span class="text-red-500">*</span></label>
+                                <select name="kecamatan" id="kecamatanSelect" class="w-full border border-gray-600 rounded-md px-2 py-1 h-[32px] text-xs font-bold text-black-800 focus:border-blue-500 focus:ring-blue-500 shadow-sm" required>
+                                    <option value="">-- Pilih Kecamatan --</option>
+                                    @foreach($kecamatans as $kec)
+                                        <option value="{{ $kec->nama_kecamatan }}" data-id="{{ $kec->id }}" {{ old('kecamatan') == $kec->nama_kecamatan ? 'selected' : '' }}>{{ $kec->nama_kecamatan }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+
+                            <div class="md:col-span-1">
                                 <label class="block text-[10px] font-bold text-gray-600 uppercase tracking-wider mb-1">Desa / Kelurahan Lembaga <span class="text-red-500">*</span></label>
                                 <select name="desa" id="desaSelect" class="w-full border border-gray-600 rounded-md px-2 py-1 h-[32px] text-xs font-bold text-black-800 focus:border-blue-500 focus:ring-blue-500 shadow-sm" required>
                                     <option value="">-- Pilih Kecamatan Dulu --</option>
@@ -208,15 +218,7 @@
                                 </div>
                             </div>
 
-                            <div class="md:col-span-1">
-                                <label class="block text-[10px] font-bold text-gray-600 uppercase tracking-wider mb-1">Kecamatan Lembaga <span class="text-red-500">*</span></label>
-                                <select name="kecamatan" id="kecamatanSelect" class="w-full border border-gray-600 rounded-md px-2 py-1 h-[32px] text-xs font-bold text-black-800 focus:border-blue-500 focus:ring-blue-500 shadow-sm" required>
-                                    <option value="">-- Pilih Kecamatan --</option>
-                                    @foreach($kecamatans as $kec)
-                                        <option value="{{ $kec->nama_kecamatan }}" data-id="{{ $kec->id }}" {{ old('kecamatan') == $kec->nama_kecamatan ? 'selected' : '' }}>{{ $kec->nama_kecamatan }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
+                            
 
                             
 

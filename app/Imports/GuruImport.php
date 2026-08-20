@@ -37,11 +37,12 @@ class GuruImport implements ToCollection, WithHeadingRow
 
             if (empty(array_filter($row->toArray()))) continue;
 
-            $rawNik          = $row['nik'] ?? null;
+            // Bersihkan tanda petik / spasi agar murni terbaca angka
+            $rawNik          = preg_replace('/[^0-9]/', '', (string)($row['nik'] ?? ''));
             $rawNamaGuru     = $row['nama_lengkap_tanpa_gelar'] ?? null;
             $rawLembaga      = $row['nama_lembaga'] ?? null;
             $rawJenisLembaga = $row['jenis_lembaga'] ?? null;
-            $rawRekening     = $row['nomer_rekening'] ?? null;
+            $rawRekening     = trim(str_replace(["'", '"'], '', (string)($row['nomer_rekening'] ?? '')));
             $rawKecGuru      = $row['kec'] ?? null; 
             $rawDesaGuru     = $row['desa'] ?? null; 
 
@@ -130,6 +131,14 @@ class GuruImport implements ToCollection, WithHeadingRow
                                   ->where('jenis_lembaga', $this->menuAktif)
                                   ->first();
 
+                // Update langsung ke tabel lembagas via DB Query
+                $rawAlamatLembaga = trim($row['alamat_lembaga'] ?? '');
+                if (!empty($rawAlamatLembaga) && $rawAlamatLembaga !== '-') {
+                    DB::table('lembagas')
+                        ->where('id', $lembaga->id)
+                        ->update(['alamat' => strtoupper($rawAlamatLembaga)]);
+                }
+
                 $ttl = explode(',', $row['tempat_tanggal_lahir']);
                 $tempatLahir = trim($ttl[0]);
                 $tanggalLahir = null;
@@ -143,7 +152,7 @@ class GuruImport implements ToCollection, WithHeadingRow
                     'lembaga_id'         => $lembaga->id,
                     'jenis_guru'         => $this->menuAktif, 
                     'nama_lengkap'       => strtoupper($row['nama_lengkap_tanpa_gelar']),
-                    'nik'                => trim($row['nik']),
+                    'nik'                => preg_replace('/[^0-9]/', '', (string)$row['nik']),
                     'tempat_lahir'       => strtoupper($tempatLahir),
                     'tanggal_lahir'      => $tanggalLahir, 
                     'jenis_kelamin'      => strtoupper($row['jenis_kelamin']),
@@ -152,14 +161,14 @@ class GuruImport implements ToCollection, WithHeadingRow
                     'status_kepegawaian' => 'NON-ASN', 
                     'status_sertifikasi' => 'BELUM SERTIFIKASI',
                     'penerima_insentif'  => 0, // <--- [FIXED] Default menjadi 0 (Standby / Abu-abu)
-                    'alamat_ktp'         => strtoupper($row['alamat_sesuai_ktp']),
+                    'alamat_ktp'         => strtoupper($row['alamat_guru_sesuai_ktp'] ?? $row['alamat_sesuai_ktp'] ?? ''),
 
 
                     'desa'               => strtoupper($row['desa']),
                     'kecamatan'          => strtoupper($row['kec_1'] ?? $row['kecamatan_guru'] ?? $row['kec'] ?? ''),
                     'kabupaten'          => strtoupper($row['kab'] ?? 'KEDIRI'),
-                    'no_hp'              => $row['no_hp'] ?? null,
-                    'nomor_rekening'     => trim($row['nomer_rekening']),
+                    'no_hp'              => trim(str_replace(["'", '"'], '', (string)($row['no_hp'] ?? ''))),
+                    'nomor_rekening'     => trim(str_replace(["'", '"'], '', (string)$row['nomer_rekening'])),
                     'status_ktp'         => 'Pending',
                     'status_kk'          => 'Pending',
                     'status_bukurekening'=> 'Pending',
