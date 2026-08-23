@@ -67,6 +67,81 @@
                 </div>
             @endif
 
+            {{-- ================================================================= --}}
+            {{-- [BARU] SISTEM KONTROL ALOKASI KUOTA INDUK (3 KARTU RINGKASAN)     --}}
+            {{-- ================================================================= --}}
+            @if(Auth::user()->role != 'korcam')
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-1 mb-1">
+                    
+                    {{-- KARTU 1: TOTAL PAGU KABUPATEN (INPUT MASTER) --}}
+                    <div class="bg-white rounded-xl border border-gray-300 p-4 shadow-sm flex flex-col justify-between">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Total Pagu Kuota Kabupaten</span>
+                            <span class="p-1.5 bg-blue-50 text-blue-600 rounded-md">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>
+                            </span>
+                        </div>
+                        <form action="{{ route('kecamatan.update_pagu_induk') }}" method="POST" class="flex items-center gap-2 mt-1">
+                            @csrf
+                            <input type="number" name="pagu_induk" value="{{ old('pagu_induk', $totalPagu) }}" min="0" placeholder="0" required
+                                class="w-full border border-gray-300 rounded-lg px-3 py-1.5 text-base font-extrabold text-slate-800 focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                            <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold px-3 py-2 rounded-lg shadow-sm transition whitespace-nowrap">
+                                Simpan Pagu
+                            </button>
+                        </form>
+                        <p class="text-[10px] text-slate-400 mt-2 italic">* Angka pagu anggaran resmi Pemkab Kediri</p>
+                    </div>
+
+                    {{-- KARTU 2: KUOTA SUDAH TERBAGI --}}
+                    <div class="bg-white rounded-xl border border-gray-300 p-4 shadow-sm flex flex-col justify-between">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Kuota Terdistribusi</span>
+                            <span class="p-1.5 bg-emerald-50 text-emerald-600 rounded-md">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                            </span>
+                        </div>
+                        <div>
+                            <p class="text-2xl font-black text-emerald-600">{{ number_format($kuotaTerdistribusi ?? 0) }} <span class="text-xs font-bold text-slate-500">Slot</span></p>
+                            <p class="text-[11px] text-slate-500 mt-1 font-medium">Total jatah yang sudah dibagi ke kecamatan</p>
+                        </div>
+                        <div class="w-full bg-gray-100 rounded-full h-1.5 mt-3 overflow-hidden">
+                            @php
+                                $persenTerbagi = ($totalPagu > 0) ? min(100, round(($kuotaTerdistribusi / $totalPagu) * 100)) : 0;
+                            @endphp
+                            <div class="bg-emerald-500 h-1.5 rounded-full" style="width: {{ $persenTerbagi }}%"></div>
+                        </div>
+                    </div>
+
+                    {{-- KARTU 3: SISA KUOTA BELUM DIBAGI --}}
+                    <div class="bg-white rounded-xl border border-gray-300 p-4 shadow-sm flex flex-col justify-between">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Sisa Kuota Belum Dibagi</span>
+                            <span class="p-1.5 {{ $sisaKuota < 0 ? 'bg-red-50 text-red-600' : ($sisaKuota == 0 ? 'bg-emerald-50 text-emerald-600' : 'bg-amber-50 text-amber-600') }} rounded-md">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                            </span>
+                        </div>
+                        <div>
+                            <p class="text-2xl font-black {{ $sisaKuota < 0 ? 'text-red-600' : ($sisaKuota == 0 ? 'text-emerald-600' : 'text-amber-600') }}">
+                                {{ number_format($sisaKuota ?? 0) }} <span class="text-xs font-bold text-slate-500">Slot</span>
+                            </p>
+                            @if($sisaKuota == 0)
+                                <p class="text-[11px] text-emerald-600 mt-1 font-bold">✅ Sempurna! Kuota terbagi 100% pas.</p>
+                            @elseif($sisaKuota > 0)
+                                <p class="text-[11px] text-amber-600 mt-1 font-bold">🎯 Masih ada {{ number_format($sisaKuota) }} slot yang siap dialokasikan.</p>
+                            @else
+                                <p class="text-[11px] text-red-600 mt-1 font-bold">⚠️ Over Kuota! Jatah kecamatan melebihi pagu.</p>
+                            @endif
+                        </div>
+                        <div class="mt-2 text-right">
+                            <span class="text-[10px] font-bold px-2 py-0.5 rounded-full {{ $sisaKuota < 0 ? 'bg-red-100 text-red-700' : ($sisaKuota == 0 ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700') }}">
+                                {{ $sisaKuota < 0 ? 'Defisit' : ($sisaKuota == 0 ? 'Pas' : 'Tersedia') }}
+                            </span>
+                        </div>
+                    </div>
+
+                </div>
+            @endif
+
             {{-- TABEL ALA EXCEL (BORDERED & COMPACT) --}}
             <div class="bg-white border border-gray-600 overflow-hidden shadow-sm">
                 <table class="w-full text-sm border-collapse">
@@ -93,7 +168,7 @@
                                 
                                 {{-- NO --}}
                                 <td class="border border-gray-600 px-2 py-1 text-center bg-gray-50 font-medium">
-                                    {{ $kecamatans->firstItem() + $index }}
+                                    {{ $loop->iteration }}
                                 </td>
 
                                 {{-- NAMA KECAMATAN --}}
@@ -175,9 +250,9 @@
                 </table>
             </div>
             
-            {{-- PAGINATION --}}
-            <div class="mt-4">
-                {{ $kecamatans->withQueryString()->links() }}
+            {{-- INFORMASI TOTAL DATA (PAGINATION DIHAPUS) --}}
+            <div class="mt-2 text-xs text-slate-500 font-semibold">
+                Menampilkan total {{ $kecamatans->count() }} Kecamatan di Kabupaten Kediri
             </div>
 
         </div>

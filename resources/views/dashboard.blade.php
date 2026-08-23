@@ -27,16 +27,16 @@
                 <div class="bg-gray-50 rounded-xl p-4 border border-gray-300">
                     <div class="grid grid-cols-3 gap-2 mb-4 text-center border-b border-gray-200 pb-4">
                         <div>
-                            <span class="block text-[10px] text-slate-500 font-bold uppercase">TPQ</span>
-                            <span class="text-lg font-bold text-green-600">{{ number_format($lembagaTPQ) }}</span>
+                            <span class="block text-[10px] text-slate-600 font-bold uppercase">TPQ</span>
+                            <span class="text-lg font-bold text-emerald-700">{{ number_format($lembagaTPQ) }}</span>
                         </div>
                         <div class="border-x border-gray-200">
-                            <span class="block text-[10px] text-slate-500 font-bold uppercase">Madin</span>
-                            <span class="text-lg font-bold text-blue-600">{{ number_format($lembagaMadin) }}</span>
+                            <span class="block text-[10px] text-slate-600 font-bold uppercase">Madin</span>
+                            <span class="text-lg font-bold text-blue-700">{{ number_format($lembagaMadin) }}</span>
                         </div>
                         <div>
-                            <span class="block text-[10px] text-slate-500 font-bold uppercase">Ponpes</span>
-                            <span class="text-lg font-bold text-purple-600">{{ number_format($lembagaPonpes) }}</span>
+                            <span class="block text-[10px] text-slate-600 font-bold uppercase">Ponpes</span>
+                            <span class="text-lg font-bold text-purple-700">{{ number_format($lembagaPonpes) }}</span>
                         </div>
                     </div>
                     <div class="flex justify-between items-center">
@@ -123,17 +123,17 @@
                                     <p class="text-sm font-bold text-slate-800">{{ number_format($sudahTerimaInsentif) }} <span class="text-[10px] font-normal text-slate-500">Guru</span></p>
                                 </div>
                             </div>
-                            <span class="text-xs font-bold text-emerald-600">{{ $persenSudah }}%</span>
+                            <span class="text-xs font-bold text-emerald-700">{{ $persenSudah }}%</span>
                         </div>
                         <div class="flex justify-between items-end">
                             <div class="flex items-center gap-2">
-                                <div class="w-2.5 h-2.5 rounded-full bg-red-400"></div>
+                                <div class="w-2.5 h-2.5 rounded-full bg-red-500"></div>
                                 <div>
-                                    <p class="text-[10px] text-slate-500 font-bold uppercase">tidak terpilih untuk diajukan</p>
-                                    <p class="text-sm font-bold text-slate-800">{{ number_format($belumTerimaInsentif) }} <span class="text-[10px] font-normal text-slate-500">Guru</span></p>
+                                    <p class="text-[10px] text-slate-600 font-bold uppercase">Sisa Kuota Belum Diajukan</p>
+                                    <p class="text-sm font-bold text-slate-800">{{ number_format($belumTerimaInsentif) }} <span class="text-[10px] font-normal text-slate-500">Slot</span></p>
                                 </div>
                             </div>
-                            <span class="text-xs font-bold text-red-500">{{ $persenBelum }}%</span>
+                            <span class="text-xs font-bold text-red-700">{{ $persenBelum }}%</span>
                         </div>
                     </div>
                 </div>
@@ -161,20 +161,20 @@
                     <div class="flex justify-between items-end mb-2">
                         <div>
                             <p class="text-sm font-bold text-slate-700">Dokumen Legalitas Lembaga</p>
-                            <p class="text-[10px] text-slate-500 mt-0.5"><span class="font-bold text-slate-700">{{ number_format($lembagaLengkap) }}</span> dari {{ number_format($totalLembagaBerkas) }} Lembaga</p>
+                            <p class="text-[10px] text-slate-600 mt-0.5"><span class="font-bold text-slate-700">{{ number_format($lembagaLengkap) }}</span> dari {{ number_format($totalLembagaBerkas) }} Lembaga</p>
                         </div>
-                        <span class="text-xl font-black {{ $persenLembaga == 100 ? 'text-emerald-500' : 'text-orange-500' }}">{{ $persenLembaga }}%</span>
+                        <span class="text-xl font-black {{ $persenLembaga == 100 ? 'text-emerald-700' : 'text-amber-700' }}">{{ $persenLembaga }}%</span>
                     </div>
                     <div class="w-full bg-gray-100 rounded-full h-3 mb-1.5 overflow-hidden border border-gray-200">
-                        <div class="{{ $persenLembaga == 100 ? 'bg-emerald-500' : 'bg-orange-500' }} h-3 rounded-full transition-all duration-1000 ease-out relative" style="width: {{ $persenLembaga }}%">
+                        <div class="{{ $persenLembaga == 100 ? 'bg-emerald-600' : 'bg-amber-600' }} h-3 rounded-full transition-all duration-1000 ease-out relative" style="width: {{ $persenLembaga }}%">
                             {{-- Efek Kilau --}}
                             <div class="absolute top-0 left-0 bottom-0 right-0 bg-white opacity-20" style="background-image: linear-gradient(45deg,rgba(255,255,255,.15) 25%,transparent 25%,transparent 50%,rgba(255,255,255,.15) 50%,rgba(255,255,255,.15) 75%,transparent 75%,transparent); background-size: 1rem 1rem;"></div>
                         </div>
                     </div>
                     @if($persenLembaga < 100)
-                        <p class="text-[10px] text-red-500 font-bold italic">* {{ number_format($totalLembagaBerkas - $lembagaLengkap) }} Lembaga Dokumennya Belum Lengkap</p>
+                        <p class="text-[10px] text-red-700 font-bold italic">* {{ number_format($totalLembagaBerkas - $lembagaLengkap) }} Lembaga Dokumennya Belum Lengkap</p>
                     @else
-                        <p class="text-[10px] text-emerald-600 font-bold italic">✅ Sempurna! Seluruh berkas lembaga disetujui.</p>
+                        <p class="text-[10px] text-emerald-700 font-bold italic">✅ Sempurna! Seluruh berkas lembaga disetujui.</p>
                     @endif
                 </div>
 
@@ -319,23 +319,44 @@
             <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-4 gap-4">
                 <div>
                     <h3 class="font-bold text-slate-800 text-lg">Pemetaan Geografis Sebaran Lembaga</h3>
-                    <p class="text-sm text-slate-500">Titik Koordinat Lembaga Se-Kabupaten Kediri (Bisa Mode Citra Satelit)</p>
+                    <p class="text-sm text-slate-500">Titik Koordinat Lembaga Se-Kabupaten Kediri</p>
                 </div>
                 
-                {{-- Legend Warna Pin --}}
-                <div class="flex flex-wrap gap-4 text-xs font-semibold">
-                    <div class="flex items-center gap-1.5">
-                        <span class="w-3.5 h-3.5 rounded-full bg-emerald-500 border border-white shadow-sm"></span>
-                        <span class="text-slate-700">TPQ</span>
-                    </div>
-                    <div class="flex items-center gap-1.5">
-                        <span class="w-3.5 h-3.5 rounded-full bg-blue-500 border border-white shadow-sm"></span>
-                        <span class="text-slate-700">Madin</span>
-                    </div>
-                    <div class="flex items-center gap-1.5">
-                        <span class="w-3.5 h-3.5 rounded-full bg-purple-600 border border-white shadow-sm"></span>
-                        <span class="text-slate-700">Ponpes</span>
-                    </div>
+                {{-- [BARU] Filter Interaktif Jenis Lembaga (Klik untuk Menyortir Pin Peta) --}}
+                <div class="flex flex-wrap items-center gap-1.5 text-xs font-bold" id="legendFilterContainer">
+                    <span class="text-[10px] text-slate-400 uppercase tracking-wider mr-1 hidden sm:inline">Filter Lembaga:</span>
+                    
+                    {{-- Tombol Semua --}}
+                    <button type="button" onclick="filterMapMarkers('ALL', this)" class="btn-filter-map active px-3 py-1.5 rounded-lg border border-slate-300 bg-slate-800 text-black transition shadow-sm hover:opacity-90 flex items-center gap-1 text-[11px]">
+                        <span>Semua</span>
+                    </button>
+
+                    {{-- Tombol TPQ --}}
+                    <button type="button" onclick="filterMapMarkers('TPQ', this)" class="btn-filter-map px-3 py-1.5 rounded-lg border border-emerald-300 bg-white text-emerald-700 transition shadow-sm hover:bg-emerald-50 flex items-center gap-1.5 text-[11px]">
+                        <svg class="w-3.5 h-3.5" viewBox="0 0 24 32" fill="#10b981">
+                            <path d="M12 0C5.373 0 0 5.373 0 12c0 8.5 12 20 12 20s12-11.5 12-20c0-6.627-5.373-12-12-12z"/>
+                            <circle cx="12" cy="11" r="4" fill="#ffffff"/>
+                        </svg>
+                        <span>TPQ</span>
+                    </button>
+
+                    {{-- Tombol Madin --}}
+                    <button type="button" onclick="filterMapMarkers('MADIN', this)" class="btn-filter-map px-3 py-1.5 rounded-lg border border-blue-300 bg-white text-blue-700 transition shadow-sm hover:bg-blue-50 flex items-center gap-1.5 text-[11px]">
+                        <svg class="w-3.5 h-3.5" viewBox="0 0 24 32" fill="#2563eb">
+                            <path d="M12 0C5.373 0 0 5.373 0 12c0 8.5 12 20 12 20s12-11.5 12-20c0-6.627-5.373-12-12-12z"/>
+                            <circle cx="12" cy="11" r="4" fill="#ffffff"/>
+                        </svg>
+                        <span>Madin</span>
+                    </button>
+
+                    {{-- Tombol Ponpes --}}
+                    <button type="button" onclick="filterMapMarkers('PONPES', this)" class="btn-filter-map px-3 py-1.5 rounded-lg border border-purple-300 bg-white text-purple-700 transition shadow-sm hover:bg-purple-50 flex items-center gap-1.5 text-[11px]">
+                        <svg class="w-3.5 h-3.5" viewBox="0 0 24 32" fill="#9333ea">
+                            <path d="M12 0C5.373 0 0 5.373 0 12c0 8.5 12 20 12 20s12-11.5 12-20c0-6.627-5.373-12-12-12z"/>
+                            <circle cx="12" cy="11" r="4" fill="#ffffff"/>
+                        </svg>
+                        <span>Ponpes</span>
+                    </button>
                 </div>
             </div>
 
@@ -386,7 +407,7 @@
         new Chart(document.getElementById('chartInsentif'), {
             type: 'doughnut',
             data: {
-                labels: ['Sudah Terima', 'Belum Terima'],
+                labels: ['Sudah Diajukan', 'Sisa Kuota Tersedia'],
                 datasets: [{
                     data: [{{ $sudahTerimaInsentif }}, {{ $belumTerimaInsentif }}],
                     backgroundColor: ['#059669', '#f87171'], borderWidth: 0,
@@ -714,6 +735,30 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
+    <style>
+    /* 1. Perbesar Touch Target Tombol Zoom Leaflet (+ dan -) */
+    .leaflet-touch .leaflet-bar a,
+    .leaflet-control-zoom a {
+        width: 44px !important;
+        height: 44px !important;
+        line-height: 44px !important;
+        font-size: 18px !important;
+    }
+    
+    /* 2. Perbesar Touch Target Tombol Layer Satelit */
+    .leaflet-touch .leaflet-control-layers-toggle,
+    .leaflet-control-layers-toggle {
+        width: 44px !important;
+        height: 44px !important;
+    }
+
+    /* 3. Pastikan Touch Target Tombol Filter Legenda Lega */
+    .btn-filter-map {
+        min-height: 38px;
+        touch-action: manipulation;
+    }
+    </style>
+
     @php
         $markerData = [];
         if (isset($petaLembagas)) {
@@ -791,43 +836,81 @@
             };
             L.control.layers(baseMaps, null, { position: 'topright' }).addTo(map);
 
-            // 4. Render Marker Lembaga
+            // 4. Render Marker Lembaga dengan Penampung Layer Khusus (Mendukung Filter)
             const listLembaga = {!! json_encode($markerData) !!};
+            window.allMapMarkers = [];
+            window.markerLayerGroup = L.layerGroup().addTo(map);
 
             listLembaga.forEach(item => {
                 let markerColor = '#10b981'; // Hijau (TPQ)
-                if (item.jenis === 'MADIN') markerColor = '#3b82f6'; // Biru
-                if (item.jenis === 'PONPES') markerColor = '#9333ea'; // Ungu
+                if (item.jenis === 'MADIN') markerColor = '#2563eb'; // Biru (MADIN)
+                if (item.jenis === 'PONPES') markerColor = '#9333ea'; // Ungu (PONPES)
 
-                // Marker Circle Interaktif
-                const circle = L.circleMarker([item.lat, item.lng], {
-                    radius: 7,
-                    fillColor: markerColor,
-                    color: '#ffffff',
-                    weight: 2,
-                    opacity: 1,
-                    fillOpacity: 0.9
-                }).addTo(map);
+                // Template SVG Pin Modern dengan Aksesibilitas Penuh (ARIA)
+                const pinSvg = `
+                    <div role="button" aria-label="Lokasi ${item.jenis} ${item.nama}" style="display: flex; justify-content: center; align-items: center; filter: drop-shadow(0 4px 5px rgba(0,0,0,0.45)); width: 32px; height: 40px;">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 32" width="30" height="38" aria-hidden="true">
+                            <path d="M12 0C5.373 0 0 5.373 0 12c0 8.5 12 20 12 20s12-11.5 12-20c0-6.627-5.373-12-12-12z" fill="${markerColor}" stroke="#ffffff" stroke-width="1.2"/>
+                            <circle cx="12" cy="11" r="5.5" fill="#ffffff"/>
+                            <circle cx="12" cy="11" r="3.2" fill="${markerColor}"/>
+                        </svg>
+                    </div>
+                `;
 
-                // Popup Info Saat Marker Diklik
+                // Buat Ikon Pin Leaflet (Ukuran Sentuhan Standar Lighthouse 44x48px)
+                const customIcon = L.divIcon({
+                    html: pinSvg,
+                    className: '',
+                    iconSize: [44, 48],
+                    iconAnchor: [22, 48],
+                    popupAnchor: [0, -44]
+                });
+
+                // Buat Marker Lengkap dengan Title & Alt (Screen Reader Friendly)
+                const marker = L.marker([item.lat, item.lng], { 
+                    icon: customIcon,
+                    title: `${item.jenis} - ${item.nama}`,
+                    alt: `Pin lokasi ${item.jenis} ${item.nama}`
+                });
+
+                // Popup Info Saat Pin Diklik (Lengkap dengan Tombol Google Maps Langsung)
+                const gmapsUrl = `https://www.google.com/maps?q=${item.lat},${item.lng}`;
+
                 const popupContent = `
-                    <div style="font-family: 'Inter', sans-serif; font-size: 11px; min-width: 170px;">
-                        <span style="display:inline-block; padding: 2px 6px; border-radius: 4px; font-weight: bold; font-size: 9px; color: #fff; background-color: ${markerColor}; margin-bottom: 4px;">
+                    <div style="font-family: 'Inter', sans-serif; font-size: 11px; min-width: 190px; padding: 2px 0;">
+                        <span style="display:inline-block; padding: 2px 7px; border-radius: 4px; font-weight: bold; font-size: 9px; color: #fff; background-color: ${markerColor}; margin-bottom: 5px;">
                             ${item.jenis}
                         </span>
-                        <strong style="display:block; font-size: 12px; color: #1e293b; text-transform: uppercase; margin-bottom: 2px;">
+                        <strong style="display:block; font-size: 12px; color: #0f172a; text-transform: uppercase; margin-bottom: 2px; line-height: 1.2;">
                             ${item.nama}
                         </strong>
                         <span style="color: #64748b; font-weight: 600; display: block; margin-bottom: 6px;">
                             Desa ${item.desa}, Kec. ${item.kecamatan}
                         </span>
-                        <div style="border-top: 1px solid #e2e8f0; padding-top: 4px; display: flex; justify-content: space-between; color: #334155;">
+                        <div style="border-top: 1px solid #e2e8f0; padding-top: 5px; margin-bottom: 8px; display: flex; justify-content: space-between; color: #334155;">
                             <span>Santri: <b>${item.santri}</b></span>
                             <span style="color: ${item.status === 'AKTIF' ? '#16a34a' : '#dc2626'}; font-weight: bold;">${item.status}</span>
                         </div>
+
+                        <!-- Tombol Direct Google Maps -->
+                        <a href="${gmapsUrl}" target="_blank" rel="noopener noreferrer" 
+                           style="display: flex; align-items: center; justify-content: center; gap: 6px; width: 100%; padding: 6px 0; background-color: #2563eb; color: #ffffff; text-decoration: none; border-radius: 6px; font-weight: bold; font-size: 11px; box-shadow: 0 1px 2px rgba(0,0,0,0.1); transition: background-color 0.2s;"
+                           onmouseover="this.style.backgroundColor='#1d4ed8'" 
+                           onmouseout="this.style.backgroundColor='#2563eb'">
+                            <svg style="width: 13px; height: 13px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                            </svg>
+                            Buka di Google Maps
+                        </a>
                     </div>
                 `;
-                circle.bindPopup(popupContent);
+                marker.bindPopup(popupContent);
+
+                // Tandai jenis lembaga pada marker dan simpan ke layer
+                marker.jenisLembaga = item.jenis;
+                window.allMapMarkers.push(marker);
+                window.markerLayerGroup.addLayer(marker);
             });
         }
 
@@ -837,5 +920,33 @@
         } else {
             inisialisasiPeta();
         }
+
+        // ========================================================
+        // 5. FUNGSI FILTER PIN PETA BERDASARKAN JENIS LEMBAGA
+        // ========================================================
+        window.filterMapMarkers = function(jenis, btnElement) {
+            if (!window.markerLayerGroup || !window.allMapMarkers) return;
+
+            // 1. Bersihkan pin saat ini di peta
+            window.markerLayerGroup.clearLayers();
+
+            // 2. Tambahkan kembali pin yang cocok dengan filter
+            window.allMapMarkers.forEach(m => {
+                if (jenis === 'ALL' || m.jenisLembaga === jenis) {
+                    window.markerLayerGroup.addLayer(m);
+                }
+            });
+
+            // 3. Efek Aktif / Highlight pada Tombol Filter yang Diklik
+            document.querySelectorAll('.btn-filter-map').forEach(btn => {
+                btn.classList.remove('ring-2', 'ring-offset-2', 'ring-slate-900', 'scale-105');
+                btn.classList.add('opacity-60');
+            });
+
+            if (btnElement) {
+                btnElement.classList.remove('opacity-60');
+                btnElement.classList.add('ring-2', 'ring-offset-2', 'ring-slate-900', 'scale-105');
+            }
+        };
     </script>
 </x-app-layout>

@@ -4,7 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Kecamatan;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth; // [PENTING] Wajib ada agar Auth::user() jalan
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache; // [BARU] Untuk simpan total pagu kabupaten
 
 class KecamatanController extends Controller
 {
@@ -30,12 +31,15 @@ class KecamatanController extends Controller
             $query->where('nama_kecamatan', 'like', '%' . $request->search . '%');
         }
 
-        // 4. Ambil data dengan Pagination
-        $kecamatans = $query->orderBy('nama_kecamatan', 'asc')
-                            ->paginate(10)
-                            ->withQueryString();
+        // 4. Ambil semua data sekaligus (tanpa pagination)
+        $kecamatans = $query->orderBy('nama_kecamatan', 'asc')->get();
 
-        return view('admin.kecamatan.index', compact('kecamatans'));
+        // [BARU] Hitung Kontrol Kuota Induk Kabupaten (Murni dari input petugas)
+        $totalPagu = (int) Cache::get('pagu_induk_kabupaten', 0);
+        $kuotaTerdistribusi = (int) Kecamatan::sum('kuota_insentif');
+        $sisaKuota = $totalPagu - $kuotaTerdistribusi;
+
+        return view('admin.kecamatan.index', compact('kecamatans', 'totalPagu', 'kuotaTerdistribusi', 'sisaKuota'));
     }
 
     /**
@@ -160,5 +164,27 @@ class KecamatanController extends Controller
         }
 
         return redirect()->route('kecamatan.index')->with('success', "Alhamdulillah! Kuota untuk Kecamatan {$kecamatan->nama_kecamatan} berhasil diatur menjadi {$request->kuota_insentif} jatah.");
+    }
+
+    /**
+     * [BARU] Simpan Angka Master Pagu Kuota Kabupaten
+     */
+    public function updatePaguInduk(Request $request)
+    {
+        if (Auth::user()->role == 'korcam') {
+            abort(403, 'Akses Ditolak! Korcam tidak berhak mengubah pagu induk.');
+        }
+
+        $request->validate([
+            'pagu_induk' => 'required|integer|min:0'
+        ], [
+            'pagu_induk.required' => 'Total kuota kabupaten wajib diisi.',
+            'pagu_induk.integer'  => 'Total kuota harus berupa angka.',
+            'pagu_induk.min'      => 'Total kuota minimal 0.'
+        ]);
+
+        Cache::forever('pagu_induk_kabupaten', $request->pagu_induk);
+
+        return redirect()->route('kecamatan.index')->with('success', "Alhamdulillah! Total Pagu Kuota Kabupaten berhasil diatur menjadi " . number_format($request->pagu_induk) . " jatah.");
     }
 }

@@ -98,11 +98,13 @@ Route::get('/dashboard', function () {
         ->count();
     $persenGuru = $totalGuruBerkas > 0 ? round(($guruLengkap / $totalGuruBerkas) * 100) : 0;
 
-    // Target Insentif Real Database
+    // Target Insentif Real Database (Tersinkron Otomatis dengan Pagu Induk Inputan Petugas)
     if ($user->role == 'korcam') {
-        $targetInsentif = \App\Models\Kecamatan::where('id', $user->kecamatan_id)->value('kuota_insentif') ?? 0;
+        $targetInsentif = (int) \App\Models\Kecamatan::where('id', $user->kecamatan_id)->value('kuota_insentif') ?? 0;
     } else {
-        $targetInsentif = \App\Models\Kecamatan::sum('kuota_insentif');
+        $paguInduk = (int) \Illuminate\Support\Facades\Cache::get('pagu_induk_kabupaten', 0);
+        // Jika pagu induk diisi petugas gunakan nilai tersebut, jika masih 0 gunakan total akumulasi kecamatan
+        $targetInsentif = $paguInduk > 0 ? $paguInduk : (int) \App\Models\Kecamatan::sum('kuota_insentif');
     }
     
     $sudahTerimaInsentif = (clone $queryGuru)->where('penerima_insentif', 1)->count();
@@ -226,6 +228,7 @@ Route::get('/dashboard', function () {
 Route::middleware(['auth', 'role:admin,verifikator'])->prefix('admin')->group(function () {
     
     // ===== MASTER DATA WILAYAH =====
+    Route::post('/kecamatan/update-pagu-induk', [KecamatanController::class, 'updatePaguInduk'])->name('kecamatan.update_pagu_induk'); // <-- [BARU] Rute Simpan Master Pagu
     Route::resource('kecamatan', KecamatanController::class);
     Route::put('/kecamatan/{id}/update-kuota', [KecamatanController::class, 'updateKuota'])->name('kecamatan.update_kuota');
     Route::resource('desa', DesaController::class);
