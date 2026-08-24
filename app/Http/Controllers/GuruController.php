@@ -228,7 +228,16 @@ class GuruController extends Controller
 
     public function store(Request $request)
     {
-        // 1. Validasi Input
+        // [BARU] Normalisasi No HP otomatis berawalan 08 sebelum validasi & simpan
+        $noHp = preg_replace('/[^0-9]/', '', (string)$request->no_hp);
+        if (str_starts_with($noHp, '62')) {
+            $noHp = '0' . substr($noHp, 2);
+        } elseif (str_starts_with($noHp, '8')) {
+            $noHp = '0' . $noHp;
+        }
+        $request->merge(['no_hp' => $noHp]);
+
+        // 1. Validasi Input & Unik Kontak/Rekening
         $request->validate([
             'lembaga_id'        => 'required|exists:lembagas,id',
             'jenis_guru'        => 'required|in:MADIN,TPQ,PONPES',
@@ -240,7 +249,7 @@ class GuruController extends Controller
             
             'status_kepegawaian'=> 'required|string',
             'status_sertifikasi'=> 'required|string',
-            'penerima_insentif' => 'required|boolean', // [BARU] Wajib diisi (0/1)
+            'penerima_insentif' => 'required|boolean',
             
             'nama_ibu_kandung'  => 'required|string',
             'agama'             => 'required|string',
@@ -250,16 +259,54 @@ class GuruController extends Controller
             'desa_ktp'          => 'required|string', 
             'kabupaten'         => 'required|string',
 
-
-            'no_hp'             => 'required|numeric',
-            'nomor_rekening'    => 'nullable|numeric',
+            'no_hp'             => 'required|numeric|unique:gurus,no_hp',
+            'nomor_rekening'    => 'nullable|numeric|unique:gurus,nomor_rekening',
             
             'file_ktp'          => 'nullable|mimes:pdf|max:2048',
             'file_kk'           => 'nullable|mimes:pdf|max:2048',
             'file_bukurekening' => 'nullable|mimes:pdf|max:2048',
+        ], [
+            'nik.unique'            => 'NIK ini sudah terdaftar di database.',
+            'no_hp.unique'          => 'Nomor HP sudah terdaftar atas nama guru lain.',
+            'nomor_rekening.unique' => 'Nomor Rekening sudah digunakan oleh guru lain.',
         ]);
 
+        // 1. Satpam Wilayah: Domisili KTP Wajib Kabupaten Kediri
+        $kabKtp = strtoupper($request->kabupaten);
+        if (!empty($kabKtp) && !str_contains($kabKtp, 'KEDIRI')) {
+            return back()->withInput()->withErrors([
+                'kabupaten' => "Domisili KTP Guru harus berada di Kabupaten Kediri (Terinput: {$request->kabupaten})."
+            ]);
+        }
+
+        // 2. Satpam Validasi NIK Dukcapil vs Tanggal Lahir (+40 Perempuan)
+        $nik = $request->nik;
+        $tglLahir = \Carbon\Carbon::parse($request->tanggal_lahir);
+        $tgl = (int)$tglLahir->format('d');
+        $bln = $tglLahir->format('m');
+        $thn = $tglLahir->format('y');
+        $expectedTgl = ($request->jenis_kelamin === 'P') ? ($tgl + 40) : $tgl;
+        $expectedNikPattern = str_pad($expectedTgl, 2, '0', STR_PAD_LEFT) . $bln . $thn;
+
+        if (substr($nik, 6, 6) !== $expectedNikPattern) {
+            return back()->withInput()->withErrors([
+                'nik' => "ANOMALI NIK! NIK '{$nik}' tidak sinkron dengan Tanggal Lahir (" . $tglLahir->format('d-m-Y') . ") & Jenis Kelamin ({$request->jenis_kelamin}). Format NIK semestinya memuat kode '{$expectedNikPattern}'."
+            ]);
+        }
+
+        // [BARU] Satpam Duplikasi Ganda: Kombinasi (Nama Lengkap + Nama Ibu Kandung)
+        $cekGanda = Guru::where('nama_lengkap', strtoupper($request->nama_lengkap))
+                        ->where('nama_ibu_kandung', strtoupper($request->nama_ibu_kandung))
+                        ->first();
+        if ($cekGanda) {
+            return back()->withInput()->withErrors([
+                'nama_lengkap' => "INDIKASI DATA GANDA! Guru bernama '{$request->nama_lengkap}' dengan Nama Ibu '{$request->nama_ibu_kandung}' sudah terdaftar di sistem (NIK: {$cekGanda->nik})."
+            ]);
+        }
+
         // 2. Proses Upload File
+
+
         $pathKtp = $request->file('file_ktp') ? $request->file('file_ktp')->store('berkas_guru', 'public') : null;
         $pathKk  = $request->file('file_kk') ? $request->file('file_kk')->store('berkas_guru', 'public') : null;
         $pathRek = $request->file('file_bukurekening') ? $request->file('file_bukurekening')->store('berkas_guru', 'public') : null;
@@ -287,7 +334,7 @@ class GuruController extends Controller
             'kabupaten'         => strtoupper($request->kabupaten),
 
 
-            'no_hp'             => $request->no_hp,
+            'no_hp'             => $noHp,
             'nomor_rekening'    => $request->nomor_rekening,
             'keterangan'        => $request->keterangan,
             
@@ -366,32 +413,87 @@ class GuruController extends Controller
     {
         $guru = Guru::findOrFail($id);
         
+        // [BARU] Normalisasi No HP otomatis berawalan 08 sebelum validasi & update
+        $noHp = preg_replace('/[^0-9]/', '', (string)$request->no_hp);
+        if (str_starts_with($noHp, '62')) {
+            $noHp = '0' . substr($noHp, 2);
+        } elseif (str_starts_with($noHp, '8')) {
+            $noHp = '0' . $noHp;
+        }
+        $request->merge(['no_hp' => $noHp]);
+
         $request->validate([
             'lembaga_id'        => 'required|exists:lembagas,id',
             'nama_lengkap'      => 'required|string|max:255',
             'nik'               => 'required|numeric|digits:16|unique:gurus,nik,' . $id,
+            'tempat_lahir'      => 'required|string',
+            'tanggal_lahir'     => 'required|date',
+            'jenis_kelamin'     => 'required|in:L,P',
+            'nama_ibu_kandung'  => 'required|string',
+            'agama'             => 'required|string',
+            'no_hp'             => 'required|numeric|unique:gurus,no_hp,' . $id,
+            'nomor_rekening'    => 'nullable|numeric|unique:gurus,nomor_rekening,' . $id,
             'status_kepegawaian'=> 'required|string',
             'status_sertifikasi'=> 'required|string',
             'penerima_insentif' => 'required|boolean',
-            'kecamatan_ktp'     => 'required|string', // [BARU] Validasi unik KTP
-            'desa_ktp'          => 'required|string', // [BARU] Validasi unik KTP
+            'alamat_ktp'        => 'required|string',
+            'kecamatan_ktp'     => 'required|string',
+            'desa_ktp'          => 'required|string',
             'file_ktp'          => 'nullable|mimes:pdf|max:2048',
             'file_kk'           => 'nullable|mimes:pdf|max:2048',
             'file_bukurekening' => 'nullable|mimes:pdf|max:2048',
+        ], [
+            'nik.unique'            => 'NIK ini sudah digunakan oleh data guru lain.',
+            'no_hp.unique'          => 'Nomor HP sudah terdaftar atas nama guru lain.',
+            'nomor_rekening.unique' => 'Nomor Rekening sudah digunakan oleh guru lain.',
         ]);
 
-        // Ambil semua data input kecuali file dan input wilayah KTP khusus
-        $data = $request->except(['file_ktp', 'file_kk', 'file_bukurekening', 'kecamatan_ktp', 'desa_ktp']);
+        // 1. Satpam Wilayah saat Update: Domisili KTP Wajib Kabupaten Kediri
+        $kabKtp = strtoupper($request->kabupaten);
+        if (!empty($kabKtp) && !str_contains($kabKtp, 'KEDIRI')) {
+            return back()->withInput()->withErrors([
+                'kabupaten' => "Domisili KTP Guru harus berada di Kabupaten Kediri (Terinput: {$request->kabupaten})."
+            ]);
+        }
+
+        // 2. Satpam Validasi NIK Dukcapil vs Tanggal Lahir saat Update
+        $nik = $request->nik;
+        $tglLahir = \Carbon\Carbon::parse($request->tanggal_lahir);
+        $tgl = (int)$tglLahir->format('d');
+        $bln = $tglLahir->format('m');
+        $thn = $tglLahir->format('y');
+        $expectedTgl = ($request->jenis_kelamin === 'P') ? ($tgl + 40) : $tgl;
+        $expectedNikPattern = str_pad($expectedTgl, 2, '0', STR_PAD_LEFT) . $bln . $thn;
+
+        if (substr($nik, 6, 6) !== $expectedNikPattern) {
+            return back()->withInput()->withErrors([
+                'nik' => "ANOMALI NIK! NIK '{$nik}' tidak sinkron dengan Tanggal Lahir (" . $tglLahir->format('d-m-Y') . ") & Jenis Kelamin ({$request->jenis_kelamin}). Format NIK semestinya memuat kode '{$expectedNikPattern}'."
+            ]);
+        }
+
+        // [BARU] Satpam Duplikasi Ganda (Kecuali Data Guru Ini Sendiri)
+        $cekGanda = Guru::where('id', '!=', $id)
+                        ->where('nama_lengkap', strtoupper($request->nama_lengkap))
+                        ->where('nama_ibu_kandung', strtoupper($request->nama_ibu_kandung))
+                        ->first();
+        if ($cekGanda) {
+            return back()->withInput()->withErrors([
+                'nama_lengkap' => "INDIKASI DATA GANDA! Guru bernama '{$request->nama_lengkap}' dengan Nama Ibu '{$request->nama_ibu_kandung}' sudah terdaftar pada data guru lain (NIK: {$cekGanda->nik})."
+            ]);
+        }
+
+        // Ambil semua data input kecuali file, input wilayah khusus KTP, dan input trigger hapus
+        $data = $request->except([
+            'file_ktp', 'file_kk', 'file_bukurekening', 
+            'kecamatan_ktp', 'desa_ktp',
+            'hapus_file_ktp', 'hapus_file_kk', 'hapus_file_bukurekening'
+        ]);
         
         // Petakan manual hasil input unik ke kolom asli database
         $data['kecamatan'] = $request->kecamatan_ktp;
         $data['desa'] = $request->desa_ktp;
-
-        // Ambil semua data input kecuali file
-        $data = $request->except(['file_ktp', 'file_kk', 'file_bukurekening']);
-        
-        // [PENTING] Pastikan penerima_insentif masuk ke array $data
         $data['penerima_insentif'] = $request->penerima_insentif;
+        $data['no_hp'] = $noHp;
 
         // --- MULAI SUNTIKAN KODE PEMAKSAAN KAPITAL ---
         $kolom_teks = [
@@ -407,21 +509,54 @@ class GuruController extends Controller
         }
         // --- AKHIR SUNTIKAN KODE ---
 
-        // Proses File
+        // ========================================================
+        // 📁 PROSES DOKUMEN: HAPUS FILE LAMA & UPLOAD FILE BARU
+        // ========================================================
 
-        // Proses File
+        // 1. FILE KTP
+        if ($request->input('hapus_file_ktp') == '1') {
+            if ($guru->file_ktp && Storage::disk('public')->exists($guru->file_ktp)) {
+                Storage::disk('public')->delete($guru->file_ktp);
+            }
+            $data['file_ktp'] = null;
+            $data['status_ktp'] = null;
+        }
         if ($request->hasFile('file_ktp')) {
-            if ($guru->file_ktp) Storage::disk('public')->delete($guru->file_ktp);
+            if ($guru->file_ktp && Storage::disk('public')->exists($guru->file_ktp)) {
+                Storage::disk('public')->delete($guru->file_ktp);
+            }
             $data['file_ktp'] = $request->file('file_ktp')->store('berkas_guru', 'public');
             $data['status_ktp'] = 'Pending';
         }
+
+        // 2. FILE KK
+        if ($request->input('hapus_file_kk') == '1') {
+            if ($guru->file_kk && Storage::disk('public')->exists($guru->file_kk)) {
+                Storage::disk('public')->delete($guru->file_kk);
+            }
+            $data['file_kk'] = null;
+            $data['status_kk'] = null;
+        }
         if ($request->hasFile('file_kk')) {
-            if ($guru->file_kk) Storage::disk('public')->delete($guru->file_kk);
+            if ($guru->file_kk && Storage::disk('public')->exists($guru->file_kk)) {
+                Storage::disk('public')->delete($guru->file_kk);
+            }
             $data['file_kk'] = $request->file('file_kk')->store('berkas_guru', 'public');
             $data['status_kk'] = 'Pending';
         }
+
+        // 3. FILE BUKU REKENING
+        if ($request->input('hapus_file_bukurekening') == '1') {
+            if ($guru->file_bukurekening && Storage::disk('public')->exists($guru->file_bukurekening)) {
+                Storage::disk('public')->delete($guru->file_bukurekening);
+            }
+            $data['file_bukurekening'] = null;
+            $data['status_bukurekening'] = null;
+        }
         if ($request->hasFile('file_bukurekening')) {
-            if ($guru->file_bukurekening) Storage::disk('public')->delete($guru->file_bukurekening);
+            if ($guru->file_bukurekening && Storage::disk('public')->exists($guru->file_bukurekening)) {
+                Storage::disk('public')->delete($guru->file_bukurekening);
+            }
             $data['file_bukurekening'] = $request->file('file_bukurekening')->store('berkas_guru', 'public');
             $data['status_bukurekening'] = 'Pending';
         }
@@ -476,6 +611,48 @@ class GuruController extends Controller
         return redirect()->route($route)->with('success', 'Verifikasi dokumen berhasil disimpan.');
     }
 
+    // ==========================================
+    // [BARU] HAPUS FILE FISIK TUNGGAL SECARA INSTAN
+    // ==========================================
+    public function deleteFile($id, $type)
+    {
+        $guru = Guru::with('lembaga')->findOrFail($id);
+        $user = Auth::user();
+
+        // Keamanan: Cegah Korcam menghapus file guru kecamatan lain
+        if ($user->role == 'korcam' && $guru->lembaga->kecamatan_id != $user->kecamatan_id) {
+            return back()->with('error', 'Akses Ditolak.');
+        }
+
+        $columnFile = 'file_' . $type;
+        $columnStatus = 'status_' . $type;
+
+        if (in_array($type, ['ktp', 'kk', 'bukurekening']) && $guru->$columnFile) {
+            // 1. Hapus file fisik dari storage disk public
+            if (Storage::disk('public')->exists($guru->$columnFile)) {
+                Storage::disk('public')->delete($guru->$columnFile);
+            }
+
+            // 2. Set file jadi null dan kembalikan status ke 'Pending' (Sesuai aturan database)
+            $guru->$columnFile = null;
+            $guru->$columnStatus = 'Pending';
+            $guru->save();
+
+            // 3. Catat di CCTV Activity Logs
+            DB::table('activity_logs')->insert([
+                'user_id'    => Auth::id(),
+                'nama_user'  => Auth::user()->name,
+                'aksi'       => 'Menghapus Berkas ' . strtoupper($type),
+                'target'     => $guru->nama_lengkap . ' (' . $guru->nik . ')',
+                'created_at' => now(),
+            ]);
+
+            return back()->with('success', 'Berkas ' . strtoupper($type) . ' berhasil dihapus permanen.');
+        }
+
+        return back()->with('error', 'Berkas tidak ditemukan.');
+    }
+
     public function destroy($id)
     {
         $guru = Guru::findOrFail($id);
@@ -527,9 +704,10 @@ class GuruController extends Controller
             $menuAsal = 'PONPES';
         }
 
+        // Inisialisasi $import di luar try agar terbaca jelas oleh VS Code
+        $import = new GuruImport(Auth::user(), $menuAsal);
+
         try {
-            // Suntikkan $menuAsal ke dalam class Import agar satpam mendeteksi dengan akurat
-            $import = new GuruImport(Auth::user(), $menuAsal);
             Excel::import($import, $request->file('file_excel'));
 
             return back()->with('success', "Alhamdulillah! Seluruh data Guru {$menuAsal} di file Excel berhasil diproses tanpa ada NIK/Rekening ganda.");

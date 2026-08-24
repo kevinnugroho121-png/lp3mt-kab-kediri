@@ -260,7 +260,11 @@ Route::middleware(['auth', 'role:admin,verifikator,korcam'])->prefix('admin')->g
     Route::get('lembaga/{lembaga}/verifikasi', [LembagaController::class, 'verifikasi'])->name('lembaga.verifikasi');
     Route::post('lembaga/{lembaga}/verifikasi', [LembagaController::class, 'prosesVerifikasi'])->name('lembaga.proses_verifikasi');
     Route::post('/lembaga/import', [LembagaController::class, 'import'])->name('lembaga.import');
-    Route::get('/lembaga/export-excel', [LembagaController::class, 'exportExcel'])->name('lembaga.export'); // <--- [TAMBAH BARIS INI]
+    Route::get('/lembaga/export-excel', [LembagaController::class, 'exportExcel'])->name('lembaga.export');
+    
+    // [BARU] Rute Hapus Dokumen Fisik PDF & Foto Lembaga Instan
+    Route::delete('/lembaga/{id}/delete-file/{type}', [LembagaController::class, 'deleteFile'])->name('lembaga.delete_file');
+    
     Route::resource('lembaga', LembagaController::class);
 
     // ===== MASTER DATA GURU =====
@@ -275,6 +279,10 @@ Route::middleware(['auth', 'role:admin,verifikator,korcam'])->prefix('admin')->g
     Route::post('/guru/{id}/toggle-insentif', [GuruController::class, 'toggleInsentif'])->name('guru.toggle_insentif');
     // Selipkan rute ini di dalam Grup 3B
     Route::get('/guru/export-excel', [GuruController::class, 'exportExcel'])->name('guru.export');
+    
+    // [BARU] Rute Hapus Dokumen Fisik Tunggal Instan
+    Route::delete('/guru/{id}/delete-file/{type}', [GuruController::class, 'deleteFile'])->name('guru.delete_file');
+    
     Route::resource('guru', GuruController::class);
 
 });

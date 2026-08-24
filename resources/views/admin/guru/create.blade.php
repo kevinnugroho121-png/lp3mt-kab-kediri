@@ -57,7 +57,10 @@
 
                             <div class="md:col-span-1">
                                 <label class="block text-[10px] font-bold text-gray-600 uppercase tracking-wider mb-1">NIK (16 Digit) <span class="text-red-500">*</span></label>
-                                <input type="number" name="nik" value="{{ old('nik') }}" class="w-full border border-gray-600 rounded-md px-2 py-1 h-[32px] text-xs font-bold text-black-800 focus:border-blue-500 focus:ring-blue-500 shadow-sm" required>
+                                <input type="text" name="nik" maxlength="16" value="{{ old('nik') }}" class="w-full border {{ $errors->has('nik') ? 'border-red-500 bg-red-50' : 'border-gray-600' }} rounded-md px-2 py-1 h-[32px] text-xs font-bold text-black-800 focus:border-blue-500 focus:ring-blue-500 shadow-sm" required placeholder="16 digit angka NIK">
+                                @error('nik')
+                                    <span class="text-[10px] text-red-600 font-bold block mt-1 leading-tight">{{ $message }}</span>
+                                @enderror
                             </div>
 
                             <div class="md:col-span-1">
@@ -432,7 +435,7 @@
                     kecamatan_id: div.getAttribute('data-kecamatan-id'), 
                     nama: div.getAttribute('data-nama') 
                 }));
-                const oldDesaKtp = "{{ old('desa') }}"; // Khusus create, pakai old('desa') saja tanpa data model
+                const oldDesaKtp = "{{ old('desa_ktp') }}"; // Mengambil old input desa KTP yang benar
 
                 function populateDesaKtp() {
                     const selectedOption = kecamatanKtpSelect.options[kecamatanKtpSelect.selectedIndex];

@@ -546,9 +546,9 @@
                                 <td class="border border-gray-600 px-2 py-1 text-center {{ $isTidakLayak ? 'bg-red-100' : 'bg-gray-50' }}">
                                     @if($guru->file_ktp)
                                         <div class="flex flex-col items-center">
-                                            <a href="{{ asset('storage/' . $guru->file_ktp) }}" target="_blank" class="text-blue-600 underline font-bold hover:text-blue-800 mb-1">
+                                            <button type="button" onclick="bukaModalPdf('{{ \Illuminate\Support\Facades\Storage::url($guru->file_ktp) }}', 'KTP - {{ addslashes($guru->nama_lengkap) }}')" class="text-blue-600 underline font-bold hover:text-blue-800 mb-1 cursor-pointer">
                                                 Lihat
-                                            </a>
+                                            </button>
                                             @php
                                                 $s = $guru->status_ktp;
                                                 $c = ($s == 'Disetujui') ? 'bg-green-100 text-green-700' : (($s == 'Ditolak') ? 'bg-red-100 text-red-700' : 'bg-yellow-100 text-yellow-700');
@@ -564,9 +564,9 @@
                                 <td class="border border-gray-600 px-2 py-1 text-center {{ $isTidakLayak ? 'bg-red-100' : 'bg-white' }}">
                                     @if($guru->file_kk)
                                         <div class="flex flex-col items-center">
-                                            <a href="{{ asset('storage/' . $guru->file_kk) }}" target="_blank" class="text-green-600 underline font-bold hover:text-green-800 mb-1">
+                                            <button type="button" onclick="bukaModalPdf('{{ \Illuminate\Support\Facades\Storage::url($guru->file_kk) }}', 'KK - {{ addslashes($guru->nama_lengkap) }}')" class="text-green-600 underline font-bold hover:text-green-800 mb-1 cursor-pointer">
                                                 Lihat
-                                            </a>
+                                            </button>
                                             @php
                                                 $s = $guru->status_kk;
                                                 $c = ($s == 'Disetujui') ? 'bg-green-100 text-green-700' : (($s == 'Ditolak') ? 'bg-red-100 text-red-700' : 'bg-yellow-100 text-yellow-700');
@@ -582,9 +582,9 @@
                                 <td class="border border-gray-600 px-2 py-1 text-center {{ $isTidakLayak ? 'bg-red-100' : 'bg-gray-50' }}">
                                     @if($guru->file_bukurekening)
                                         <div class="flex flex-col items-center">
-                                            <a href="{{ asset('storage/' . $guru->file_bukurekening) }}" target="_blank" class="text-purple-600 underline font-bold hover:text-purple-800 mb-1">
+                                            <button type="button" onclick="bukaModalPdf('{{ \Illuminate\Support\Facades\Storage::url($guru->file_bukurekening) }}', 'Buku Rekening - {{ addslashes($guru->nama_lengkap) }}')" class="text-purple-600 underline font-bold hover:text-purple-800 mb-1 cursor-pointer">
                                                 Lihat
-                                            </a>
+                                            </button>
                                             @php
                                                 $s = $guru->status_bukurekening;
                                                 $c = ($s == 'Disetujui') ? 'bg-green-100 text-green-700' : (($s == 'Ditolak') ? 'bg-red-100 text-red-700' : 'bg-yellow-100 text-yellow-700');
@@ -603,7 +603,7 @@
 
                                 {{-- 12. TTL --}}
                                 <td class="border border-gray-600 px-2 py-1">
-                                    {{ $guru->tempat_lahir }}, {{ \Carbon\Carbon::parse($guru->tanggal_lahir)->format('d-m-Y') }}
+                                    {{ $guru->tempat_lahir ?? 'KEDIRI' }}{{ !empty($guru->tanggal_lahir) ? ', ' . \Carbon\Carbon::parse($guru->tanggal_lahir)->format('d-m-Y') : '' }}
                                 </td>
 
                                 {{-- 13. L/P --}}
@@ -738,11 +738,27 @@
             updateDesaFilter();
         });
     </script>
+    {{-- ======================================================== --}}
+    {{-- 📄 KOTAK POP-UP MODAL PREVIEW PDF (IDENTIK DENGAN LEMBAGA) --}}
+    {{-- ======================================================== --}}
+    <div id="modalPdf" style="z-index: 9999999 !important;" class="fixed inset-0 bg-black bg-opacity-75 hidden flex justify-center items-center p-4 backdrop-blur-sm transition-opacity">
+        <div class="relative bg-white rounded-xl shadow-2xl w-full max-w-5xl h-[90vh] flex flex-col border border-gray-400 overflow-hidden" style="z-index: 10000000 !important;">
+            {{-- Header Pop-Up Abu-abu Terang --}}
+            <div class="flex justify-between items-center p-3 bg-gray-100 border-b border-gray-400 select-none">
+                <h3 id="judulModalPdf" class="text-sm font-bold text-black-800 tracking-wide uppercase">Preview Dokumen</h3>
+                <button type="button" onclick="tutupModalPdf()" class="text-black-500 hover:text-red-600 font-black text-xl leading-none px-2 transition cursor-pointer">&times;</button>
+            </div>
+            {{-- Area PDF (Iframe) --}}
+            <div class="flex-grow bg-gray-200 w-full h-full">
+                <iframe id="sumberModalPdf" src="" class="w-full h-full border-none"></iframe>
+            </div>
+        </div>
+    </div>
+
     {{-- ================================================================= --}}
-    {{-- 🧩 [MODAL & SCRIPT] CUSTOM CONFIRM UNTUK TOMBOL AKSI              --}}
+    {{-- 🧩 [DIKEMBALIKAN] CUSTOM CONFIRM MODAL UNTUK HAPUS & STATUS       --}}
     {{-- ================================================================= --}}
-    
-    <div id="custom-confirm-modal" class="hidden fixed inset-0 z-[9999] flex items-center justify-center bg-black/50 backdrop-blur-sm px-4">
+    <div id="custom-confirm-modal" style="z-index: 999998;" class="hidden fixed inset-0 flex items-center justify-center bg-black/60 p-4">
         <div class="bg-white rounded-md border border-gray-400 shadow-xl w-full max-w-sm p-4 transform scale-95 transition-transform duration-200">
             <div class="flex items-center gap-2 mb-3 pb-1 border-b border-gray-600">
                 <span class="flex items-center justify-center w-5 h-5 rounded-full border border-gray-800 text-[10px] font-bold text-gray-800">?</span>
@@ -831,6 +847,26 @@
                 document.querySelectorAll('.excel-filter-popup').forEach(el => {
                     el.classList.remove('show');
                 });
+            }
+        });
+    </script>
+
+    <script>
+        // Logika Buka/Tutup Modal PDF (Identik Lembaga + Support Tombol Escape)
+        function bukaModalPdf(urlPdf, judul) {
+            document.getElementById('sumberModalPdf').src = urlPdf;
+            document.getElementById('judulModalPdf').innerText = judul;
+            document.getElementById('modalPdf').classList.remove('hidden');
+        }
+
+        function tutupModalPdf() {
+            document.getElementById('modalPdf').classList.add('hidden');
+            document.getElementById('sumberModalPdf').src = ""; // Clear memori iframe
+        }
+
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                tutupModalPdf();
             }
         });
     </script>

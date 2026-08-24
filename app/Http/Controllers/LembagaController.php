@@ -412,6 +412,83 @@ class LembagaController extends Controller
     }
 
     /**
+     * [BARU] Hapus file fisik PDF atau Foto Lembaga secara instan
+     */
+    public function deleteFile($id, $type)
+    {
+        $lembaga = Lembaga::findOrFail($id);
+        $user = Auth::user();
+
+        if ($user->role == 'korcam' && $lembaga->kecamatan_id != $user->kecamatan_id) {
+            return back()->with('error', 'Akses Ditolak.');
+        }
+
+        $pdfTypes = [
+            'ijop'  => ['file' => 'file_ijop',  'status' => 'status_ijop'],
+            'skd'   => ['file' => 'file_skd',   'status' => 'status_skd'],
+            'super' => ['file' => 'file_super', 'status' => 'status_super'],
+            'skam'  => ['file' => 'file_skam',  'status' => 'status_skam'],
+        ];
+
+        $fotoTypes = [
+            'foto_lembaga'  => 'foto_lembaga',
+            'foto_nambor'   => 'foto_nambor',
+            'foto_bangunan' => 'foto_bangunan',
+            'foto_kbm'      => 'foto_kbm',
+        ];
+
+        // Hapus Dokumen PDF
+        if (array_key_exists($type, $pdfTypes)) {
+            $fileCol = $pdfTypes[$type]['file'];
+            $statusCol = $pdfTypes[$type]['status'];
+
+            if ($lembaga->$fileCol) {
+                if (Storage::disk('public')->exists($lembaga->$fileCol)) {
+                    Storage::disk('public')->delete($lembaga->$fileCol);
+                }
+                $lembaga->$fileCol = null;
+                $lembaga->$statusCol = 'Pending';
+                $lembaga->save();
+
+                DB::table('activity_logs')->insert([
+                    'user_id'    => Auth::id(),
+                    'nama_user'  => Auth::user()->name,
+                    'aksi'       => 'Menghapus Berkas ' . strtoupper($type),
+                    'target'     => $lembaga->nama_lembaga,
+                    'created_at' => now(),
+                ]);
+
+                return back()->with('success', 'Berkas ' . strtoupper($type) . ' berhasil dihapus.');
+            }
+        }
+
+        // Hapus Foto Lapangan
+        if (array_key_exists($type, $fotoTypes)) {
+            $fotoCol = $fotoTypes[$type];
+
+            if ($lembaga->$fotoCol) {
+                if (Storage::disk('public')->exists($lembaga->$fotoCol)) {
+                    Storage::disk('public')->delete($lembaga->$fotoCol);
+                }
+                $lembaga->$fotoCol = null;
+                $lembaga->save();
+
+                DB::table('activity_logs')->insert([
+                    'user_id'    => Auth::id(),
+                    'nama_user'  => Auth::user()->name,
+                    'aksi'       => 'Menghapus Foto Lembaga',
+                    'target'     => $lembaga->nama_lembaga,
+                    'created_at' => now(),
+                ]);
+
+                return back()->with('success', 'Foto berhasil dihapus.');
+            }
+        }
+
+        return back()->with('error', 'Berkas tidak ditemukan.');
+    }
+
+    /**
      * Hapus lembaga
      */
     public function destroy(Lembaga $lembaga)

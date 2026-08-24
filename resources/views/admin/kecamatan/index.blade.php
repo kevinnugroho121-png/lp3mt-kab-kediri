@@ -152,10 +152,10 @@
                         <tr class="bg-gray-100 text-black-700 uppercase text-xs tracking-wider">
                             <th class="border border-gray-600 px-2 py-2 text-center w-12 font-bold">No</th>
                             <th class="border border-gray-600 px-3 py-2 text-center font-bold">Nama Kecamatan</th>
-                            <th class="border border-gray-600 px-3 py-2 text-center font-bold w-48">Data Desa</th> 
-                            {{-- [BARU] Sisipkan kolom kuota insentif di sini --}}
-                            <th class="border border-gray-600 px-3 py-2 text-center font-bold w-64">Jatah Kuota Insentif</th> 
-                            <th class="border border-gray-600 px-3 py-2 text-center font-bold w-32">Aksi</th>
+                            <th class="border border-gray-600 px-2 py-2 text-center font-bold w-28">Data Desa</th> 
+                            {{-- Kunci lebar pas 310px agar rapat dan tidak membuang ruang di kanan-kiri --}}
+                            <th class="border border-gray-600 px-1 py-2 text-center font-bold w-[310px] whitespace-nowrap">Alokasi & Realisasi Kuota</th> 
+                            <th class="border border-gray-600 px-2 py-2 text-center font-bold w-20">Aksi</th>
                         </tr>
 
 
@@ -186,33 +186,42 @@
                                     </a>
                                 </td>
 
-                                {{-- [BARU - FASE 2] LOGIKA FORM INPUT KUOTA DINAMIS --}}
-                                <td class="border border-gray-600 px-3 py-1 text-center">
-                                    @if(Auth::user()->role == 'admin' || Auth::user()->role == 'verifikator')
+                                {{-- [BARU] FORM INPUT KUOTA + BADGE REALISASI SEJAJAR PRESISI & RAPI --}}
+                                <td class="border border-gray-600 px-1 py-1 text-center w-[310px]">
+                                    @php
+                                        $terpakai = $terpakaiMap[$kecamatan->id] ?? 0;
+                                        $sisaKec = ($kecamatan->kuota_insentif ?? 0) - $terpakai;
+                                    @endphp
 
+                                    <div class="flex items-center justify-center gap-1.5">
+                                        {{-- 1. Input Group Menyatu (Input + Tombol Simpan Tergabung Rapi) --}}
+                                        @if(Auth::user()->role == 'admin' || Auth::user()->role == 'verifikator')
+                                            <form action="{{ route('kecamatan.update_kuota', $kecamatan->id) }}" method="POST" class="inline-flex shadow-sm rounded-md overflow-hidden">
+                                                @csrf
+                                                @method('PUT')
+                                                <input type="hidden" name="current_page_url" value="{{ request()->fullUrl() }}">
+                                                <input type="number" name="kuota_insentif" value="{{ old('kuota_insentif', $kecamatan->kuota_insentif ?? 0) }}" min="0"
+                                                    class="w-16 border border-r-0 border-gray-400 rounded-l-md px-1 py-0.5 text-center text-xs font-bold text-slate-800 focus:ring-1 focus:ring-blue-500 focus:border-blue-500 h-7 bg-white">
+                                                <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white text-[10px] font-bold px-2.5 h-7 rounded-r-md transition flex items-center justify-center">
+                                                    Simpan
+                                                </button>
+                                            </form>
+                                        @else
+                                            <span class="w-24 h-7 inline-flex items-center justify-center rounded-md bg-blue-50 border border-blue-200 text-blue-700 font-bold text-xs">
+                                                {{ $kecamatan->kuota_insentif ?? 0 }} Kuota
+                                            </span>
+                                        @endif
 
-                                        {{-- Jika Superadmin/Verifikator, tampilkan Form Input Instan --}}
-                                        <form action="{{ route('kecamatan.update_kuota', $kecamatan->id) }}" method="POST" class="flex items-center gap-1 justify-center">
-                                            @csrf
-                                            @method('PUT')
-                                            
-                                            {{-- [BARU] Menyimpan page saat ini agar tidak terlempar ke page 1 --}}
-                                            <input type="hidden" name="current_page_url" value="{{ request()->fullUrl() }}">
-                                            
-                                            <input type="number" name="kuota_insentif" value="{{ old('kuota_insentif', $kecamatan->kuota_insentif ?? 0) }}" min="0"
-                                                class="w-20 border border-gray-600 rounded px-2 py-0.5 text-center text-xs font-bold text-blue-800 focus:ring-1 focus:ring-blue-500 focus:border-blue-500">
-                                            <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white text-[10px] font-bold px-2 py-1 rounded shadow-sm transition">
-                                                Simpan
-                                            </button>
-                                        </form>
-
-
-                                    @else
-                                        {{-- Jika Korcam, Cukup Kunci & Tampilkan Angkanya Saja (Read-Only) --}}
-                                        <span class="px-2.5 py-0.5 rounded-full bg-blue-50 border border-blue-300 text-blue-700 font-bold text-xs">
-                                            🎯 {{ $kecamatan->kuota_insentif ?? 0 }} Kuota Guru
+                                        {{-- 2. Badge Kuota Terpakai (Lebar Dikunci w-24 agar Sumbu Tegak Lurus) --}}
+                                        <span class="w-24 h-7 inline-flex items-center justify-center px-1.5 rounded-md bg-emerald-50 border border-emerald-300 text-emerald-700 text-[11px] font-medium whitespace-nowrap shadow-sm" title="Guru yang sudah diajukan">
+                                            Terpakai:&nbsp;<b class="font-bold text-emerald-800">{{ $terpakai }}</b>
                                         </span>
-                                    @endif
+
+                                        {{-- 3. Badge Sisa Kuota (Lebar Dikunci w-20 agar Sumbu Tegak Lurus) --}}
+                                        <span class="w-20 h-7 inline-flex items-center justify-center px-1.5 rounded-md border text-[11px] font-medium whitespace-nowrap shadow-sm {{ $sisaKec < 0 ? 'bg-red-50 border-red-300 text-red-600 font-bold' : ($sisaKec == 0 ? 'bg-gray-100 border-gray-300 text-gray-600' : 'bg-amber-50 border-amber-300 text-amber-800 font-semibold') }}" title="Sisa slot kuota">
+                                            Sisa:&nbsp;<b class="font-bold">{{ $sisaKec }}</b>
+                                        </span>
+                                    </div>
                                 </td>
 
                                 {{-- AKSI --}}

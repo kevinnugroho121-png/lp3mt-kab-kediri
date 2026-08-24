@@ -33,8 +33,21 @@
                 <form action="{{ route('guru.update', $guru->id) }}" method="POST" enctype="multipart/form-data" class="p-8">
                     @csrf
                     @method('PUT')
-                    
 
+                    {{-- [BARU] KOTAK ALERT PERINGATAN JIKA ADA SALAH KETIK / NIK TIDAK SINKRON --}}
+                    @if ($errors->any())
+                        <div class="mb-5 bg-red-50 border-l-4 border-red-600 p-4 rounded-r-md shadow-sm">
+                            <div class="flex items-center gap-2 mb-2 text-red-800">
+                                <span class="text-lg font-black">⚠️</span>
+                                <strong class="text-xs font-bold uppercase tracking-tight">Gagal Menyimpan Perubahan! Mohon periksa kembali:</strong>
+                            </div>
+                            <ul class="list-disc pl-6 text-xs text-red-700 font-semibold space-y-1">
+                                @foreach ($errors->all() as $error)
+                                    <li>{{ $error }}</li>
+                                @endforeach
+                            </ul>
+                        </div>
+                    @endif
 
                     {{-- SECTION A: DATA PRIBADI --}}
                     <div class="mb-4">
@@ -51,7 +64,10 @@
 
                             <div class="md:col-span-1">
                                 <label class="block text-[10px] font-bold text-gray-600 uppercase tracking-wider mb-1">NIK (16 Digit) <span class="text-red-500">*</span></label>
-                                <input type="number" name="nik" value="{{ old('nik', $guru->nik) }}" class="w-full border border-gray-600 rounded-md px-2 py-1 h-[32px] text-xs font-bold text-black-800 focus:border-blue-500 focus:ring-blue-500 shadow-sm" required>
+                                <input type="text" name="nik" maxlength="16" value="{{ old('nik', $guru->nik) }}" class="w-full border {{ $errors->has('nik') ? 'border-red-500 bg-red-50' : 'border-gray-600' }} rounded-md px-2 py-1 h-[32px] text-xs font-bold text-black-800 focus:border-blue-500 focus:ring-blue-500 shadow-sm" required>
+                                @error('nik')
+                                    <span class="text-[10px] text-red-600 font-bold block mt-1 leading-tight">{{ $message }}</span>
+                                @enderror
                             </div>
 
                             <div class="md:col-span-1">
@@ -100,7 +116,7 @@
 
                             <div class="md:col-span-1">
                                 <label class="block text-[10px] font-bold text-gray-600 uppercase tracking-wider mb-1">Tanggal Lahir</label>
-                                <input type="date" name="tanggal_lahir" value="{{ old('tanggal_lahir', optional($guru->tanggal_lahir)->format('Y-m-d')) }}" class="w-full border border-gray-600 rounded-md px-2 py-1 h-[32px] text-xs font-bold text-black-800 focus:border-blue-500 focus:ring-blue-500 shadow-sm">
+                                <input type="date" name="tanggal_lahir" value="{{ old('tanggal_lahir', $guru->tanggal_lahir ? \Carbon\Carbon::parse($guru->tanggal_lahir)->format('Y-m-d') : '') }}" class="w-full border border-gray-600 rounded-md px-2 py-1 h-[32px] text-xs font-bold text-black-800 focus:border-blue-500 focus:ring-blue-500 shadow-sm">
                             </div>
 
                             <div class="md:col-span-1">
@@ -246,7 +262,12 @@
                             <div class="bg-gray-50 p-3 rounded-lg border border-gray-600 shadow-sm flex flex-col items-start">
                                 <label class="block text-xs font-bold text-black-800 mb-2">1. Scan KTP Asli *</label>
                                 @if($guru->file_ktp)
-                                    <p class="text-[10px] text-green-600 font-bold mb-1">✓ File Tersimpan</p>
+                                    <div class="flex items-center justify-between w-full mb-1.5">
+                                        <span class="text-[10px] text-green-600 font-bold">✓ File Tersimpan</span>
+                                        <button type="button" onclick="triggerStatusUpdate('Yakin ingin menghapus permanen berkas KTP ini sekarang?', 'form-delete-file-ktp')" class="text-[10px] text-red-600 hover:text-white font-bold bg-red-50 hover:bg-red-600 border border-red-300 px-2 py-0.5 rounded transition cursor-pointer">
+                                             Hapus File
+                                        </button>
+                                    </div>
                                 @endif
                                 <div class="w-full text-left">
                                     <input type="file" name="file_ktp" id="file_ktp" accept="application/pdf" class="block w-full text-[10px] text-black-500 file:mr-2 file:py-1 file:px-3 file:rounded file:border-0 file:text-[10px] file:font-bold file:bg-blue-600 file:text-white hover:file:bg-blue-700 transition cursor-pointer" onchange="handleFileSelect(this, 'preview_ktp_new', 'btn_reset_ktp', 'old_ktp_frame')">
@@ -262,7 +283,12 @@
                             <div class="bg-gray-50 p-3 rounded-lg border border-gray-600 shadow-sm flex flex-col items-start">
                                 <label class="block text-xs font-bold text-black-800 mb-2">2. Scan Kartu Keluarga *</label>
                                 @if($guru->file_kk)
-                                    <p class="text-[10px] text-green-600 font-bold mb-1">✓ File Tersimpan</p>
+                                    <div class="flex items-center justify-between w-full mb-1.5">
+                                        <span class="text-[10px] text-green-600 font-bold">✓ File Tersimpan</span>
+                                        <button type="button" onclick="triggerStatusUpdate('Yakin ingin menghapus permanen berkas KK ini sekarang?', 'form-delete-file-kk')" class="text-[10px] text-red-600 hover:text-white font-bold bg-red-50 hover:bg-red-600 border border-red-300 px-2 py-0.5 rounded transition cursor-pointer">
+                                             Hapus File
+                                        </button>
+                                    </div>
                                 @endif
                                 <div class="w-full text-left">
                                     <input type="file" name="file_kk" id="file_kk" accept="application/pdf" class="block w-full text-[10px] text-black-500 file:mr-2 file:py-1 file:px-3 file:rounded file:border-0 file:text-[10px] file:font-bold file:bg-green-600 file:text-white hover:file:bg-green-700 transition cursor-pointer" onchange="handleFileSelect(this, 'preview_kk_new', 'btn_reset_kk', 'old_kk_frame')">
@@ -278,7 +304,12 @@
                             <div class="bg-gray-50 p-3 rounded-lg border border-gray-600 shadow-sm flex flex-col items-start">
                                 <label class="block text-xs font-bold text-black-800 mb-2">3. Scan Buku Rekening</label>
                                 @if($guru->file_bukurekening)
-                                    <p class="text-[10px] text-green-600 font-bold mb-1">✓ File Tersimpan</p>
+                                    <div class="flex items-center justify-between w-full mb-1.5">
+                                        <span class="text-[10px] text-green-600 font-bold">✓ File Tersimpan</span>
+                                        <button type="button" onclick="triggerStatusUpdate('Yakin ingin menghapus permanen berkas Buku Rekening ini sekarang?', 'form-delete-file-bukurekening')" class="text-[10px] text-red-600 hover:text-white font-bold bg-red-50 hover:bg-red-600 border border-red-300 px-2 py-0.5 rounded transition cursor-pointer">
+                                             Hapus File
+                                        </button>
+                                    </div>
                                 @endif
                                 <div class="w-full text-left">
                                     <input type="file" name="file_bukurekening" id="file_bukurekening" accept="application/pdf" class="block w-full text-[10px] text-black-500 file:mr-2 file:py-1 file:px-3 file:rounded file:border-0 file:text-[10px] file:font-bold file:bg-purple-600 file:text-white hover:file:bg-purple-700 transition cursor-pointer" onchange="handleFileSelect(this, 'preview_rekening_new', 'btn_reset_rekening', 'old_rekening_frame')">
@@ -418,7 +449,7 @@
 
 
 
-        // --- 4. File Upload ---
+        // --- 4. File Upload Preview & Reset ---
         function handleFileSelect(input, iframeId, btnId, oldFrameId = null) {
             const iframe = document.getElementById(iframeId); const btnReset = document.getElementById(btnId);
             if(oldFrameId) { const oldFrame = document.getElementById(oldFrameId); if(oldFrame) oldFrame.classList.add('hidden'); }
@@ -429,10 +460,76 @@
                 reader.readAsDataURL(input.files[0]);
             }
         }
+
         function resetFile(inputId, iframeId, btnId, oldFrameId = null) {
             const input = document.getElementById(inputId); const iframe = document.getElementById(iframeId); const btnReset = document.getElementById(btnId);
             if(oldFrameId) { const oldFrame = document.getElementById(oldFrameId); if(oldFrame) oldFrame.classList.remove('hidden'); }
             input.value = ""; iframe.src = ""; iframe.classList.add('hidden'); btnReset.classList.add('hidden');
         }
+
+        // --- 5. Pop-up Dialog Konfirmasi Hapus Instan ---
+        function showConfirmDialog(message, onConfirmCallback) {
+            const modal = document.getElementById('custom-confirm-modal');
+            const msgEl = document.getElementById('custom-confirm-message');
+            const btnCancel = document.getElementById('custom-confirm-cancel');
+            const btnOk = document.getElementById('custom-confirm-ok');
+
+            msgEl.textContent = message;
+            modal.classList.remove('hidden');
+            setTimeout(() => { modal.firstElementChild.classList.replace('scale-95', 'scale-100'); }, 10);
+
+            const closeModal = () => {
+                modal.firstElementChild.classList.replace('scale-100', 'scale-95');
+                setTimeout(() => { modal.classList.add('hidden'); }, 150);
+                btnCancel.removeEventListener('click', handleCancel);
+                btnOk.removeEventListener('click', handleOk);
+            };
+
+            const handleCancel = () => closeModal();
+            const handleOk = () => {
+                closeModal();
+                if (typeof onConfirmCallback === 'function') onConfirmCallback();
+            };
+
+            btnCancel.addEventListener('click', handleCancel);
+            btnOk.addEventListener('click', handleOk);
+        }
+
+        function triggerStatusUpdate(pesan, formId) {
+            showConfirmDialog(pesan, function() {
+                const formToSubmit = document.getElementById(formId);
+                if (formToSubmit) formToSubmit.submit();
+            });
+        }
     </script>
+
+    {{-- ================================================================= --}}
+    {{--  FORM EKSEKUTOR HAPUS INSTAN (DI LUAR FORM UTAMA)               --}}
+    {{-- ================================================================= --}}
+    <form id="form-delete-file-ktp" action="{{ route('guru.delete_file', ['id' => $guru->id, 'type' => 'ktp']) }}" method="POST" class="hidden">
+        @csrf @method('DELETE')
+    </form>
+    <form id="form-delete-file-kk" action="{{ route('guru.delete_file', ['id' => $guru->id, 'type' => 'kk']) }}" method="POST" class="hidden">
+        @csrf @method('DELETE')
+    </form>
+    <form id="form-delete-file-bukurekening" action="{{ route('guru.delete_file', ['id' => $guru->id, 'type' => 'bukurekening']) }}" method="POST" class="hidden">
+        @csrf @method('DELETE')
+    </form>
+
+    {{-- ================================================================= --}}
+    {{-- 🧩 POP-UP MODAL KONFIRMASI TINDAKAN                               --}}
+    {{-- ================================================================= --}}
+    <div id="custom-confirm-modal" style="z-index: 999998;" class="hidden fixed inset-0 flex items-center justify-center bg-black/60 p-4">
+        <div class="bg-white rounded-md border border-gray-400 shadow-xl w-full max-w-sm p-4 transform scale-95 transition-transform duration-200">
+            <div class="flex items-center gap-2 mb-3 pb-1 border-b border-gray-600">
+                <span class="flex items-center justify-center w-5 h-5 rounded-full border border-gray-800 text-[10px] font-bold text-gray-800">?</span>
+                <span class="block text-xs font-bold text-black-800 uppercase">Konfirmasi Tindakan</span>
+            </div>
+            <p id="custom-confirm-message" class="text-xs font-bold text-gray-700 mb-5"></p>
+            <div class="flex justify-end gap-2">
+                <button id="custom-confirm-cancel" type="button" class="px-3 py-1 h-[32px] border border-gray-400 rounded-md text-[10px] font-bold text-gray-600 hover:bg-gray-100 uppercase transition">Batal</button>
+                <button id="custom-confirm-ok" type="button" class="px-3 py-1 h-[32px] border border-red-600 bg-red-600 rounded-md text-[10px] font-bold text-white hover:bg-red-700 uppercase shadow-sm transition">Ya, Hapus Sekarang</button>
+            </div>
+        </div>
+    </div>
 </x-app-layout>

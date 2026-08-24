@@ -81,13 +81,13 @@ class GuruExport implements FromQuery, WithHeadings, WithMapping, ShouldAutoSize
             'TEMPAT TANGGAL LAHIR', 
             'JENIS KELAMIN', 
             'NIK',
-            'NAMA LEMBAGA', 
+            'NAMA LEMBAGA TEMPAT MENGAJAR', 
             'ALAMAT LEMBAGA',           // <-- 1. Kolom baru diselipkan di sini
             'JENIS LEMBAGA', 
             'ALAMAT GURU SESUAI KTP',   // <-- 2. Nama kolom disesuaikan
-            'DESA', 
-            'KEC', 
-            'KAB', 
+            'DESA GURU', 
+            'KEC GURU', 
+            'KAB GURU', 
             'AGAMA', 
             'NO HP', 
             'NAMA IBU KANDUNG', 
@@ -110,24 +110,34 @@ class GuruExport implements FromQuery, WithHeadings, WithMapping, ShouldAutoSize
             ? (($guru->lembaga->desa->nama_desa ?? '-') . ', KEC. ' . ($guru->lembaga->kecamatan->nama_kecamatan ?? '-'))
             : '-';
 
+        // [BARU] Otomatis tambal angka 0 di depan nomor HP lama yang berawalan 8 atau ubah 62 jadi 0
+        $cleanHp = !empty($guru->no_hp) ? preg_replace('/[^0-9]/', '', (string)$guru->no_hp) : '';
+        if (!empty($cleanHp)) {
+            if (str_starts_with($cleanHp, '62')) {
+                $cleanHp = '0' . substr($cleanHp, 2);
+            } elseif (str_starts_with($cleanHp, '8')) {
+                $cleanHp = '0' . $cleanHp;
+            }
+        }
+
         return [
             $rowNumber,
             $guru->nama_lengkap,
             $ttl_gabungan,
             $guru->jenis_kelamin,
-            "'" . $guru->nik, 
+            !empty($guru->nik) ? "'" . $guru->nik : '-', 
             $guru->lembaga->nama_lembaga ?? '-',
-            $alamatLembagaOtomatis,         // <-- [SUDAH OTOMATIS TERISI DESA & KEC LEMBAGA]
+            $alamatLembagaOtomatis,
             $guru->jenis_guru,
-            $guru->alamat_ktp,             
-            $guru->lembaga->desa->nama_desa ?? '-',
-            $guru->lembaga->kecamatan->nama_kecamatan ?? '-',
+            $guru->alamat_ktp ?? '-',             
+            $guru->desa ?? '-',                          // Mengambil Desa KTP Guru Asli
+            $guru->kecamatan ?? '-',                     // Mengambil Kecamatan KTP Guru Asli
             $guru->kabupaten ?? 'KEDIRI',
-            $guru->agama,
-            "'" . $guru->no_hp,
-            $guru->nama_ibu_kandung,
-            "'" . $guru->nomor_rekening,
-            ($guru->penerima_insentif == 1) ? 'YA DIAJUKAN' : 'TIDAK'
+            $guru->agama ?? 'ISLAM',
+            !empty($cleanHp) ? "'" . $cleanHp : '-',     // Nomor HP selalu rapi 08...
+            $guru->nama_ibu_kandung ?? '-',
+            !empty($guru->nomor_rekening) ? "'" . $guru->nomor_rekening : '-',
+            ($guru->penerima_insentif == 1) ? 'YA DIAJUKAN' : 'TIDAK DIAJUKAN'
         ];
     }
 

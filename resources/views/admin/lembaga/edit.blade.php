@@ -172,7 +172,14 @@
                             
                             {{-- 1. IJOP --}}
                             <div class="bg-gray-50 p-3 rounded-lg border border-gray-400 shadow-sm flex flex-col">
-                                <label class="block text-xs font-bold text-black-800 mb-2">1. Scan IJOP Asli</label>
+                                <div class="flex items-center justify-between mb-2">
+                                    <label class="block text-xs font-bold text-black-800">1. Scan IJOP Asli</label>
+                                    @if($lembaga->file_ijop)
+                                        <button type="button" onclick="triggerStatusUpdate('Yakin ingin menghapus permanen berkas IJOP ini sekarang?', 'form-delete-file-ijop')" class="text-[10px] text-red-600 hover:text-white font-bold bg-red-50 hover:bg-red-600 border border-red-300 px-2 py-0.5 rounded transition cursor-pointer">
+                                            Hapus File
+                                        </button>
+                                    @endif
+                                </div>
                                 <div class="w-full text-left mb-3">
                                     <input type="file" name="file_ijop" id="file_ijop" accept="application/pdf" class="block w-full text-[10px] text-black-500 file:mr-2 file:py-1 file:px-3 file:rounded file:border-0 file:text-[10px] file:font-bold file:bg-blue-600 file:text-white hover:file:bg-blue-700 cursor-pointer transition" onchange="handleFileSelect(this, 'preview_ijop_edit', 'btn_reset_ijop_edit', 'old_ijop')">
                                     <button type="button" id="btn_reset_ijop_edit" onclick="resetFile('file_ijop', 'preview_ijop_edit', 'btn_reset_ijop_edit', 'old_ijop')" class="hidden mt-1 text-[10px] text-red-600 font-bold underline">&times; Batal Upload File Baru</button>
@@ -198,7 +205,14 @@
 
                             {{-- 2. SKD --}}
                             <div class="bg-gray-50 p-3 rounded-lg border border-gray-400 shadow-sm flex flex-col">
-                                <label class="block text-xs font-bold text-black-800 mb-2">2. Scan SKD (Opsional)</label>
+                                <div class="flex items-center justify-between mb-2">
+                                    <label class="block text-xs font-bold text-black-800">2. Scan SKD (Opsional)</label>
+                                    @if($lembaga->file_skd)
+                                        <button type="button" onclick="triggerStatusUpdate('Yakin ingin menghapus permanen berkas SKD ini sekarang?', 'form-delete-file-skd')" class="text-[10px] text-red-600 hover:text-white font-bold bg-red-50 hover:bg-red-600 border border-red-300 px-2 py-0.5 rounded transition cursor-pointer">
+                                             Hapus File
+                                        </button>
+                                    @endif
+                                </div>
                                 <div class="w-full text-left mb-3">
                                     <input type="file" name="file_skd" id="file_skd" accept="application/pdf" class="block w-full text-[10px] text-black-500 file:mr-2 file:py-1 file:px-3 file:rounded file:border-0 file:text-[10px] file:font-bold file:bg-gray-600 file:text-white hover:file:bg-gray-700 cursor-pointer transition" onchange="handleFileSelect(this, 'preview_skd_edit', 'btn_reset_skd_edit', 'old_skd')">
                                     <button type="button" id="btn_reset_skd_edit" onclick="resetFile('file_skd', 'preview_skd_edit', 'btn_reset_skd_edit', 'old_skd')" class="hidden mt-1 text-[10px] text-red-600 font-bold underline">&times; Batal Upload File Baru</button>
@@ -211,7 +225,14 @@
 
                             {{-- 3. SPTJM --}}
                             <div class="bg-gray-50 p-3 rounded-lg border border-gray-400 shadow-sm flex flex-col">
-                                <label class="block text-xs font-bold text-black-800 mb-2">3. Scan SPTJM Mutlak</label>
+                                <div class="flex items-center justify-between mb-2">
+                                    <label class="block text-xs font-bold text-black-800">3. Scan SPTJM Mutlak</label>
+                                    @if($lembaga->file_super)
+                                        <button type="button" onclick="triggerStatusUpdate('Yakin ingin menghapus permanen berkas SPTJM ini sekarang?', 'form-delete-file-super')" class="text-[10px] text-red-600 hover:text-white font-bold bg-red-50 hover:bg-red-600 border border-red-300 px-2 py-0.5 rounded transition cursor-pointer">
+                                             Hapus File
+                                        </button>
+                                    @endif
+                                </div>
                                 <div class="w-full text-left mb-3">
                                     <input type="file" name="file_super" id="file_super" accept="application/pdf" class="block w-full text-[10px] text-black-500 file:mr-2 file:py-1 file:px-3 file:rounded file:border-0 file:text-[10px] file:font-bold file:bg-purple-600 file:text-white hover:file:bg-purple-700 cursor-pointer transition" onchange="handleFileSelect(this, 'preview_super_edit', 'btn_reset_super_edit', 'old_super')">
                                     <button type="button" id="btn_reset_super_edit" onclick="resetFile('file_super', 'preview_super_edit', 'btn_reset_super_edit', 'old_super')" class="hidden mt-1 text-[10px] text-red-600 font-bold underline">&times; Batal Upload File Baru</button>
@@ -225,7 +246,14 @@
 
                             {{-- 4. SKAM --}}
                             <div class="bg-gray-50 p-3 rounded-lg border border-gray-400 shadow-sm flex flex-col">
-                                <label class="block text-xs font-bold text-black-800 mb-2">4. Scan SKAM</label>
+                                <div class="flex items-center justify-between mb-2">
+                                    <label class="block text-xs font-bold text-black-800">4. Scan SKAM</label>
+                                    @if($lembaga->file_skam)
+                                        <button type="button" onclick="triggerStatusUpdate('Yakin ingin menghapus permanen berkas SKAM ini sekarang?', 'form-delete-file-skam')" class="text-[10px] text-red-600 hover:text-white font-bold bg-red-50 hover:bg-red-600 border border-red-300 px-2 py-0.5 rounded transition cursor-pointer">
+                                             Hapus File
+                                        </button>
+                                    @endif
+                                </div>
                                 <div class="w-full text-left mb-3">
                                     <input type="file" name="file_skam" id="file_skam" accept="application/pdf" class="block w-full text-[10px] text-black-500 file:mr-2 file:py-1 file:px-3 file:rounded file:border-0 file:text-[10px] file:font-bold file:bg-teal-600 file:text-white hover:file:bg-teal-700 cursor-pointer transition" onchange="handleFileSelect(this, 'preview_skam_edit', 'btn_reset_skam_edit', 'old_skam')">
                                     <button type="button" id="btn_reset_skam_edit" onclick="resetFile('file_skam', 'preview_skam_edit', 'btn_reset_skam_edit', 'old_skam')" class="hidden mt-1 text-[10px] text-red-600 font-bold underline">&times; Batal Upload File Baru</button>
@@ -242,7 +270,14 @@
                         {{-- FOTO LAMA (Jika Ada) --}}
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div class="border border-gray-300 rounded-lg p-3 bg-gray-50 flex flex-col items-center">
-                                <label class="text-xs font-bold text-black-700 uppercase mb-2">A. Profil Lembaga</label>
+                                <div class="flex items-center justify-between w-full mb-2">
+                                    <label class="text-xs font-bold text-black-700 uppercase">A. Profil Lembaga</label>
+                                    @if($lembaga->foto_lembaga)
+                                        <button type="button" onclick="triggerStatusUpdate('Yakin ingin menghapus permanen Foto Profil ini sekarang?', 'form-delete-file-foto_lembaga')" class="text-[10px] text-red-600 hover:text-white font-bold bg-red-50 hover:bg-red-600 border border-red-300 px-2 py-0.5 rounded transition cursor-pointer">
+                                            Hapus Foto
+                                        </button>
+                                    @endif
+                                </div>
                                 <div class="w-full h-40 bg-gray-200 border border-gray-400 rounded-md mb-3 overflow-hidden flex justify-center items-center relative">
                                     <img id="preview_lembaga" src="{{ $lembaga->foto_lembaga ? asset('storage/' . $lembaga->foto_lembaga) : '#' }}" class="{{ $lembaga->foto_lembaga ? '' : 'hidden' }} object-cover w-full h-full absolute inset-0 z-10" />
                                     <span class="text-black-400 text-[11px] z-0">Tidak Ada Foto</span>
@@ -251,7 +286,14 @@
                             </div>
                             
                             <div class="border border-gray-300 rounded-lg p-3 bg-gray-50 flex flex-col items-center">
-                                <label class="text-xs font-bold text-black-700 uppercase mb-2">B. Papan Nama / Nambor</label>
+                                <div class="flex items-center justify-between w-full mb-2">
+                                    <label class="text-xs font-bold text-black-700 uppercase">B. Papan Nama / Nambor</label>
+                                    @if($lembaga->foto_nambor)
+                                        <button type="button" onclick="triggerStatusUpdate('Yakin ingin menghapus permanen Foto Papan Nama ini sekarang?', 'form-delete-file-foto_nambor')" class="text-[10px] text-red-600 hover:text-white font-bold bg-red-50 hover:bg-red-600 border border-red-300 px-2 py-0.5 rounded transition cursor-pointer">
+                                             Hapus Foto
+                                        </button>
+                                    @endif
+                                </div>
                                 <div class="w-full h-40 bg-gray-200 border border-gray-400 rounded-md mb-3 overflow-hidden flex justify-center items-center relative">
                                     <img id="preview_nambor" src="{{ $lembaga->foto_nambor ? asset('storage/' . $lembaga->foto_nambor) : '#' }}" class="{{ $lembaga->foto_nambor ? '' : 'hidden' }} object-cover w-full h-full absolute inset-0 z-10" />
                                     <span class="text-black-400 text-[11px] z-0">Tidak Ada Foto</span>
@@ -260,7 +302,14 @@
                             </div>
                             
                             <div class="border border-gray-300 rounded-lg p-3 bg-gray-50 flex flex-col items-center">
-                                <label class="text-xs font-bold text-black-700 uppercase mb-2">C. Gedung / Bangunan</label>
+                                <div class="flex items-center justify-between w-full mb-2">
+                                    <label class="text-xs font-bold text-black-700 uppercase">C. Gedung / Bangunan</label>
+                                    @if($lembaga->foto_bangunan)
+                                        <button type="button" onclick="triggerStatusUpdate('Yakin ingin menghapus permanen Foto Bangunan ini sekarang?', 'form-delete-file-foto_bangunan')" class="text-[10px] text-red-600 hover:text-white font-bold bg-red-50 hover:bg-red-600 border border-red-300 px-2 py-0.5 rounded transition cursor-pointer">
+                                             Hapus Foto
+                                        </button>
+                                    @endif
+                                </div>
                                 <div class="w-full h-40 bg-gray-200 border border-gray-400 rounded-md mb-3 overflow-hidden flex justify-center items-center relative">
                                     <img id="preview_bangunan" src="{{ $lembaga->foto_bangunan ? asset('storage/' . $lembaga->foto_bangunan) : '#' }}" class="{{ $lembaga->foto_bangunan ? '' : 'hidden' }} object-cover w-full h-full absolute inset-0 z-10" />
                                     <span class="text-black-400 text-[11px] z-0">Tidak Ada Foto</span>
@@ -269,7 +318,14 @@
                             </div>
                             
                             <div class="border border-gray-300 rounded-lg p-3 bg-gray-50 flex flex-col items-center">
-                                <label class="text-xs font-bold text-black-700 uppercase mb-2">D. Aktivitas KBM</label>
+                                <div class="flex items-center justify-between w-full mb-2">
+                                    <label class="text-xs font-bold text-black-700 uppercase">D. Aktivitas KBM</label>
+                                    @if($lembaga->foto_kbm)
+                                        <button type="button" onclick="triggerStatusUpdate('Yakin ingin menghapus permanen Foto KBM ini sekarang?', 'form-delete-file-foto_kbm')" class="text-[10px] text-red-600 hover:text-white font-bold bg-red-50 hover:bg-red-600 border border-red-300 px-2 py-0.5 rounded transition cursor-pointer">
+                                             Hapus Foto
+                                        </button>
+                                    @endif
+                                </div>
                                 <div class="w-full h-40 bg-gray-200 border border-gray-400 rounded-md mb-3 overflow-hidden flex justify-center items-center relative">
                                     <img id="preview_kbm" src="{{ $lembaga->foto_kbm ? asset('storage/' . $lembaga->foto_kbm) : '#' }}" class="{{ $lembaga->foto_kbm ? '' : 'hidden' }} object-cover w-full h-full absolute inset-0 z-10" />
                                     <span class="text-black-400 text-[11px] z-0">Tidak Ada Foto</span>
@@ -381,6 +437,70 @@
                 }
                 reader.readAsDataURL(file);
             }
+        }
+    </script>
+
+    {{-- ================================================================= --}}
+    {{--  FORM EKSEKUTOR HAPUS INSTAN PDF & FOTO (DI LUAR FORM UTAMA)     --}}
+    {{-- ================================================================= --}}
+    <form id="form-delete-file-ijop" action="{{ route('lembaga.delete_file', ['id' => $lembaga->id, 'type' => 'ijop']) }}" method="POST" class="hidden">@csrf @method('DELETE')</form>
+    <form id="form-delete-file-skd" action="{{ route('lembaga.delete_file', ['id' => $lembaga->id, 'type' => 'skd']) }}" method="POST" class="hidden">@csrf @method('DELETE')</form>
+    <form id="form-delete-file-super" action="{{ route('lembaga.delete_file', ['id' => $lembaga->id, 'type' => 'super']) }}" method="POST" class="hidden">@csrf @method('DELETE')</form>
+    <form id="form-delete-file-skam" action="{{ route('lembaga.delete_file', ['id' => $lembaga->id, 'type' => 'skam']) }}" method="POST" class="hidden">@csrf @method('DELETE')</form>
+    
+    <form id="form-delete-file-foto_lembaga" action="{{ route('lembaga.delete_file', ['id' => $lembaga->id, 'type' => 'foto_lembaga']) }}" method="POST" class="hidden">@csrf @method('DELETE')</form>
+    <form id="form-delete-file-foto_nambor" action="{{ route('lembaga.delete_file', ['id' => $lembaga->id, 'type' => 'foto_nambor']) }}" method="POST" class="hidden">@csrf @method('DELETE')</form>
+    <form id="form-delete-file-foto_bangunan" action="{{ route('lembaga.delete_file', ['id' => $lembaga->id, 'type' => 'foto_bangunan']) }}" method="POST" class="hidden">@csrf @method('DELETE')</form>
+    <form id="form-delete-file-foto_kbm" action="{{ route('lembaga.delete_file', ['id' => $lembaga->id, 'type' => 'foto_kbm']) }}" method="POST" class="hidden">@csrf @method('DELETE')</form>
+
+    {{-- 🧩 POP-UP MODAL KONFIRMASI TINDAKAN --}}
+    <div id="custom-confirm-modal" style="z-index: 999998;" class="hidden fixed inset-0 flex items-center justify-center bg-black/60 p-4">
+        <div class="bg-white rounded-md border border-gray-400 shadow-xl w-full max-w-sm p-4 transform scale-95 transition-transform duration-200">
+            <div class="flex items-center gap-2 mb-3 pb-1 border-b border-gray-600">
+                <span class="flex items-center justify-center w-5 h-5 rounded-full border border-gray-800 text-[10px] font-bold text-gray-800">?</span>
+                <span class="block text-xs font-bold text-black-800 uppercase">Konfirmasi Tindakan</span>
+            </div>
+            <p id="custom-confirm-message" class="text-xs font-bold text-gray-700 mb-5"></p>
+            <div class="flex justify-end gap-2">
+                <button id="custom-confirm-cancel" type="button" class="px-3 py-1 h-[32px] border border-gray-400 rounded-md text-[10px] font-bold text-gray-600 hover:bg-gray-100 uppercase transition">Batal</button>
+                <button id="custom-confirm-ok" type="button" class="px-3 py-1 h-[32px] border border-red-600 bg-red-600 rounded-md text-[10px] font-bold text-white hover:bg-red-700 uppercase shadow-sm transition">Ya, Hapus Sekarang</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function showConfirmDialog(message, onConfirmCallback) {
+            const modal = document.getElementById('custom-confirm-modal');
+            const msgEl = document.getElementById('custom-confirm-message');
+            const btnCancel = document.getElementById('custom-confirm-cancel');
+            const btnOk = document.getElementById('custom-confirm-ok');
+
+            msgEl.textContent = message;
+            modal.classList.remove('hidden');
+            setTimeout(() => { modal.firstElementChild.classList.replace('scale-95', 'scale-100'); }, 10);
+
+            const closeModal = () => {
+                modal.firstElementChild.classList.replace('scale-100', 'scale-95');
+                setTimeout(() => { modal.classList.add('hidden'); }, 150);
+                btnCancel.removeEventListener('click', handleCancel);
+                btnOk.removeEventListener('click', handleOk);
+            };
+
+            const handleCancel = () => closeModal();
+            const handleOk = () => {
+                closeModal();
+                if (typeof onConfirmCallback === 'function') onConfirmCallback();
+            };
+
+            btnCancel.addEventListener('click', handleCancel);
+            btnOk.addEventListener('click', handleOk);
+        }
+
+        function triggerStatusUpdate(pesan, formId) {
+            showConfirmDialog(pesan, function() {
+                const formToSubmit = document.getElementById(formId);
+                if (formToSubmit) formToSubmit.submit();
+            });
         }
     </script>
 </x-app-layout>

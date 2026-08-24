@@ -5,7 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Kecamatan;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Cache; // [BARU] Untuk simpan total pagu kabupaten
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB; // [BARU] Untuk hitung real-time insentif terpakai
 
 class KecamatanController extends Controller
 {
@@ -34,12 +35,20 @@ class KecamatanController extends Controller
         // 4. Ambil semua data sekaligus (tanpa pagination)
         $kecamatans = $query->orderBy('nama_kecamatan', 'asc')->get();
 
+        // [BARU] Ambil Real-Time Jumlah Guru Diajukan Insentif per Kecamatan
+        $terpakaiMap = DB::table('gurus')
+            ->join('lembagas', 'gurus.lembaga_id', '=', 'lembagas.id')
+            ->where('gurus.penerima_insentif', 1)
+            ->groupBy('lembagas.kecamatan_id')
+            ->select('lembagas.kecamatan_id', DB::raw('count(*) as total'))
+            ->pluck('total', 'kecamatan_id');
+
         // [BARU] Hitung Kontrol Kuota Induk Kabupaten (Murni dari input petugas)
         $totalPagu = (int) Cache::get('pagu_induk_kabupaten', 0);
         $kuotaTerdistribusi = (int) Kecamatan::sum('kuota_insentif');
         $sisaKuota = $totalPagu - $kuotaTerdistribusi;
 
-        return view('admin.kecamatan.index', compact('kecamatans', 'totalPagu', 'kuotaTerdistribusi', 'sisaKuota'));
+        return view('admin.kecamatan.index', compact('kecamatans', 'totalPagu', 'kuotaTerdistribusi', 'sisaKuota', 'terpakaiMap'));
     }
 
     /**

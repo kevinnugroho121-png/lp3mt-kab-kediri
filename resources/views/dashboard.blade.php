@@ -319,7 +319,7 @@
             <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-4 gap-4">
                 <div>
                     <h3 class="font-bold text-slate-800 text-lg">Pemetaan Geografis Sebaran Lembaga</h3>
-                    <p class="text-sm text-slate-500">Titik Koordinat Lembaga Se-Kabupaten Kediri</p>
+                    <p class="text-sm text-slate-500">Sebaran Titik Koordinat Lembaga</p>
                 </div>
                 
                 {{-- [BARU] Filter Interaktif Jenis Lembaga (Klik untuk Menyortir Pin Peta) --}}
