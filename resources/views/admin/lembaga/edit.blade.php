@@ -25,10 +25,23 @@
 
                 {{-- FORM START --}}
                 <form action="{{ route('lembaga.update', $lembaga->id) }}" method="POST" enctype="multipart/form-data" class="p-8">
-
-
                     @csrf
                     @method('PUT')
+
+                    {{-- [BARU] ALERT NOTIFIKASI JIKA ADA ERROR VALIDASI / NAMA GANDA --}}
+                    @if ($errors->any())
+                        <div class="mb-5 bg-red-50 border-l-4 border-red-600 p-4 rounded-r-md shadow-sm">
+                            <div class="flex items-center gap-2 mb-2 text-red-800">
+                                <span class="text-lg font-black">⚠️</span>
+                                <strong class="text-xs font-bold uppercase tracking-tight">Gagal Memperbarui Lembaga! Mohon periksa kembali:</strong>
+                            </div>
+                            <ul class="list-disc pl-6 text-xs text-red-700 font-semibold space-y-1">
+                                @foreach ($errors->all() as $error)
+                                    <li>{{ $error }}</li>
+                                @endforeach
+                            </ul>
+                        </div>
+                    @endif
 
                     {{-- SECTION A: IDENTITAS --}}
                     <div class="mb-4">
@@ -40,23 +53,26 @@
                         <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 px-1">
                             <div class="md:col-span-2">
                                 <label class="block text-[10px] font-bold text-gray-600 uppercase mb-1">Nama Lembaga <span class="text-red-500">*</span></label>
-                                <input type="text" name="nama_lembaga" value="{{ old('nama_lembaga', $lembaga->nama_lembaga) }}" class="w-full border border-gray-400 rounded-md px-2 py-1 h-[32px] text-xs font-bold text-black-800 focus:border-blue-500 shadow-sm uppercase" required oninput="this.value = this.value.toUpperCase()">
+                                <input type="text" name="nama_lembaga" value="{{ old('nama_lembaga', $lembaga->nama_lembaga) }}" class="w-full border {{ $errors->has('nama_lembaga') ? 'border-red-500 bg-red-50' : 'border-gray-400' }} rounded-md px-2 py-1 h-[32px] text-xs font-bold text-black-800 focus:border-blue-500 shadow-sm uppercase" required oninput="this.value = this.value.toUpperCase()">
+                                @error('nama_lembaga')
+                                    <span class="text-[10px] text-red-600 font-bold block mt-1 leading-tight">{{ $message }}</span>
+                                @enderror
                             </div>
                             <div class="md:col-span-1">
                                 <label class="block text-[10px] font-bold text-gray-600 uppercase mb-1">Jenis Lembaga <span class="text-red-500">*</span></label>
                                 <select name="jenis_lembaga" class="w-full border border-gray-400 rounded-md px-2 py-1 h-[32px] text-xs font-bold text-black-800 focus:border-blue-500 shadow-sm">
-                                    <option value="TPQ" {{ $lembaga->jenis_lembaga == 'TPQ' ? 'selected' : '' }}>TPQ</option>
-                                    <option value="MADIN" {{ $lembaga->jenis_lembaga == 'MADIN' ? 'selected' : '' }}>MADIN</option>
-                                    <option value="PONPES" {{ $lembaga->jenis_lembaga == 'PONPES' ? 'selected' : '' }}>PONPES</option>
+                                    <option value="TPQ" {{ old('jenis_lembaga', $lembaga->jenis_lembaga) == 'TPQ' ? 'selected' : '' }}>TPQ</option>
+                                    <option value="MADIN" {{ old('jenis_lembaga', $lembaga->jenis_lembaga) == 'MADIN' ? 'selected' : '' }}>MADIN</option>
+                                    <option value="PONPES" {{ old('jenis_lembaga', $lembaga->jenis_lembaga) == 'PONPES' ? 'selected' : '' }}>PONPES</option>
                                 </select>
                             </div>
                             <div class="md:col-span-1">
                                 <label class="block text-[10px] font-bold text-gray-600 uppercase mb-1">Ormas Afiliasi</label>
                                 <select name="ormas" class="w-full border border-gray-400 rounded-md px-2 py-1 h-[32px] text-xs font-bold text-black-800 focus:border-blue-500 shadow-sm">
                                     <option value="">- Tidak Ada -</option>
-                                    <option value="NU" {{ $lembaga->ormas == 'NU' ? 'selected' : '' }}>NU</option>
-                                    <option value="Muhammadiyah" {{ $lembaga->ormas == 'Muhammadiyah' ? 'selected' : '' }}>Muhammadiyah</option>
-                                    <option value="LDII" {{ $lembaga->ormas == 'LDII' ? 'selected' : '' }}>LDII</option>
+                                    <option value="NU" {{ old('ormas', $lembaga->ormas) == 'NU' ? 'selected' : '' }}>NU</option>
+                                    <option value="Muhammadiyah" {{ old('ormas', $lembaga->ormas) == 'Muhammadiyah' ? 'selected' : '' }}>Muhammadiyah</option>
+                                    <option value="LDII" {{ old('ormas', $lembaga->ormas) == 'LDII' ? 'selected' : '' }}>LDII</option>
                                 </select>
                             </div>
 
@@ -155,7 +171,7 @@
                             </div>
                             <div class="md:col-span-2">
                                 <label class="block text-[10px] font-bold text-gray-600 uppercase mb-1">No. Telp / WA</label>
-                                <input type="number" name="no_telp" value="{{ old('no_telp', $lembaga->no_telp) }}" class="w-full border border-gray-400 rounded-md px-2 py-1 h-[32px] text-xs font-bold text-black-800 focus:border-blue-500 shadow-sm">
+                                <input type="text" name="no_telp" value="{{ old('no_telp', $lembaga->no_telp) }}" placeholder="Contoh: 081234567890" class="w-full border border-gray-400 rounded-md px-2 py-1 h-[32px] text-xs font-bold text-black-800 focus:border-blue-500 shadow-sm">
                             </div>
                         </div>
                     </div>
@@ -191,14 +207,14 @@
                                     </div>
                                     <div>
                                         <label class="block text-[9px] font-bold text-gray-600 uppercase">Fisik IJOP</label>
-                                        <input type="text" name="ijop" value="{{ old('ijop', $lembaga->ijop) }}" class="w-full border border-gray-400 rounded-md h-[28px] text-[10px] font-bold px-2 uppercase" oninput="this.value = this.value.toUpperCase()">
+                                        <input type="text" name="ijop" id="status_fisik_ijop_edit" value="{{ $lembaga->file_ijop ? 'ADA' : 'TIDAK ADA' }}" readonly class="w-full bg-gray-100 border border-gray-400 rounded-md h-[28px] text-[10px] font-bold px-2 uppercase text-gray-700 cursor-not-allowed shadow-inner">
                                     </div>
                                     <div class="col-span-2 hidden bg-green-100 text-green-800 text-[10px] py-1.5 rounded text-center font-bold" id="info_masa_berlaku"></div>
                                 </div>
                                 <input type="hidden" name="status_ijop" value="Pending">
                                 
                                 @if($lembaga->file_ijop)
-                                    <iframe id="old_ijop" src="{{ asset('storage/' . $lembaga->file_ijop) }}" class="w-full h-[250px] border border-gray-300 rounded bg-white mt-auto"></iframe>
+                                    <iframe id="old_ijop" src="{{ \Illuminate\Support\Facades\Storage::url($lembaga->file_ijop) }}" class="w-full h-[250px] border border-gray-300 rounded bg-white mt-auto"></iframe>
                                 @endif
                                 <iframe id="preview_ijop_edit" class="hidden w-full h-[250px] border border-gray-300 rounded bg-white mt-auto"></iframe>
                             </div>
@@ -218,7 +234,7 @@
                                     <button type="button" id="btn_reset_skd_edit" onclick="resetFile('file_skd', 'preview_skd_edit', 'btn_reset_skd_edit', 'old_skd')" class="hidden mt-1 text-[10px] text-red-600 font-bold underline">&times; Batal Upload File Baru</button>
                                 </div>
                                 @if($lembaga->file_skd)
-                                    <iframe id="old_skd" src="{{ asset('storage/' . $lembaga->file_skd) }}" class="w-full h-[250px] border border-gray-300 rounded bg-white mt-auto"></iframe>
+                                    <iframe id="old_skd" src="{{ \Illuminate\Support\Facades\Storage::url($lembaga->file_skd) }}" class="w-full h-[250px] border border-gray-300 rounded bg-white mt-auto"></iframe>
                                 @endif
                                 <iframe id="preview_skd_edit" class="hidden w-full h-[250px] border border-gray-300 rounded bg-white mt-auto"></iframe>
                             </div>
@@ -239,7 +255,7 @@
                                 </div>
                                 <input type="hidden" name="status_super" value="Pending">
                                 @if($lembaga->file_super)
-                                    <iframe id="old_super" src="{{ asset('storage/' . $lembaga->file_super) }}" class="w-full h-[250px] border border-gray-300 rounded bg-white mt-auto"></iframe>
+                                    <iframe id="old_super" src="{{ \Illuminate\Support\Facades\Storage::url($lembaga->file_super) }}" class="w-full h-[250px] border border-gray-300 rounded bg-white mt-auto"></iframe>
                                 @endif
                                 <iframe id="preview_super_edit" class="hidden w-full h-[250px] border border-gray-300 rounded bg-white mt-auto"></iframe>
                             </div>
@@ -260,7 +276,7 @@
                                 </div>
                                 <input type="hidden" name="status_skam" value="Pending">
                                 @if($lembaga->file_skam)
-                                    <iframe id="old_skam" src="{{ asset('storage/' . $lembaga->file_skam) }}" class="w-full h-[250px] border border-gray-300 rounded bg-white mt-auto"></iframe>
+                                    <iframe id="old_skam" src="{{ \Illuminate\Support\Facades\Storage::url($lembaga->file_skam) }}" class="w-full h-[250px] border border-gray-300 rounded bg-white mt-auto"></iframe>
                                 @endif
                                 <iframe id="preview_skam_edit" class="hidden w-full h-[250px] border border-gray-300 rounded bg-white mt-auto"></iframe>
                             </div>
@@ -279,7 +295,7 @@
                                     @endif
                                 </div>
                                 <div class="w-full h-40 bg-gray-200 border border-gray-400 rounded-md mb-3 overflow-hidden flex justify-center items-center relative">
-                                    <img id="preview_lembaga" src="{{ $lembaga->foto_lembaga ? asset('storage/' . $lembaga->foto_lembaga) : '#' }}" class="{{ $lembaga->foto_lembaga ? '' : 'hidden' }} object-cover w-full h-full absolute inset-0 z-10" />
+                                    <img id="preview_lembaga" src="{{ $lembaga->foto_lembaga ? \Illuminate\Support\Facades\Storage::url($lembaga->foto_lembaga) : '#' }}" class="{{ $lembaga->foto_lembaga ? '' : 'hidden' }} object-cover w-full h-full absolute inset-0 z-10" />
                                     <span class="text-black-400 text-[11px] z-0">Tidak Ada Foto</span>
                                 </div>
                                 <input type="file" name="foto_lembaga" accept="image/*" onchange="previewImageFase3(this, 'preview_lembaga')" class="text-[10px] w-full file:mr-2 file:py-1 file:px-2 file:rounded file:border-0 file:text-[10px] file:font-bold file:bg-orange-500 file:text-white hover:file:bg-orange-600 cursor-pointer transition">
@@ -295,7 +311,7 @@
                                     @endif
                                 </div>
                                 <div class="w-full h-40 bg-gray-200 border border-gray-400 rounded-md mb-3 overflow-hidden flex justify-center items-center relative">
-                                    <img id="preview_nambor" src="{{ $lembaga->foto_nambor ? asset('storage/' . $lembaga->foto_nambor) : '#' }}" class="{{ $lembaga->foto_nambor ? '' : 'hidden' }} object-cover w-full h-full absolute inset-0 z-10" />
+                                    <img id="preview_nambor" src="{{ $lembaga->foto_nambor ? \Illuminate\Support\Facades\Storage::url($lembaga->foto_nambor) : '#' }}" class="{{ $lembaga->foto_nambor ? '' : 'hidden' }} object-cover w-full h-full absolute inset-0 z-10" />
                                     <span class="text-black-400 text-[11px] z-0">Tidak Ada Foto</span>
                                 </div>
                                 <input type="file" name="foto_nambor" accept="image/*" onchange="previewImageFase3(this, 'preview_nambor')" class="text-[10px] w-full file:mr-2 file:py-1 file:px-2 file:rounded file:border-0 file:text-[10px] file:font-bold file:bg-orange-500 file:text-white hover:file:bg-orange-600 cursor-pointer transition">
@@ -311,7 +327,7 @@
                                     @endif
                                 </div>
                                 <div class="w-full h-40 bg-gray-200 border border-gray-400 rounded-md mb-3 overflow-hidden flex justify-center items-center relative">
-                                    <img id="preview_bangunan" src="{{ $lembaga->foto_bangunan ? asset('storage/' . $lembaga->foto_bangunan) : '#' }}" class="{{ $lembaga->foto_bangunan ? '' : 'hidden' }} object-cover w-full h-full absolute inset-0 z-10" />
+                                    <img id="preview_bangunan" src="{{ $lembaga->foto_bangunan ? \Illuminate\Support\Facades\Storage::url($lembaga->foto_bangunan) : '#' }}" class="{{ $lembaga->foto_bangunan ? '' : 'hidden' }} object-cover w-full h-full absolute inset-0 z-10" />
                                     <span class="text-black-400 text-[11px] z-0">Tidak Ada Foto</span>
                                 </div>
                                 <input type="file" name="foto_bangunan" accept="image/*" onchange="previewImageFase3(this, 'preview_bangunan')" class="text-[10px] w-full file:mr-2 file:py-1 file:px-2 file:rounded file:border-0 file:text-[10px] file:font-bold file:bg-orange-500 file:text-white hover:file:bg-orange-600 cursor-pointer transition">
@@ -327,7 +343,7 @@
                                     @endif
                                 </div>
                                 <div class="w-full h-40 bg-gray-200 border border-gray-400 rounded-md mb-3 overflow-hidden flex justify-center items-center relative">
-                                    <img id="preview_kbm" src="{{ $lembaga->foto_kbm ? asset('storage/' . $lembaga->foto_kbm) : '#' }}" class="{{ $lembaga->foto_kbm ? '' : 'hidden' }} object-cover w-full h-full absolute inset-0 z-10" />
+                                    <img id="preview_kbm" src="{{ $lembaga->foto_kbm ? \Illuminate\Support\Facades\Storage::url($lembaga->foto_kbm) : '#' }}" class="{{ $lembaga->foto_kbm ? '' : 'hidden' }} object-cover w-full h-full absolute inset-0 z-10" />
                                     <span class="text-black-400 text-[11px] z-0">Tidak Ada Foto</span>
                                 </div>
                                 <input type="file" name="foto_kbm" accept="image/*" onchange="previewImageFase3(this, 'preview_kbm')" class="text-[10px] w-full file:mr-2 file:py-1 file:px-2 file:rounded file:border-0 file:text-[10px] file:font-bold file:bg-orange-500 file:text-white hover:file:bg-orange-600 cursor-pointer transition">
@@ -393,11 +409,19 @@
         });
 
         // 2. PREVIEW & RESET PDF (Disesuaikan untuk form EDIT)
+        const hasExistingIjopFile = {{ $lembaga->file_ijop ? 'true' : 'false' }};
+
         function handleFileSelect(input, iframeId, btnId, oldFrameId = null) {
             const iframe = document.getElementById(iframeId); const btnReset = document.getElementById(btnId);
             if(oldFrameId) { const oldFrame = document.getElementById(oldFrameId); if(oldFrame) oldFrame.classList.add('hidden'); }
             if (input.files && input.files[0]) {
                 if(input.files[0].type !== 'application/pdf'){ alert("Mohon upload PDF!"); input.value = ""; return; }
+
+                if (input.name === 'file_ijop') {
+                    const statusFisik = document.getElementById('status_fisik_ijop_edit');
+                    if (statusFisik) statusFisik.value = 'ADA';
+                }
+
                 const reader = new FileReader();
                 reader.onload = function(e) { iframe.src = e.target.result; iframe.classList.remove('hidden'); btnReset.classList.remove('hidden'); }
                 reader.readAsDataURL(input.files[0]);
@@ -407,6 +431,11 @@
             const input = document.getElementById(inputId); const iframe = document.getElementById(iframeId); const btnReset = document.getElementById(btnId);
             if(oldFrameId) { const oldFrame = document.getElementById(oldFrameId); if(oldFrame) oldFrame.classList.remove('hidden'); }
             input.value = ""; iframe.src = ""; iframe.classList.add('hidden'); btnReset.classList.add('hidden');
+
+            if (inputId === 'file_ijop') {
+                const statusFisik = document.getElementById('status_fisik_ijop_edit');
+                if (statusFisik) statusFisik.value = hasExistingIjopFile ? 'ADA' : 'TIDAK ADA';
+            }
         }
 
         // [BARU] FUNGSI PREVIEW GAMBAR UNTUK MENU EDIT

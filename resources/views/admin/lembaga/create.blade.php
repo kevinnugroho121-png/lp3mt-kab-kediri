@@ -29,6 +29,21 @@
                 <form action="{{ route('lembaga.store') }}" method="POST" enctype="multipart/form-data" class="p-8">
                     @csrf
 
+                    {{-- [BARU] KOTAK ALERT PERINGATAN JIKA ADA DATA GANDA / SALAH VALIDASI --}}
+                    @if ($errors->any())
+                        <div class="mb-5 bg-red-50 border-l-4 border-red-600 p-4 rounded-r-md shadow-sm">
+                            <div class="flex items-center gap-2 mb-2 text-red-800">
+                                <span class="text-lg font-black">⚠️</span>
+                                <strong class="text-xs font-bold uppercase tracking-tight">Gagal Menyimpan Lembaga! Mohon periksa kembali:</strong>
+                            </div>
+                            <ul class="list-disc pl-6 text-xs text-red-700 font-semibold space-y-1">
+                                @foreach ($errors->all() as $error)
+                                    <li>{{ $error }}</li>
+                                @endforeach
+                            </ul>
+                        </div>
+                    @endif
+
                     {{-- SECTION A: IDENTITAS & LOKASI --}}
                     <div class="mb-4">
                         <div class="flex items-center gap-2 mb-3 pb-1 border-b border-gray-600">
@@ -44,13 +59,18 @@
                             <div class="md:col-span-1">
                                 <label class="block text-[10px] font-bold text-gray-600 uppercase mb-1">Jenis Lembaga <span class="text-red-500">*</span></label>
                                 <select name="jenis_lembaga" class="w-full border border-gray-400 rounded-md px-2 py-1 h-[32px] text-xs font-bold text-black-800 focus:border-blue-500 shadow-sm">
-                                    <option value="TPQ">TPQ</option><option value="MADIN">MADIN</option><option value="PONPES">PONPES</option>
+                                    <option value="TPQ" {{ old('jenis_lembaga') == 'TPQ' ? 'selected' : '' }}>TPQ</option>
+                                    <option value="MADIN" {{ old('jenis_lembaga') == 'MADIN' ? 'selected' : '' }}>MADIN</option>
+                                    <option value="PONPES" {{ old('jenis_lembaga') == 'PONPES' ? 'selected' : '' }}>PONPES</option>
                                 </select>
                             </div>
                             <div class="md:col-span-1">
                                 <label class="block text-[10px] font-bold text-gray-600 uppercase mb-1">Ormas Afiliasi</label>
                                 <select name="ormas" class="w-full border border-gray-400 rounded-md px-2 py-1 h-[32px] text-xs font-bold text-black-800 focus:border-blue-500 shadow-sm">
-                                    <option value="">- Tidak Ada -</option><option value="NU">NU</option><option value="Muhammadiyah">Muhammadiyah</option><option value="LDII">LDII</option>
+                                    <option value="">- Tidak Ada -</option>
+                                    <option value="NU" {{ old('ormas') == 'NU' ? 'selected' : '' }}>NU</option>
+                                    <option value="Muhammadiyah" {{ old('ormas') == 'Muhammadiyah' ? 'selected' : '' }}>Muhammadiyah</option>
+                                    <option value="LDII" {{ old('ormas') == 'LDII' ? 'selected' : '' }}>LDII</option>
                                 </select>
                             </div>
 
@@ -139,11 +159,11 @@
 
                             <div class="md:col-span-2">
                                 <label class="block text-[10px] font-bold text-gray-600 uppercase mb-1">Kepala Lembaga</label>
-                                <input type="text" name="kepala_lembaga" class="w-full border border-gray-400 rounded-md px-2 py-1 h-[32px] text-xs font-bold text-black-800 focus:border-blue-500 shadow-sm uppercase" oninput="this.value = this.value.toUpperCase()">
+                                <input type="text" name="kepala_lembaga" value="{{ old('kepala_lembaga') }}" class="w-full border border-gray-400 rounded-md px-2 py-1 h-[32px] text-xs font-bold text-black-800 focus:border-blue-500 shadow-sm uppercase" oninput="this.value = this.value.toUpperCase()">
                             </div>
                             <div class="md:col-span-2">
                                 <label class="block text-[10px] font-bold text-gray-600 uppercase mb-1">No. Telp / WA</label>
-                                <input type="number" name="no_telp" class="w-full border border-gray-400 rounded-md px-2 py-1 h-[32px] text-xs font-bold text-black-800 focus:border-blue-500 shadow-sm">
+                                <input type="text" name="no_telp" value="{{ old('no_telp') }}" placeholder="Contoh: 081234567890" class="w-full border border-gray-400 rounded-md px-2 py-1 h-[32px] text-xs font-bold text-black-800 focus:border-blue-500 shadow-sm">
                             </div>
                         </div>
                     </div>
@@ -174,7 +194,7 @@
                                     </div>
                                     <div>
                                         <label class="block text-[9px] font-bold text-gray-600 uppercase">Fisik IJOP</label>
-                                        <input type="text" name="ijop" value="ADA" class="w-full border border-gray-400 rounded-md h-[28px] text-[10px] font-bold px-2 uppercase" oninput="this.value = this.value.toUpperCase()">
+                                        <input type="text" name="ijop" id="status_fisik_ijop" value="TIDAK ADA" readonly class="w-full bg-gray-100 border border-gray-400 rounded-md h-[28px] text-[10px] font-bold px-2 uppercase text-gray-700 cursor-not-allowed shadow-inner">
                                     </div>
                                     <div class="col-span-2 hidden bg-green-100 text-green-800 text-[10px] py-1.5 rounded text-center font-bold" id="info_masa_berlaku"></div>
                                 </div>
@@ -279,29 +299,42 @@
 
     {{-- SCRIPT: LOGIKA UI/UX --}}
     <script>
-        // 1. FILTER DESA (Dependent Dropdown)
+        // 1. FILTER DESA (Dependent Dropdown + Dukungan Old Value)
         document.addEventListener('DOMContentLoaded', function() {
             const kecamatanSelect = document.getElementById('kecamatanSelect');
             const desaSelect = document.getElementById('desaSelect');
+            const oldDesaId = "{{ old('desa_id') }}";
             
             if(kecamatanSelect && desaSelect){
-                const allDesaOptions = Array.from(desaSelect.querySelectorAll('option'));
-                const defaultOption = desaSelect.querySelector('option[value=""]');
-                desaSelect.innerHTML = '';
-                desaSelect.appendChild(defaultOption);
+                const allDesaOptions = Array.from(desaSelect.querySelectorAll('option[data-kecamatan]'));
+                const defaultOption = document.createElement('option');
+                defaultOption.value = "";
+                defaultOption.text = "-- Pilih --";
 
-                kecamatanSelect.addEventListener('change', function() {
-                    const selectedKecId = this.value;
+                function filterDesa() {
+                    const selectedKecId = kecamatanSelect.value;
                     desaSelect.innerHTML = '';
                     desaSelect.appendChild(defaultOption);
+
                     if(selectedKecId) {
                         const filteredDesas = allDesaOptions.filter(option => option.dataset.kecamatan === selectedKecId);
-                        filteredDesas.forEach(option => desaSelect.appendChild(option));
+                        filteredDesas.forEach(option => {
+                            const newOption = option.cloneNode(true);
+                            if(newOption.value === oldDesaId) {
+                                newOption.selected = true;
+                            }
+                            desaSelect.appendChild(newOption);
+                        });
                         defaultOption.text = "-- Pilih Desa --";
                     } else {
                         defaultOption.text = "-- Pilih Kecamatan Dulu --";
                     }
-                });
+                }
+
+                kecamatanSelect.addEventListener('change', filterDesa);
+                if(kecamatanSelect.value) {
+                    filterDesa();
+                }
             }
 
             // 2. HITUNG MASA BERLAKU IJOP (5 TAHUN)
@@ -330,24 +363,29 @@
             }
         });
 
-        // 3. PREVIEW & RESET PDF
+        // 3. PREVIEW & RESET PDF (DENGAN AUTO FISIK IJOP)
         function handleFileSelect(input, iframeId, btnId) {
             const iframe = document.getElementById(iframeId);
             const btnReset = document.getElementById(btnId);
             
             if (input.files && input.files[0]) {
-                // Cek apakah PDF
                 if(input.files[0].type !== 'application/pdf'){
                     alert("Mohon upload file berformat PDF!");
-                    input.value = ""; // Reset input
+                    input.value = "";
                     return;
+                }
+
+                // Otomatis ubah status fisik IJOP jika file IJOP diupload
+                if (input.name === 'file_ijop') {
+                    const statusFisik = document.getElementById('status_fisik_ijop');
+                    if (statusFisik) statusFisik.value = 'ADA';
                 }
 
                 const reader = new FileReader();
                 reader.onload = function(e) {
                     iframe.src = e.target.result;
-                    iframe.classList.remove('hidden'); // Munculkan Iframe
-                    btnReset.classList.remove('hidden'); // Munculkan Tombol Hapus
+                    iframe.classList.remove('hidden');
+                    btnReset.classList.remove('hidden');
                 }
                 reader.readAsDataURL(input.files[0]);
             }
@@ -358,10 +396,16 @@
             const iframe = document.getElementById(iframeId);
             const btnReset = document.getElementById(btnId);
 
-            input.value = ""; // Kosongkan Input File
-            iframe.src = "";  // Kosongkan Preview
-            iframe.classList.add('hidden'); // Sembunyikan Iframe
-            btnReset.classList.add('hidden'); // Sembunyikan Tombol Hapus
+            input.value = "";
+            iframe.src = "";
+            iframe.classList.add('hidden');
+            btnReset.classList.add('hidden');
+
+            // Otomatis kembalikan status jadi TIDAK ADA jika file IJOP dibatalkan
+            if (inputId === 'file_ijop') {
+                const statusFisik = document.getElementById('status_fisik_ijop');
+                if (statusFisik) statusFisik.value = 'TIDAK ADA';
+            }
         }
 
 

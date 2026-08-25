@@ -43,6 +43,14 @@ class LembagaController extends Controller
         if ($request->filled('filter_jenis')) {
             $query->where('jenis_lembaga', $request->filter_jenis);
         }
+        // [BARU] Filter Ormas
+        if ($request->filled('filter_ormas')) {
+            if (strtoupper($request->filter_ormas) === 'LAINNYA') {
+                $query->whereNotIn('ormas', ['NU', 'MUHAMMADIYAH', 'LDII']);
+            } else {
+                $query->where('ormas', strtoupper($request->filter_ormas));
+            }
+        }
 
 
         // [REVISI] Filter Cerdas (Smart Sort) Dokumen Lembaga
@@ -130,25 +138,41 @@ class LembagaController extends Controller
             $request->merge(['kecamatan_id' => $user->kecamatan_id]);
         }
 
-        // 1. VALIDASI DATA
+        // 1. Sanitasi Nama & No HP Sebelum Validasi
+        $cleanNama = strtoupper(preg_replace('/\s+/', ' ', trim($request->nama_lembaga)));
+        
+        $rawHp = (string)$request->no_telp;
+        $cleanHp = str_ireplace('o', '0', $rawHp);
+        $cleanHp = preg_replace('/[^0-9]/', '', $cleanHp);
+        if (str_starts_with($cleanHp, '62')) {
+            $cleanHp = '0' . substr($cleanHp, 2);
+        } elseif (str_starts_with($cleanHp, '8')) {
+            $cleanHp = '0' . $cleanHp;
+        }
+
+        $request->merge([
+            'nama_lembaga' => $cleanNama,
+            'no_telp'      => !empty($cleanHp) ? $cleanHp : null
+        ]);
+
+        // 2. VALIDASI DATA
         $request->validate([
             'nama_lembaga'       => 'required|string|max:255',
-            'jenis_lembaga'      => 'required',
+            'jenis_lembaga'      => 'required|in:MADIN,TPQ,PONPES',
             'kecamatan_id'       => 'required|exists:kecamatans,id',
             'desa_id'            => 'required|exists:desas,id',
             'alamat'             => 'nullable|string',
-            'link_gmaps'         => 'nullable|string', // <-- Tambahkan baris ini
+            'link_gmaps'         => 'nullable|string',
             'jumlah_santri'      => 'required|integer|min:0',
-            'jumlah_guru'        => 'required|integer|min:0',
-
+            'jumlah_guru'        => 'nullable|integer|min:0',
 
             // Validasi File PDF
             'file_ijop'          => 'nullable|mimes:pdf|max:2048', 
-            'file_skd'           => 'nullable|mimes:pdf|max:2048', // [BARU Poin 1] Validasi SKD
+            'file_skd'           => 'nullable|mimes:pdf|max:2048',
             'file_super'         => 'nullable|mimes:pdf|max:2048', 
             'file_skam'          => 'nullable|mimes:pdf|max:2048',
 
-            // [BARU - FASE 3] Validasi Gambar Dokumentasi (HANYA GAMBAR, MAKSIMAL 1 MB)
+            // Validasi Gambar Dokumentasi
             'foto_lembaga'       => 'nullable|image|mimes:jpeg,png,jpg,jfif|max:1024',
             'foto_nambor'        => 'nullable|image|mimes:jpeg,png,jpg,jfif|max:1024',
             'foto_bangunan'      => 'nullable|image|mimes:jpeg,png,jpg,jfif|max:1024',
@@ -158,15 +182,24 @@ class LembagaController extends Controller
             'file_ijop.max'      => 'Ukuran file IJOP maksimal 2MB.',
             'file_super.mimes'   => 'File Surat Pernyataan harus format PDF.',
             'file_skam.mimes'    => 'File Surat Ket. Aktif Mengajar harus format PDF.',
-            
-            // Pesan validasi gambar kustom
             'foto_lembaga.image' => 'File profil lembaga wajib berupa format gambar (JPG/PNG) maksimal 1MB.',
             'foto_nambor.image'  => 'File papan nama wajib berupa format gambar (JPG/PNG) maksimal 1MB.',
             'foto_bangunan.image'=> 'File bangunan wajib berupa format gambar (JPG/PNG) maksimal 1MB.',
             'foto_kbm.image'     => 'File KBM wajib berupa format gambar (JPG/PNG) maksimal 1MB.',
         ]);
 
-        // 2. PROSES UPLOAD FILE
+        // 3. SATPAM ANTI-DUPLIKASI LEMBAGA (Nama + Jenis + Desa)
+        $isDuplicate = Lembaga::where('nama_lembaga', $cleanNama)
+                              ->where('jenis_lembaga', $request->jenis_lembaga)
+                              ->where('desa_id', $request->desa_id)
+                              ->exists();
+        if ($isDuplicate) {
+            return back()->withInput()->withErrors([
+                'nama_lembaga' => "Lembaga '{$cleanNama}' ({$request->jenis_lembaga}) sudah terdaftar di desa yang dipilih."
+            ]);
+        }
+
+        // 4. PROSES UPLOAD FILE
         $pathIjop = null;
         if ($request->hasFile('file_ijop')) {
             $pathIjop = $request->file('file_ijop')->store('dokumen_lembaga', 'public');
@@ -217,11 +250,12 @@ class LembagaController extends Controller
         
         // Set default status dokumen jika belum ada
         $data['status_ijop'] = 'Pending';
-        $data['status_skd'] = 'Pending'; // [BARU]
+        $data['status_skd'] = 'Pending';
         $data['status_super'] = 'Pending';
         $data['status_skam'] = 'Pending';
 
-
+        // Otomatis tentukan status Fisik IJOP berdasarkan keberadaan file yang diunggah
+        $data['ijop'] = $request->hasFile('file_ijop') ? 'ADA' : 'TIDAK ADA';
 
         Lembaga::create($data);
 
@@ -310,23 +344,51 @@ class LembagaController extends Controller
             $request->merge(['kecamatan_id' => $user->kecamatan_id]);
         }
 
+        // 1. Sanitasi Nama & No HP Sebelum Update
+        $cleanNama = strtoupper(preg_replace('/\s+/', ' ', trim($request->nama_lembaga)));
+        
+        $rawHp = (string)$request->no_telp;
+        $cleanHp = str_ireplace('o', '0', $rawHp);
+        $cleanHp = preg_replace('/[^0-9]/', '', $cleanHp);
+        if (str_starts_with($cleanHp, '62')) {
+            $cleanHp = '0' . substr($cleanHp, 2);
+        } elseif (str_starts_with($cleanHp, '8')) {
+            $cleanHp = '0' . $cleanHp;
+        }
+
+        $request->merge([
+            'nama_lembaga' => $cleanNama,
+            'no_telp'      => !empty($cleanHp) ? $cleanHp : null
+        ]);
+
         $request->validate([
             'nama_lembaga'       => 'required|string|max:255',
             'alamat'             => 'nullable|string',
-            'link_gmaps'         => 'nullable|string', // <-- Tambahkan baris ini
+            'link_gmaps'         => 'nullable|string',
             'file_ijop'          => 'nullable|mimes:pdf|max:2048',
-            'file_skd'           => 'nullable|mimes:pdf|max:2048', // [BARU] Validasi SKD
+            'file_skd'           => 'nullable|mimes:pdf|max:2048',
             'file_super'         => 'nullable|mimes:pdf|max:2048',
             'file_skam'          => 'nullable|mimes:pdf|max:2048',
-
-
-            
-            // [BARU - FASE 3] Validasi Gambar saat Update Data
             'foto_lembaga'       => 'nullable|image|mimes:jpeg,png,jpg,jfif|max:1024',
             'foto_nambor'        => 'nullable|image|mimes:jpeg,png,jpg,jfif|max:1024',
             'foto_bangunan'      => 'nullable|image|mimes:jpeg,png,jpg,jfif|max:1024',
             'foto_kbm'           => 'nullable|image|mimes:jpeg,png,jpg,jfif|max:1024',
         ]);
+
+        // 2. Satpam Anti-Duplikasi Lembaga saat Edit (Kecuali Lembaga Ini Sendiri)
+        $desaTarget = $request->desa_id ?? $lembaga->desa_id;
+        $jenisTarget = $request->jenis_lembaga ?? $lembaga->jenis_lembaga;
+        
+        $isDuplicate = Lembaga::where('id', '!=', $lembaga->id)
+                              ->where('nama_lembaga', $cleanNama)
+                              ->where('jenis_lembaga', $jenisTarget)
+                              ->where('desa_id', $desaTarget)
+                              ->exists();
+        if ($isDuplicate) {
+            return back()->withInput()->withErrors([
+                'nama_lembaga' => "Lembaga '{$cleanNama}' ({$jenisTarget}) sudah digunakan oleh data lembaga lain di desa ini."
+            ]);
+        }
 
         $data = $request->all();
 
@@ -406,6 +468,13 @@ class LembagaController extends Controller
             unset($data['file_skam']);
         }
 
+        // Otomatis sinkronkan status Fisik IJOP saat update data
+        if ($request->hasFile('file_ijop')) {
+            $data['ijop'] = 'ADA';
+        } elseif (!$lembaga->file_ijop) {
+            $data['ijop'] = 'TIDAK ADA';
+        }
+
         $lembaga->update($data);
 
         return redirect()->route('lembaga.index')->with('success', 'Data lembaga berhasil diperbarui');
@@ -448,6 +517,9 @@ class LembagaController extends Controller
                 }
                 $lembaga->$fileCol = null;
                 $lembaga->$statusCol = 'Pending';
+                if ($type === 'ijop') {
+                    $lembaga->ijop = 'TIDAK ADA';
+                }
                 $lembaga->save();
 
                 DB::table('activity_logs')->insert([
@@ -541,7 +613,11 @@ class LembagaController extends Controller
     public function import(Request $request)
     {
         $request->validate([
-            'file' => 'required|mimes:xlsx,xls,csv|max:2048',
+            'file' => 'required|mimes:xlsx,xls,csv|max:5120',
+        ], [
+            'file.required' => 'Silakan pilih file Excel terlebih dahulu.',
+            'file.mimes'    => 'Format file tidak didukung! Harus file Excel (.xlsx, .xls, atau .csv).',
+            'file.max'      => 'Ukuran file Excel maksimal 5MB.',
         ]);
 
 

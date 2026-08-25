@@ -95,11 +95,11 @@
                     <div class="w-full">
                         <label class="text-[10px] font-bold text-black-500 uppercase tracking-wider ml-1">Ormas</label>
                         <select name="filter_ormas" class="bg-gray-50 border border-gray-400 text-black-900 text-sm rounded-md focus:ring-blue-500 focus:border-blue-500 block w-full h-8 px-1 py-1">
-                            <option value="">- Semua -</option>
+                            <option value="">- Semua Ormas -</option>
                             <option value="NU" {{ request('filter_ormas') == 'NU' ? 'selected' : '' }}>NU</option>
-                            <option value="Muhammadiyah" {{ request('filter_ormas') == 'Muhammadiyah' ? 'selected' : '' }}>Muh</option>
+                            <option value="MUHAMMADIYAH" {{ in_array(request('filter_ormas'), ['MUHAMMADIYAH', 'Muhammadiyah']) ? 'selected' : '' }}>Muhammadiyah</option>
                             <option value="LDII" {{ request('filter_ormas') == 'LDII' ? 'selected' : '' }}>LDII</option>
-                            <option value="Lainnya" {{ request('filter_ormas') == 'Lainnya' ? 'selected' : '' }}>Lain</option>
+                            <option value="LAINNYA" {{ in_array(request('filter_ormas'), ['LAINNYA', 'Lainnya']) ? 'selected' : '' }}>Lainnya</option>
                         </select>
                     </div>
 
@@ -321,28 +321,28 @@
                                     <div class="grid grid-cols-2 gap-1 w-12 mx-auto">
                                         {{-- 1. Profil Lembaga --}}
                                         @if($lembaga->foto_lembaga)
-                                            <button onclick="bukaModalGambar('{{ asset('storage/' . $lembaga->foto_lembaga) }}', 'A. Foto Profil Lembaga')" title="Lihat Profil Lembaga" class="bg-blue-100 text-blue-700 border border-blue-300 p-0.5 rounded hover:bg-blue-600 hover:text-white transition text-[10px]">📸</button>
+                                            <button onclick="bukaModalGambar('{{ \Illuminate\Support\Facades\Storage::url($lembaga->foto_lembaga) }}', 'A. Foto Profil Lembaga')" title="Lihat Profil Lembaga" class="bg-blue-100 text-blue-700 border border-blue-300 p-0.5 rounded hover:bg-blue-600 hover:text-white transition text-[10px]">📸</button>
                                         @else
                                             <span title="Kosong" class="bg-gray-100 text-black-300 border border-gray-400 p-0.5 rounded text-[10px] cursor-not-allowed">📸</span>
                                         @endif
 
                                         {{-- 2. Nambor --}}
                                         @if($lembaga->foto_nambor)
-                                            <button onclick="bukaModalGambar('{{ asset('storage/' . $lembaga->foto_nambor) }}', 'B. Papan Nama / Nambor')" title="Lihat Papan Nama" class="bg-indigo-100 text-indigo-700 border border-indigo-300 p-0.5 rounded hover:bg-indigo-600 hover:text-white transition text-[10px]">🏷️</button>
+                                            <button onclick="bukaModalGambar('{{ \Illuminate\Support\Facades\Storage::url($lembaga->foto_nambor) }}', 'B. Papan Nama / Nambor')" title="Lihat Papan Nama" class="bg-indigo-100 text-indigo-700 border border-indigo-300 p-0.5 rounded hover:bg-indigo-600 hover:text-white transition text-[10px]">🏷️</button>
                                         @else
                                             <span title="Kosong" class="bg-gray-100 text-black-300 border border-gray-400 p-0.5 rounded text-[10px] cursor-not-allowed">🏷️</span>
                                         @endif
 
                                         {{-- 3. Gedung Bangunan --}}
                                         @if($lembaga->foto_bangunan)
-                                            <button onclick="bukaModalGambar('{{ asset('storage/' . $lembaga->foto_bangunan) }}', 'C. Gedung Bangunan')" title="Lihat Bangunan" class="bg-amber-100 text-amber-700 border border-amber-300 p-0.5 rounded hover:bg-amber-600 hover:text-white transition text-[10px]">🏢</button>
+                                            <button onclick="bukaModalGambar('{{ \Illuminate\Support\Facades\Storage::url($lembaga->foto_bangunan) }}', 'C. Gedung Bangunan')" title="Lihat Bangunan" class="bg-amber-100 text-amber-700 border border-amber-300 p-0.5 rounded hover:bg-amber-600 hover:text-white transition text-[10px]">🏢</button>
                                         @else
                                             <span title="Kosong" class="bg-gray-100 text-black-300 border border-gray-400 p-0.5 rounded text-[10px] cursor-not-allowed">🏢</span>
                                         @endif
 
                                         {{-- 4. KBM --}}
                                         @if($lembaga->foto_kbm)
-                                            <button onclick="bukaModalGambar('{{ asset('storage/' . $lembaga->foto_kbm) }}', 'D. Kegiatan Belajar (KBM)')" title="Lihat KBM" class="bg-green-100 text-green-700 border border-green-300 p-0.5 rounded hover:bg-green-600 hover:text-white transition text-[10px]">👥</button>
+                                            <button onclick="bukaModalGambar('{{ \Illuminate\Support\Facades\Storage::url($lembaga->foto_kbm) }}', 'D. Kegiatan Belajar (KBM)')" title="Lihat KBM" class="bg-green-100 text-green-700 border border-green-300 p-0.5 rounded hover:bg-green-600 hover:text-white transition text-[10px]">👥</button>
                                         @else
                                             <span title="Kosong" class="bg-gray-100 text-black-300 border border-gray-400 p-0.5 rounded text-[10px] cursor-not-allowed">👥</span>
                                         @endif
@@ -420,11 +420,11 @@
 
 
 
-                                {{-- 8. LEGALITAS IJOP (MURNI) --}}
+                                {{-- 8. LEGALITAS IJOP (MURNI + DETEKSI EXPIRED OTOMATIS) --}}
                                 <td class="border-r border-gray-400 py-1 text-center align-top bg-blue-50/30">
                                     <div class="flex flex-col items-center gap-1">
                                         @if($lembaga->file_ijop)
-                                            <button onclick="bukaModalPdf('{{ asset('storage/' . $lembaga->file_ijop) }}', 'IJOP - {{ addslashes($lembaga->nama_lembaga) }}')" class="flex items-center gap-1 text-green-600 text-[10px] font-bold bg-green-50 px-2 py-1 rounded border border-green-300 hover:bg-green-600 hover:text-white transition shadow-sm" title="Lihat IJOP">
+                                            <button onclick="bukaModalPdf('{{ \Illuminate\Support\Facades\Storage::url($lembaga->file_ijop) }}', 'IJOP - {{ addslashes($lembaga->nama_lembaga) }}')" class="flex items-center gap-1 text-green-600 text-[10px] font-bold bg-green-50 px-2 py-1 rounded border border-green-300 hover:bg-green-600 hover:text-white transition shadow-sm" title="Lihat IJOP">
                                                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg> Cek File
                                             </button>
                                         @else
@@ -436,21 +436,43 @@
                                             $badgeIjop = match($lembaga->status_ijop) {
                                                 'Disetujui' => 'text-green-700 bg-green-100', 'Ditolak' => 'text-red-700 bg-red-100', default => 'text-yellow-700 bg-yellow-100'
                                             };
+                                            
+                                            // 1. Ambil Tanggal Terbit
+                                            $tglTerbit = $lembaga->masa_berlaku_ijop ? \Carbon\Carbon::parse($lembaga->masa_berlaku_ijop) : null;
+                                            
+                                            // 2. Hitung Tanggal Expired (Tanggal Terbit + 5 Tahun)
+                                            $tglExpired = $tglTerbit ? (clone $tglTerbit)->addYears(5) : null;
+                                            
+                                            // 3. Cek apakah tanggal expired (+5 tahun) sudah lewat dari hari ini
+                                            $isExpired = $tglExpired ? $tglExpired->isPast() : false;
                                         @endphp
                                         <span class="text-[9px] font-bold px-1.5 py-0.5 rounded {{ $badgeIjop }}">{{ $lembaga->status_ijop ?? 'Pending' }}</span>
                                         <div class="mt-1 pt-1 border-t border-blue-100 text-[8px] text-black-500 leading-tight w-full">
-                                            <div class="text-[10px] font-semibold"">Exp: <span class="font-bold text-black-600">{{ $lembaga->masa_berlaku_ijop ? \Carbon\Carbon::parse($lembaga->masa_berlaku_ijop)->format('d/m/Y') : '-' }}</span></div>
+                                            <div class="text-[10px] font-semibold">
+                                                Exp: 
+                                                @if($tglExpired)
+                                                    @if($isExpired)
+                                                        <span class="font-bold text-red-600 bg-red-50 px-1 rounded border border-red-200 block mt-0.5">
+                                                            {{ $tglExpired->format('d/m/Y') }} (Expired)
+                                                        </span>
+                                                    @else
+                                                        <span class="font-bold text-black-600">
+                                                            {{ $tglExpired->format('d/m/Y') }}
+                                                        </span>
+                                                    @endif
+                                                @else
+                                                    <span class="font-bold text-black-600">-</span>
+                                                @endif
+                                            </div>
                                         </div>
                                     </div>
-
-                                 
                                 </td>
 
                                 {{-- 8B. LEGALITAS SKD SEMENTARA [BARU] --}}
                                 <td class="border-r border-gray-400 py-1 text-center align-top bg-teal-50/30">
                                     <div class="flex flex-col items-center gap-1">
                                         @if($lembaga->file_skd)
-                                            <button onclick="bukaModalPdf('{{ asset('storage/' . $lembaga->file_skd) }}', 'SKD - {{ addslashes($lembaga->nama_lembaga) }}')" class="flex items-center gap-1 text-green-600 text-[10px] font-bold bg-green-50 px-2 py-1 rounded border border-green-300 hover:bg-green-600 hover:text-white transition shadow-sm" title="Lihat SKD">
+                                            <button onclick="bukaModalPdf('{{ \Illuminate\Support\Facades\Storage::url($lembaga->file_skd) }}', 'SKD - {{ addslashes($lembaga->nama_lembaga) }}')" class="flex items-center gap-1 text-green-600 text-[10px] font-bold bg-green-50 px-2 py-1 rounded border border-green-300 hover:bg-green-600 hover:text-white transition shadow-sm" title="Lihat SKD">
                                                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg> Cek File
                                             </button>
                                         @else
@@ -471,7 +493,7 @@
                                 <td class="border-r border-gray-400 py-1 text-center align-top bg-purple-50/30">
                                     <div class="flex flex-col items-center gap-1">
                                         @if($lembaga->file_super)
-                                            <button onclick="bukaModalPdf('{{ asset('storage/' . $lembaga->file_super) }}', 'SPTJM - {{ addslashes($lembaga->nama_lembaga) }}')" class="flex items-center gap-1 text-green-600 text-[10px] font-bold bg-green-50 px-2 py-1 rounded border border-green-300 hover:bg-green-600 hover:text-white transition shadow-sm" title="Lihat SPTJM">
+                                            <button onclick="bukaModalPdf('{{ \Illuminate\Support\Facades\Storage::url($lembaga->file_super) }}', 'SPTJM - {{ addslashes($lembaga->nama_lembaga) }}')" class="flex items-center gap-1 text-green-600 text-[10px] font-bold bg-green-50 px-2 py-1 rounded border border-green-300 hover:bg-green-600 hover:text-white transition shadow-sm" title="Lihat SPTJM">
                                                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg> Cek File
                                             </button>
                                         @else
@@ -492,12 +514,12 @@
                                 <td class="border-r border-gray-400 py-1 text-center align-top bg-orange-50/30">
                                     <div class="flex flex-col items-center gap-1">
                                         @if($lembaga->file_skam)
-                                            <button onclick="bukaModalPdf('{{ asset('storage/' . $lembaga->file_skam) }}', 'SKAM - {{ addslashes($lembaga->nama_lembaga) }}')" class="flex items-center gap-1 text-green-600 text-[10px] font-bold bg-green-50 px-2 py-1 rounded border border-green-300 hover:bg-green-600 hover:text-white transition shadow-sm" title="Lihat SKAM">
+                                            <button onclick="bukaModalPdf('{{ \Illuminate\Support\Facades\Storage::url($lembaga->file_skam) }}', 'SKAM - {{ addslashes($lembaga->nama_lembaga) }}')" class="flex items-center gap-1 text-green-600 text-[10px] font-bold bg-green-50 px-2 py-1 rounded border border-green-300 hover:bg-green-600 hover:text-white transition shadow-sm" title="Lihat SKAM">
                                                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg> Cek File
                                             </button>
                                         @else
                                             <div class="flex items-center gap-1 text-red-500 text-[10px] font-bold bg-red-50 px-1.5 py-0.5 rounded border border-red-200">
-                                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path></svg>Kosong
+                                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path></svg> Kosong
                                             </div>
                                         @endif
                                         @php
@@ -601,7 +623,12 @@
                         desaSelect.append(`<option value="${d.id}" ${isSelected}>${d.nama}</option>`);
                     });
                 } else {
-                    desaSelect.append('<option value="">- Pilih Kecamatan Dulu -</option>');
+                    // Jika belum pilih kecamatan, tampilkan semua desa
+                    desaSelect.append('<option value="">- Semua Desa -</option>');
+                    allDesas.forEach(d => {
+                        const isSelected = (d.id == oldDesa) ? 'selected' : '';
+                        desaSelect.append(`<option value="${d.id}" ${isSelected}>${d.nama}</option>`);
+                    });
                 }
 
                 // Refresh tampilan Select2

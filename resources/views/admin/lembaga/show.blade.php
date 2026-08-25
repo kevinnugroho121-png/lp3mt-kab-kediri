@@ -145,11 +145,28 @@
                                 @php $cIjop = ($lembaga->status_ijop == 'Disetujui') ? 'bg-green-100 text-green-700' : (($lembaga->status_ijop == 'Ditolak') ? 'bg-red-100 text-red-700' : 'bg-yellow-100 text-yellow-700'); @endphp
                                 <span class="px-2 py-0.5 rounded text-[9px] font-bold {{ $cIjop }}">Status: {{ $lembaga->status_ijop ?? 'Pending' }}</span>
                             </div>
+                            @php
+                                $isExpired = $lembaga->masa_berlaku_ijop && \Carbon\Carbon::parse($lembaga->masa_berlaku_ijop)->isPast();
+                            @endphp
                             <div class="mb-2 text-[10px] font-bold text-black-600">
-                                Fisik: <span class="text-black-800">{{ $lembaga->ijop }}</span> | Berlaku: <span class="text-black-800">{{ $lembaga->masa_berlaku_ijop ? $lembaga->masa_berlaku_ijop->format('d/m/Y') : '-' }}</span>
+                                Fisik: <span class="text-black-800">{{ $lembaga->ijop }}</span> | 
+                                Berlaku: 
+                                @if($lembaga->masa_berlaku_ijop)
+                                    @if($isExpired)
+                                        <span class="text-red-600 font-extrabold bg-red-50 px-1.5 py-0.5 rounded border border-red-200">
+                                            {{ \Carbon\Carbon::parse($lembaga->masa_berlaku_ijop)->format('d/m/Y') }} (Expired)
+                                        </span>
+                                    @else
+                                        <span class="text-black-800">
+                                            {{ \Carbon\Carbon::parse($lembaga->masa_berlaku_ijop)->format('d/m/Y') }}
+                                        </span>
+                                    @endif
+                                @else
+                                    <span class="text-black-800">-</span>
+                                @endif
                             </div>
                             @if($lembaga->file_ijop)
-                                <iframe src="{{ asset('storage/' . $lembaga->file_ijop) }}#view=FitH" type="application/pdf" class="w-full h-[250px] border border-gray-400 rounded bg-white"></iframe>
+                                <iframe src="{{ \Illuminate\Support\Facades\Storage::url($lembaga->file_ijop) }}#view=FitH" type="application/pdf" class="w-full h-[250px] border border-gray-400 rounded bg-white"></iframe>
                             @else
                                 <div class="h-[250px] flex items-center justify-center bg-gray-100 border border-dashed border-gray-400 rounded text-black-400 text-xs italic">Belum diupload</div>
                             @endif
@@ -164,7 +181,7 @@
                             </div>
                             <div class="mb-2 h-[15px]"></div>
                             @if($lembaga->file_skd)
-                                <iframe src="{{ asset('storage/' . $lembaga->file_skd) }}#view=FitH" type="application/pdf" class="w-full h-[250px] border border-gray-400 rounded bg-white"></iframe>
+                                <iframe src="{{ \Illuminate\Support\Facades\Storage::url($lembaga->file_skd) }}#view=FitH" type="application/pdf" class="w-full h-[250px] border border-gray-400 rounded bg-white"></iframe>
                             @else
                                 <div class="h-[250px] flex items-center justify-center bg-gray-100 border border-dashed border-gray-400 rounded text-black-400 text-xs italic">Belum diupload</div>
                             @endif
@@ -179,7 +196,7 @@
                             </div>
                             <div class="mb-2 h-[15px]"></div>
                             @if($lembaga->file_super)
-                                <iframe src="{{ asset('storage/' . $lembaga->file_super) }}#view=FitH" type="application/pdf" class="w-full h-[250px] border border-gray-400 rounded bg-white"></iframe>
+                                <iframe src="{{ \Illuminate\Support\Facades\Storage::url($lembaga->file_super) }}#view=FitH" type="application/pdf" class="w-full h-[250px] border border-gray-400 rounded bg-white"></iframe>
                             @else
                                 <div class="h-[250px] flex items-center justify-center bg-gray-100 border border-dashed border-gray-400 rounded text-black-400 text-xs italic">Belum diupload</div>
                             @endif
@@ -194,7 +211,7 @@
                             </div>
                             <div class="mb-2 h-[15px]"></div>
                             @if($lembaga->file_skam)
-                                <iframe src="{{ asset('storage/' . $lembaga->file_skam) }}#view=FitH" type="application/pdf" class="w-full h-[250px] border border-gray-400 rounded bg-white"></iframe>
+                                <iframe src="{{ \Illuminate\Support\Facades\Storage::url($lembaga->file_skam) }}#view=FitH" type="application/pdf" class="w-full h-[250px] border border-gray-400 rounded bg-white"></iframe>
                             @else
                                 <div class="h-[250px] flex items-center justify-center bg-gray-100 border border-dashed border-gray-400 rounded text-black-400 text-xs italic">Belum diupload</div>
                             @endif
@@ -207,7 +224,7 @@
                             <label class="text-[10px] font-bold text-black-700 uppercase mb-1">A. Profil Lembaga</label>
                             <div class="w-full h-32 bg-gray-200 border border-gray-400 rounded-md overflow-hidden flex justify-center items-center">
                                 @if($lembaga->foto_lembaga)
-                                    <img src="{{ asset('storage/' . $lembaga->foto_lembaga) }}" class="object-cover w-full h-full cursor-pointer hover:scale-105 transition" onclick="bukaModalGambar('{{ asset('storage/' . $lembaga->foto_lembaga) }}', 'A. Foto Profil Lembaga')">
+                                    <img src="{{ \Illuminate\Support\Facades\Storage::url($lembaga->foto_lembaga) }}" class="object-cover w-full h-full cursor-pointer hover:scale-105 transition" onclick="bukaModalGambar('{{ \Illuminate\Support\Facades\Storage::url($lembaga->foto_lembaga) }}', 'A. Foto Profil Lembaga')">
                                 @else
                                     <span class="text-black-400 text-[11px]">Belum Ada</span>
                                 @endif
@@ -217,7 +234,7 @@
                             <label class="text-[10px] font-bold text-black-700 uppercase mb-1">B. Papan Nama</label>
                             <div class="w-full h-32 bg-gray-200 border border-gray-400 rounded-md overflow-hidden flex justify-center items-center">
                                 @if($lembaga->foto_nambor)
-                                    <img src="{{ asset('storage/' . $lembaga->foto_nambor) }}" class="object-cover w-full h-full cursor-pointer hover:scale-105 transition" onclick="bukaModalGambar('{{ asset('storage/' . $lembaga->foto_nambor) }}', 'B. Papan Nama / Nambor')">
+                                    <img src="{{ \Illuminate\Support\Facades\Storage::url($lembaga->foto_nambor) }}" class="object-cover w-full h-full cursor-pointer hover:scale-105 transition" onclick="bukaModalGambar('{{ \Illuminate\Support\Facades\Storage::url($lembaga->foto_nambor) }}', 'B. Papan Nama / Nambor')">
                                 @else
                                     <span class="text-black-400 text-[11px]">Belum Ada</span>
                                 @endif
@@ -227,7 +244,7 @@
                             <label class="text-[10px] font-bold text-black-700 uppercase mb-1">C. Gedung</label>
                             <div class="w-full h-32 bg-gray-200 border border-gray-400 rounded-md overflow-hidden flex justify-center items-center">
                                 @if($lembaga->foto_bangunan)
-                                    <img src="{{ asset('storage/' . $lembaga->foto_bangunan) }}" class="object-cover w-full h-full cursor-pointer hover:scale-105 transition" onclick="bukaModalGambar('{{ asset('storage/' . $lembaga->foto_bangunan) }}', 'C. Gedung / Bangunan')">
+                                    <img src="{{ \Illuminate\Support\Facades\Storage::url($lembaga->foto_bangunan) }}" class="object-cover w-full h-full cursor-pointer hover:scale-105 transition" onclick="bukaModalGambar('{{ \Illuminate\Support\Facades\Storage::url($lembaga->foto_bangunan) }}', 'C. Gedung / Bangunan')">
                                 @else
                                     <span class="text-black-400 text-[11px]">Belum Ada</span>
                                 @endif
@@ -237,7 +254,7 @@
                             <label class="text-[10px] font-bold text-black-700 uppercase mb-1">D. KBM</label>
                             <div class="w-full h-32 bg-gray-200 border border-gray-400 rounded-md overflow-hidden flex justify-center items-center">
                                 @if($lembaga->foto_kbm)
-                                    <img src="{{ asset('storage/' . $lembaga->foto_kbm) }}" class="object-cover w-full h-full cursor-pointer hover:scale-105 transition" onclick="bukaModalGambar('{{ asset('storage/' . $lembaga->foto_kbm) }}', 'D. Kegiatan Belajar')">
+                                    <img src="{{ \Illuminate\Support\Facades\Storage::url($lembaga->foto_kbm) }}" class="object-cover w-full h-full cursor-pointer hover:scale-105 transition" onclick="bukaModalGambar('{{ \Illuminate\Support\Facades\Storage::url($lembaga->foto_kbm) }}', 'D. Kegiatan Belajar')">
                                 @else
                                     <span class="text-black-400 text-[11px]">Belum Ada</span>
                                 @endif
@@ -257,4 +274,34 @@
             </div>
         </div>
     </div>
+
+    {{-- 🖼️ KOTAK POP-UP MODAL PREVIEW GAMBAR --}}
+    <div id="modalGambar" class="fixed inset-0 z-[9999] bg-black bg-opacity-70 hidden flex justify-center items-center p-4 backdrop-blur-sm transition-opacity">
+        <div class="relative bg-white rounded-xl shadow-2xl max-w-3xl w-full flex flex-col border border-gray-400 overflow-hidden">
+            <div class="flex justify-between items-center p-3 bg-gray-100 border-b border-gray-400">
+                <h3 id="judulModalGambar" class="text-sm font-bold text-black-800 tracking-wide uppercase">Preview Foto Lembaga</h3>
+                <button type="button" onclick="tutupModalGambar()" class="text-black-500 hover:text-red-600 font-black text-xl leading-none px-2 transition cursor-pointer">&times;</button>
+            </div>
+            <div class="p-4 flex justify-center items-center bg-gray-200">
+                <img id="sumberModalGambar" src="" alt="Preview" class="max-w-full max-h-[70vh] object-contain rounded shadow-sm border border-gray-400">
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function bukaModalGambar(urlGambar, judul) {
+            document.getElementById('sumberModalGambar').src = urlGambar;
+            document.getElementById('judulModalGambar').innerText = judul;
+            document.getElementById('modalGambar').classList.remove('hidden');
+        }
+        function tutupModalGambar() {
+            document.getElementById('modalGambar').classList.add('hidden');
+            document.getElementById('sumberModalGambar').src = "";
+        }
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                tutupModalGambar();
+            }
+        });
+    </script>
 </x-app-layout>

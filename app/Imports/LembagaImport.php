@@ -83,29 +83,27 @@ class LembagaImport implements ToCollection, WithHeadingRow
                 continue;
             }
 
-            // C. Validasi Duplikasi Data Internal File Excel (Antar baris Excel)
-            $namaLembagaUpper = strtoupper(trim($rawNama));
-            $jenisLembagaUpper = strtoupper(trim($rawJenis)); // [BARU] Ambil jenis lembaganya
+            // C. Validasi Duplikasi Data Internal File Excel (Pembersihan Spasi Ganda)
+            $namaLembagaClean = strtoupper(preg_replace('/\s+/', ' ', trim($rawNama)));
+            $jenisLembagaUpper = strtoupper(trim($rawJenis));
             
-            // [DIUBAH] Kunci unik sekarang ditambah Jenis Lembaga
-            $keyKombinasiUnik = $namaLembagaUpper . '|' . $jenisLembagaUpper . '|' . $kecamatan->id . '|' . $desa->id;
+            // Kunci unik: Nama bersih + Jenis + Kecamatan + Desa
+            $keyKombinasiUnik = $namaLembagaClean . '|' . $jenisLembagaUpper . '|' . $kecamatan->id . '|' . $desa->id;
 
             if (isset($processedRows[$keyKombinasiUnik])) {
-                $this->errors[] = "Baris Ke-{$lineNumber}: Duplikasi internal Excel! Lembaga '{$namaLembagaUpper}' ({$jenisLembagaUpper}) kembar dengan Baris Ke-" . $processedRows[$keyKombinasiUnik];
+                $this->errors[] = "Baris Ke-{$lineNumber}: Duplikasi internal Excel! Lembaga '{$namaLembagaClean}' ({$jenisLembagaUpper}) kembar dengan Baris Ke-" . $processedRows[$keyKombinasiUnik];
             } else {
                 $processedRows[$keyKombinasiUnik] = $lineNumber;
             }
 
-
-
             // D. Validasi Duplikasi dengan Database Utama
-            $isDuplicateInDb = Lembaga::where('nama_lembaga', $namaLembagaUpper)
-                                       ->where('jenis_lembaga', $jenisLembagaUpper) // [BARU] Cek juga jenis lembaganya
+            $isDuplicateInDb = Lembaga::where('nama_lembaga', $namaLembagaClean)
+                                       ->where('jenis_lembaga', $jenisLembagaUpper)
                                        ->where('kecamatan_id', $kecamatan->id)
                                        ->where('desa_id', $desa->id)
                                        ->exists();
             if ($isDuplicateInDb) {
-                $this->errors[] = "Baris Ke-{$lineNumber}: Lembaga '{$namaLembagaUpper}' ({$jenisLembagaUpper}) di Desa '{$rawDesa}' SUDAH ADA di database.";
+                $this->errors[] = "Baris Ke-{$lineNumber}: Lembaga '{$namaLembagaClean}' ({$jenisLembagaUpper}) di Desa '{$rawDesa}' SUDAH ADA di database.";
             }
 
 
@@ -132,32 +130,67 @@ class LembagaImport implements ToCollection, WithHeadingRow
                 $desa      = Desa::where('kecamatan_id', $kecamatan->id)
                                  ->where('nama_desa', 'LIKE', '%' . trim($rawDesa) . '%')->first();
 
-                // Parsing format tanggal Masa Berlaku IJOP
+                // Parsing format tanggal Masa Berlaku IJOP (Anti-Crash berbagai format)
                 $masaBerlaku = null;
-                if (!empty($row['masa_berlaku_ijop'])) {
+                $rawIjopTgl = trim((string)($row['masa_berlaku_ijop'] ?? ''));
+                if (!empty($rawIjopTgl) && $rawIjopTgl !== '-') {
                     try {
-                        if (is_numeric($row['masa_berlaku_ijop'])) {
-                            $masaBerlaku = \PhpOffice\PhpSpreadsheet\Shared\Date::excelToDateTimeObject($row['masa_berlaku_ijop'])->format('Y-m-d');
+                        if (is_numeric($rawIjopTgl)) {
+                            $masaBerlaku = \PhpOffice\PhpSpreadsheet\Shared\Date::excelToDateTimeObject($rawIjopTgl)->format('Y-m-d');
                         } else {
-                            $masaBerlaku = Carbon::parse($row['masa_berlaku_ijop'])->format('Y-m-d');
+                            // Samakan pemisah slash jadi dash agar terbaca d-m-Y secara akurat
+                            $cleanDateStr = str_replace('/', '-', $rawIjopTgl);
+                            $masaBerlaku = Carbon::parse($cleanDateStr)->format('Y-m-d');
                         }
                     } catch (\Exception $e) {
                         $masaBerlaku = null;
                     }
                 }
 
+                // 1. Satpam Pembersih No. HP Kepala Lembaga (Kutip ganda, huruf O, & awalan 08)
+                $rawHp = (string)($row['no_hp'] ?? $row['no_telp'] ?? '');
+                $cleanHp = str_ireplace('o', '0', $rawHp); // Mengubah huruf O jadi angka 0
+                $cleanHp = preg_replace('/[^0-9]/', '', $cleanHp); // Hapus kutip, strip, titik, & spasi
+                if (str_starts_with($cleanHp, '62')) {
+                    $cleanHp = '0' . substr($cleanHp, 2);
+                } elseif (str_starts_with($cleanHp, '8')) {
+                    $cleanHp = '0' . $cleanHp;
+                }
+
+                // 2. Satpam Auto-Koreksi Typo Ormas
+                $rawOrmas = strtoupper(trim((string)($row['ormas'] ?? 'NU')));
+                if (in_array($rawOrmas, ['MUHAMADIYAH', 'MUHAMMADIYA', 'MUHAMMADIYAH'])) {
+                    $cleanOrmas = 'MUHAMMADIYAH';
+                } elseif (in_array($rawOrmas, ['NU', 'NJ', 'NAHDLATUL ULAMA'])) {
+                    $cleanOrmas = 'NU';
+                } elseif ($rawOrmas === 'LDII') {
+                    $cleanOrmas = 'LDII';
+                } else {
+                    $cleanOrmas = $rawOrmas ?: 'NU';
+                }
+
+                // 3. Satpam Standardisasi Status Kelembagaan
+                $rawStatus = strtoupper(trim((string)($row['status'] ?? 'AKTIF')));
+                if (in_array($rawStatus, ['AKTIF', 'AKTIF '])) {
+                    $cleanStatus = 'AKTIF';
+                } elseif (in_array($rawStatus, ['TIDAK AKTIF', 'NON AKTIF', 'NONAKTIF', 'MATI', 'TIDAK ADA', 'BELUM ADA', '0', 'NON-AKTIF'])) {
+                    $cleanStatus = 'TIDAK AKTIF';
+                } else {
+                    $cleanStatus = $rawStatus ?: 'AKTIF';
+                }
+
                 Lembaga::create([
                     'kecamatan_id'            => $kecamatan->id,
                     'desa_id'                 => $desa->id,
-                    'nama_lembaga'            => strtoupper(trim($row['nama_lembaga'])),
+                    'nama_lembaga'            => strtoupper(preg_replace('/\s+/', ' ', trim($row['nama_lembaga']))),
                     'jenis_lembaga'           => strtoupper(trim($row['jenis_lembaga'])),
                     'nsbq'                    => $row['nsbq'] ?? null,
-                    'ormas'                   => strtoupper($row['ormas'] ?? 'NU'),
-                    'status'                  => strtoupper($row['status'] ?? 'AKTIF'),
+                    'ormas'                   => $cleanOrmas,
+                    'status'                  => $cleanStatus,
                     'alamat'                  => strtoupper($row['alamat'] ?? ''),
                     'link_gmaps'              => !empty($row['link_google_maps'] ?? $row['link_gmaps'] ?? $row['google_maps'] ?? null) ? trim($row['link_google_maps'] ?? $row['link_gmaps'] ?? $row['google_maps']) : null,
-                    'kepala_lembaga'          => strtoupper($row['kepala_lembaga'] ?? ''),
-                    'no_telp'                 => $row['no_hp'] ?? $row['no_telp'] ?? null,
+                    'kepala_lembaga'          => strtoupper(trim((string)($row['kepala_lembaga'] ?? ''))),
+                    'no_telp'                 => !empty($cleanHp) ? $cleanHp : null,
                     
                     // Pemetaan Kolom Excel Template Baru Mas Kevin
                     'jumlah_santri'           => (int) ($row['jumlah_santri'] ?? 0),
