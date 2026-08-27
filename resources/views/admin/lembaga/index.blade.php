@@ -449,7 +449,7 @@
                                         <span class="text-[9px] font-bold px-1.5 py-0.5 rounded {{ $badgeIjop }}">{{ $lembaga->status_ijop ?? 'Pending' }}</span>
                                         <div class="mt-1 pt-1 border-t border-blue-100 text-[8px] text-black-500 leading-tight w-full">
                                             <div class="text-[10px] font-semibold">
-                                                Exp: 
+                                                Berlaku sampai: 
                                                 @if($tglExpired)
                                                     @if($isExpired)
                                                         <span class="font-bold text-red-600 bg-red-50 px-1 rounded border border-red-200 block mt-0.5">

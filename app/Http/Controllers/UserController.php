@@ -8,13 +8,16 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Support\Facades\DB; // <--- [BARU] Wajib dipanggil untuk akses tabel sessions
+use Illuminate\Support\Facades\Auth;
 
 class UserController extends Controller
 {
     // 1. TAMPILKAN DAFTAR USER (+ FILTER & PEMANTAUAN SESI)
     public function index(Request $request)
     {
-        $query = User::with('kecamatan')->latest();
+        $query = User::with('kecamatan')
+            ->orderBy('kecamatan_id', 'asc')
+            ->orderByRaw("FIELD(jabatan_korcam, 'KETUA', 'ANGGOTA 1', 'ANGGOTA 2') ASC, id ASC");
 
         // --- A. LOGIKA FILTER PINTAR ---
         if ($request->filled('search')) {
@@ -142,7 +145,7 @@ class UserController extends Controller
     public function destroy(User $user)
     {
         // Cegah hapus akun sendiri
-        if (auth()->id() == $user->id) {
+        if (Auth::id() == $user->id) {
             return back()->with('error', 'Anda tidak bisa menghapus akun sendiri!');
         }
 

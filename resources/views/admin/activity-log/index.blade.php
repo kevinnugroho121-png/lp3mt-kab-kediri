@@ -46,12 +46,35 @@
 
             {{-- FILTER PENCARIAN LOG --}}
             <div class="bg-white px-3 py-2 rounded-t-xl border-t border-l border-r border-gray-600 shadow-sm">
-                <form action="{{ route('activity.log') }}" method="GET" class="flex gap-2 max-w-md">
-                    <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari nama operator, aksi, atau nama guru..." 
-                           class="w-full border border-gray-600 rounded-md px-2 py-1 h-[32px] text-xs focus:border-blue-500 focus:ring-blue-500 shadow-sm">
-                    <button type="submit" class="bg-gray-800 text-white px-3 py-1 h-[32px] rounded-md text-xs font-bold hover:bg-gray-900 transition shadow-sm">Cari</button>
-                    @if(request('search'))
-                        <a href="{{ route('activity.log') }}" class="bg-gray-100 text-black-600 border border-gray-600 px-3 py-1 h-[32px] rounded-md text-xs font-bold hover:bg-gray-200 transition flex items-center justify-center">Reset</a>
+                <form action="{{ route('activity.log') }}" method="GET" class="flex flex-wrap items-center gap-2">
+                    {{-- Input Pencarian Teks --}}
+                    <div class="flex-1 min-w-[280px]">
+                        <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari nama operator, aksi, atau nama guru..." 
+                               class="w-full border border-gray-600 rounded-md px-2 py-1 h-[32px] text-xs font-bold text-black-800 focus:border-blue-500 focus:ring-blue-500 shadow-sm">
+                    </div>
+
+                    {{-- Dropdown Filter Kecamatan --}}
+                    <div class="w-56">
+                        <select name="filter_kecamatan" class="w-full border border-gray-600 rounded-md px-2 py-1 h-[32px] text-xs font-bold text-black-800 focus:border-blue-500 focus:ring-blue-500 shadow-sm bg-white uppercase">
+                            <option value="">- SEMUA KECAMATAN -</option>
+                            @foreach($kecamatans as $kec)
+                                <option value="{{ $kec->id }}" {{ request('filter_kecamatan') == $kec->id ? 'selected' : '' }}>
+                                    KEC. {{ strtoupper($kec->nama_kecamatan) }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    {{-- Tombol Cari / Filter --}}
+                    <button type="submit" class="bg-gray-800 hover:bg-gray-900 text-white px-4 py-1 h-[32px] rounded-md text-xs font-bold uppercase transition shadow-sm">
+                        Filter
+                    </button>
+
+                    {{-- Tombol Reset (Otomatis muncul jika sedang mencari atau memfilter kecamatan) --}}
+                    @if(request('search') || request('filter_kecamatan'))
+                        <a href="{{ route('activity.log') }}" class="bg-gray-100 text-black-600 hover:bg-gray-200 border border-gray-600 px-3 py-1 h-[32px] rounded-md text-xs font-bold uppercase transition flex items-center justify-center">
+                            Reset
+                        </a>
                     @endif
                 </form>
             </div>

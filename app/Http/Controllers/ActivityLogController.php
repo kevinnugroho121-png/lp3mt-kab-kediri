@@ -9,9 +9,12 @@ class ActivityLogController extends Controller
 {
     public function index(Request $request)
     {
+        // 1. Ambil data master kecamatan untuk dropdown
+        $kecamatans = DB::table('kecamatans')->orderBy('nama_kecamatan')->get();
+
         $query = DB::table('activity_logs')->orderBy('created_at', 'desc');
 
-        // Fitur Pencarian Log
+        // Fitur Pencarian Log (Nama Operator, Aksi, Target)
         if ($request->filled('search')) {
             $search = $request->search;
             $query->where(function($q) use ($search) {
@@ -21,9 +24,18 @@ class ActivityLogController extends Controller
             });
         }
 
+        // Fitur Filter Kecamatan (Menyaring log berdasarkan wilayah tugas operator)
+        if ($request->filled('filter_kecamatan')) {
+            $kecId = $request->filter_kecamatan;
+            $query->whereIn('user_id', function($sub) use ($kecId) {
+                $sub->select('id')->from('users')->where('kecamatan_id', $kecId);
+            });
+        }
+
         $logs = $query->paginate(20)->withQueryString();
 
-        return view('admin.activity-log.index', compact('logs'));
+        // 2. Kirim $kecamatans ke view bersama $logs
+        return view('admin.activity-log.index', compact('logs', 'kecamatans'));
     }
 
     public function clear()
