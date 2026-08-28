@@ -53,8 +53,8 @@
                                     <tr class="hover:bg-gray-100 transition">
                                         {{-- KOLOM FOTO (Bisa diklik untuk Preview) --}}
                                         <td class="px-4 py-3">
-                                            <img src="{{ asset('storage/' . $dok->foto_path) }}" alt="Foto" 
-                                                 @click="previewSrc = '{{ asset('storage/' . $dok->foto_path) }}'; previewTitle = '{{ $dok->judul }}'; previewOpen = true"
+                                            <img src="{{ asset('dokumen/' . $dok->foto_path) }}" alt="Foto" 
+                                                 @click="previewSrc = '{{ asset('dokumen/' . $dok->foto_path) }}'; previewTitle = '{{ $dok->judul }}'; previewOpen = true"
                                                  class="w-24 h-16 object-cover rounded shadow-sm cursor-pointer hover:opacity-80 transition transform hover:scale-105" title="Klik untuk memperbesar">
                                         </td>
                                         
@@ -66,7 +66,7 @@
                                             <div class="flex items-center justify-center gap-3">
                                                 
                                                 {{-- Tombol Preview (Mata) --}}
-                                                <button type="button" @click="previewSrc = '{{ asset('storage/' . $dok->foto_path) }}'; previewTitle = '{{ $dok->judul }}'; previewOpen = true" class="text-emerald-600 hover:text-emerald-800 font-bold text-xs underline">
+                                                <button type="button" @click="previewSrc = '{{ asset('dokumen/' . $dok->foto_path) }}'; previewTitle = '{{ $dok->judul }}'; previewOpen = true" class="text-emerald-600 hover:text-emerald-800 font-bold text-xs underline">
                                                     Lihat
                                                 </button>
 

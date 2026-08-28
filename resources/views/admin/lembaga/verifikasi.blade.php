@@ -63,7 +63,7 @@
                                     </span>
                                     <span class="text-[9px] font-bold text-black-500">Fisik: <span class="text-black-800">{{ $lembaga->ijop ?? 'ADA' }}</span></span>
                                 </div>
-                                <iframe src="{{ \Illuminate\Support\Facades\Storage::url($lembaga->file_ijop) }}#view=FitH" type="application/pdf" class="w-full h-[350px] border border-gray-300 rounded bg-white"></iframe>
+                                <iframe src="{{ asset('dokumen/' . $lembaga->file_ijop) }}#view=FitH" type="application/pdf" class="w-full h-[350px] border border-gray-300 rounded bg-white"></iframe>
                             @else
                                 <div class="h-[350px] flex flex-col items-center justify-center border border-dashed border-gray-300 rounded bg-gray-100">
                                     <span class="text-black-500 font-bold text-xs italic">File IJOP belum diupload.</span>
@@ -90,7 +90,7 @@
                         </div>
                         <div class="p-2 flex-grow">
                             @if($lembaga->file_skd)
-                                <iframe src="{{ \Illuminate\Support\Facades\Storage::url($lembaga->file_skd) }}#view=FitH" type="application/pdf" class="w-full h-[350px] border border-gray-300 rounded bg-white"></iframe>
+                                <iframe src="{{ asset('dokumen/' . $lembaga->file_skd) }}#view=FitH" type="application/pdf" class="w-full h-[350px] border border-gray-300 rounded bg-white"></iframe>
                             @else
                                 <div class="h-[350px] flex flex-col items-center justify-center border border-dashed border-gray-300 rounded bg-gray-100 p-4 text-center">
                                     <span class="text-black-500 font-bold text-xs italic">File SKD tidak ada/belum diupload.</span>
@@ -118,7 +118,7 @@
                         </div>
                         <div class="p-2 flex-grow">
                             @if($lembaga->file_super)
-                                <iframe src="{{ \Illuminate\Support\Facades\Storage::url($lembaga->file_super) }}#view=FitH" type="application/pdf" class="w-full h-[350px] border border-gray-300 rounded bg-white"></iframe>
+                                <iframe src="{{ asset('dokumen/' . $lembaga->file_super) }}#view=FitH" type="application/pdf" class="w-full h-[350px] border border-gray-300 rounded bg-white"></iframe>
                             @else
                                 <div class="h-[350px] flex flex-col items-center justify-center border border-dashed border-gray-300 rounded bg-gray-100">
                                     <span class="text-black-500 font-bold text-xs italic">File SPTJM belum diupload.</span>
@@ -145,7 +145,7 @@
                         </div>
                         <div class="p-2 flex-grow">
                             @if($lembaga->file_skam)
-                                <iframe src="{{ \Illuminate\Support\Facades\Storage::url($lembaga->file_skam) }}#view=FitH" type="application/pdf" class="w-full h-[350px] border border-gray-300 rounded bg-white"></iframe>
+                                <iframe src="{{ asset('dokumen/' . $lembaga->file_skam) }}#view=FitH" type="application/pdf" class="w-full h-[350px] border border-gray-300 rounded bg-white"></iframe>
                             @else
                                 <div class="h-[350px] flex flex-col items-center justify-center border border-dashed border-gray-300 rounded bg-gray-100">
                                     <span class="text-black-500 font-bold text-xs italic">File SKAM belum diupload.</span>

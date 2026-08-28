@@ -274,7 +274,7 @@
                                     <button type="button" id="btn_reset_ktp" onclick="resetFile('file_ktp', 'preview_ktp_new', 'btn_reset_ktp', 'old_ktp_frame')" class="hidden mt-1 text-[10px] text-red-600 font-bold underline">&times; Batal Upload Baru</button>
                                 </div>
                                 @if($guru->file_ktp)
-                                    <div class="mt-2 w-full" id="old_ktp_frame"><iframe src="{{ asset('storage/' . $guru->file_ktp) }}" type="application/pdf" class="w-full h-[250px] border border-gray-400 rounded bg-white"></iframe></div>
+                                    <div class="mt-2 w-full" id="old_ktp_frame"><iframe src="{{ asset('dokumen/' . $guru->file_ktp) }}" type="application/pdf" class="w-full h-[250px] border border-gray-400 rounded bg-white"></iframe></div>
                                 @endif
                                 <div class="mt-2 w-full"><iframe id="preview_ktp_new" type="application/pdf" class="hidden w-full h-[250px] border border-gray-600 rounded bg-white"></iframe></div>
                             </div>
@@ -295,7 +295,7 @@
                                     <button type="button" id="btn_reset_kk" onclick="resetFile('file_kk', 'preview_kk_new', 'btn_reset_kk', 'old_kk_frame')" class="hidden mt-1 text-[10px] text-red-600 font-bold underline">&times; Batal Upload Baru</button>
                                 </div>
                                 @if($guru->file_kk)
-                                    <div class="mt-2 w-full" id="old_kk_frame"><iframe src="{{ asset('storage/' . $guru->file_kk) }}" type="application/pdf" class="w-full h-[250px] border border-gray-400 rounded bg-white"></iframe></div>
+                                    <div class="mt-2 w-full" id="old_kk_frame"><iframe src="{{ asset('dokumen/' . $guru->file_kk) }}" type="application/pdf" class="w-full h-[250px] border border-gray-400 rounded bg-white"></iframe></div>
                                 @endif
                                 <div class="mt-2 w-full"><iframe id="preview_kk_new" type="application/pdf" class="hidden w-full h-[250px] border border-gray-600 rounded bg-white"></iframe></div>
                             </div>
@@ -316,7 +316,7 @@
                                     <button type="button" id="btn_reset_rekening" onclick="resetFile('file_bukurekening', 'preview_rekening_new', 'btn_reset_rekening', 'old_rekening_frame')" class="hidden mt-1 text-[10px] text-red-600 font-bold underline">&times; Batal Upload Baru</button>
                                 </div>
                                 @if($guru->file_bukurekening)
-                                    <div class="mt-2 w-full" id="old_rekening_frame"><iframe src="{{ asset('storage/' . $guru->file_bukurekening) }}" type="application/pdf" class="w-full h-[250px] border border-gray-400 rounded bg-white"></iframe></div>
+                                    <div class="mt-2 w-full" id="old_rekening_frame"><iframe src="{{ asset('dokumen/' . $guru->file_bukurekening) }}" type="application/pdf" class="w-full h-[250px] border border-gray-400 rounded bg-white"></iframe></div>
                                 @endif
                                 <div class="mt-2 w-full"><iframe id="preview_rekening_new" type="application/pdf" class="hidden w-full h-[250px] border border-gray-600 rounded bg-white"></iframe></div>
                             </div>

@@ -1,0 +1,11 @@
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    DirectoryIndex public/index.php
+
+    # Arahkan halaman utama ke index.php di folder public
+    RewriteRule ^$ public/index.php [L]
+
+    # Arahkan seluruh request lainnya ke folder public
+    RewriteCond %{REQUEST_URI} !^/public/
+    RewriteRule ^(.*)$ public/$1 [L]
+</IfModule>

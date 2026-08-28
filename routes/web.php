@@ -298,3 +298,35 @@ Route::middleware('auth')->group(function () {
 // 5. INCLUDE AUTH BAWAAN
 // ===============================
 require __DIR__.'/auth.php';
+
+
+
+// =======================================================
+// RUTE RESMI PENAMPIL DOKUMEN & FOTO (HOSTINGER FIX)
+// =======================================================
+Route::get('/dokumen/{path}', function ($path) {
+    $cleanPath = ltrim($path, '/');
+    $filePath = storage_path('app/public/' . $cleanPath);
+
+    if (!file_exists($filePath)) {
+        return response("
+            <div style='display:flex;flex-direction:column;align-items:center;justify-content:center;height:100vh;font-family:sans-serif;color:#64748b;background:#f8fafc;text-align:center;padding:15px;'>
+                <p style='font-size:14px;color:#dc2626;font-weight:bold;margin:0 0 4px 0;'>Berkas Fisik Belum Diunggah</p>
+                <p style='font-size:12px;color:#94a3b8;margin:0;'>Silakan unggah berkas melalui form edit data.</p>
+            </div>
+        ", 404);
+    }
+
+    $ext = strtolower(pathinfo($filePath, PATHINFO_EXTENSION));
+    $mime = match($ext) {
+        'pdf' => 'application/pdf',
+        'jpg', 'jpeg' => 'image/jpeg',
+        'png' => 'image/png',
+        default => (function_exists('mime_content_type') ? @mime_content_type($filePath) : 'application/octet-stream'),
+    };
+
+    return response()->file($filePath, [
+        'Content-Type' => $mime,
+        'Content-Disposition' => 'inline; filename="' . basename($filePath) . '"'
+    ]);
+})->where('path', '.*');

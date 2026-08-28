@@ -199,7 +199,7 @@
                                 <span class="px-2 py-0.5 rounded text-[9px] font-bold {{ $colorKtp }}">Status: {{ $sKtp }}</span>
                             </div>
                             @if($guru->file_ktp)
-                                <iframe src="{{ \Illuminate\Support\Facades\Storage::url($guru->file_ktp) }}" type="application/pdf" class="w-full h-[250px] border border-gray-300 rounded bg-white"></iframe>
+                                <iframe src="{{ asset('dokumen/' . $guru->file_ktp) }}" type="application/pdf" class="w-full h-[250px] border border-gray-300 rounded bg-white"></iframe>
                             @else
                                 <div class="h-[250px] flex items-center justify-center bg-gray-100 border border-dashed border-gray-400 rounded text-black-400 text-xs italic">Belum diupload</div>
                             @endif
@@ -216,7 +216,7 @@
                                 <span class="px-2 py-0.5 rounded text-[9px] font-bold {{ $colorKk }}">Status: {{ $sKk }}</span>
                             </div>
                             @if($guru->file_kk)
-                                <iframe src="{{ \Illuminate\Support\Facades\Storage::url($guru->file_kk) }}" type="application/pdf" class="w-full h-[250px] border border-gray-300 rounded bg-white"></iframe>
+                                <iframe src="{{ asset('dokumen/' . $guru->file_kk) }}" type="application/pdf" class="w-full h-[250px] border border-gray-300 rounded bg-white"></iframe>
                             @else
                                 <div class="h-[250px] flex items-center justify-center bg-gray-100 border border-dashed border-gray-400 rounded text-black-400 text-xs italic">Belum diupload</div>
                             @endif
@@ -233,7 +233,7 @@
                                 <span class="px-2 py-0.5 rounded text-[9px] font-bold {{ $colorRek }}">Status: {{ $sRek }}</span>
                             </div>
                             @if($guru->file_bukurekening)
-                                <iframe src="{{ \Illuminate\Support\Facades\Storage::url($guru->file_bukurekening) }}" type="application/pdf" class="w-full h-[250px] border border-gray-300 rounded bg-white"></iframe>
+                                <iframe src="{{ asset('dokumen/' . $guru->file_bukurekening) }}" type="application/pdf" class="w-full h-[250px] border border-gray-300 rounded bg-white"></iframe>
                             @else
                                 <div class="h-[250px] flex items-center justify-center bg-gray-100 border border-dashed border-gray-400 rounded text-black-400 text-xs italic">Belum diupload</div>
                             @endif

@@ -214,7 +214,7 @@
                                 <input type="hidden" name="status_ijop" value="Pending">
                                 
                                 @if($lembaga->file_ijop)
-                                    <iframe id="old_ijop" src="{{ \Illuminate\Support\Facades\Storage::url($lembaga->file_ijop) }}" class="w-full h-[250px] border border-gray-300 rounded bg-white mt-auto"></iframe>
+                                    <iframe id="old_ijop" src="{{ asset('dokumen/' . $lembaga->file_ijop) }}" class="w-full h-[250px] border border-gray-300 rounded bg-white mt-auto"></iframe>
                                 @endif
                                 <iframe id="preview_ijop_edit" class="hidden w-full h-[250px] border border-gray-300 rounded bg-white mt-auto"></iframe>
                             </div>
@@ -234,7 +234,7 @@
                                     <button type="button" id="btn_reset_skd_edit" onclick="resetFile('file_skd', 'preview_skd_edit', 'btn_reset_skd_edit', 'old_skd')" class="hidden mt-1 text-[10px] text-red-600 font-bold underline">&times; Batal Upload File Baru</button>
                                 </div>
                                 @if($lembaga->file_skd)
-                                    <iframe id="old_skd" src="{{ \Illuminate\Support\Facades\Storage::url($lembaga->file_skd) }}" class="w-full h-[250px] border border-gray-300 rounded bg-white mt-auto"></iframe>
+                                    <iframe id="old_skd" src="{{ asset('dokumen/' . $lembaga->file_skd) }}" class="w-full h-[250px] border border-gray-300 rounded bg-white mt-auto"></iframe>
                                 @endif
                                 <iframe id="preview_skd_edit" class="hidden w-full h-[250px] border border-gray-300 rounded bg-white mt-auto"></iframe>
                             </div>
@@ -255,7 +255,7 @@
                                 </div>
                                 <input type="hidden" name="status_super" value="Pending">
                                 @if($lembaga->file_super)
-                                    <iframe id="old_super" src="{{ \Illuminate\Support\Facades\Storage::url($lembaga->file_super) }}" class="w-full h-[250px] border border-gray-300 rounded bg-white mt-auto"></iframe>
+                                    <iframe id="old_super" src="{{ asset('dokumen/' . $lembaga->file_super) }}" class="w-full h-[250px] border border-gray-300 rounded bg-white mt-auto"></iframe>
                                 @endif
                                 <iframe id="preview_super_edit" class="hidden w-full h-[250px] border border-gray-300 rounded bg-white mt-auto"></iframe>
                             </div>
@@ -276,7 +276,7 @@
                                 </div>
                                 <input type="hidden" name="status_skam" value="Pending">
                                 @if($lembaga->file_skam)
-                                    <iframe id="old_skam" src="{{ \Illuminate\Support\Facades\Storage::url($lembaga->file_skam) }}" class="w-full h-[250px] border border-gray-300 rounded bg-white mt-auto"></iframe>
+                                    <iframe id="old_skam" src="{{ asset('dokumen/' . $lembaga->file_skam) }}" class="w-full h-[250px] border border-gray-300 rounded bg-white mt-auto"></iframe>
                                 @endif
                                 <iframe id="preview_skam_edit" class="hidden w-full h-[250px] border border-gray-300 rounded bg-white mt-auto"></iframe>
                             </div>
@@ -295,7 +295,7 @@
                                     @endif
                                 </div>
                                 <div class="w-full h-40 bg-gray-200 border border-gray-400 rounded-md mb-3 overflow-hidden flex justify-center items-center relative">
-                                    <img id="preview_lembaga" src="{{ $lembaga->foto_lembaga ? \Illuminate\Support\Facades\Storage::url($lembaga->foto_lembaga) : '#' }}" class="{{ $lembaga->foto_lembaga ? '' : 'hidden' }} object-cover w-full h-full absolute inset-0 z-10" />
+                                    <img id="preview_lembaga" src="{{ $lembaga->foto_lembaga ? asset('dokumen/' . $lembaga->foto_lembaga) : '#' }}" class="{{ $lembaga->foto_lembaga ? '' : 'hidden' }} object-cover w-full h-full absolute inset-0 z-10" />
                                     <span class="text-black-400 text-[11px] z-0">Tidak Ada Foto</span>
                                 </div>
                                 <input type="file" name="foto_lembaga" accept="image/*" onchange="previewImageFase3(this, 'preview_lembaga')" class="text-[10px] w-full file:mr-2 file:py-1 file:px-2 file:rounded file:border-0 file:text-[10px] file:font-bold file:bg-orange-500 file:text-white hover:file:bg-orange-600 cursor-pointer transition">
@@ -311,7 +311,7 @@
                                     @endif
                                 </div>
                                 <div class="w-full h-40 bg-gray-200 border border-gray-400 rounded-md mb-3 overflow-hidden flex justify-center items-center relative">
-                                    <img id="preview_nambor" src="{{ $lembaga->foto_nambor ? \Illuminate\Support\Facades\Storage::url($lembaga->foto_nambor) : '#' }}" class="{{ $lembaga->foto_nambor ? '' : 'hidden' }} object-cover w-full h-full absolute inset-0 z-10" />
+                                    <img id="preview_nambor" src="{{ $lembaga->foto_nambor ? asset('dokumen/' . $lembaga->foto_nambor) : '#' }}" class="{{ $lembaga->foto_nambor ? '' : 'hidden' }} object-cover w-full h-full absolute inset-0 z-10" />
                                     <span class="text-black-400 text-[11px] z-0">Tidak Ada Foto</span>
                                 </div>
                                 <input type="file" name="foto_nambor" accept="image/*" onchange="previewImageFase3(this, 'preview_nambor')" class="text-[10px] w-full file:mr-2 file:py-1 file:px-2 file:rounded file:border-0 file:text-[10px] file:font-bold file:bg-orange-500 file:text-white hover:file:bg-orange-600 cursor-pointer transition">
@@ -327,7 +327,7 @@
                                     @endif
                                 </div>
                                 <div class="w-full h-40 bg-gray-200 border border-gray-400 rounded-md mb-3 overflow-hidden flex justify-center items-center relative">
-                                    <img id="preview_bangunan" src="{{ $lembaga->foto_bangunan ? \Illuminate\Support\Facades\Storage::url($lembaga->foto_bangunan) : '#' }}" class="{{ $lembaga->foto_bangunan ? '' : 'hidden' }} object-cover w-full h-full absolute inset-0 z-10" />
+                                    <img id="preview_bangunan" src="{{ $lembaga->foto_bangunan ? asset('dokumen/' . $lembaga->foto_bangunan) : '#' }}" class="{{ $lembaga->foto_bangunan ? '' : 'hidden' }} object-cover w-full h-full absolute inset-0 z-10" />
                                     <span class="text-black-400 text-[11px] z-0">Tidak Ada Foto</span>
                                 </div>
                                 <input type="file" name="foto_bangunan" accept="image/*" onchange="previewImageFase3(this, 'preview_bangunan')" class="text-[10px] w-full file:mr-2 file:py-1 file:px-2 file:rounded file:border-0 file:text-[10px] file:font-bold file:bg-orange-500 file:text-white hover:file:bg-orange-600 cursor-pointer transition">
@@ -343,7 +343,7 @@
                                     @endif
                                 </div>
                                 <div class="w-full h-40 bg-gray-200 border border-gray-400 rounded-md mb-3 overflow-hidden flex justify-center items-center relative">
-                                    <img id="preview_kbm" src="{{ $lembaga->foto_kbm ? \Illuminate\Support\Facades\Storage::url($lembaga->foto_kbm) : '#' }}" class="{{ $lembaga->foto_kbm ? '' : 'hidden' }} object-cover w-full h-full absolute inset-0 z-10" />
+                                    <img id="preview_kbm" src="{{ $lembaga->foto_kbm ? asset('dokumen/' . $lembaga->foto_kbm) : '#' }}" class="{{ $lembaga->foto_kbm ? '' : 'hidden' }} object-cover w-full h-full absolute inset-0 z-10" />
                                     <span class="text-black-400 text-[11px] z-0">Tidak Ada Foto</span>
                                 </div>
                                 <input type="file" name="foto_kbm" accept="image/*" onchange="previewImageFase3(this, 'preview_kbm')" class="text-[10px] w-full file:mr-2 file:py-1 file:px-2 file:rounded file:border-0 file:text-[10px] file:font-bold file:bg-orange-500 file:text-white hover:file:bg-orange-600 cursor-pointer transition">

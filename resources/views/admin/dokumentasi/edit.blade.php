@@ -23,7 +23,7 @@
                         {{-- KIRI: TAMPILAN FOTO LAMA --}}
                         <div class="flex flex-col items-center justify-center bg-slate-100 p-4 rounded-xl border border-slate-200 border-dashed">
                             <span class="text-xs font-bold text-slate-400 uppercase mb-3">Preview Foto Saat Ini</span>
-                            <img src="{{ asset('storage/' . $dok->foto_path) }}" alt="Preview" class="w-full h-auto max-h-56 object-contain rounded shadow-sm bg-white p-1 border">
+                            <img src="{{ asset('dokumen/' . $dok->foto_path) }}" alt="Preview" class="w-full h-auto max-h-56 object-contain rounded shadow-sm bg-white p-1 border">
                         </div>
 
                         {{-- KANAN: FORM INPUT --}}

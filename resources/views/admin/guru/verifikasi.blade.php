@@ -50,13 +50,17 @@
                                 <option value="Ditolak" {{ $guru->status_ktp == 'Ditolak' ? 'selected' : '' }}>❌ Ditolak</option>
                             </select>
                         </div>
+                        
+                        
                         <div class="p-2 flex-grow">
                             @if($guru->file_ktp)
-                                <iframe src="{{ asset('storage/' . $guru->file_ktp) }}" type="application/pdf" class="w-full h-[350px] border border-gray-300 rounded bg-white"></iframe>
+                                <iframe src="{{ asset('dokumen/' . $guru->file_ktp) }}" type="application/pdf" class="w-full h-[350px] border border-gray-300 rounded bg-white"></iframe>
                             @else
                                 <div class="h-[350px] flex items-center justify-center border border-dashed border-gray-300 rounded bg-gray-100 text-gray-500 text-xs italic">Belum diupload</div>
                             @endif
                         </div>
+                        
+                        
                     </div>
 
                     {{-- 2. KK --}}
@@ -73,7 +77,7 @@
                         </div>
                         <div class="p-2 flex-grow">
                             @if($guru->file_kk)
-                                <iframe src="{{ asset('storage/' . $guru->file_kk) }}" type="application/pdf" class="w-full h-[350px] border border-gray-300 rounded bg-white"></iframe>
+                                <iframe src="{{ asset('dokumen/' . $guru->file_kk) }}" type="application/pdf" class="w-full h-[350px] border border-gray-300 rounded bg-white"></iframe>
                             @else
                                 <div class="h-[350px] flex items-center justify-center border border-dashed border-gray-300 rounded bg-gray-100 text-gray-500 text-xs italic">Belum diupload</div>
                             @endif
@@ -94,7 +98,7 @@
                         </div>
                         <div class="p-2 flex-grow">
                             @if($guru->file_bukurekening)
-                                <iframe src="{{ asset('storage/' . $guru->file_bukurekening) }}" type="application/pdf" class="w-full h-[350px] border border-gray-300 rounded bg-white"></iframe>
+                                <iframe src="{{ asset('dokumen/' . $guru->file_bukurekening) }}" type="application/pdf" class="w-full h-[350px] border border-gray-300 rounded bg-white"></iframe>
                             @else
                                 <div class="h-[350px] flex items-center justify-center border border-dashed border-gray-300 rounded bg-gray-100 text-gray-500 text-xs italic">Belum diupload</div>
                             @endif

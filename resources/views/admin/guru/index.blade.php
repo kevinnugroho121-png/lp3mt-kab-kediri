@@ -546,7 +546,7 @@
                                 <td class="border border-gray-600 px-2 py-1 text-center {{ $isTidakLayak ? 'bg-red-100' : 'bg-gray-50' }}">
                                     @if($guru->file_ktp)
                                         <div class="flex flex-col items-center">
-                                            <button type="button" onclick="bukaModalPdf('{{ \Illuminate\Support\Facades\Storage::url($guru->file_ktp) }}', 'KTP - {{ addslashes($guru->nama_lengkap) }}')" class="text-blue-600 underline font-bold hover:text-blue-800 mb-1 cursor-pointer">
+                                            <button type="button" onclick="bukaModalPdf('{{ asset('dokumen/' . $guru->file_ktp) }}', 'KTP - {{ addslashes($guru->nama_lengkap) }}')" class="text-blue-600 underline font-bold hover:text-blue-800 mb-1 cursor-pointer">
                                                 Lihat
                                             </button>
                                             @php
@@ -564,7 +564,7 @@
                                 <td class="border border-gray-600 px-2 py-1 text-center {{ $isTidakLayak ? 'bg-red-100' : 'bg-white' }}">
                                     @if($guru->file_kk)
                                         <div class="flex flex-col items-center">
-                                            <button type="button" onclick="bukaModalPdf('{{ \Illuminate\Support\Facades\Storage::url($guru->file_kk) }}', 'KK - {{ addslashes($guru->nama_lengkap) }}')" class="text-green-600 underline font-bold hover:text-green-800 mb-1 cursor-pointer">
+                                            <button type="button" onclick="bukaModalPdf('{{ asset('dokumen/' . $guru->file_kk) }}', 'KK - {{ addslashes($guru->nama_lengkap) }}')" class="text-green-600 underline font-bold hover:text-green-800 mb-1 cursor-pointer">
                                                 Lihat
                                             </button>
                                             @php
@@ -582,7 +582,7 @@
                                 <td class="border border-gray-600 px-2 py-1 text-center {{ $isTidakLayak ? 'bg-red-100' : 'bg-gray-50' }}">
                                     @if($guru->file_bukurekening)
                                         <div class="flex flex-col items-center">
-                                            <button type="button" onclick="bukaModalPdf('{{ \Illuminate\Support\Facades\Storage::url($guru->file_bukurekening) }}', 'Buku Rekening - {{ addslashes($guru->nama_lengkap) }}')" class="text-purple-600 underline font-bold hover:text-purple-800 mb-1 cursor-pointer">
+                                            <button type="button" onclick="bukaModalPdf('{{ asset('dokumen/' . $guru->file_bukurekening) }}', 'Buku Rekening - {{ addslashes($guru->nama_lengkap) }}')" class="text-purple-600 underline font-bold hover:text-purple-800 mb-1 cursor-pointer">
                                                 Lihat
                                             </button>
                                             @php

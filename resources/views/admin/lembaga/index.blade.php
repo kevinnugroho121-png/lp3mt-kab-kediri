@@ -321,28 +321,28 @@
                                     <div class="grid grid-cols-2 gap-1 w-12 mx-auto">
                                         {{-- 1. Profil Lembaga --}}
                                         @if($lembaga->foto_lembaga)
-                                            <button onclick="bukaModalGambar('{{ \Illuminate\Support\Facades\Storage::url($lembaga->foto_lembaga) }}', 'A. Foto Profil Lembaga')" title="Lihat Profil Lembaga" class="bg-blue-100 text-blue-700 border border-blue-300 p-0.5 rounded hover:bg-blue-600 hover:text-white transition text-[10px]">📸</button>
+                                            <button onclick="bukaModalGambar('{{ asset('dokumen/' . $lembaga->foto_lembaga) }}', 'A. Foto Profil Lembaga')" title="Lihat Profil Lembaga" class="bg-blue-100 text-blue-700 border border-blue-300 p-0.5 rounded hover:bg-blue-600 hover:text-white transition text-[10px]">📸</button>
                                         @else
                                             <span title="Kosong" class="bg-gray-100 text-black-300 border border-gray-400 p-0.5 rounded text-[10px] cursor-not-allowed">📸</span>
                                         @endif
 
                                         {{-- 2. Nambor --}}
                                         @if($lembaga->foto_nambor)
-                                            <button onclick="bukaModalGambar('{{ \Illuminate\Support\Facades\Storage::url($lembaga->foto_nambor) }}', 'B. Papan Nama / Nambor')" title="Lihat Papan Nama" class="bg-indigo-100 text-indigo-700 border border-indigo-300 p-0.5 rounded hover:bg-indigo-600 hover:text-white transition text-[10px]">🏷️</button>
+                                            <button onclick="bukaModalGambar('{{ asset('dokumen/' . $lembaga->foto_nambor) }}', 'B. Papan Nama / Nambor')" title="Lihat Papan Nama" class="bg-indigo-100 text-indigo-700 border border-indigo-300 p-0.5 rounded hover:bg-indigo-600 hover:text-white transition text-[10px]">🏷️</button>
                                         @else
                                             <span title="Kosong" class="bg-gray-100 text-black-300 border border-gray-400 p-0.5 rounded text-[10px] cursor-not-allowed">🏷️</span>
                                         @endif
 
                                         {{-- 3. Gedung Bangunan --}}
                                         @if($lembaga->foto_bangunan)
-                                            <button onclick="bukaModalGambar('{{ \Illuminate\Support\Facades\Storage::url($lembaga->foto_bangunan) }}', 'C. Gedung Bangunan')" title="Lihat Bangunan" class="bg-amber-100 text-amber-700 border border-amber-300 p-0.5 rounded hover:bg-amber-600 hover:text-white transition text-[10px]">🏢</button>
+                                            <button onclick="bukaModalGambar('{{ asset('dokumen/' . $lembaga->foto_bangunan) }}', 'C. Gedung Bangunan')" title="Lihat Bangunan" class="bg-amber-100 text-amber-700 border border-amber-300 p-0.5 rounded hover:bg-amber-600 hover:text-white transition text-[10px]">🏢</button>
                                         @else
                                             <span title="Kosong" class="bg-gray-100 text-black-300 border border-gray-400 p-0.5 rounded text-[10px] cursor-not-allowed">🏢</span>
                                         @endif
 
                                         {{-- 4. KBM --}}
                                         @if($lembaga->foto_kbm)
-                                            <button onclick="bukaModalGambar('{{ \Illuminate\Support\Facades\Storage::url($lembaga->foto_kbm) }}', 'D. Kegiatan Belajar (KBM)')" title="Lihat KBM" class="bg-green-100 text-green-700 border border-green-300 p-0.5 rounded hover:bg-green-600 hover:text-white transition text-[10px]">👥</button>
+                                            <button onclick="bukaModalGambar('{{ asset('dokumen/' . $lembaga->foto_kbm) }}', 'D. Kegiatan Belajar (KBM)')" title="Lihat KBM" class="bg-green-100 text-green-700 border border-green-300 p-0.5 rounded hover:bg-green-600 hover:text-white transition text-[10px]">👥</button>
                                         @else
                                             <span title="Kosong" class="bg-gray-100 text-black-300 border border-gray-400 p-0.5 rounded text-[10px] cursor-not-allowed">👥</span>
                                         @endif
@@ -424,7 +424,7 @@
                                 <td class="border-r border-gray-400 py-1 text-center align-top bg-blue-50/30">
                                     <div class="flex flex-col items-center gap-1">
                                         @if($lembaga->file_ijop)
-                                            <button onclick="bukaModalPdf('{{ \Illuminate\Support\Facades\Storage::url($lembaga->file_ijop) }}', 'IJOP - {{ addslashes($lembaga->nama_lembaga) }}')" class="flex items-center gap-1 text-green-600 text-[10px] font-bold bg-green-50 px-2 py-1 rounded border border-green-300 hover:bg-green-600 hover:text-white transition shadow-sm" title="Lihat IJOP">
+                                            <button onclick="bukaModalPdf('{{ asset('dokumen/' . $lembaga->file_ijop) }}', 'IJOP - {{ addslashes($lembaga->nama_lembaga) }}')" class="flex items-center gap-1 text-green-600 text-[10px] font-bold bg-green-50 px-2 py-1 rounded border border-green-300 hover:bg-green-600 hover:text-white transition shadow-sm" title="Lihat IJOP">
                                                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg> Cek File
                                             </button>
                                         @else
@@ -472,7 +472,7 @@
                                 <td class="border-r border-gray-400 py-1 text-center align-top bg-teal-50/30">
                                     <div class="flex flex-col items-center gap-1">
                                         @if($lembaga->file_skd)
-                                            <button onclick="bukaModalPdf('{{ \Illuminate\Support\Facades\Storage::url($lembaga->file_skd) }}', 'SKD - {{ addslashes($lembaga->nama_lembaga) }}')" class="flex items-center gap-1 text-green-600 text-[10px] font-bold bg-green-50 px-2 py-1 rounded border border-green-300 hover:bg-green-600 hover:text-white transition shadow-sm" title="Lihat SKD">
+                                            <button onclick="bukaModalPdf('{{ asset('dokumen/' . $lembaga->file_skd) }}', 'SKD - {{ addslashes($lembaga->nama_lembaga) }}')" class="flex items-center gap-1 text-green-600 text-[10px] font-bold bg-green-50 px-2 py-1 rounded border border-green-300 hover:bg-green-600 hover:text-white transition shadow-sm" title="Lihat SKD">
                                                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg> Cek File
                                             </button>
                                         @else
@@ -493,7 +493,7 @@
                                 <td class="border-r border-gray-400 py-1 text-center align-top bg-purple-50/30">
                                     <div class="flex flex-col items-center gap-1">
                                         @if($lembaga->file_super)
-                                            <button onclick="bukaModalPdf('{{ \Illuminate\Support\Facades\Storage::url($lembaga->file_super) }}', 'SPTJM - {{ addslashes($lembaga->nama_lembaga) }}')" class="flex items-center gap-1 text-green-600 text-[10px] font-bold bg-green-50 px-2 py-1 rounded border border-green-300 hover:bg-green-600 hover:text-white transition shadow-sm" title="Lihat SPTJM">
+                                            <button onclick="bukaModalPdf('{{ asset('dokumen/' . $lembaga->file_super) }}', 'SPTJM - {{ addslashes($lembaga->nama_lembaga) }}')" class="flex items-center gap-1 text-green-600 text-[10px] font-bold bg-green-50 px-2 py-1 rounded border border-green-300 hover:bg-green-600 hover:text-white transition shadow-sm" title="Lihat SPTJM">
                                                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg> Cek File
                                             </button>
                                         @else
@@ -514,7 +514,7 @@
                                 <td class="border-r border-gray-400 py-1 text-center align-top bg-orange-50/30">
                                     <div class="flex flex-col items-center gap-1">
                                         @if($lembaga->file_skam)
-                                            <button onclick="bukaModalPdf('{{ \Illuminate\Support\Facades\Storage::url($lembaga->file_skam) }}', 'SKAM - {{ addslashes($lembaga->nama_lembaga) }}')" class="flex items-center gap-1 text-green-600 text-[10px] font-bold bg-green-50 px-2 py-1 rounded border border-green-300 hover:bg-green-600 hover:text-white transition shadow-sm" title="Lihat SKAM">
+                                            <button onclick="bukaModalPdf('{{ asset('dokumen/' . $lembaga->file_skam) }}', 'SKAM - {{ addslashes($lembaga->nama_lembaga) }}')" class="flex items-center gap-1 text-green-600 text-[10px] font-bold bg-green-50 px-2 py-1 rounded border border-green-300 hover:bg-green-600 hover:text-white transition shadow-sm" title="Lihat SKAM">
                                                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg> Cek File
                                             </button>
                                         @else
