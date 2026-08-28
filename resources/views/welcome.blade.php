@@ -17,6 +17,9 @@
     <meta property="og:title" content="LP3MT Kabupaten Kediri - Sistem Pendataan Guru & Lembaga">
     <meta property="og:description" content="Portal Resmi Pendataan dan Penyaluran Insentif Guru Pesantren, Madin, dan TPQ LP3MT Kabupaten Kediri.">
     <meta property="og:image" content="{{ asset('images/logo_lp3mt.png') }}">
+
+    {{-- Favicon / Icon Tab Browser --}}
+    <link rel="icon" type="image/png" href="{{ asset('images/logo_lp3mt.png') }}">
     
     {{-- FONT BARU: PLUS JAKARTA SANS --}}
     <link rel="preconnect" href="https://fonts.googleapis.com">
