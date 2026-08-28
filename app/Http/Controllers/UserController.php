@@ -17,7 +17,7 @@ class UserController extends Controller
     {
         $query = User::with('kecamatan')
             ->orderBy('kecamatan_id', 'asc')
-            ->orderByRaw("FIELD(jabatan_korcam, 'KETUA', 'ANGGOTA 1', 'ANGGOTA 2') ASC, id ASC");
+            ->orderByRaw("FIELD(jabatan_korcam, 'Korcam', 'KORCAM', 'Ketua', 'KETUA', 'Anggota 1', 'ANGGOTA 1', 'Anggota 2', 'ANGGOTA 2') ASC, id ASC");
 
         // --- A. LOGIKA FILTER PINTAR ---
         if ($request->filled('search')) {
@@ -111,12 +111,14 @@ class UserController extends Controller
         // Jika Role yang dipilih adalah KORCAM, ambil datanya
         if ($request->role == 'korcam') {
             $kecamatan_id   = $request->kecamatan_id;
-            $jabatan_korcam = $request->jabatan_korcam; // Isinya 'Ketua', 'Anggota 1', atau 'Anggota 2'
+            $jabatan_korcam = $request->jabatan_korcam; // Isinya 'Korcam', 'Anggota 1', atau 'Anggota 2'
             
-            // [OPSIONAL] Double Check di Backend untuk keamanan (mencegah data ganda)
+            // Double check: periksa jabatan 'Korcam' maupun sebutan lama 'Ketua'
+            $targetJabatan = ($jabatan_korcam == 'Korcam' || $jabatan_korcam == 'Ketua') ? ['Korcam', 'Ketua'] : [$jabatan_korcam];
+
             $exists = User::where('role', 'korcam')
                           ->where('kecamatan_id', $kecamatan_id)
-                          ->where('jabatan_korcam', $jabatan_korcam)
+                          ->whereIn('jabatan_korcam', $targetJabatan)
                           ->exists();
             
             if ($exists) {
@@ -166,9 +168,12 @@ class UserController extends Controller
         $kecamatanId = $request->kecamatan_id;
         $jabatan = $request->jabatan; 
 
+        // Menyelaraskan pencarian jika jabatan bernilai 'Korcam' atau 'Ketua'
+        $targetJabatan = ($jabatan == 'Korcam' || $jabatan == 'Ketua') ? ['Korcam', 'Ketua'] : [$jabatan];
+
         $exists = User::where('role', 'korcam')
                       ->where('kecamatan_id', $kecamatanId)
-                      ->where('jabatan_korcam', $jabatan)
+                      ->whereIn('jabatan_korcam', $targetJabatan)
                       ->exists();
 
         return response()->json(['exists' => $exists]);

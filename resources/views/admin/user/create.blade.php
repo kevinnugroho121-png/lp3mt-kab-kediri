@@ -86,7 +86,7 @@
                                 <option value="" disabled selected>- CARI WILAYAH -</option>
                                 @foreach($kecamatans as $kec)
                                     @php
-                                        $hasKetua = $kec->users->where('jabatan_korcam', 'Ketua')->isNotEmpty() ? 'true' : 'false';
+                                        $hasKetua = $kec->users->whereIn('jabatan_korcam', ['Korcam', 'Ketua'])->isNotEmpty() ? 'true' : 'false';
                                         $hasA1 = $kec->users->where('jabatan_korcam', 'Anggota 1')->isNotEmpty() ? 'true' : 'false';
                                         $hasA2 = $kec->users->where('jabatan_korcam', 'Anggota 2')->isNotEmpty() ? 'true' : 'false';
                                     @endphp
@@ -104,11 +104,11 @@
                         <div>
                             <label class="block text-[10px] font-bold text-gray-600 uppercase mb-1">Posisi Tim (Maks 3)</label>
                             <div class="grid grid-cols-3 gap-1 h-[32px]">
-                                {{-- Ketua --}}
+                                {{-- Korcam --}}
                                 <label class="cursor-pointer relative group">
-                                    <input type="radio" name="jabatan_korcam" value="Ketua" class="peer sr-only korcam-radio">
+                                    <input type="radio" name="jabatan_korcam" value="Korcam" class="peer sr-only korcam-radio">
                                     <div class="border border-gray-600 bg-white hover:bg-blue-50 peer-checked:bg-blue-600 peer-checked:text-white peer-checked:border-blue-600 transition text-center shadow-sm flex items-center justify-center h-full rounded-md">
-                                        <span class="block font-bold text-[10px] uppercase">Ketua</span>
+                                        <span class="block font-bold text-[10px] uppercase">Korcam</span>
                                     </div>
                                 </label>
                                 {{-- Anggota 1 --}}
@@ -208,7 +208,7 @@
             var isA1Full = $el.data('a1') === true;
             var isA2Full = $el.data('a2') === true;
 
-            var badgeKetua = isKetuaFull ? '<span class="px-1.5 py-0.5 mx-0.5 text-[10px] font-bold bg-red-100 text-red-700 rounded border border-red-200">Ketua ❌</span>' : '<span class="px-1.5 py-0.5 mx-0.5 text-[10px] font-bold bg-green-100 text-green-700 rounded border border-green-200">Ketua ✓</span>';
+            var badgeKetua = isKetuaFull ? '<span class="px-1.5 py-0.5 mx-0.5 text-[10px] font-bold bg-red-100 text-red-700 rounded border border-red-200">Korcam ❌</span>' : '<span class="px-1.5 py-0.5 mx-0.5 text-[10px] font-bold bg-green-100 text-green-700 rounded border border-green-200">Korcam ✓</span>';
             var badgeA1 = isA1Full ? '<span class="px-1.5 py-0.5 mx-0.5 text-[10px] font-bold bg-red-100 text-red-700 rounded border border-red-200">A1 ❌</span>' : '<span class="px-1.5 py-0.5 mx-0.5 text-[10px] font-bold bg-green-100 text-green-700 rounded border border-green-200">A1 ✓</span>';
             var badgeA2 = isA2Full ? '<span class="px-1.5 py-0.5 mx-0.5 text-[10px] font-bold bg-red-100 text-red-700 rounded border border-red-200">A2 ❌</span>' : '<span class="px-1.5 py-0.5 mx-0.5 text-[10px] font-bold bg-green-100 text-green-700 rounded border border-green-200">A2 ✓</span>';
 

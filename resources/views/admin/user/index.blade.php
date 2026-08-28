@@ -133,7 +133,7 @@
                                     @elseif($user->role == 'verifikator')
                                         <div class="inline-block px-1.5 py-0.5 rounded text-[9px] font-bold bg-blue-100 text-blue-700 border border-blue-200 mb-0.5">Verifikator Kab</div>
                                     @elseif($user->role == 'korcam')
-                                        <div class="inline-block px-1.5 py-0.5 rounded text-[9px] font-bold bg-orange-100 text-orange-700 border border-orange-200 mb-0.5">Korcam - {{ $user->jabatan_korcam ?? 'Tim' }}</div>
+                                        <div class="inline-block px-1.5 py-0.5 rounded text-[9px] font-bold bg-orange-100 text-orange-700 border border-orange-200 mb-0.5">Korcam - {{ $user->jabatan_korcam == 'Ketua' ? 'Korcam' : ($user->jabatan_korcam ?? 'Tim') }}</div>
                                     @endif
                                     
                                     <div class="text-[9px] text-gray-800 font-bold uppercase mt-0.5">
