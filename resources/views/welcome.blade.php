@@ -3,8 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Portal Resmi Pendataan dan Penyaluran Insentif Guru Pesantren, Madin, dan TPQ LP3MT Kabupaten Kediri">
-    <title>LP3MT Kabupaten Kediri</title>
+    
+    {{-- Primary Meta Tags SEO --}}
+    <title>LP3MT Kabupaten Kediri - Sistem Pendataan Guru & Lembaga</title>
+    <meta name="title" content="LP3MT Kabupaten Kediri - Sistem Pendataan Guru & Lembaga">
+    <meta name="description" content="Portal Resmi Pendataan dan Penyaluran Insentif Guru Pesantren, Madin, dan TPQ LP3MT Kabupaten Kediri.">
+    <meta name="keywords" content="LP3MT Kediri, LP3MT Kabupaten Kediri, Guru Ngaji Kediri, Pendataan TPQ Kediri, Penyaluran Insentif Kediri, LP3MT, Insentif Guru Ngaji Kediri, Pemkab Kediri">
+    <meta name="robots" content="index, follow">
+
+    {{-- Open Graph / WhatsApp & Media Sosial Preview --}}
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://lp3mt-kabkediri.com/">
+    <meta property="og:title" content="LP3MT Kabupaten Kediri - Sistem Pendataan Guru & Lembaga">
+    <meta property="og:description" content="Portal Resmi Pendataan dan Penyaluran Insentif Guru Pesantren, Madin, dan TPQ LP3MT Kabupaten Kediri.">
+    <meta property="og:image" content="{{ asset('images/logo_lp3mt.png') }}">
     
     {{-- FONT BARU: PLUS JAKARTA SANS --}}
     <link rel="preconnect" href="https://fonts.googleapis.com">
