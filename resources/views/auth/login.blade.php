@@ -5,6 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - LP3MT Kabupaten Kediri</title>
     
+    {{-- Favicon Tab Browser --}}
+    <link rel="icon" type="image/png" href="{{ asset('images/logo_lp3mt.png') }}">
+    
     {{-- FONT: PLUS JAKARTA SANS --}}
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>

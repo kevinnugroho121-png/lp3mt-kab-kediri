@@ -7,6 +7,9 @@
 
     <title>{{ config('app.name', 'LP3MT') }}</title>
 
+    {{-- Favicon Tab Browser --}}
+    <link rel="icon" type="image/png" href="{{ asset('images/logo_lp3mt.png') }}">
+
     {{-- 1. FONTS --}}
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
