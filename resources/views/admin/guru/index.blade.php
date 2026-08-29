@@ -338,9 +338,10 @@
                             </th>
 
                             <th class="border border-gray-600 px-2 text-center w-24">Insentif</th>
-                            <th class="border border-gray-600 px-2 text-center w-48">Nama Lembaga</th>
-                            <th class="border border-gray-600 px-2 text-center w-56">Alamat Lembaga</th>
-                            <th class="border border-gray-600 px-2 text-center w-24">Jenis</th>
+                            <th class="border border-gray-600 px-2 text-center w-48">Nama Lembaga Tempat Mengajar</th>
+                            <th class="border border-gray-600 px-2 text-center w-36">Desa Lembaga</th>
+                            <th class="border border-gray-600 px-2 text-center w-36">Kecamatan Lembaga</th>
+                            <th class="border border-gray-600 px-2 text-center w-24">Jenis Lembaga</th>
                             <th class="border border-gray-600 px-2 text-center w-32">File KTP</th> 
                             <th class="border border-gray-600 px-2 text-center w-32">File KK</th> 
                             <th class="border border-gray-600 px-2 text-center w-32">File Rekening</th> 
@@ -348,7 +349,7 @@
                             {{-- 4. ALAMAT GURU (Dengan Filter) --}}
                             <th class="border border-gray-600 px-2 text-left w-64 relative">
                                 <div class="flex items-center justify-between cursor-pointer hover:text-blue-600 transition" onclick="toggleExcelFilter('filter-alamat')">
-                                    <span>Alamat Guru (Sesuai KTP)</span>
+                                    <span>Alamat Guru Sesuai KTP</span>
                                     <svg class="w-3 h-3 {{ request('col_alamat') ? 'text-blue-600' : 'text-gray-500' }}" fill="currentColor" viewBox="0 0 20 20"><path d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3 5a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm2 5a1 1 0 011-1h2a1 1 0 110 2h-2a1 1 0 01-1-1z"></path></svg>
                                 </div>
                                 <div id="filter-alamat" class="excel-filter-popup absolute top-full right-0 mt-1 w-48 bg-white border border-gray-400 shadow-2xl rounded-md z-[99] p-2 text-left font-normal normal-case">
@@ -368,15 +369,16 @@
                                 </div>
                             </th>
 
-                            <th class="border border-gray-600 px-2 text-center w-32">Tempat Tanggal Lahir</th>
-                            <th class="border border-gray-600 px-2 text-center w-10">L/P</th>
-                            <th class="border border-gray-600 px-2 text-center w-32">Desa</th>
-                            <th class="border border-gray-600 px-2 text-center w-32">Kecamatan</th>
-                            <th class="border border-gray-600 px-2 text-center w-24">Kabupaten</th>
+                            <th class="border border-gray-600 px-2 text-center w-36">Tempat Tanggal Lahir</th>
+                            <th class="border border-gray-600 px-2 text-center w-20">Jenis Kelamin</th>
+                            <th class="border border-gray-600 px-2 text-center w-32">Desa Guru</th>
+                            <th class="border border-gray-600 px-2 text-center w-32">Kecamatan Guru</th>
+                            <th class="border border-gray-600 px-2 text-center w-28">Kabupaten Guru</th>
                             <th class="border border-gray-600 px-2 text-center w-20">Agama</th>
-                            <th class="border border-gray-600 px-2 text-center w-28">Nomor HP</th>
+                            <th class="border border-gray-600 px-2 text-center w-28">Pekerjaan Utama</th>
+                            <th class="border border-gray-600 px-2 text-center w-28">No HP</th>
                             <th class="border border-gray-600 px-2 text-center w-40">Nama Ibu Kandung</th>
-                            <th class="border border-gray-600 px-2 text-center w-40">Nomor Rekening</th>
+                            <th class="border border-gray-600 px-2 text-center w-40">Nomer Rekening</th>
                             <th class="border border-gray-600 px-2 text-center w-40">Keterangan</th>
                             <th class="border border-gray-600 px-2 text-center w-40 sticky right-0 bg-gray-100 z-30">Aksi</th>
                         </tr>
@@ -389,7 +391,7 @@
                             {{-- LOGIKA WARNA BARIS SUPER SIMPEL (FASE 2) --}}
                             @php
                                 // 1. Cek Kelayakan (PNS/PPPK/Inpassing = Merah)
-                                $isTidakLayak = in_array($guru->status_kepegawaian, ['PNS', 'PPPK']) || strtoupper($guru->status_sertifikasi) == 'INPASSING';
+                                $isTidakLayak = in_array(strtoupper($guru->status_kepegawaian ?? ''), ['PNS', 'PPPK']) || strtoupper($guru->status_sertifikasi ?? '') == 'INPASSING';
                                 
                                 // Penentuan Warna Default (Standby = Putih)
                                 $rowClass = 'hover:bg-gray-50 bg-white';
@@ -517,13 +519,14 @@
                                     {{ $guru->lembaga->nama_lembaga ?? '-' }}
                                 </td>
 
-                                {{-- [BARU] ALAMAT LEMBAGA --}}
-                                <td class="border border-gray-600 px-2 py-1 truncate max-w-xs" title="{{ $guru->lembaga ? ($guru->lembaga->desa->nama_desa ?? '') . ', KEC. ' . ($guru->lembaga->kecamatan->nama_kecamatan ?? '') : '-' }}">
-                                    @if($guru->lembaga)
-                                        DS. {{ $guru->lembaga->desa->nama_desa ?? '-' }}, KEC. {{ $guru->lembaga->kecamatan->nama_kecamatan ?? '-' }}
-                                    @else
-                                        -
-                                    @endif
+                                {{-- DESA LEMBAGA --}}
+                                <td class="border border-gray-600 px-2 py-1">
+                                    {{ $guru->lembaga->desa->nama_desa ?? '-' }}
+                                </td>
+
+                                {{-- KECAMATAN LEMBAGA --}}
+                                <td class="border border-gray-600 px-2 py-1">
+                                    {{ $guru->lembaga->kecamatan->nama_kecamatan ?? '-' }}
                                 </td>
 
                                 {{-- 7. JENIS LEMBAGA --}}
@@ -616,6 +619,7 @@
                                 <td class="border border-gray-600 px-2 py-1">{{ $guru->kecamatan ?? '-' }}</td>
                                 <td class="border border-gray-600 px-2 py-1 text-center">{{ $guru->kabupaten }}</td>
                                 <td class="border border-gray-600 px-2 py-1 text-center">{{ $guru->agama }}</td>
+                                <td class="border border-gray-600 px-2 py-1 text-center font-bold text-gray-700">{{ $guru->pekerjaan_utama ?: ($guru->status_kepegawaian ?? 'GURU') }}</td>
                                 <td class="border border-gray-600 px-2 py-1">{{ $guru->no_hp }}</td>
 
                                 {{-- 19-21. DETAIL LAIN --}}
@@ -659,7 +663,7 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="23" class="border border-gray-600 px-4 py-8 text-center bg-gray-50 text-gray-400">
+                                <td colspan="25" class="border border-gray-600 px-4 py-8 text-center bg-gray-50 text-gray-400">
                                     <div class="flex flex-col items-center">
                                         <span class="text-2xl mb-1">📂</span>
                                         <p>Belum ada data guru. Silakan klik tombol+ Tambah.</p>

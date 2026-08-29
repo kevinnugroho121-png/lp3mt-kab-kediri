@@ -25,6 +25,7 @@ class Guru extends Model
         'jenis_kelamin', // L atau P
         'nama_ibu_kandung',
         'agama',
+        'pekerjaan_utama', // <--- Ditambahkan agar bisa mass assignment
         'status_kepegawaian',
         'status_sertifikasi',
         'penerima_insentif', // <--- [PENTING] SUDAH DITAMBAHKAN

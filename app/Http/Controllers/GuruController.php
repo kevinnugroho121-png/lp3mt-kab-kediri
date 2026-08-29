@@ -247,12 +247,13 @@ class GuruController extends Controller
             'tanggal_lahir'     => 'required|date',
             'jenis_kelamin'     => 'required|in:L,P',
             
+            'pekerjaan_utama'   => 'required|string',
             'status_kepegawaian'=> 'required|string',
             'status_sertifikasi'=> 'required|string',
             'penerima_insentif' => 'required|boolean',
             
             'nama_ibu_kandung'  => 'required|string',
-            'agama'             => 'required|string',
+            'agama'              => 'required|string',
             
             'alamat_ktp'        => 'required|string',
             'kecamatan_ktp'     => 'required|string', 
@@ -322,7 +323,8 @@ class GuruController extends Controller
             'tanggal_lahir'     => $request->tanggal_lahir,
             'jenis_kelamin'     => strtoupper($request->jenis_kelamin),
             'nama_ibu_kandung'  => strtoupper($request->nama_ibu_kandung),
-            'agama'             => strtoupper($request->agama),
+            'agama'              => strtoupper($request->agama),
+            'pekerjaan_utama'   => strtoupper($request->pekerjaan_utama),
             
             'status_kepegawaian'=> strtoupper($request->status_kepegawaian),
             'status_sertifikasi'=> strtoupper($request->status_sertifikasi),
@@ -433,6 +435,7 @@ class GuruController extends Controller
             'agama'             => 'required|string',
             'no_hp'             => 'required|numeric|unique:gurus,no_hp,' . $id,
             'nomor_rekening'    => 'nullable|numeric|unique:gurus,nomor_rekening,' . $id,
+            'pekerjaan_utama'   => 'required|string',
             'status_kepegawaian'=> 'required|string',
             'status_sertifikasi'=> 'required|string',
             'penerima_insentif' => 'required|boolean',
@@ -497,7 +500,7 @@ class GuruController extends Controller
 
         // --- MULAI SUNTIKAN KODE PEMAKSAAN KAPITAL ---
         $kolom_teks = [
-            'nama_lengkap', 'tempat_lahir', 'nama_ibu_kandung', 'agama', 
+            'nama_lengkap', 'tempat_lahir', 'nama_ibu_kandung', 'agama', 'pekerjaan_utama',
             'status_kepegawaian', 'status_sertifikasi', 
             'alamat_ktp', 'desa', 'kecamatan', 'kabupaten'
         ];

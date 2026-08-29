@@ -123,17 +123,19 @@
 
                         
 
-                        <div class="md:col-span-3  border-b border-gray-200 pb-1">
+                        <div class="md:col-span-2 border-b border-gray-200 pb-1">
                             <span class="block text-[10px] font-bold text-gray-500 uppercase">Alamat Guru (Sesuai KTP)</span>
                             <span class="text-sm font-bold text-black-800 uppercase">{{ $guru->alamat_ktp }}</span>
                         </div>
 
+                        <div class="md:col-span-1 border-b border-gray-200 pb-1">
+                            <span class="block text-[10px] font-bold text-gray-500 uppercase">Pekerjaan Utama</span>
+                            <span class="text-sm font-bold text-black-800 uppercase">{{ $guru->pekerjaan_utama ?: ($guru->status_kepegawaian ?? 'GURU') }}</span>
+                        </div>
 
-
-                        
                         <div class="md:col-span-1 border-b border-gray-200 pb-1">
                             <span class="block text-[10px] font-bold text-gray-500 uppercase">Nomor Rekening BANK JATIM</span>
-                            <span class="text-sm font-bold text-black-800">{{ $guru->nomor_rekening }}</span>
+                            <span class="text-sm font-bold text-black-800">{{ $guru->nomor_rekening ?? '-' }}</span>
                         </div>
 
 

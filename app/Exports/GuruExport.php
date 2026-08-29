@@ -76,22 +76,24 @@ class GuruExport implements FromQuery, WithHeadings, WithMapping, ShouldAutoSize
     public function headings(): array
     {
         return [
-            'NO', 
-            'NAMA LENGKAP (tanpa gelar)', 
-            'TEMPAT TANGGAL LAHIR', 
-            'JENIS KELAMIN', 
+            'NO',
+            'NAMA LENGKAP (tanpa gelar)',
+            'TEMPAT TANGGAL LAHIR',
+            'JENIS KELAMIN',
             'NIK',
-            'NAMA LEMBAGA TEMPAT MENGAJAR', 
-            'ALAMAT LEMBAGA',           // <-- 1. Kolom baru diselipkan di sini
-            'JENIS LEMBAGA', 
-            'ALAMAT GURU SESUAI KTP',   // <-- 2. Nama kolom disesuaikan
-            'DESA GURU', 
-            'KEC GURU', 
-            'KAB GURU', 
-            'AGAMA', 
-            'NO HP', 
-            'NAMA IBU KANDUNG', 
-            'NOMER REKENING', 
+            'NAMA LEMBAGA TEMPAT MENGAJAR',
+            'JENIS LEMBAGA',
+            'DESA LEMBAGA',
+            'KECAMATAN LEMBAGA',
+            'ALAMAT GURU SESUAI KTP',
+            'DESA GURU',
+            'KECAMATAN GURU',
+            'KABUPATEN GURU',
+            'AGAMA',
+            'PEKERJAAN UTAMA',
+            'NO HP',
+            'NAMA IBU KANDUNG',
+            'NOMER REKENING',
             'KETERANGAN'
         ];
     }
@@ -101,16 +103,11 @@ class GuruExport implements FromQuery, WithHeadings, WithMapping, ShouldAutoSize
         static $rowNumber = 0;
         $rowNumber++;
 
-        // Gabungkan lagi Tempat dan Tanggal Lahir (Contoh: "KEDIRI, 16-06-2026")
+        // Format Tempat & Tanggal Lahir
         $tgl_lahir = $guru->tanggal_lahir ? \Carbon\Carbon::parse($guru->tanggal_lahir)->format('d-m-Y') : '';
-        $ttl_gabungan = $guru->tempat_lahir . ($tgl_lahir ? ', ' . $tgl_lahir : '');
+        $ttl_gabungan = trim(($guru->tempat_lahir ?? '') . ($tgl_lahir ? ', ' . $tgl_lahir : ''));
 
-        // Susun alamat lembaga otomatis dari Desa & Kecamatan Lembaga
-        $alamatLembagaOtomatis = $guru->lembaga 
-            ? (($guru->lembaga->desa->nama_desa ?? '-') . ', KEC. ' . ($guru->lembaga->kecamatan->nama_kecamatan ?? '-'))
-            : '-';
-
-        // [BARU] Otomatis tambal angka 0 di depan nomor HP lama yang berawalan 8 atau ubah 62 jadi 0
+        // Normalisasi format No HP agar rapi awalan 08...
         $cleanHp = !empty($guru->no_hp) ? preg_replace('/[^0-9]/', '', (string)$guru->no_hp) : '';
         if (!empty($cleanHp)) {
             if (str_starts_with($cleanHp, '62')) {
@@ -120,24 +117,34 @@ class GuruExport implements FromQuery, WithHeadings, WithMapping, ShouldAutoSize
             }
         }
 
+        // Logika 3 Kategori Keterangan sesuai kriteria
+        $keterangan = 'BELUM DIAJUKAN';
+        if (in_array(strtoupper($guru->status_kepegawaian ?? ''), ['PNS', 'PPPK']) || strtoupper($guru->status_sertifikasi ?? '') == 'INPASSING') {
+            $keterangan = 'TIDAK BISA DIAJUKAN';
+        } elseif ($guru->penerima_insentif == 1) {
+            $keterangan = 'DIAJUKAN';
+        }
+
         return [
             $rowNumber,
             $guru->nama_lengkap,
             $ttl_gabungan,
             $guru->jenis_kelamin,
-            !empty($guru->nik) ? "'" . $guru->nik : '-', 
+            !empty($guru->nik) ? "'" . $guru->nik : '-',
             $guru->lembaga->nama_lembaga ?? '-',
-            $alamatLembagaOtomatis,
-            $guru->jenis_guru,
-            $guru->alamat_ktp ?? '-',             
-            $guru->desa ?? '-',                          // Mengambil Desa KTP Guru Asli
-            $guru->kecamatan ?? '-',                     // Mengambil Kecamatan KTP Guru Asli
+            $guru->jenis_guru ?? '-',
+            $guru->lembaga->desa->nama_desa ?? '-',
+            $guru->lembaga->kecamatan->nama_kecamatan ?? '-',
+            $guru->alamat_ktp ?? '-',
+            $guru->desa ?? '-',
+            $guru->kecamatan ?? '-',
             $guru->kabupaten ?? 'KEDIRI',
             $guru->agama ?? 'ISLAM',
-            !empty($cleanHp) ? "'" . $cleanHp : '-',     // Nomor HP selalu rapi 08...
+            $guru->pekerjaan_utama ?: ($guru->status_kepegawaian ?? 'GURU'),
+            !empty($cleanHp) ? "'" . $cleanHp : '-',
             $guru->nama_ibu_kandung ?? '-',
             !empty($guru->nomor_rekening) ? "'" . $guru->nomor_rekening : '-',
-            ($guru->penerima_insentif == 1) ? 'YA DIAJUKAN' : 'TIDAK DIAJUKAN'
+            $keterangan
         ];
     }
 

@@ -172,12 +172,15 @@
                                 <input type="number" name="no_hp" value="{{ old('no_hp', $guru->no_hp) }}" class="w-full border border-gray-600 rounded-md px-2 py-1 h-[32px] text-xs font-bold text-black-800 focus:border-blue-500 focus:ring-blue-500 shadow-sm">
                             </div>
 
-                            <div class="md:col-span-3">
-                                <label class="block text-[10px] font-bold text-gray-600 uppercase tracking-wider mb-1">Alamat Guru (Sesuai KTP)</label>
+                            <div class="md:col-span-2">
+                                <label class="block text-[10px] font-bold text-gray-600 uppercase tracking-wider mb-1">Alamat Guru (Sesuai KTP) <span class="text-red-500">*</span></label>
                                 <input type="text" name="alamat_ktp" value="{{ old('alamat_ktp', $guru->alamat_ktp) }}" class="w-full border border-gray-600 rounded-md px-2 py-1 h-[32px] text-xs font-bold text-black-800 focus:border-blue-500 focus:ring-blue-500 shadow-sm uppercase" required oninput="this.value = this.value.toUpperCase()">
                             </div>
 
-                            
+                            <div class="md:col-span-1">
+                                <label class="block text-[10px] font-bold text-gray-600 uppercase tracking-wider mb-1">Pekerjaan Utama <span class="text-red-500">*</span></label>
+                                <input type="text" name="pekerjaan_utama" id="pekerjaan_utama" value="{{ old('pekerjaan_utama', $guru->pekerjaan_utama) }}" class="w-full border border-gray-600 rounded-md px-2 py-1 h-[32px] text-xs font-bold text-black-800 focus:border-blue-500 focus:ring-blue-500 shadow-sm uppercase" placeholder="CONTOH: PETANI / GURU / PNS" required oninput="this.value = this.value.toUpperCase(); autoDetectStatusPegawai(this.value)">
+                            </div>
 
                             <div class="md:col-span-1">
                                 <label class="block text-[10px] font-bold text-gray-600 uppercase tracking-wider mb-1">Nomor Rekening BANK JATIM</label>
@@ -334,6 +337,24 @@
     </div>
 
     <script>
+        // --- 0. AUTO-DETECT STATUS GURU DARI KETIKAN PEKERJAAN UTAMA ---
+        function autoDetectStatusPegawai(val) {
+            const statusSelect = document.getElementById('status_kepegawaian');
+            if (!statusSelect) return;
+            const text = val.trim().toUpperCase();
+
+            if (text.includes('PPPK') || text.includes('P3K')) {
+                statusSelect.value = 'PPPK';
+            } else if (text.includes('PNS') || text.includes('ASN')) {
+                statusSelect.value = 'PNS';
+            } else {
+                statusSelect.value = 'Non-ASN';
+            }
+
+            // Jalankan validasi penguncian insentif otomatis
+            checkInsentifEligibility();
+        }
+
         // --- 1. LOGIKA VALIDASI INSENTIF (PNS=TIDAK, NON-ASN=YA) ---
         function checkInsentifEligibility() {
             const pegawai = document.getElementById('status_kepegawaian').value.toUpperCase();

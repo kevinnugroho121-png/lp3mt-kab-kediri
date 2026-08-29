@@ -45,10 +45,10 @@ class GuruImport implements ToCollection, WithHeadingRow
             $rawLembaga      = trim((string)($row['nama_lembaga_tempat_mengajar'] ?? $row['nama_lembaga'] ?? ''));
             $rawJenisLembaga = trim((string)($row['jenis_lembaga'] ?? ''));
             $rawRekening     = trim(str_replace(["'", '"', ' '], '', (string)($row['nomer_rekening'] ?? $row['nomor_rekening'] ?? '')));
-            $rawKecGuru      = trim((string)($row['kec_guru'] ?? $row['kec'] ?? $row['kecamatan_guru'] ?? $row['kec_1'] ?? '')); 
+            $rawKecGuru      = trim((string)($row['kec_guru'] ?? $row['kecamatan_guru'] ?? $row['kecamatan'] ?? $row['kec'] ?? $row['kec_1'] ?? '')); 
             $rawDesaGuru     = trim((string)($row['desa_guru'] ?? $row['desa'] ?? '')); 
             $rawIbuKandung   = trim((string)($row['nama_ibu_kandung'] ?? ''));
-            $rawJk           = strtoupper(trim((string)($row['jenis_kelamin'] ?? '')));
+            $rawJk           = strtoupper(trim((string)($row['jenis_kelamin'] ?? $row['lp'] ?? $row['l_p'] ?? '')));
             $rawTtl          = trim((string)($row['tempat_tanggal_lahir'] ?? ''));
             
             // Otomatis menambal angka 0 jika di Excel diawali angka 8 atau ubah 62 jadi 0
@@ -76,7 +76,7 @@ class GuruImport implements ToCollection, WithHeadingRow
             }
 
             // B. SATPAM VALIDASI DOMISILI KTP KAB. KEDIRI & NIK DUKCAPIL
-            $rawKabGuru = strtoupper(trim((string)($row['kab_guru'] ?? $row['kab'] ?? 'KEDIRI')));
+            $rawKabGuru = strtoupper(trim((string)($row['kab_guru'] ?? $row['kabupaten_guru'] ?? $row['kabupaten'] ?? $row['kab'] ?? 'KEDIRI')));
 
             // 1. Satpam Domisili KTP: Wajib Warga Kabupaten Kediri
             if (!empty($rawKabGuru) && !str_contains($rawKabGuru, 'KEDIRI') && $rawKabGuru !== '-') {
@@ -297,9 +297,14 @@ class GuruImport implements ToCollection, WithHeadingRow
                 }
 
                 $desaGuru = $row['desa_guru'] ?? $row['desa'] ?? '';
-                $kecGuru  = $row['kec_guru'] ?? $row['kec_1'] ?? $row['kecamatan_guru'] ?? $row['kec'] ?? '';
-                $kabGuru  = $row['kab_guru'] ?? $row['kab'] ?? 'KEDIRI';
+                $kecGuru  = $row['kec_guru'] ?? $row['kecamatan_guru'] ?? $row['kecamatan'] ?? $row['kec'] ?? $row['kec_1'] ?? '';
+                $kabGuru  = $row['kab_guru'] ?? $row['kabupaten_guru'] ?? $row['kabupaten'] ?? $row['kab'] ?? 'KEDIRI';
                 $rekGuru  = $row['nomer_rekening'] ?? $row['nomor_rekening'] ?? '';
+                $jkGuru   = strtoupper(trim((string)($row['jenis_kelamin'] ?? $row['lp'] ?? $row['l_p'] ?? '')));
+
+                // Baca Status Kepegawaian / Pekerjaan Utama jika ada
+                $rawPekerjaan = strtoupper(trim((string)($row['pekerjaan_utama'] ?? $row['status_kepegawaian'] ?? $row['pekerjaan'] ?? '')));
+                $statusPegawai = in_array($rawPekerjaan, ['PNS', 'PPPK']) ? $rawPekerjaan : 'NON-ASN';
 
                 // Normalisasi No HP sebelum masuk tabel database
                 $cleanHp = preg_replace('/[^0-9]/', '', (string)($row['no_hp'] ?? ''));
@@ -316,10 +321,11 @@ class GuruImport implements ToCollection, WithHeadingRow
                     'nik'                => preg_replace('/[^0-9]/', '', (string)($row['nik'] ?? '')),
                     'tempat_lahir'       => strtoupper($tempatLahir),
                     'tanggal_lahir'      => $tanggalLahir, 
-                    'jenis_kelamin'      => strtoupper($row['jenis_kelamin'] ?? ''),
+                    'jenis_kelamin'      => $jkGuru,
                     'nama_ibu_kandung'   => strtoupper($row['nama_ibu_kandung'] ?? ''),
                     'agama'              => strtoupper($row['agama'] ?? 'ISLAM'),
-                    'status_kepegawaian' => 'NON-ASN', 
+                    'pekerjaan_utama'    => $rawPekerjaan ?: 'GURU', // <--- Diselipkan di sini agar tersimpan ke DB
+                    'status_kepegawaian' => $statusPegawai, 
                     'status_sertifikasi' => 'BELUM SERTIFIKASI',
                     'penerima_insentif'  => 0,
                     'alamat_ktp'         => strtoupper($row['alamat_guru_sesuai_ktp'] ?? $row['alamat_sesuai_ktp'] ?? ''),

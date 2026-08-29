@@ -12,10 +12,14 @@
                     <h1 class="text-2xl font-bold text-black-800 uppercase">VERIFIKASI GURU: {{ $guru->nama_lengkap }}</h1>
 
 
-                    <p class="text-sm text-black-500 mt-1">
-                        {{ $guru->lembaga->nama_lembaga }} &bull; 
+                    <p class="text-sm text-black-500 mt-1 flex items-center gap-2 flex-wrap">
+                        <span>{{ $guru->lembaga->nama_lembaga ?? '-' }}</span>
+                        <span>&bull;</span>
                         <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-bold bg-blue-100 text-blue-800">
                             {{ $guru->jenis_guru }}
+                        </span>
+                        <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-bold bg-gray-100 text-gray-700 border border-gray-300">
+                            {{ $guru->pekerjaan_utama ?: ($guru->status_kepegawaian ?? 'GURU') }}
                         </span>
                     </p>
                 </div>
