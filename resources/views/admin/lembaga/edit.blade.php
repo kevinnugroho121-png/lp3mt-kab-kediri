@@ -129,8 +129,16 @@
 
                         <div class="grid grid-cols-2 md:grid-cols-4 gap-3 px-1">
                             <div>
-                                <label class="block text-[10px] font-bold text-gray-600 uppercase mb-1">Jml Santri</label>
-                                <input type="number" name="jumlah_santri" value="{{ old('jumlah_santri', $lembaga->jumlah_santri) }}" class="w-full border border-gray-400 rounded-md px-2 py-1 h-[32px] text-xs font-bold text-black-800 focus:border-blue-500 bg-gray-50 shadow-sm">
+                                <label class="block text-[10px] font-bold text-blue-700 uppercase mb-1">Santri Putra (L)</label>
+                                <input type="number" name="jumlah_santri_l" id="santri_l" value="{{ old('jumlah_santri_l', $lembaga->jumlah_santri_l ?? 0) }}" min="0" oninput="hitungTotalSantri()" class="w-full border border-blue-300 rounded-md px-2 py-1 h-[32px] text-xs font-bold text-blue-800 focus:border-blue-500 bg-blue-50/40 shadow-sm">
+                            </div>
+                            <div>
+                                <label class="block text-[10px] font-bold text-rose-700 uppercase mb-1">Santri Putri (P)</label>
+                                <input type="number" name="jumlah_santri_p" id="santri_p" value="{{ old('jumlah_santri_p', $lembaga->jumlah_santri_p ?? 0) }}" min="0" oninput="hitungTotalSantri()" class="w-full border border-rose-300 rounded-md px-2 py-1 h-[32px] text-xs font-bold text-rose-800 focus:border-rose-500 bg-rose-50/40 shadow-sm">
+                            </div>
+                            <div>
+                                <label class="block text-[10px] font-bold text-gray-600 uppercase mb-1">Total Santri</label>
+                                <input type="number" name="jumlah_santri" id="santri_total" value="{{ old('jumlah_santri', $lembaga->jumlah_santri ?? 0) }}" readonly class="w-full bg-gray-100 border border-gray-400 rounded-md px-2 py-1 h-[32px] text-xs font-black text-blue-600 cursor-not-allowed shadow-inner">
                             </div>
                             <div>
                                 <label class="block text-[10px] font-bold text-gray-600 uppercase mb-1">Total Guru</label>
@@ -466,6 +474,13 @@
                 }
                 reader.readAsDataURL(file);
             }
+        }
+
+        // 4. HITUNG OTOMATIS TOTAL SANTRI (L + P)
+        function hitungTotalSantri() {
+            const santriL = parseInt(document.getElementById('santri_l').value) || 0;
+            const santriP = parseInt(document.getElementById('santri_p').value) || 0;
+            document.getElementById('santri_total').value = santriL + santriP;
         }
     </script>
 

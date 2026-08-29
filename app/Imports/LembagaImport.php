@@ -179,6 +179,19 @@ class LembagaImport implements ToCollection, WithHeadingRow
                     $cleanStatus = $rawStatus ?: 'AKTIF';
                 }
 
+                // 4. Logika Cerdas Pembacaan Santri (Support Template Baru L/P & Template Lama 50:50)
+                $santriL = (int) ($row['santri_l'] ?? $row['santri_laki_laki'] ?? $row['santri_putra'] ?? 0);
+                $santriP = (int) ($row['santri_p'] ?? $row['santri_perempuan'] ?? $row['santri_putri'] ?? 0);
+                $totalSantri = (int) ($row['jumlah_santri'] ?? $row['total_santri'] ?? 0);
+
+                if ($santriL > 0 || $santriP > 0) {
+                    $totalSantri = $santriL + $santriP;
+                } elseif ($totalSantri > 0) {
+                    // Jika impor dari template lama yang hanya berisi total, bagi rata otomatis (50:50)
+                    $santriL = (int) ceil($totalSantri / 2);
+                    $santriP = (int) floor($totalSantri / 2);
+                }
+
                 Lembaga::create([
                     'kecamatan_id'            => $kecamatan->id,
                     'desa_id'                 => $desa->id,
@@ -192,8 +205,10 @@ class LembagaImport implements ToCollection, WithHeadingRow
                     'kepala_lembaga'          => strtoupper(trim((string)($row['kepala_lembaga'] ?? ''))),
                     'no_telp'                 => !empty($cleanHp) ? $cleanHp : null,
                     
-                    // Pemetaan Kolom Excel Template Baru Mas Kevin
-                    'jumlah_santri'           => (int) ($row['jumlah_santri'] ?? 0),
+                    // Kolom Santri Lengkap (Total + L & P)
+                    'jumlah_santri'           => $totalSantri,
+                    'jumlah_santri_l'         => $santriL,
+                    'jumlah_santri_p'         => $santriP,
                     
                     // [DIUBAH] Semua hitungan guru dipaksa jadi 0, mengabaikan ketikan Korcam di Excel
                     'jumlah_guru'             => 0, 

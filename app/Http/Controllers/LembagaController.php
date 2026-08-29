@@ -163,7 +163,9 @@ class LembagaController extends Controller
             'desa_id'            => 'required|exists:desas,id',
             'alamat'             => 'nullable|string',
             'link_gmaps'         => 'nullable|string',
-            'jumlah_santri'      => 'required|integer|min:0',
+            'jumlah_santri'      => 'nullable|integer|min:0',
+            'jumlah_santri_l'    => 'nullable|integer|min:0',
+            'jumlah_santri_p'    => 'nullable|integer|min:0',
             'jumlah_guru'        => 'nullable|integer|min:0',
 
             // Validasi File PDF
@@ -256,6 +258,19 @@ class LembagaController extends Controller
 
         // Otomatis tentukan status Fisik IJOP berdasarkan keberadaan file yang diunggah
         $data['ijop'] = $request->hasFile('file_ijop') ? 'ADA' : 'TIDAK ADA';
+
+        // Hitung total santri otomatis dari L + P (atau bagi 50:50 jika hanya total yang diisi)
+        $data['jumlah_santri_l'] = (int)($request->jumlah_santri_l ?? 0);
+        $data['jumlah_santri_p'] = (int)($request->jumlah_santri_p ?? 0);
+        $totalInput = (int)($request->jumlah_santri ?? 0);
+
+        if ($data['jumlah_santri_l'] > 0 || $data['jumlah_santri_p'] > 0) {
+            $data['jumlah_santri'] = $data['jumlah_santri_l'] + $data['jumlah_santri_p'];
+        } elseif ($totalInput > 0) {
+            $data['jumlah_santri'] = $totalInput;
+            $data['jumlah_santri_l'] = (int) ceil($totalInput / 2);
+            $data['jumlah_santri_p'] = (int) floor($totalInput / 2);
+        }
 
         Lembaga::create($data);
 
@@ -365,6 +380,9 @@ class LembagaController extends Controller
             'nama_lembaga'       => 'required|string|max:255',
             'alamat'             => 'nullable|string',
             'link_gmaps'         => 'nullable|string',
+            'jumlah_santri'      => 'nullable|integer|min:0',
+            'jumlah_santri_l'    => 'nullable|integer|min:0',
+            'jumlah_santri_p'    => 'nullable|integer|min:0',
             'file_ijop'          => 'nullable|mimes:pdf|max:2048',
             'file_skd'           => 'nullable|mimes:pdf|max:2048',
             'file_super'         => 'nullable|mimes:pdf|max:2048',
@@ -473,6 +491,21 @@ class LembagaController extends Controller
             $data['ijop'] = 'ADA';
         } elseif (!$lembaga->file_ijop) {
             $data['ijop'] = 'TIDAK ADA';
+        }
+
+        // Sinkronisasi otomatis total santri saat data L & P diperbarui
+        if ($request->has('jumlah_santri_l') || $request->has('jumlah_santri_p') || $request->has('jumlah_santri')) {
+            $data['jumlah_santri_l'] = (int)($request->jumlah_santri_l ?? $lembaga->jumlah_santri_l ?? 0);
+            $data['jumlah_santri_p'] = (int)($request->jumlah_santri_p ?? $lembaga->jumlah_santri_p ?? 0);
+            $totalInput = (int)($request->jumlah_santri ?? $lembaga->jumlah_santri ?? 0);
+
+            if ($data['jumlah_santri_l'] > 0 || $data['jumlah_santri_p'] > 0) {
+                $data['jumlah_santri'] = $data['jumlah_santri_l'] + $data['jumlah_santri_p'];
+            } elseif ($totalInput > 0) {
+                $data['jumlah_santri'] = $totalInput;
+                $data['jumlah_santri_l'] = (int) ceil($totalInput / 2);
+                $data['jumlah_santri_p'] = (int) floor($totalInput / 2);
+            }
         }
 
         $lembaga->update($data);

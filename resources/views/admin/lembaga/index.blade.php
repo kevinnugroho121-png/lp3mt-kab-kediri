@@ -352,9 +352,30 @@
 
 
 
-                                {{-- 5. SANTRI --}}
-                                <td class="border-r border-gray-400 py-0 text-center font-bold text-blue-600 text-sm">
-                                    {{ $lembaga->jumlah_santri }}
+                                {{-- 5. SANTRI (TOTAL + RINCIAN L/P) --}}
+                                <td class="border-r border-gray-400 px-1 py-1 text-center align-top">
+                                    @php
+                                        $santriL = (int)($lembaga->jumlah_santri_l ?? 0);
+                                        $santriP = (int)($lembaga->jumlah_santri_p ?? 0);
+                                        $totalSantri = ($lembaga->jumlah_santri > 0) ? $lembaga->jumlah_santri : ($santriL + $santriP);
+                                        
+                                        // Fallback cerdas: Jika L & P masih 0 tapi total ada isinya, bagi 50:50 untuk tampilan
+                                        if (($santriL + $santriP) === 0 && $totalSantri > 0) {
+                                            $santriL = (int) ceil($totalSantri / 2);
+                                            $santriP = (int) floor($totalSantri / 2);
+                                        }
+                                    @endphp
+
+                                    {{-- Angka Total Santri --}}
+                                    <div class="font-black text-blue-600 text-base leading-none mb-1">
+                                        {{ $totalSantri }}
+                                    </div>
+
+                                    {{-- Keterangan Gender L & P di bawahnya --}}
+                                    <div class="flex flex-col gap-0.5 text-[9px] font-bold border-t border-gray-300 pt-1 leading-tight">
+                                        <span class="text-blue-700 bg-blue-50 border border-blue-200 rounded px-1">L : {{ $santriL }}</span>
+                                        <span class="text-rose-700 bg-rose-50 border border-rose-200 rounded px-1">P : {{ $santriP }}</span>
+                                    </div>
                                 </td>
 
                                 {{-- LOGIKA PENGHITUNGAN REAL-TIME DARI RELASI (SINKRONISASI ABSOLUT) --}}
@@ -568,7 +589,7 @@
                                 </td>
                             </tr>
                         @empty
-                            <tr><td colspan="10" class="border border-gray-400 py-8 text-center text-black-400 bg-gray-50">Data lembaga tidak ditemukan.</td></tr>
+                            <tr><td colspan="12" class="border border-gray-400 py-8 text-center text-black-400 bg-gray-50 font-bold">Data lembaga tidak ditemukan.</td></tr>
                         @endforelse
                     </tbody>
                 </table>

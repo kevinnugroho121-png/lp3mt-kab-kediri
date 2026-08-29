@@ -99,7 +99,24 @@
                     <div class="grid grid-cols-2 md:grid-cols-4 gap-y-3 gap-x-4 px-2">
                         <div class="md:col-span-1 border-b border-gray-200 pb-1">
                             <span class="block text-[10px] font-bold text-gray-500 uppercase">Jumlah Santri</span>
-                            <span class="text-sm font-black text-blue-700">{{ $lembaga->jumlah_santri }}</span>
+                            @php
+                                $santriL = (int)($lembaga->jumlah_santri_l ?? 0);
+                                $santriP = (int)($lembaga->jumlah_santri_p ?? 0);
+                                $totalSantri = ($lembaga->jumlah_santri > 0) ? $lembaga->jumlah_santri : ($santriL + $santriP);
+
+                                // Fallback otomatis 50:50 untuk data lama yang belum terisi L/P
+                                if (($santriL + $santriP) === 0 && $totalSantri > 0) {
+                                    $santriL = (int) ceil($totalSantri / 2);
+                                    $santriP = (int) floor($totalSantri / 2);
+                                }
+                            @endphp
+                            <div class="flex items-center gap-2 mt-0.5">
+                                <span class="text-sm font-black text-blue-700">{{ $totalSantri }}</span>
+                                <div class="flex gap-1 text-[10px] font-bold">
+                                    <span class="text-blue-700 bg-blue-50 border border-blue-200 px-1 rounded">L: {{ $santriL }}</span>
+                                    <span class="text-rose-700 bg-rose-50 border border-rose-200 px-1 rounded">P: {{ $santriP }}</span>
+                                </div>
+                            </div>
                         </div>
                         <div class="md:col-span-1 border-b border-gray-200 pb-1">
                             <span class="block text-[10px] font-bold text-gray-500 uppercase">Total Guru</span>

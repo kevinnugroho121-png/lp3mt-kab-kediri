@@ -31,6 +31,8 @@ class Lembaga extends Model
         'kepala_lembaga',
         'no_telp',
         'jumlah_santri',
+        'jumlah_santri_l',
+        'jumlah_santri_p',
 
         // 4. DATA GURU
         'jumlah_guru',

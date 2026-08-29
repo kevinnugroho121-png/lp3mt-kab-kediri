@@ -83,7 +83,7 @@ class LembagaExport implements FromQuery, WithHeadings, WithMapping, ShouldAutoS
     {
         return [
             'NO.', 'NAMA LEMBAGA', 'JENIS LEMBAGA', 'ORMAS', 'KEC', 'DESA', 'LINK GOOGLE MAPS',
-            'JUMLAH SANTRI', 'JUMLAH GURU', 'PENERIMA INSENTIF', 'BELUM MENERIMA',
+            'SANTRI (L)', 'SANTRI (P)', 'JUMLAH SANTRI', 'JUMLAH GURU', 'PENERIMA INSENTIF', 'BELUM MENERIMA',
             'IJOP', 'MASA BERLAKU IJOP', 'STATUS', 'KEPALA LEMBAGA', 'NO HP',
             'PNS', 'PPPK', 'SERTIFIKASI', 'KETERANGAN'
         ];
@@ -127,6 +127,10 @@ class LembagaExport implements FromQuery, WithHeadings, WithMapping, ShouldAutoS
         $diajukan = $sesuaiKriteria->where('penerima_insentif', 1)->count();
         $tidakDiajukan = $sesuaiKriteria->count() - $diajukan;
 
+        $santriL = (int)($lembaga->jumlah_santri_l ?? 0);
+        $santriP = (int)($lembaga->jumlah_santri_p ?? 0);
+        $totalSantri = ($lembaga->jumlah_santri > 0) ? $lembaga->jumlah_santri : ($santriL + $santriP);
+
         return [
             $rowNumber,
             $lembaga->nama_lembaga,
@@ -135,7 +139,9 @@ class LembagaExport implements FromQuery, WithHeadings, WithMapping, ShouldAutoS
             $lembaga->kecamatan->nama_kecamatan ?? '-',
             $lembaga->desa->nama_desa ?? '-',
             $lembaga->link_gmaps ?? '-',
-            $lembaga->jumlah_santri ?? 0,
+            $santriL,
+            $santriP,
+            $totalSantri,
             $totalGuru,
             $diajukan,
             $tidakDiajukan,
