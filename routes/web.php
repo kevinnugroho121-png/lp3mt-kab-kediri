@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Artisan;
 
 // Import Model
 use App\Models\Lembaga;
@@ -330,3 +331,9 @@ Route::get('/dokumen/{path}', function ($path) {
         'Content-Disposition' => 'inline; filename="' . basename($filePath) . '"'
     ]);
 })->where('path', '.*');
+
+
+Route::get('/jalankan-migrasi-darurat', function () {
+    Artisan::call('migrate', ['--force' => true]);
+    return "Alhamdulillah, migrasi database berhasil dijalankan!";
+});
