@@ -438,7 +438,6 @@ class GuruController extends Controller
             'pekerjaan_utama'   => 'required|string',
             'status_kepegawaian'=> 'required|string',
             'status_sertifikasi'=> 'required|string',
-            'penerima_insentif' => 'required|boolean',
             'alamat_ktp'        => 'required|string',
             'kecamatan_ktp'     => 'required|string',
             'desa_ktp'          => 'required|string',
@@ -489,14 +488,23 @@ class GuruController extends Controller
         $data = $request->except([
             'file_ktp', 'file_kk', 'file_bukurekening', 
             'kecamatan_ktp', 'desa_ktp',
-            'hapus_file_ktp', 'hapus_file_kk', 'hapus_file_bukurekening'
+            'hapus_file_ktp', 'hapus_file_kk', 'hapus_file_bukurekening',
+            'penerima_insentif' // <-- KUNCI: Abaikan input insentif dari form edit
         ]);
         
         // Petakan manual hasil input unik ke kolom asli database
         $data['kecamatan'] = $request->kecamatan_ktp;
         $data['desa'] = $request->desa_ktp;
-        $data['penerima_insentif'] = $request->penerima_insentif;
         $data['no_hp'] = $noHp;
+
+        // PENGAMAN KUOTA KORCAM:
+        // Jika status pegawai diubah jadi ASN (PNS/PPPK), jatah otomatis dicabut (0).
+        // Jika tetap Non-ASN, pertahankan status asli database (tidak akan berubah jadi hijau sendiri).
+        if (in_array(strtoupper($request->status_kepegawaian), ['PNS', 'PPPK'])) {
+            $data['penerima_insentif'] = 0;
+        } else {
+            $data['penerima_insentif'] = $guru->penerima_insentif;
+        }
 
         // --- MULAI SUNTIKAN KODE PEMAKSAAN KAPITAL ---
         $kolom_teks = [

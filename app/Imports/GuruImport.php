@@ -5,6 +5,7 @@ namespace App\Imports;
 use App\Models\Guru;
 use App\Models\Lembaga;
 use App\Models\Kecamatan;
+use App\Models\Desa;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
 use Maatwebsite\Excel\Concerns\ToCollection;
@@ -73,6 +74,29 @@ class GuruImport implements ToCollection, WithHeadingRow
             if (empty($rawIbuKandung)) $this->errors[] = "Baris Ke-{$lineNumber}: Kolom 'NAMA IBU KANDUNG' wajib diisi.";
             if (empty($rawJk) || !in_array($rawJk, ['L', 'P'])) {
                 $this->errors[] = "Baris Ke-{$lineNumber}: Jenis Kelamin harus 'L' atau 'P'.";
+            }
+
+            // ========================================================
+            // [BARU] SATPAM WILAYAH: CEK RELASI DESA & KECAMATAN GURU
+            // ========================================================
+            if (!empty($rawKecGuru) && !empty($rawDesaGuru)) {
+                // Bersihkan imbuhan seperti 'Kec.' atau 'Desa' jika penginput menulisnya
+                $cleanKec = trim(preg_replace('/^(KECAMATAN|KEC\.?)\s+/i', '', $rawKecGuru));
+                $cleanDesa = trim(preg_replace('/^(DESA|DS\.?|KELURAHAN|KEL\.?)\s+/i', '', $rawDesaGuru));
+
+                $kecamatanDb = Kecamatan::where('nama_kecamatan', 'LIKE', $cleanKec)->first();
+
+                if (!$kecamatanDb) {
+                    $this->errors[] = "Baris Ke-{$lineNumber}: Kecamatan Guru '{$rawKecGuru}' tidak ditemukan di database Kabupaten Kediri.";
+                } else {
+                    $desaValid = Desa::where('kecamatan_id', $kecamatanDb->id)
+                                     ->where('nama_desa', 'LIKE', $cleanDesa)
+                                     ->exists();
+
+                    if (!$desaValid) {
+                        $this->errors[] = "Baris Ke-{$lineNumber}: Desa '{$rawDesaGuru}' BUKAN bagian dari Kecamatan {$kecamatanDb->nama_kecamatan}. Silakan periksa kembali.";
+                    }
+                }
             }
 
             // B. SATPAM VALIDASI DOMISILI KTP KAB. KEDIRI & NIK DUKCAPIL
