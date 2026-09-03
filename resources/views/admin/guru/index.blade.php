@@ -249,19 +249,18 @@
 
                     <thead>
                         <tr class="bg-gray-100 text-gray-800 uppercase text-[10px] tracking-wider font-bold h-9">
+                            {{-- 1. NO (Excel) --}}
                             <th class="border border-gray-600 w-10 text-center sticky left-0 bg-gray-100 z-30">No</th>
                             
-                            {{-- 1. NAMA LENGKAP (Dengan Filter) --}}
-                            <th class="border border-gray-600 px-2 text-left w-48 sticky left-10 bg-gray-100 z-30 shadow-r relative">
+                            {{-- 2. NAMA LENGKAP (Excel - Dengan Filter) --}}
+                            <th class="border border-gray-600 px-2 text-center w-48 sticky left-10 bg-gray-100 z-30 shadow-r relative">
                                 <div class="flex items-center justify-between cursor-pointer hover:text-blue-600 transition" onclick="toggleExcelFilter('filter-nama')">
                                     <span>Nama Lengkap</span>
                                     <svg class="w-3 h-3 {{ request('col_nama') || (request('sort_col') == 'nama_lengkap') ? 'text-blue-600' : 'text-gray-500' }}" fill="currentColor" viewBox="0 0 20 20"><path d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3 5a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm2 5a1 1 0 011-1h2a1 1 0 110 2h-2a1 1 0 01-1-1z"></path></svg>
                                 </div>
                                 <div id="filter-nama" class="excel-filter-popup absolute top-full left-0 mt-1 w-48 bg-white border border-gray-400 shadow-2xl rounded-md z-[99] p-2 text-left font-normal normal-case">
                                     <form action="{{ url()->current() }}" method="GET">
-                                        {{-- Pertahankan filter atas yang sedang aktif --}}
                                         @foreach(request()->except(['col_nama', 'sort_col', 'sort_dir', 'page']) as $key => $value) <input type="hidden" name="{{ $key }}" value="{{ $value }}"> @endforeach
-                                        
                                         <div class="mb-2 pb-2 border-b border-gray-300 flex flex-col gap-1">
                                             <button type="submit" name="sort_dir" value="asc" onclick="document.getElementById('sort_nama').value='nama_lengkap'" class="w-full text-left px-2 py-1 hover:bg-blue-50 text-[10px] rounded flex items-center gap-2"><span class="text-blue-600 font-bold">A↓</span> Urutkan A-Z</button>
                                             <button type="submit" name="sort_dir" value="desc" onclick="document.getElementById('sort_nama').value='nama_lengkap'" class="w-full text-left px-2 py-1 hover:bg-blue-50 text-[10px] rounded flex items-center gap-2"><span class="text-blue-600 font-bold">Z↑</span> Urutkan Z-A</button>
@@ -281,8 +280,14 @@
                                 </div>
                             </th>
 
-                            {{-- 2. NIK (Dengan Filter) --}}
-                            <th class="border border-gray-600 px-2 text-left w-32 relative">
+                            {{-- 3. TEMPAT TANGGAL LAHIR (Excel) --}}
+                            <th class="border border-gray-600 px-2 text-center w-36">Tempat Tanggal Lahir</th>
+
+                            {{-- 4. JENIS KELAMIN (Excel) --}}
+                            <th class="border border-gray-600 px-2 text-center w-20">Jenis Kelamin</th>
+
+                            {{-- 5. NIK (Excel - Dengan Filter) --}}
+                            <th class="border border-gray-600 px-2 text-center w-32 relative">
                                 <div class="flex items-center justify-between cursor-pointer hover:text-blue-600 transition" onclick="toggleExcelFilter('filter-nik')">
                                     <span>NIK</span>
                                     <svg class="w-3 h-3 {{ request('col_nik') || (request('sort_col') == 'nik') ? 'text-blue-600' : 'text-gray-500' }}" fill="currentColor" viewBox="0 0 20 20"><path d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3 5a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm2 5a1 1 0 011-1h2a1 1 0 110 2h-2a1 1 0 01-1-1z"></path></svg>
@@ -309,9 +314,72 @@
                                 </div>
                             </th>
 
-                            {{-- 3. STATUS GURU (Dengan Filter) --}}
-                            <th class="border border-gray-600 px-2 text-left w-32 relative">
-                                <div class="flex items-center justify-between cursor-pointer hover:text-blue-600 transition" onclick="toggleExcelFilter('filter-status')">
+                            {{-- 6. NAMA LEMBAGA (Excel) --}}
+                            <th class="border border-gray-600 px-2 text-center w-48">Nama Lembaga Tempat Mengajar</th>
+
+                            {{-- 7. JENIS LEMBAGA (Excel) --}}
+                            <th class="border border-gray-600 px-2 text-center w-24">Jenis Lembaga</th>
+
+                            {{-- 8. DESA LEMBAGA (Excel) --}}
+                            <th class="border border-gray-600 px-2 text-center w-36">Desa Lembaga</th>
+
+                            {{-- 9. KECAMATAN LEMBAGA (Excel) --}}
+                            <th class="border border-gray-600 px-2 text-center w-36">Kecamatan Lembaga</th>
+
+                            {{-- 10. ALAMAT GURU SESUAI KTP (Excel - Dengan Filter) --}}
+                            <th class="border border-gray-600 px-2 text-center w-64 relative">
+                                <div class="flex items-center text-center justify-between cursor-pointer hover:text-blue-600 transition" onclick="toggleExcelFilter('filter-alamat')">
+                                    <span>Alamat Guru Sesuai KTP</span>
+                                    <svg class="w-3 h-3 {{ request('col_alamat') ? 'text-blue-600' : 'text-gray-500' }}" fill="currentColor" viewBox="0 0 20 20"><path d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3 5a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm2 5a1 1 0 011-1h2a1 1 0 110 2h-2a1 1 0 01-1-1z"></path></svg>
+                                </div>
+                                <div id="filter-alamat" class="excel-filter-popup absolute top-full right-0 mt-1 w-48 bg-white border border-gray-400 shadow-2xl rounded-md z-[99] p-2 text-left font-normal normal-case">
+                                    <form action="{{ url()->current() }}" method="GET">
+                                        @foreach(request()->except(['col_alamat', 'page']) as $key => $value) <input type="hidden" name="{{ $key }}" value="{{ $value }}"> @endforeach
+                                        <div>
+                                            <label class="text-[9px] font-bold text-gray-500 uppercase mb-1 block">Cari Alamat Spesifik:</label>
+                                            <input type="text" name="col_alamat" value="{{ request('col_alamat') }}" class="w-full border border-gray-400 rounded px-2 py-1 text-xs focus:border-blue-500" placeholder="Ketik jalan/dusun...">
+                                        </div>
+                                        <div class="mt-2 flex gap-1">
+                                            <button type="submit" class="bg-blue-600 text-white px-2 py-1 rounded text-[10px] w-full font-bold hover:bg-blue-700">Terapkan</button>
+                                            @if(request('col_alamat'))
+                                                <a href="{{ request()->fullUrlWithQuery(['col_alamat' => null]) }}" class="bg-red-50 text-red-600 border border-red-200 px-2 py-1 rounded text-[10px] font-bold hover:bg-red-100 text-center">Clear</a>
+                                            @endif
+                                        </div>
+                                    </form>
+                                </div>
+                            </th>
+
+                            {{-- 11. DESA GURU (Excel) --}}
+                            <th class="border border-gray-600 px-2 text-center w-32">Desa Guru</th>
+
+                            {{-- 12. KECAMATAN GURU (Excel) --}}
+                            <th class="border border-gray-600 px-2 text-center w-32">Kecamatan Guru</th>
+
+                            {{-- 13. KABUPATEN GURU (Excel) --}}
+                            <th class="border border-gray-600 px-2 text-center w-28">Kabupaten Guru</th>
+
+                            {{-- 14. AGAMA (Excel) --}}
+                            <th class="border border-gray-600 px-2 text-center w-20">Agama</th>
+
+                            {{-- 15. PEKERJAAN UTAMA (Excel) --}}
+                            <th class="border border-gray-600 px-2 text-center w-28">Pekerjaan Utama</th>
+
+                            {{-- 16. NO HP (Excel) --}}
+                            <th class="border border-gray-600 px-2 text-center w-28">No HP</th>
+
+                            {{-- 17. NAMA IBU KANDUNG (Excel) --}}
+                            <th class="border border-gray-600 px-2 text-center w-40">Nama Ibu Kandung</th>
+
+                            {{-- 18. NOMER REKENING (Excel) --}}
+                            <th class="border border-gray-600 px-2 text-center w-40">Nomer Rekening</th>
+
+                            {{-- 19. KETERANGAN (Excel) --}}
+                            <th class="border border-gray-600 px-2 text-center w-40">Keterangan</th>
+
+                            {{-- ================= KOLOM FITUR SISTEM WEB ================= --}}
+                            {{-- 20. STATUS GURU (Dengan Filter) --}}
+                            <th class="border border-gray-600 px-2 text-center w-32 relative">
+                                <div class="flex items-center text-center justify-between cursor-pointer hover:text-blue-600 transition" onclick="toggleExcelFilter('filter-status')">
                                     <span>Status Pegawai</span>
                                     <svg class="w-3 h-3 {{ request('col_status_pegawai') || (request('sort_col') == 'status_kepegawaian') ? 'text-blue-600' : 'text-gray-500' }}" fill="currentColor" viewBox="0 0 20 20"><path d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3 5a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm2 5a1 1 0 011-1h2a1 1 0 110 2h-2a1 1 0 01-1-1z"></path></svg>
                                 </div>
@@ -337,49 +405,19 @@
                                 </div>
                             </th>
 
+                            {{-- 21. INSENTIF --}}
                             <th class="border border-gray-600 px-2 text-center w-24">Insentif</th>
-                            <th class="border border-gray-600 px-2 text-center w-48">Nama Lembaga Tempat Mengajar</th>
-                            <th class="border border-gray-600 px-2 text-center w-36">Desa Lembaga</th>
-                            <th class="border border-gray-600 px-2 text-center w-36">Kecamatan Lembaga</th>
-                            <th class="border border-gray-600 px-2 text-center w-24">Jenis Lembaga</th>
+
+                            {{-- 22. FILE KTP --}}
                             <th class="border border-gray-600 px-2 text-center w-32">File KTP</th> 
+
+                            {{-- 23. FILE KK --}}
                             <th class="border border-gray-600 px-2 text-center w-32">File KK</th> 
+
+                            {{-- 24. FILE REKENING --}}
                             <th class="border border-gray-600 px-2 text-center w-32">File Rekening</th> 
 
-                            {{-- 4. ALAMAT GURU (Dengan Filter) --}}
-                            <th class="border border-gray-600 px-2 text-left w-64 relative">
-                                <div class="flex items-center justify-between cursor-pointer hover:text-blue-600 transition" onclick="toggleExcelFilter('filter-alamat')">
-                                    <span>Alamat Guru Sesuai KTP</span>
-                                    <svg class="w-3 h-3 {{ request('col_alamat') ? 'text-blue-600' : 'text-gray-500' }}" fill="currentColor" viewBox="0 0 20 20"><path d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3 5a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm2 5a1 1 0 011-1h2a1 1 0 110 2h-2a1 1 0 01-1-1z"></path></svg>
-                                </div>
-                                <div id="filter-alamat" class="excel-filter-popup absolute top-full right-0 mt-1 w-48 bg-white border border-gray-400 shadow-2xl rounded-md z-[99] p-2 text-left font-normal normal-case">
-                                    <form action="{{ url()->current() }}" method="GET">
-                                        @foreach(request()->except(['col_alamat', 'page']) as $key => $value) <input type="hidden" name="{{ $key }}" value="{{ $value }}"> @endforeach
-                                        <div>
-                                            <label class="text-[9px] font-bold text-gray-500 uppercase mb-1 block">Cari Alamat Spesifik:</label>
-                                            <input type="text" name="col_alamat" value="{{ request('col_alamat') }}" class="w-full border border-gray-400 rounded px-2 py-1 text-xs focus:border-blue-500" placeholder="Ketik jalan/dusun...">
-                                        </div>
-                                        <div class="mt-2 flex gap-1">
-                                            <button type="submit" class="bg-blue-600 text-white px-2 py-1 rounded text-[10px] w-full font-bold hover:bg-blue-700">Terapkan</button>
-                                            @if(request('col_alamat'))
-                                                <a href="{{ request()->fullUrlWithQuery(['col_alamat' => null]) }}" class="bg-red-50 text-red-600 border border-red-200 px-2 py-1 rounded text-[10px] font-bold hover:bg-red-100 text-center">Clear</a>
-                                            @endif
-                                        </div>
-                                    </form>
-                                </div>
-                            </th>
-
-                            <th class="border border-gray-600 px-2 text-center w-36">Tempat Tanggal Lahir</th>
-                            <th class="border border-gray-600 px-2 text-center w-20">Jenis Kelamin</th>
-                            <th class="border border-gray-600 px-2 text-center w-32">Desa Guru</th>
-                            <th class="border border-gray-600 px-2 text-center w-32">Kecamatan Guru</th>
-                            <th class="border border-gray-600 px-2 text-center w-28">Kabupaten Guru</th>
-                            <th class="border border-gray-600 px-2 text-center w-20">Agama</th>
-                            <th class="border border-gray-600 px-2 text-center w-28">Pekerjaan Utama</th>
-                            <th class="border border-gray-600 px-2 text-center w-28">No HP</th>
-                            <th class="border border-gray-600 px-2 text-center w-40">Nama Ibu Kandung</th>
-                            <th class="border border-gray-600 px-2 text-center w-40">Nomer Rekening</th>
-                            <th class="border border-gray-600 px-2 text-center w-40">Keterangan</th>
+                            {{-- 25. AKSI --}}
                             <th class="border border-gray-600 px-2 text-center w-40 sticky right-0 bg-gray-100 z-30">Aksi</th>
                         </tr>
                     </thead>
@@ -408,25 +446,19 @@
 
                             <tr class="{{ $rowClass }} transition duration-75 whitespace-nowrap">
                               
-                            
-
-
-                                {{-- 1. NO --}}
+                                {{-- 1. NO (Excel) --}}
                                 <td class="border border-gray-600 py-1 text-center font-medium sticky left-0 z-10 {{ $isTidakLayak ? 'bg-red-100' : 'bg-gray-50' }}">
                                     {{ $gurus->firstItem() + $index }}
                                 </td>
 
-
-
-
-                                {{-- 2. NAMA --}}
+                                {{-- 2. NAMA LENGKAP (Excel) --}}
                                 <td class="border border-gray-600 px-2 py-1 font-semibold sticky left-10 z-10 shadow-r {{ $stickyClass }}">
                                     {{ $guru->nama_lengkap }}
                                     @if($isTidakLayak)
                                         <span class="block text-[9px] text-red-600 font-normal italic">(Tidak Berhak Mendapat Insentif)</span>
                                     @endif
 
-                                    {{-- [BARU] BADGE INDIKATOR STATUS BERKAS GURU --}}
+                                    {{-- BADGE INDIKATOR STATUS BERKAS GURU --}}
                                     <div class="mt-1 flex flex-wrap gap-1">
                                         @if($guru->status_berkas == 'bermasalah')
                                             <span class="inline-flex items-center bg-orange-50 text-orange-700 text-[9px] font-bold px-1 py-0.5 rounded border border-orange-200 tracking-wide">
@@ -440,96 +472,27 @@
                                     </div>
                                 </td>
 
+                                {{-- 3. TEMPAT TANGGAL LAHIR (Excel) --}}
+                                <td class="border border-gray-600 px-2 py-1">
+                                    {{ $guru->tempat_lahir ?? 'KEDIRI' }}{{ !empty($guru->tanggal_lahir) ? ', ' . \Carbon\Carbon::parse($guru->tanggal_lahir)->format('d-m-Y') : '' }}
+                                </td>
 
+                                {{-- 4. JENIS KELAMIN (Excel) --}}
+                                <td class="border border-gray-600 px-2 py-1 text-center">
+                                    {{ $guru->jenis_kelamin }}
+                                </td>
 
-                                {{-- 3. NIK --}}
+                                {{-- 5. NIK (Excel) --}}
                                 <td class="border border-gray-600 font-semibold px-2 py-1 text-gray-600">
                                     {{ $guru->nik }}
                                 </td>
 
-                                {{-- 4. STATUS GURU --}}
-                                <td class="border border-gray-600 px-2 py-1 text-center">
-                                    <div class="flex flex-col gap-1 items-center">
-                                        {{-- Badge Status Kepegawaian (PNS/NON-ASN) --}}
-                                        <span class="text-[9px] font-bold px-1.5 py-0.5 rounded bg-gray-100 border text-gray-600">
-                                            {{ $guru->status_kepegawaian ?? '-' }}
-                                        </span>
-                                        
-                                        {{-- Badge Sertifikasi HANYA MUNCUL kalau sudah Sertifikasi/Inpassing --}}
-                                        @if(strtoupper($guru->status_sertifikasi) == 'SERTIFIKASI' || strtoupper($guru->status_sertifikasi) == 'INPASSING')
-                                            <span class="text-[9px] font-bold px-1.5 py-0.5 rounded bg-blue-100 text-blue-700 border border-blue-200">
-                                                {{ $guru->status_sertifikasi }}
-                                            </span>
-                                        @endif
-                                    </div>
-                                </td>
-
-                                {{-- 5. INSENTIF (SINKRONISASI FASE 2) --}}
-                                <td class="border border-gray-600 px-2 py-1 text-center align-middle">
-                                    
-                                    @if($isTidakLayak)
-                                        {{-- JIKA PNS/PPPK/INPASSING: TAMPILKAN SILANG MERAH DI MENU MANAPUN --}}
-                                        <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-red-100 text-red-700 border border-red-300">
-                                            TIDAK BERHAK
-                                        </span>
-                                    
-                                    @else
-                                        {{-- JIKA NON-ASN (GURU BERHAK) --}}
-                                        @if(Auth::user()->role == 'korcam' && isset($filterType) && $filterType == 'INSENTIF')
-                                            
-
-                                            {{-- SAKLAR KHUSUS KORCAM (HANYA DI MENU INSENTIF) --}}
-                                            <form id="form-toggle-{{ $guru->id }}" action="{{ route('guru.toggle_insentif', $guru->id) }}" method="POST">
-                                                @csrf
-                                                @if($guru->penerima_insentif == 1)
-                                                    <button type="button" onclick="triggerStatusUpdate('Apakah Anda yakin ingin mengubah status alokasi insentif untuk guru ini?', 'form-toggle-{{ $guru->id }}')" class="text-[10px] font-bold px-2 py-1 rounded-md bg-green-600 text-white border border-green-700 hover:bg-red-600 hover:text-white transition duration-200 shadow-sm group w-full text-center">
-                                                        <span class="group-hover:hidden">BERHAK & DIAJUKAN</span>
-                                                        <span class="hidden group-hover:inline">COPOT JATAH</span>
-                                                    </button>
-                                                @else
-                                                    <button type="button" onclick="triggerStatusUpdate('Apakah Anda yakin ingin mengubah status alokasi insentif untuk guru ini?', 'form-toggle-{{ $guru->id }}')" class="text-[10px] font-bold px-2 py-1 rounded-md bg-yellow-500 text-white border border-yellow-600 hover:bg-emerald-600 hover:text-white transition duration-200 shadow-sm w-full text-center">
-                                                        BERHAK (tidak diajukan)
-                                                    </button>
-                                                @endif
-                                            </form>
-                                            
-
-                                        @else
-                                            
-                                            {{-- TAMPILAN STATIS (UNTUK SUPERADMIN/VERIFIKATOR ATAU DI MENU LAINNYA) --}}
-                                            @if($guru->penerima_insentif == 1)
-                                                <span class="text-[10px] font-bold px-2 py-1 rounded-md bg-green-100 text-green-800 border border-green-500 block text-center">
-                                                    BERHAK & DIAJUKAN
-                                                </span>
-                                            @else
-                                                <span class="text-[10px] font-bold px-2 py-1 rounded-md bg-yellow-100 text-yellow-800 border border-yellow-500 block text-center">
-                                                    BERHAK (tidak diajukan)
-                                                </span>
-                                            @endif
-
-                                        @endif
-                                    @endif
-                                </td>
-
-
-
-
-                                {{-- 6. NAMA LEMBAGA --}}
+                                {{-- 6. NAMA LEMBAGA (Excel) --}}
                                 <td class="border border-gray-600 px-2 py-1">
                                     {{ $guru->lembaga->nama_lembaga ?? '-' }}
                                 </td>
 
-                                {{-- DESA LEMBAGA --}}
-                                <td class="border border-gray-600 px-2 py-1">
-                                    {{ $guru->lembaga->desa->nama_desa ?? '-' }}
-                                </td>
-
-                                {{-- KECAMATAN LEMBAGA --}}
-                                <td class="border border-gray-600 px-2 py-1">
-                                    {{ $guru->lembaga->kecamatan->nama_kecamatan ?? '-' }}
-                                </td>
-
-                                {{-- 7. JENIS LEMBAGA --}}
+                                {{-- 7. JENIS LEMBAGA (Excel) --}}
                                 <td class="border border-gray-600 px-2 py-1 text-center">
                                     @php
                                         $j = $guru->lembaga->jenis_lembaga ?? '-';
@@ -545,7 +508,99 @@
                                     </span>
                                 </td>
 
-                                {{-- 8. FILE KTP --}}
+                                {{-- 8. DESA LEMBAGA (Excel) --}}
+                                <td class="border border-gray-600 px-2 py-1">
+                                    {{ $guru->lembaga->desa->nama_desa ?? '-' }}
+                                </td>
+
+                                {{-- 9. KECAMATAN LEMBAGA (Excel) --}}
+                                <td class="border border-gray-600 px-2 py-1">
+                                    {{ $guru->lembaga->kecamatan->nama_kecamatan ?? '-' }}
+                                </td>
+
+                                {{-- 10. ALAMAT GURU SESUAI KTP (Excel) --}}
+                                <td class="border border-gray-600 px-2 py-1 truncate max-w-xs" title="{{ $guru->alamat_ktp }}">
+                                    {{ Str::limit($guru->alamat_ktp, 30) }}
+                                </td>
+
+                                {{-- 11. DESA GURU (Excel) --}}
+                                <td class="border border-gray-600 px-2 py-1">{{ $guru->desa ?? '-' }}</td>
+
+                                {{-- 12. KECAMATAN GURU (Excel) --}}
+                                <td class="border border-gray-600 px-2 py-1">{{ $guru->kecamatan ?? '-' }}</td>
+
+                                {{-- 13. KABUPATEN GURU (Excel) --}}
+                                <td class="border border-gray-600 px-2 py-1 text-center">{{ $guru->kabupaten }}</td>
+
+                                {{-- 14. AGAMA (Excel) --}}
+                                <td class="border border-gray-600 px-2 py-1 text-center">{{ $guru->agama }}</td>
+
+                                {{-- 15. PEKERJAAN UTAMA (Excel) --}}
+                                <td class="border border-gray-600 px-2 py-1 text-center font-bold text-gray-700">{{ $guru->pekerjaan_utama ?: ($guru->status_kepegawaian ?? 'GURU') }}</td>
+
+                                {{-- 16. NO HP (Excel) --}}
+                                <td class="border border-gray-600 px-2 py-1">{{ $guru->no_hp }}</td>
+
+                                {{-- 17. NAMA IBU KANDUNG (Excel) --}}
+                                <td class="border border-gray-600 px-2 py-1">{{ $guru->nama_ibu_kandung }}</td>
+
+                                {{-- 18. NOMER REKENING (Excel) --}}
+                                <td class="border border-gray-600 px-2 py-1 ">{{ $guru->nomor_rekening }}</td>
+
+                                {{-- 19. KETERANGAN (Excel) --}}
+                                <td class="border border-gray-600 px-2 py-1 text-gray-500 italic">{{ $guru->keterangan ?? '-' }}</td>
+
+                                {{-- ================= KOLOM FITUR SISTEM WEB ================= --}}
+                                {{-- 20. STATUS GURU --}}
+                                <td class="border border-gray-600 px-2 py-1 text-center">
+                                    <div class="flex flex-col gap-1 items-center">
+                                        <span class="text-[9px] font-bold px-1.5 py-0.5 rounded bg-gray-100 border text-gray-600">
+                                            {{ $guru->status_kepegawaian ?? '-' }}
+                                        </span>
+                                        @if(strtoupper($guru->status_sertifikasi) == 'SERTIFIKASI' || strtoupper($guru->status_sertifikasi) == 'INPASSING')
+                                            <span class="text-[9px] font-bold px-1.5 py-0.5 rounded bg-blue-100 text-blue-700 border border-blue-200">
+                                                {{ $guru->status_sertifikasi }}
+                                            </span>
+                                        @endif
+                                    </div>
+                                </td>
+
+                                {{-- 21. INSENTIF --}}
+                                <td class="border border-gray-600 px-2 py-1 text-center align-middle">
+                                    @if($isTidakLayak)
+                                        <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-red-100 text-red-700 border border-red-300">
+                                            TIDAK BERHAK
+                                        </span>
+                                    @else
+                                        @if(Auth::user()->role == 'korcam' && isset($filterType) && $filterType == 'INSENTIF')
+                                            <form id="form-toggle-{{ $guru->id }}" action="{{ route('guru.toggle_insentif', $guru->id) }}" method="POST">
+                                                @csrf
+                                                @if($guru->penerima_insentif == 1)
+                                                    <button type="button" onclick="triggerStatusUpdate('Apakah Anda yakin ingin mengubah status alokasi insentif untuk guru ini?', 'form-toggle-{{ $guru->id }}')" class="text-[10px] font-bold px-2 py-1 rounded-md bg-green-600 text-white border border-green-700 hover:bg-red-600 hover:text-white transition duration-200 shadow-sm group w-full text-center">
+                                                        <span class="group-hover:hidden">BERHAK & DIAJUKAN</span>
+                                                        <span class="hidden group-hover:inline">COPOT JATAH</span>
+                                                    </button>
+                                                @else
+                                                    <button type="button" onclick="triggerStatusUpdate('Apakah Anda yakin ingin mengubah status alokasi insentif untuk guru ini?', 'form-toggle-{{ $guru->id }}')" class="text-[10px] font-bold px-2 py-1 rounded-md bg-yellow-500 text-white border border-yellow-600 hover:bg-emerald-600 hover:text-white transition duration-200 shadow-sm w-full text-center">
+                                                        BERHAK (tidak diajukan)
+                                                    </button>
+                                                @endif
+                                            </form>
+                                        @else
+                                            @if($guru->penerima_insentif == 1)
+                                                <span class="text-[10px] font-bold px-2 py-1 rounded-md bg-green-100 text-green-800 border border-green-500 block text-center">
+                                                    BERHAK & DIAJUKAN
+                                                </span>
+                                            @else
+                                                <span class="text-[10px] font-bold px-2 py-1 rounded-md bg-yellow-100 text-yellow-800 border border-yellow-500 block text-center">
+                                                    BERHAK (tidak diajukan)
+                                                </span>
+                                            @endif
+                                        @endif
+                                    @endif
+                                </td>
+
+                                {{-- 22. FILE KTP --}}
                                 <td class="border border-gray-600 px-2 py-1 text-center {{ $isTidakLayak ? 'bg-red-100' : 'bg-gray-50' }}">
                                     @if($guru->file_ktp)
                                         <div class="flex flex-col items-center">
@@ -563,7 +618,7 @@
                                     @endif
                                 </td>
 
-                                {{-- 9. FILE KK --}}
+                                {{-- 23. FILE KK --}}
                                 <td class="border border-gray-600 px-2 py-1 text-center {{ $isTidakLayak ? 'bg-red-100' : 'bg-white' }}">
                                     @if($guru->file_kk)
                                         <div class="flex flex-col items-center">
@@ -581,7 +636,7 @@
                                     @endif
                                 </td>
 
-                                {{-- 10. FILE REKENING --}}
+                                {{-- 24. FILE REKENING --}}
                                 <td class="border border-gray-600 px-2 py-1 text-center {{ $isTidakLayak ? 'bg-red-100' : 'bg-gray-50' }}">
                                     @if($guru->file_bukurekening)
                                         <div class="flex flex-col items-center">
@@ -599,44 +654,15 @@
                                     @endif
                                 </td>
 
-                                {{-- 11. ALAMAT --}}
-                                <td class="border border-gray-600 px-2 py-1 truncate max-w-xs" title="{{ $guru->alamat_ktp }}">
-                                    {{ Str::limit($guru->alamat_ktp, 30) }}
-                                </td>
-
-                                {{-- 12. TTL --}}
-                                <td class="border border-gray-600 px-2 py-1">
-                                    {{ $guru->tempat_lahir ?? 'KEDIRI' }}{{ !empty($guru->tanggal_lahir) ? ', ' . \Carbon\Carbon::parse($guru->tanggal_lahir)->format('d-m-Y') : '' }}
-                                </td>
-
-                                {{-- 13. L/P --}}
-                                <td class="border border-gray-600 px-2 py-1 text-center">
-                                    {{ $guru->jenis_kelamin }}
-                                </td>
-
-                                {{-- 14-18. WILAYAH & KONTAK --}}
-                                <td class="border border-gray-600 px-2 py-1">{{ $guru->desa ?? '-' }}</td>
-                                <td class="border border-gray-600 px-2 py-1">{{ $guru->kecamatan ?? '-' }}</td>
-                                <td class="border border-gray-600 px-2 py-1 text-center">{{ $guru->kabupaten }}</td>
-                                <td class="border border-gray-600 px-2 py-1 text-center">{{ $guru->agama }}</td>
-                                <td class="border border-gray-600 px-2 py-1 text-center font-bold text-gray-700">{{ $guru->pekerjaan_utama ?: ($guru->status_kepegawaian ?? 'GURU') }}</td>
-                                <td class="border border-gray-600 px-2 py-1">{{ $guru->no_hp }}</td>
-
-                                {{-- 19-21. DETAIL LAIN --}}
-                                <td class="border border-gray-600 px-2 py-1">{{ $guru->nama_ibu_kandung }}</td>
-                                <td class="border border-gray-600 px-2 py-1 ">{{ $guru->nomor_rekening }}</td>
-                                <td class="border border-gray-600 px-2 py-1 text-gray-500 italic">{{ $guru->keterangan ?? '-' }}</td>
-
-                                {{-- 22. AKSI --}}
+                                {{-- 25. AKSI --}}
                                 <td class="border border-gray-600 py-1 text-center sticky right-0 z-10 shadow-l {{ $stickyClass }}">
                                     <div class="flex justify-center gap-1 px-1">
-                                        
                                         {{-- LIHAT --}}
                                         <a href="{{ route('guru.show', $guru->id) }}" class="p-1 bg-blue-100 text-blue-700 border border-blue-300 rounded hover:bg-blue-200 transition" title="Lihat Detail">
                                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
                                         </a>
 
-                                        {{-- VERIFIKASI (Hanya Admin dan Verifikator) --}}
+                                        {{-- VERIFIKASI --}}
                                         @if(Auth::user()->role == 'admin' || Auth::user()->role == 'verifikator')
                                             <a href="{{ route('guru.verifikasi', $guru->id) }}" class="p-1 bg-purple-100 text-purple-700 border border-purple-300 rounded hover:bg-purple-200 transition" title="Verifikasi">
                                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
@@ -647,9 +673,8 @@
                                         <a href="{{ route('guru.edit', $guru->id) }}" class="p-1 bg-yellow-100 text-yellow-700 border border-yellow-300 rounded hover:bg-yellow-200 transition" title="Edit Data">
                                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
                                         </a>
-                                        
-                                        
-                                        {{-- HAPUS (Dapat diakses oleh semua role) --}}
+
+                                        {{-- HAPUS --}}
                                         <form id="form-delete-{{ $guru->id }}" action="{{ route('guru.destroy', $guru->id) }}" method="POST" class="inline">
                                             @csrf
                                             @method('DELETE')
@@ -657,10 +682,11 @@
                                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
                                             </button>
                                         </form>
-                                        
                                     </div>
                                 </td>
                             </tr>
+
+
                         @empty
                             <tr>
                                 <td colspan="25" class="border border-gray-600 px-4 py-8 text-center bg-gray-50 text-gray-400">
