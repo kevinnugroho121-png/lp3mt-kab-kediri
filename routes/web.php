@@ -305,7 +305,7 @@ require __DIR__.'/auth.php';
 // =======================================================
 // RUTE RESMI PENAMPIL DOKUMEN & FOTO (HOSTINGER FIX)
 // =======================================================
-Route::get('/dokumen/{path}', function ($path) {
+Route::get('/{prefix}/{path}', function ($prefix, $path) {
     $cleanPath = ltrim($path, '/');
     $filePath = storage_path('app/public/' . $cleanPath);
 
@@ -323,6 +323,7 @@ Route::get('/dokumen/{path}', function ($path) {
         'pdf' => 'application/pdf',
         'jpg', 'jpeg' => 'image/jpeg',
         'png' => 'image/png',
+        'webp' => 'image/webp',
         default => (function_exists('mime_content_type') ? @mime_content_type($filePath) : 'application/octet-stream'),
     };
 
@@ -330,7 +331,7 @@ Route::get('/dokumen/{path}', function ($path) {
         'Content-Type' => $mime,
         'Content-Disposition' => 'inline; filename="' . basename($filePath) . '"'
     ]);
-})->where('path', '.*');
+})->where('prefix', 'dokumen|storage')->where('path', '.*');
 
 
 Route::get('/jalankan-migrasi-darurat', function () {
