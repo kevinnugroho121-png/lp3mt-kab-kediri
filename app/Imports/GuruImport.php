@@ -107,41 +107,23 @@ class GuruImport implements ToCollection, WithHeadingRow
                 $this->errors[] = "Baris Ke-{$lineNumber}: Domisili KTP Guru '{$rawNamaGuru}' terdata di luar Kabupaten Kediri ({$rawKabGuru}). Guru wajib berdomisili di Kabupaten Kediri.";
             }
 
-            if (strlen($rawNik) === 16) {
-                // 2. Validasi Tanggal Lahir & Jenis Kelamin (Terbuka untuk NIK se-Indonesia)
-                if (!empty($rawTtl) && in_array($rawJk, ['L', 'P'])) {
-                    $tglDeteksi = null;
+            // 2. Validasi Format Tanggal Lahir (Cek Kevalidan Kalender Saja Tanpa Mengunci ke Digit NIK)
+            if (!empty($rawTtl) && $rawTtl !== '-') {
+                $tglDeteksi = null;
 
-                    // Deteksi jika ada format tanggal di dalam input (dengan koma, spasi, atau tanggal murni)
-                    if (str_contains($rawTtl, ',')) {
-                        $parts = explode(',', $rawTtl, 2);
-                        $tglDeteksi = trim($parts[1]);
-                    } elseif (preg_match('/([\d]{1,2}[\-\/\.][\d]{1,2}[\-\/\.][\d]{2,4})/', $rawTtl, $matches)) {
-                        $tglDeteksi = trim($matches[1]);
+                if (str_contains($rawTtl, ',')) {
+                    $parts = explode(',', $rawTtl, 2);
+                    $tglDeteksi = trim($parts[1]);
+                } elseif (preg_match('/([\d]{1,2}[\-\/\.][\d]{1,2}[\-\/\.][\d]{2,4})/', $rawTtl, $matches)) {
+                    $tglDeteksi = trim($matches[1]);
+                }
+
+                if (!empty($tglDeteksi)) {
+                    try {
+                        Carbon::parse($tglDeteksi);
+                    } catch (\Exception $e) {
+                        $this->errors[] = "Baris Ke-{$lineNumber}: Format Tanggal Lahir pada '{$rawTtl}' tidak valid/tidak terbaca kalender.";
                     }
-
-                    // Jika petugas menyertakan tanggal lahir, cek sinkronisasinya dengan NIK
-                    if (!empty($tglDeteksi)) {
-                        try {
-                            $parsedDate = Carbon::parse($tglDeteksi);
-                            $tgl = (int)$parsedDate->format('d');
-                            $bln = $parsedDate->format('m');
-                            $thn = $parsedDate->format('y');
-
-                            $expectedTgl = ($rawJk === 'P') ? ($tgl + 40) : $tgl;
-                            $expectedTglStr = str_pad($expectedTgl, 2, '0', STR_PAD_LEFT);
-                            $expectedNikPattern = $expectedTglStr . $bln . $thn;
-
-                            $nikDatePart = substr($rawNik, 6, 6);
-
-                            if ($nikDatePart !== $expectedNikPattern) {
-                                $this->errors[] = "Baris Ke-{$lineNumber}: ANOMALI NIK! NIK '{$rawNik}' tidak cocok dengan Tanggal Lahir di Excel (" . $parsedDate->format('d-m-Y') . ") & Jenis Kelamin ({$rawJk}). 6 digit tengah NIK seharusnya '{$expectedNikPattern}'.";
-                            }
-                        } catch (\Exception $e) {
-                            $this->errors[] = "Baris Ke-{$lineNumber}: Format Tanggal Lahir pada '{$rawTtl}' tidak valid.";
-                        }
-                    }
-                    // Catatan: Jika petugas HANYA menulis kota (cth: "KEDIRI" atau "BLITAR"), JANGAN ditolak karena tanggal akan di-generate otomatis dari NIK di Loop 2.
                 }
             }
 
@@ -182,8 +164,15 @@ class GuruImport implements ToCollection, WithHeadingRow
                     $processedNiks[$rawNik] = $lineNumber;
                 }
                 
-                if (Guru::where('nik', $rawNik)->exists()) {
-                    $this->errors[] = "Baris Ke-{$lineNumber}: NIK {$rawNik} sudah terdaftar di database sistem.";
+                // Cek ke database dan tarik info lembaganya
+                $guruDb = Guru::with(['lembaga.desa', 'lembaga.kecamatan'])->where('nik', $rawNik)->first();
+                if ($guruDb) {
+                    $namaLembaga = $guruDb->lembaga->nama_lembaga ?? '-';
+                    $desaLembaga = $guruDb->lembaga->desa->nama_desa ?? '';
+                    $kecLembaga  = $guruDb->lembaga->kecamatan->nama_kecamatan ?? '';
+                    $lokasi      = trim("{$namaLembaga}");
+
+                    $this->errors[] = "Baris Ke-{$lineNumber}: NIK {$rawNik} sudah terdaftar di database dan terdaftar di lembaga {$lokasi}.";
                 }
             }
 

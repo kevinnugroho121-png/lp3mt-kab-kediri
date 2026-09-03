@@ -242,7 +242,22 @@ class GuruController extends Controller
             'lembaga_id'        => 'required|exists:lembagas,id',
             'jenis_guru'        => 'required|in:MADIN,TPQ,PONPES',
             'nama_lengkap'      => 'required|string|max:255',
-            'nik'               => 'required|numeric|digits:16|unique:gurus,nik',
+            'nik'               => [
+                'required',
+                'numeric',
+                'digits:16',
+                function ($attribute, $value, $fail) {
+                    $guruAda = Guru::with(['lembaga.desa', 'lembaga.kecamatan'])->where('nik', $value)->first();
+                    if ($guruAda) {
+                        $namaLembaga = $guruAda->lembaga->nama_lembaga ?? '-';
+                        $desaLembaga = $guruAda->lembaga->desa->nama_desa ?? '';
+                        $kecLembaga  = $guruAda->lembaga->kecamatan->nama_kecamatan ?? '';
+                        $lokasi      = trim("{$namaLembaga}");
+
+                        $fail("NIK ini sudah terdaftar di database dan terdaftar di lembaga {$lokasi}.");
+                    }
+                }
+            ],
             'tempat_lahir'      => 'required|string',
             'tanggal_lahir'     => 'required|date',
             'jenis_kelamin'     => 'required|in:L,P',
@@ -267,7 +282,6 @@ class GuruController extends Controller
             'file_kk'           => 'nullable|mimes:pdf|max:2048',
             'file_bukurekening' => 'nullable|mimes:pdf|max:2048',
         ], [
-            'nik.unique'            => 'NIK ini sudah terdaftar di database.',
             'no_hp.unique'          => 'Nomor HP sudah terdaftar atas nama guru lain.',
             'nomor_rekening.unique' => 'Nomor Rekening sudah digunakan oleh guru lain.',
         ]);
@@ -280,20 +294,7 @@ class GuruController extends Controller
             ]);
         }
 
-        // 2. Satpam Validasi NIK Dukcapil vs Tanggal Lahir (+40 Perempuan)
-        $nik = $request->nik;
-        $tglLahir = \Carbon\Carbon::parse($request->tanggal_lahir);
-        $tgl = (int)$tglLahir->format('d');
-        $bln = $tglLahir->format('m');
-        $thn = $tglLahir->format('y');
-        $expectedTgl = ($request->jenis_kelamin === 'P') ? ($tgl + 40) : $tgl;
-        $expectedNikPattern = str_pad($expectedTgl, 2, '0', STR_PAD_LEFT) . $bln . $thn;
 
-        if (substr($nik, 6, 6) !== $expectedNikPattern) {
-            return back()->withInput()->withErrors([
-                'nik' => "ANOMALI NIK! NIK '{$nik}' tidak sinkron dengan Tanggal Lahir (" . $tglLahir->format('d-m-Y') . ") & Jenis Kelamin ({$request->jenis_kelamin}). Format NIK semestinya memuat kode '{$expectedNikPattern}'."
-            ]);
-        }
 
         // [BARU] Satpam Duplikasi Ganda: Kombinasi (Nama Lengkap + Nama Ibu Kandung)
         $cekGanda = Guru::where('nama_lengkap', strtoupper($request->nama_lengkap))
@@ -427,7 +428,25 @@ class GuruController extends Controller
         $request->validate([
             'lembaga_id'        => 'required|exists:lembagas,id',
             'nama_lengkap'      => 'required|string|max:255',
-            'nik'               => 'required|numeric|digits:16|unique:gurus,nik,' . $id,
+            'nik'               => [
+                'required',
+                'numeric',
+                'digits:16',
+                function ($attribute, $value, $fail) use ($id) {
+                    $guruAda = Guru::with(['lembaga.desa', 'lembaga.kecamatan'])
+                                    ->where('nik', $value)
+                                    ->where('id', '!=', $id)
+                                    ->first();
+                    if ($guruAda) {
+                        $namaLembaga = $guruAda->lembaga->nama_lembaga ?? '-';
+                        $desaLembaga = $guruAda->lembaga->desa->nama_desa ?? '';
+                        $kecLembaga  = $guruAda->lembaga->kecamatan->nama_kecamatan ?? '';
+                        $lokasi      = trim("{$namaLembaga}");
+
+                        $fail("NIK ini sudah terdaftar di database dan terdaftar di lembaga {$lokasi}.");
+                    }
+                }
+            ],
             'tempat_lahir'      => 'required|string',
             'tanggal_lahir'     => 'required|date',
             'jenis_kelamin'     => 'required|in:L,P',
@@ -445,7 +464,6 @@ class GuruController extends Controller
             'file_kk'           => 'nullable|mimes:pdf|max:2048',
             'file_bukurekening' => 'nullable|mimes:pdf|max:2048',
         ], [
-            'nik.unique'            => 'NIK ini sudah digunakan oleh data guru lain.',
             'no_hp.unique'          => 'Nomor HP sudah terdaftar atas nama guru lain.',
             'nomor_rekening.unique' => 'Nomor Rekening sudah digunakan oleh guru lain.',
         ]);
@@ -458,20 +476,6 @@ class GuruController extends Controller
             ]);
         }
 
-        // 2. Satpam Validasi NIK Dukcapil vs Tanggal Lahir saat Update
-        $nik = $request->nik;
-        $tglLahir = \Carbon\Carbon::parse($request->tanggal_lahir);
-        $tgl = (int)$tglLahir->format('d');
-        $bln = $tglLahir->format('m');
-        $thn = $tglLahir->format('y');
-        $expectedTgl = ($request->jenis_kelamin === 'P') ? ($tgl + 40) : $tgl;
-        $expectedNikPattern = str_pad($expectedTgl, 2, '0', STR_PAD_LEFT) . $bln . $thn;
-
-        if (substr($nik, 6, 6) !== $expectedNikPattern) {
-            return back()->withInput()->withErrors([
-                'nik' => "ANOMALI NIK! NIK '{$nik}' tidak sinkron dengan Tanggal Lahir (" . $tglLahir->format('d-m-Y') . ") & Jenis Kelamin ({$request->jenis_kelamin}). Format NIK semestinya memuat kode '{$expectedNikPattern}'."
-            ]);
-        }
 
         // [BARU] Satpam Duplikasi Ganda (Kecuali Data Guru Ini Sendiri)
         $cekGanda = Guru::where('id', '!=', $id)
