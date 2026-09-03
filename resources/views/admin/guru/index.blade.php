@@ -203,10 +203,18 @@
 
             {{-- BLOK NOTIFIKASI ERROR EXCEL CUSTOM (REJECT-ALL) --}}
             @if (session('custom_excel_errors'))
+                @php
+                    // Menghitung jumlah unik nomor baris Excel yang bermasalah
+                    $barisBermasalah = collect(session('custom_excel_errors'))->map(function($pesan) {
+                        preg_match('/Baris Ke-(\d+)/', $pesan, $matches);
+                        return $matches[1] ?? null;
+                    })->filter()->unique()->count();
+                    $totalBarisError = $barisBermasalah > 0 ? $barisBermasalah : count(session('custom_excel_errors'));
+                @endphp
                 <div class="mt-3 bg-red-50 border-2 border-red-200 rounded-lg p-4 shadow-sm">
                     <div class="flex items-center mb-2 text-red-800">
                         <span class="text-lg mr-2">⚠️</span>
-                        <strong class="font-bold text-xs tracking-tight">Sistem Menolak File! Terdeteksi Data Kosong / NIK Duplikat. Seluruh baris BATAL disimpan.</strong>
+                        <strong class="font-bold text-xs tracking-tight">Sistem Menolak File! Terdeteksi ada {{ $totalBarisError }} baris yang bermasalah. Seluruh baris BATAL disimpan.</strong>
                     </div>
                     
                     <div class="border-l-4 border-red-600 bg-white p-3 rounded shadow-inner">

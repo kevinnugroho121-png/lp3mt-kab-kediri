@@ -186,11 +186,17 @@ class GuruImport implements ToCollection, WithHeadingRow
                     $processedNamaIbu[$keyIdentitas] = $lineNumber;
                 }
 
-                $duplikatDb = Guru::where('nama_lengkap', strtoupper($rawNamaGuru))
+                $duplikatDb = Guru::with(['lembaga.desa', 'lembaga.kecamatan'])
+                                  ->where('nama_lengkap', strtoupper($rawNamaGuru))
                                   ->where('nama_ibu_kandung', strtoupper($rawIbuKandung))
                                   ->first();
                 if ($duplikatDb) {
-                    $this->errors[] = "Baris Ke-{$lineNumber}: GAGAL! Guru '{$rawNamaGuru}' dengan Ibu Kandung '{$rawIbuKandung}' sudah ada di database dengan NIK: {$duplikatDb->nik}.";
+                    $namaLembaga = $duplikatDb->lembaga->nama_lembaga ?? '-';
+                    $desaLembaga = $duplikatDb->lembaga->desa->nama_desa ?? '';
+                    $kecLembaga  = $duplikatDb->lembaga->kecamatan->nama_kecamatan ?? '';
+                    $lokasi      = trim("{$namaLembaga}");
+
+                    $this->errors[] = "Baris Ke-{$lineNumber}: GAGAL! Guru '{$rawNamaGuru}' dengan Ibu Kandung '{$rawIbuKandung}' sudah terdaftar di database di lembaga {$lokasi} (NIK: {$duplikatDb->nik}).";
                 }
             }
 
@@ -202,8 +208,14 @@ class GuruImport implements ToCollection, WithHeadingRow
                     $processedRekenings[$rawRekening] = $lineNumber;
                 }
                 
-                if (Guru::where('nomor_rekening', $rawRekening)->exists()) {
-                    $this->errors[] = "Baris Ke-{$lineNumber}: GAGAL! Nomor Rekening '{$rawRekening}' sudah terdaftar atas nama guru lain di database.";
+                $rekDb = Guru::with(['lembaga.desa', 'lembaga.kecamatan'])->where('nomor_rekening', $rawRekening)->first();
+                if ($rekDb) {
+                    $namaLembaga = $rekDb->lembaga->nama_lembaga ?? '-';
+                    $desaLembaga = $rekDb->lembaga->desa->nama_desa ?? '';
+                    $kecLembaga  = $rekDb->lembaga->kecamatan->nama_kecamatan ?? '';
+                    $lokasi      = trim("{$namaLembaga}");
+
+                    $this->errors[] = "Baris Ke-{$lineNumber}: GAGAL! Nomor Rekening '{$rawRekening}' sudah terdaftar atas nama guru {$rekDb->nama_lengkap} di lembaga {$lokasi}.";
                 }
             }
 
@@ -215,8 +227,14 @@ class GuruImport implements ToCollection, WithHeadingRow
                     $processedHp[$rawHp] = $lineNumber;
                 }
 
-                if (Guru::where('no_hp', $rawHp)->exists()) {
-                    $this->errors[] = "Baris Ke-{$lineNumber}: GAGAL! Nomor HP '{$rawHp}' sudah digunakan oleh guru lain di database.";
+                $hpDb = Guru::with(['lembaga.desa', 'lembaga.kecamatan'])->where('no_hp', $rawHp)->first();
+                if ($hpDb) {
+                    $namaLembaga = $hpDb->lembaga->nama_lembaga ?? '-';
+                    $desaLembaga = $hpDb->lembaga->desa->nama_desa ?? '';
+                    $kecLembaga  = $hpDb->lembaga->kecamatan->nama_kecamatan ?? '';
+                    $lokasi      = trim("{$namaLembaga}");
+
+                    $this->errors[] = "Baris Ke-{$lineNumber}: GAGAL! Nomor HP '{$rawHp}' sudah digunakan atas nama guru {$hpDb->nama_lengkap} di lembaga {$lokasi}.";
                 }
             }
         }
