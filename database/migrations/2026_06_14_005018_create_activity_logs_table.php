@@ -13,11 +13,13 @@ return new class extends Migration
  {
      Schema::create('activity_logs', function (Blueprint $table) {
          $table->id();
-         $table->unsignedBigInteger('user_id')->nullable();
+         $table->unsignedBigInteger('user_id')->nullable()->index(); // Tambah index agar filter korcam cepat
          $table->string('nama_user');
          $table->string('aksi');
-         $table->string('target');
+         $table->text('target')->nullable(); // Ubah ke text agar muat nama file panjang/pesan error
          $table->timestamps();
+
+         $table->index('created_at'); // Tambah index agar urutan waktu terbaru selalu instan
      });
  }
 

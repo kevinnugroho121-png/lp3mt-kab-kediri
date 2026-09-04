@@ -168,69 +168,64 @@
         {{-- TAMPILKAN PANEL HANYA DI MENU MADIN, TPQ, DAN PONPES --}}
         @if(isset($filterType) && in_array($filterType, ['MADIN', 'TPQ', 'PONPES']))
             <div class="mb-1 bg-emerald-50 border border-emerald-300 p-1 rounded-lg shadow-sm">
-            <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-                <div>
-                    <h3 class="text-sm font-bold italic text-emerald-600 flex items-center gap-1">
-                        * Import Data Guru via Excel. Pastikan semua kolom terisi lengkap. Sistem akan memblokir NIK ganda.
-                    </h3>
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                    <div>
+                        <h3 class="text-sm font-bold italic text-emerald-600 flex items-center gap-1">
+                            * Import Data Guru via Excel. Pastikan semua kolom terisi lengkap. Sistem akan memblokir NIK ganda.
+                        </h3>
+                    </div>
+                    
+                    {{-- Form Upload --}}
+                    <form action="{{ route('guru.import') }}" method="POST" enctype="multipart/form-data" class="flex flex-wrap items-center gap-2 w-full md:w-auto justify-end">
+                        @csrf
+                        <input type="file" name="file_excel" accept=".xlsx, .xls" required
+                               class="text-xs text-gray-500 file:mr-2 file:py-1.5 file:px-3 file:rounded file:border file:border-emerald-300 file:text-xs file:font-bold file:bg-white file:text-emerald-700 hover:file:bg-emerald-100 cursor-pointer">
+                        <button type="submit" class="bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1.5 rounded text-xs font-bold shadow-sm flex items-center gap-1 transition">
+                            Impor
+                        </button>
+                    </form>
                 </div>
-                
-                {{-- Form Upload --}}
-                <form action="{{ route('guru.import') }}" method="POST" enctype="multipart/form-data" class="flex flex-wrap items-center gap-2 w-full md:w-auto justify-end">
-                    @csrf
-                    <input type="file" name="file_excel" accept=".xlsx, .xls" required
-                           class="text-xs text-gray-500 file:mr-2 file:py-1.5 file:px-3 file:rounded file:border file:border-emerald-300 file:text-xs file:font-bold file:bg-white file:text-emerald-700 hover:file:bg-emerald-100 cursor-pointer">
-                    <button type="submit" class="bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1.5 rounded text-xs font-bold shadow-sm flex items-center gap-1 transition">
-                        Impor
-                    </button>
-                </form>
-                
             </div>
         @endif
 
-            {{-- Tempat Menampilkan Notifikasi Sukses / Error Massal ala Simkopdes --}}
-            @if(session('success'))
-                <div class="mt-3 bg-green-100 border border-green-400 text-green-700 px-3 py-2 rounded text-xs font-bold">
-                    {{ session('success') }}
-                </div>
-            @endif
+        {{-- Tempat Menampilkan Notifikasi Sukses / Error Massal --}}
+        @if(session('success'))
+            <div class="mb-2 bg-green-100 border border-green-400 text-green-700 px-3 py-2 rounded text-xs font-bold">
+                {{ session('success') }}
+            </div>
+        @endif
 
-            @if(session('error'))
-                <div class="mt-3 bg-red-100 border border-red-400 text-red-700 px-3 py-2 rounded text-xs font-bold">
-                    ⚠️ {{ session('error') }}
-                </div>
-            @endif
+        @if(session('error'))
+            <div class="mb-2 bg-red-100 border border-red-400 text-red-700 px-3 py-2 rounded text-xs font-bold">
+                ⚠️ {{ session('error') }}
+            </div>
+        @endif
 
-            {{-- BLOK NOTIFIKASI ERROR EXCEL CUSTOM (REJECT-ALL) --}}
-            @if (session('custom_excel_errors'))
-                @php
-                    // Menghitung jumlah unik nomor baris Excel yang bermasalah
-                    $barisBermasalah = collect(session('custom_excel_errors'))->map(function($pesan) {
-                        preg_match('/Baris Ke-(\d+)/', $pesan, $matches);
-                        return $matches[1] ?? null;
-                    })->filter()->unique()->count();
-                    $totalBarisError = $barisBermasalah > 0 ? $barisBermasalah : count(session('custom_excel_errors'));
-                @endphp
-                <div class="mt-3 bg-red-50 border-2 border-red-200 rounded-lg p-4 shadow-sm">
-                    <div class="flex items-center mb-2 text-red-800">
-                        <span class="text-lg mr-2">⚠️</span>
-                        <strong class="font-bold text-xs tracking-tight">Sistem Menolak File! Terdeteksi ada {{ $totalBarisError }} baris yang bermasalah. Seluruh baris BATAL disimpan.</strong>
-                    </div>
-                    
-                    <div class="border-l-4 border-red-600 bg-white p-3 rounded shadow-inner">
-                        <p class="font-bold text-red-900 text-[10px] mb-1 uppercase tracking-wide">Daftar Baris yang Bermasalah (Wajib Diperbaiki di Excel):</p>
-                        <div class="max-h-40 overflow-y-auto text-[11px] text-red-700 font-medium custom-scrollbar">
-                            <ul class="list-disc pl-4 space-y-1">
-                                @foreach (session('custom_excel_errors') as $errorPesan)
-                                    <li>{!! $errorPesan !!}</li>
-                                @endforeach
-                            </ul>
-                        </div>
+        {{-- BLOK NOTIFIKASI ERROR EXCEL CUSTOM (REJECT-ALL) --}}
+        @if (session('custom_excel_errors'))
+            @php
+                $barisBermasalah = collect(session('custom_excel_errors'))->map(function($pesan) {
+                    preg_match('/Baris Ke-(\d+)/', $pesan, $matches);
+                    return $matches[1] ?? null;
+                })->filter()->unique()->count();
+                $totalBarisError = $barisBermasalah > 0 ? $barisBermasalah : count(session('custom_excel_errors'));
+            @endphp
+            <div class="mb-2 bg-red-50 border-2 border-red-200 rounded-lg p-4 shadow-sm">
+                <div class="flex items-center mb-2 text-red-800">
+                    <span class="text-lg mr-2">⚠️</span>
+                    <strong class="font-bold text-xs tracking-tight">Sistem Menolak File! Terdeteksi ada {{ $totalBarisError }} baris yang bermasalah / NIK Duplikat. Seluruh baris BATAL disimpan.</strong>
+                </div>
+                
+                <div class="border-l-4 border-red-600 bg-white p-3 rounded shadow-inner">
+                    <p class="font-bold text-red-900 text-[10px] mb-1 uppercase tracking-wide">Daftar Baris yang Bermasalah (Wajib Diperbaiki di Excel):</p>
+                    <div class="max-h-40 overflow-y-auto text-[11px] text-red-700 font-medium custom-scrollbar">
+                        <ul class="list-disc pl-4 space-y-1">
+                            @foreach (session('custom_excel_errors') as $errorPesan)
+                                <li>{!! $errorPesan !!}</li>
+                            @endforeach
+                        </ul>
                     </div>
                 </div>
-            @endif
-            
-        @if(isset($filterType) && in_array($filterType, ['MADIN', 'TPQ', 'PONPES']))
             </div>
         @endif
 

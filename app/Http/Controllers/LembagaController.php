@@ -272,7 +272,16 @@ class LembagaController extends Controller
             $data['jumlah_santri_p'] = (int) floor($totalInput / 2);
         }
 
-        Lembaga::create($data);
+        $lembagaBaru = Lembaga::create($data);
+
+        // [CCTV LOG] Catat penambahan lembaga baru
+        DB::table('activity_logs')->insert([
+            'user_id'    => Auth::id(),
+            'nama_user'  => Auth::user()->name,
+            'aksi'       => 'Menambah Data Lembaga',
+            'target'     => $lembagaBaru->nama_lembaga . ' (' . $lembagaBaru->jenis_lembaga . ')',
+            'created_at' => now(),
+        ]);
 
         return redirect()->route('lembaga.index')->with('success', 'Data lembaga dan dokumen berhasil disimpan.');
     }
@@ -510,6 +519,15 @@ class LembagaController extends Controller
 
         $lembaga->update($data);
 
+        // [CCTV LOG] Catat pengubahan data lembaga
+        DB::table('activity_logs')->insert([
+            'user_id'    => Auth::id(),
+            'nama_user'  => Auth::user()->name,
+            'aksi'       => 'Mengubah Data Lembaga',
+            'target'     => $lembaga->nama_lembaga . ' (' . $lembaga->jenis_lembaga . ')',
+            'created_at' => now(),
+        ]);
+
         return redirect()->route('lembaga.index')->with('success', 'Data lembaga berhasil diperbarui');
     }
 
@@ -635,6 +653,15 @@ class LembagaController extends Controller
             }
         }
 
+        // [CCTV LOG] Catat penghapusan lembaga sebelum datanya dihapus permanen
+        DB::table('activity_logs')->insert([
+            'user_id'    => Auth::id(),
+            'nama_user'  => Auth::user()->name,
+            'aksi'       => 'Menghapus Data Lembaga',
+            'target'     => $lembaga->nama_lembaga . ' (' . $lembaga->jenis_lembaga . ')',
+            'created_at' => now(),
+        ]);
+
         $lembaga->delete();
 
         return redirect()->route('lembaga.index')->with('success', 'Data lembaga berhasil dihapus');
@@ -658,12 +685,34 @@ class LembagaController extends Controller
         $import = new LembagaImport(Auth::user());
 
         try {
+            $namaFileAsli = $request->file('file')->getClientOriginalName();
+
             Excel::import($import, $request->file('file'));
+
+            // [CCTV LOG] Catat Impor Lembaga Berhasil
+            DB::table('activity_logs')->insert([
+                'user_id'    => Auth::id(),
+                'nama_user'  => Auth::user()->name,
+                'aksi'       => 'Impor Data Lembaga Excel',
+                'target'     => "Data Lembaga (File: {$namaFileAsli})",
+                'created_at' => now(),
+            ]);
 
             return redirect()->back()->with('success', 'Alhamdulillah! Seluruh data Lembaga dari file Excel berhasil diproses tanpa ada yang cacat/ganda.');
 
         } catch (\Exception $e) {
             if ($e->getMessage() === 'excel_validation_failed') {
+                $totalError = count($import->errors);
+
+                // [CCTV LOG] Catat Percobaan Impor Lembaga yang Ditolak Satpam
+                DB::table('activity_logs')->insert([
+                    'user_id'    => Auth::id(),
+                    'nama_user'  => Auth::user()->name,
+                    'aksi'       => 'Gagal Impor Excel',
+                    'target'     => "Ditolak ({$totalError} Temuan Salah) - File: " . ($request->file('file') ? $request->file('file')->getClientOriginalName() : 'Excel'),
+                    'created_at' => now(),
+                ]);
+
                 // Lempar data array string error buatan kita ke session khusus
                 return redirect()->back()->with('custom_excel_errors', $import->errors);
             }

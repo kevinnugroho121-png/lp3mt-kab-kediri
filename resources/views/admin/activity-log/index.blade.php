@@ -90,7 +90,7 @@
                             <th class="border-r border-gray-600 px-2 py-1.5 text-center font-bold w-48">Waktu Kejadian</th>
                             <th class="border-r border-gray-600 px-2 py-1.5 text-center font-bold w-64">Nama Operator</th>
                             <th class="border-r border-gray-600 px-2 py-1.5 text-center font-bold w-64">Tindakan / Aksi</th>
-                            <th class="px-2 py-1.5 text-center font-bold">Target Objek (Data Guru)</th>
+                            <th class="px-2 py-1.5 text-center font-bold">Target Objek (Guru / Lembaga)</th>
                         </tr>
                     </thead>
 
@@ -121,12 +121,20 @@
 
                                 {{-- AKSI / TINDAKAN --}}
                                 <td class="border-r border-gray-600 px-2 py-1.5 text-[10px]">
-                                    @if(str_contains($log->aksi, 'Menghapus'))
+                                    @if(str_contains($log->aksi, 'Gagal'))
+                                        <span class="px-1.5 py-0.5 rounded font-bold bg-rose-100 text-rose-700 border border-rose-300">⚠️ {{ $log->aksi }}</span>
+                                    @elseif(str_contains($log->aksi, 'Menghapus'))
                                         <span class="px-1.5 py-0.5 rounded font-bold bg-red-100 text-red-700 border border-red-200">{{ $log->aksi }}</span>
                                     @elseif(str_contains($log->aksi, 'Mengaktifkan'))
                                         <span class="px-1.5 py-0.5 rounded font-bold bg-green-100 text-green-700 border border-green-200">{{ $log->aksi }}</span>
+                                    @elseif(str_contains($log->aksi, 'Mencopot'))
+                                        <span class="px-1.5 py-0.5 rounded font-bold bg-orange-100 text-orange-700 border border-orange-200">{{ $log->aksi }}</span>
                                     @elseif(str_contains($log->aksi, 'Menambah'))
                                         <span class="px-1.5 py-0.5 rounded font-bold bg-blue-100 text-blue-700 border border-blue-200">{{ $log->aksi }}</span>
+                                    @elseif(str_contains($log->aksi, 'Impor'))
+                                        <span class="px-1.5 py-0.5 rounded font-bold bg-purple-100 text-purple-700 border border-purple-200">{{ $log->aksi }}</span>
+                                    @elseif(str_contains($log->aksi, 'Download'))
+                                        <span class="px-1.5 py-0.5 rounded font-bold bg-cyan-100 text-cyan-700 border border-cyan-200">{{ $log->aksi }}</span>
                                     @else
                                         <span class="px-1.5 py-0.5 rounded font-bold bg-amber-100 text-amber-700 border border-amber-200">{{ $log->aksi }}</span>
                                     @endif

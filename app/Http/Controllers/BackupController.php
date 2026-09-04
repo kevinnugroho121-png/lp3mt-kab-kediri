@@ -12,21 +12,17 @@ class BackupController extends Controller
 {
     public function download()
     {
-        try {
-            // 1. Catat ke CCTV Log Aktivitas (Biar elegan pas didemokan)
-            DB::table('activity_logs')->insert([
-                'user_id'    => Auth::id(),
-                'nama_user'  => Auth::user()->name,
-                'aksi'       => 'Backup Database Sistem (.zip)',
-                'target'     => 'Database Keseluruhan',
-                'created_at' => now(),
-            ]);
+        // [KEAMANAN] Cegah peran selain Admin mendownload seluruh isi database
+        if (Auth::user()->role !== 'admin') {
+            abort(403, 'Akses Ditolak! Hanya Admin yang berhak mengunduh cadangan database.');
+        }
 
-            // 2. Perintah sakti untuk mengeksekusi backup khusus database
+        try {
+            // 1. Eksekusi backup khusus database
             Artisan::call('backup:run', ['--only-db' => true]);
 
-            // 3. Mencari file zip backup yang baru saja dibuat di folder storage
-            $folderName = config('backup.backup.name'); // Biasanya nama folder sama dengan APP_NAME di .env
+            // 2. Mencari file zip backup yang baru saja dibuat di folder storage
+            $folderName = config('backup.backup.name');
             $files = Storage::disk('local')->files($folderName);
 
             if (empty($files)) {
@@ -37,6 +33,17 @@ class BackupController extends Controller
             $latestBackup = collect($files)->sortByDesc(function ($file) {
                 return Storage::disk('local')->lastModified($file);
             })->first();
+
+            $namaFileZip = basename($latestBackup);
+
+            // 3. [CCTV LOG] Catat HANYA SETELAH file backup 100% sukses terbuat
+            DB::table('activity_logs')->insert([
+                'user_id'    => Auth::id(),
+                'nama_user'  => Auth::user()->name,
+                'aksi'       => 'Download Rekap Excel', // Atau gunakan 'Backup Database Sistem (.zip)'
+                'target'     => "Cadangan Database ({$namaFileZip})",
+                'created_at' => now(),
+            ]);
 
             // 4. Paksa browser untuk men-download file tersebut
             return Storage::disk('local')->download($latestBackup);

@@ -723,12 +723,34 @@ class GuruController extends Controller
         $import = new GuruImport(Auth::user(), $menuAsal);
 
         try {
+            $namaFileAsli = $request->file('file_excel')->getClientOriginalName();
+
             Excel::import($import, $request->file('file_excel'));
+
+            // [BARU] Catat Aktivitas Impor Berhasil ke CCTV Log
+            DB::table('activity_logs')->insert([
+                'user_id'    => Auth::id(),
+                'nama_user'  => Auth::user()->name,
+                'aksi'       => 'Impor Data Guru Excel',
+                'target'     => "Guru {$menuAsal} (File: {$namaFileAsli})",
+                'created_at' => now(),
+            ]);
 
             return back()->with('success', "Alhamdulillah! Seluruh data Guru {$menuAsal} di file Excel berhasil diproses tanpa ada NIK/Rekening ganda.");
 
         } catch (\Exception $e) {
             if ($e->getMessage() === 'excel_validation_failed') {
+                $totalError = count($import->errors);
+
+                // [CCTV LOG] Catat jika operator mencoba mengunggah data bermasalah
+                DB::table('activity_logs')->insert([
+                    'user_id'    => Auth::id(),
+                    'nama_user'  => Auth::user()->name,
+                    'aksi'       => 'Gagal Impor Excel',
+                    'target'     => "Ditolak ({$totalError} Temuan Salah) - File: {$namaFileAsli}",
+                    'created_at' => now(),
+                ]);
+
                 return redirect()->back()->with('custom_excel_errors', $import->errors);
             }
             

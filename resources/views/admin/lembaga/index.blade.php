@@ -136,16 +136,24 @@
 
         {{-- BLOK NOTIFIKASI ERROR EXCEL CUSTOM (REJECT-ALL) --}}
         @if (session('custom_excel_errors'))
-            <div class="mb-4 bg-red-50 border-2 border-red-200 rounded-2xl p-5 shadow-sm">
-                <div class="flex items-center mb-3 text-red-800">
-                    <span class="text-xl mr-2">⚠️</span>
-                    <strong class="font-extrabold text-sm tracking-tight">Sistem Menolak File! Terdeteksi Data Kosong / Duplikat. Seluruh baris BATAL disimpan demi keamanan data.</strong>
+            @php
+                // Menghitung jumlah unik nomor baris Excel yang bermasalah
+                $barisBermasalah = collect(session('custom_excel_errors'))->map(function($pesan) {
+                    preg_match('/Baris Ke-(\d+)/', $pesan, $matches);
+                    return $matches[1] ?? null;
+                })->filter()->unique()->count();
+                $totalBarisError = $barisBermasalah > 0 ? $barisBermasalah : count(session('custom_excel_errors'));
+            @endphp
+            <div class="mb-3 bg-red-50 border-2 border-red-200 rounded-lg p-4 shadow-sm">
+                <div class="flex items-center mb-2 text-red-800">
+                    <span class="text-lg mr-2">⚠️</span>
+                    <strong class="font-bold text-xs tracking-tight">Sistem Menolak File! Terdeteksi ada {{ $totalBarisError }} baris yang bermasalah / Duplikat. Seluruh baris BATAL disimpan demi keamanan data.</strong>
                 </div>
                 
-                <div class="border-l-4 border-red-600 bg-white p-4 rounded-xl shadow-inner">
-                    <p class="font-bold text-red-900 text-xs mb-2 uppercase tracking-wide">Daftar Baris yang Bermasalah (Wajib Diperbaiki di Excel):</p>
-                    <div class="max-h-60 overflow-y-auto text-xs text-red-700 font-medium">
-                        <ul class="list-disc pl-5 space-y-1.5">
+                <div class="border-l-4 border-red-600 bg-white p-3 rounded shadow-inner">
+                    <p class="font-bold text-red-900 text-[10px] mb-1 uppercase tracking-wide">Daftar Baris yang Bermasalah (Wajib Diperbaiki di Excel):</p>
+                    <div class="max-h-48 overflow-y-auto text-[11px] text-red-700 font-medium">
+                        <ul class="list-disc pl-4 space-y-1">
                             @foreach (session('custom_excel_errors') as $errorPesan)
                                 <li>{!! $errorPesan !!}</li>
                             @endforeach
@@ -589,7 +597,7 @@
                                 </td>
                             </tr>
                         @empty
-                            <tr><td colspan="12" class="border border-gray-400 py-8 text-center text-black-400 bg-gray-50 font-bold">Data lembaga tidak ditemukan.</td></tr>
+                            <tr><td colspan="13" class="border border-gray-400 py-8 text-center text-black-400 bg-gray-50 font-bold">Data lembaga tidak ditemukan.</td></tr>
                         @endforelse
                     </tbody>
                 </table>
