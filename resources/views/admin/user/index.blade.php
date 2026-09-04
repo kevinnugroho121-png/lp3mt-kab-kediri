@@ -122,8 +122,8 @@
                                     {{ $users->firstItem() + $index }}
                                 </td>
 
-                                <td class="border-r border-gray-600 px-1 py-1">
-                                    <div class="font-bold text-gray-800 text-[15px] ">{{ $user->name }}</div>
+                                <td class="border-r border-gray-600 px-2 py-1 whitespace-nowrap">
+                                    <div class="font-bold text-gray-800 text-[15px]">{{ $user->name }}</div>
                                     <div class="text-[12px] text-gray-800  py-2"><i>e-mail :</i> <i>{{ $user->email }}</i></div>
                                 </td>
 

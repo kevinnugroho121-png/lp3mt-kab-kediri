@@ -15,7 +15,16 @@ class UserController extends Controller
     // 1. TAMPILKAN DAFTAR USER (+ FILTER & PEMANTAUAN SESI)
     public function index(Request $request)
     {
+        $waktuBatasOnline = time() - 300; // 5 Menit terakhir dianggap online
+
         $query = User::with('kecamatan')
+            // 1. Prioritaskan seluruh user yang SEDANG ONLINE (Aktif <= 5 menit) di paling atas
+            ->orderByRaw("CASE WHEN (SELECT MAX(last_activity) FROM sessions WHERE sessions.user_id = users.id) >= ? THEN 1 ELSE 0 END DESC", [$waktuBatasOnline])
+            // 2. Di antara yang online, urutkan dari yang paling baru bergerak/beraktivitas
+            ->orderByRaw("(SELECT MAX(last_activity) FROM sessions WHERE sessions.user_id = users.id) DESC")
+            // 3. Untuk user offline, urutkan dari yang paling baru logout/terakhir terlihat
+            ->orderByDesc('last_seen_at')
+            // 4. Logika bawaan tetap utuh: urutkan wilayah & jabatan untuk akun yang belum pernah login
             ->orderBy('kecamatan_id', 'asc')
             ->orderByRaw("FIELD(jabatan_korcam, 'Korcam', 'KORCAM', 'Ketua', 'KETUA', 'Anggota 1', 'ANGGOTA 1', 'Anggota 2', 'ANGGOTA 2') ASC, id ASC");
 
