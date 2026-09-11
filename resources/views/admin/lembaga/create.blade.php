@@ -185,14 +185,14 @@
                             <h3 class="text-base font-bold text-black-800 ">Upload Dokumen & Foto</h3>
                         </div>
 
-                        {{-- DOKUMEN PDF (GRID 2x2) --}}
+                        {{-- DOKUMEN LEGALITAS & DATA SANTRI (GRID 2x2) --}}
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
                             
-                            {{-- 1. IJOP --}}
-                            <div class="bg-gray-50 p-3 rounded-lg border border-gray-400 shadow-sm flex flex-col">
-                                <label class="block text-xs font-bold text-black-800 mb-2">1. Scan IJOP Asli</label>
+                            {{-- 1. IJOP ASLI (PDF - WAJIB) --}}
+                            <div class="bg-green-50/40 p-3 rounded-lg border border-green-400 shadow-sm flex flex-col">
+                                <label class="block text-xs font-bold text-black-800 mb-2">1. IJOP ASLI (format pdf) <span class="text-red-500">*</span></label>
                                 <div class="w-full text-left mb-3">
-                                    <input type="file" name="file_ijop" id="file_ijop" accept="application/pdf" class="block w-full text-[10px] text-black-500 file:mr-2 file:py-1 file:px-3 file:rounded file:border-0 file:text-[10px] file:font-bold file:bg-blue-600 file:text-white hover:file:bg-blue-700 cursor-pointer transition" onchange="handleFileSelect(this, 'preview_ijop', 'btn_reset_ijop')">
+                                    <input type="file" name="file_ijop" id="file_ijop" accept="application/pdf" required class="block w-full text-[10px] text-black-500 file:mr-2 file:py-1 file:px-3 file:rounded file:border-0 file:text-[10px] file:font-bold file:bg-blue-600 file:text-white hover:file:bg-blue-700 cursor-pointer transition" onchange="handleFileSelect(this, 'preview_ijop', 'btn_reset_ijop')">
                                     <button type="button" id="btn_reset_ijop" onclick="resetFile('file_ijop', 'preview_ijop', 'btn_reset_ijop')" class="hidden mt-1 text-[10px] text-red-600 font-bold underline">&times; Batal Upload</button>
                                 </div>
                                 <div class="grid grid-cols-2 gap-3 mb-3">
@@ -210,9 +210,9 @@
                                 <iframe id="preview_ijop" class="hidden w-full h-[250px] border border-gray-300 rounded bg-white mt-auto"></iframe>
                             </div>
 
-                            {{-- 2. SKD --}}
+                            {{-- 2. SUKET DOMISILI (PDF - OPSIONAL) --}}
                             <div class="bg-gray-50 p-3 rounded-lg border border-gray-400 shadow-sm flex flex-col">
-                                <label class="block text-xs font-bold text-black-800 mb-2">2. Scan SKD (Opsional)</label>
+                                <label class="block text-xs font-bold text-black-800 mb-2">2. Suket Domisili (Opsional)</label>
                                 <div class="w-full text-left mb-3">
                                     <input type="file" name="file_skd" id="file_skd" accept="application/pdf" class="block w-full text-[10px] text-black-500 file:mr-2 file:py-1 file:px-3 file:rounded file:border-0 file:text-[10px] file:font-bold file:bg-gray-600 file:text-white hover:file:bg-gray-700 cursor-pointer transition" onchange="handleFileSelect(this, 'preview_skd', 'btn_reset_skd')">
                                     <button type="button" id="btn_reset_skd" onclick="resetFile('file_skd', 'preview_skd', 'btn_reset_skd')" class="hidden mt-1 text-[10px] text-red-600 font-bold underline">&times; Batal Upload</button>
@@ -220,26 +220,34 @@
                                 <iframe id="preview_skd" class="hidden w-full h-[250px] border border-gray-300 rounded bg-white mt-auto"></iframe>
                             </div>
 
-                            {{-- 3. SPTJM --}}
+                            {{-- 3. SPTJM DAN SKAM (PDF - WAJIB) --}}
                             <div class="bg-gray-50 p-3 rounded-lg border border-gray-400 shadow-sm flex flex-col">
-                                <label class="block text-xs font-bold text-black-800 mb-2">3. Scan SPTJM Mutlak</label>
+                                <label class="block text-xs font-bold text-black-800 mb-2">3. SPTJM dan SK AKTIF MENGAJAR (format pdf) <span class="text-red-500">*</span></label>
                                 <div class="w-full text-left mb-3">
-                                    <input type="file" name="file_super" id="file_super" accept="application/pdf" class="block w-full text-[10px] text-black-500 file:mr-2 file:py-1 file:px-3 file:rounded file:border-0 file:text-[10px] file:font-bold file:bg-purple-600 file:text-white hover:file:bg-purple-700 cursor-pointer transition" onchange="handleFileSelect(this, 'preview_super', 'btn_reset_super')">
+                                    <input type="file" name="file_super" id="file_super" accept="application/pdf" required class="block w-full text-[10px] text-black-500 file:mr-2 file:py-1 file:px-3 file:rounded file:border-0 file:text-[10px] file:font-bold file:bg-purple-600 file:text-white hover:file:bg-purple-700 cursor-pointer transition" onchange="handleFileSelect(this, 'preview_super', 'btn_reset_super')">
                                     <button type="button" id="btn_reset_super" onclick="resetFile('file_super', 'preview_super', 'btn_reset_super')" class="hidden mt-1 text-[10px] text-red-600 font-bold underline">&times; Batal Upload</button>
                                 </div>
                                 <input type="hidden" name="status_super" value="Pending">
                                 <iframe id="preview_super" class="hidden w-full h-[250px] border border-gray-300 rounded bg-white mt-auto"></iframe>
                             </div>
 
-                            {{-- 4. SKAM --}}
+                            {{-- 4. DATA SANTRI / MURID (EXCEL - WAJIB) --}}
                             <div class="bg-gray-50 p-3 rounded-lg border border-gray-400 shadow-sm flex flex-col">
-                                <label class="block text-xs font-bold text-black-800 mb-2">4. Scan SKAM</label>
+                                <label class="block text-xs font-bold text-black-800 mb-2">4. Data Santri/Murid (format excel) <span class="text-red-500">*</span></label>
                                 <div class="w-full text-left mb-3">
-                                    <input type="file" name="file_skam" id="file_skam" accept="application/pdf" class="block w-full text-[10px] text-black-500 file:mr-2 file:py-1 file:px-3 file:rounded file:border-0 file:text-[10px] file:font-bold file:bg-teal-600 file:text-white hover:file:bg-teal-700 cursor-pointer transition" onchange="handleFileSelect(this, 'preview_skam', 'btn_reset_skam')">
-                                    <button type="button" id="btn_reset_skam" onclick="resetFile('file_skam', 'preview_skam', 'btn_reset_skam')" class="hidden mt-1 text-[10px] text-red-600 font-bold underline">&times; Batal Upload</button>
+                                    <input type="file" name="file_skam" id="file_skam" accept=".xlsx, .xls" required class="block w-full text-[10px] text-gray-600 file:mr-2 file:py-1 file:px-3 file:rounded file:border-0 file:text-[10px] file:font-bold file:bg-green-600 file:text-white hover:file:bg-green-700 cursor-pointer transition" onchange="handleExcelSelect(this, 'info_excel_santri', 'btn_reset_skam')">
+                                    <button type="button" id="btn_reset_skam" onclick="resetExcelFile('file_skam', 'info_excel_santri', 'btn_reset_skam')" class="hidden mt-1 text-[10px] text-red-600 font-bold underline">&times; Batal Upload</button>
                                 </div>
                                 <input type="hidden" name="status_skam" value="Pending">
-                                <iframe id="preview_skam" class="hidden w-full h-[250px] border border-gray-300 rounded bg-white mt-auto"></iframe>
+                                
+                                {{-- Box Notifikasi File Excel Berhasil Dipilih (Pengganti Iframe PDF) --}}
+                                <div id="info_excel_santri" class="hidden mt-auto p-4 bg-emerald-50 border border-emerald-300 rounded-md text-emerald-800 text-xs flex items-center gap-2">
+                                    <svg class="w-6 h-6 text-emerald-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                                    <div>
+                                        <div class="font-bold">File Excel Siap Diunggah:</div>
+                                        <div id="nama_file_excel" class="text-[11px] font-mono text-emerald-700 truncate max-w-[200px]"></div>
+                                    </div>
+                                </div>
                             </div>
 
                         </div>
@@ -414,6 +422,39 @@
                 const statusFisik = document.getElementById('status_fisik_ijop');
                 if (statusFisik) statusFisik.value = 'TIDAK ADA';
             }
+        }
+
+        // 3B. KHUSUS FILE EXCEL DATA SANTRI (PENGGANTI IFRAME PREVIEW)
+        function handleExcelSelect(input, infoBoxId, btnId) {
+            const infoBox = document.getElementById(infoBoxId);
+            const btnReset = document.getElementById(btnId);
+            const namaFileEl = document.getElementById('nama_file_excel');
+            
+            if (input.files && input.files[0]) {
+                const file = input.files[0];
+                const validExtensions = ['.xlsx', '.xls'];
+                const fileExt = file.name.substring(file.name.lastIndexOf('.')).toLowerCase();
+
+                if (!validExtensions.includes(fileExt)) {
+                    alert("Mohon upload file data santri berformat Excel (.xlsx atau .xls)!");
+                    input.value = "";
+                    return;
+                }
+
+                namaFileEl.textContent = file.name + " (" + (file.size / 1024).toFixed(1) + " KB)";
+                infoBox.classList.remove('hidden');
+                btnReset.classList.remove('hidden');
+            }
+        }
+
+        function resetExcelFile(inputId, infoBoxId, btnId) {
+            const input = document.getElementById(inputId);
+            const infoBox = document.getElementById(infoBoxId);
+            const btnReset = document.getElementById(btnId);
+
+            input.value = "";
+            infoBox.classList.add('hidden');
+            btnReset.classList.add('hidden');
         }
 
 

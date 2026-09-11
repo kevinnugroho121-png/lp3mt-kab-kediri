@@ -82,7 +82,7 @@
 
                     {{-- 4. Filter Jenis --}}
                     <div class="w-full">
-                        <label class="text-[10px] font-bold text-black-500 uppercase tracking-wider ml-1">Jenis</label>
+                        <label class="text-[10px] font-bold text-black-500 uppercase tracking-wider ml-1">Jenis Lembaga</label>
                         <select name="filter_jenis" class="bg-gray-50 border border-gray-400 text-black-900 text-sm rounded-md focus:ring-blue-500 focus:border-blue-500 block w-full h-8 px-1 py-1">
                             <option value="">- Semua -</option>
                             <option value="TPQ" {{ request('filter_jenis') == 'TPQ' ? 'selected' : '' }}>TPQ</option>
@@ -222,10 +222,10 @@
                             <th class="border-r border-gray-400 px-3 text-center w-32">Status Insentif</th>
                             
                             {{-- KOLOM LEGALITAS --}}
-                            <th class="border-r border-gray-400 px-3 text-center w-32 bg-teal-50">Surat IJOP Lembaga</th>
-                            <th class="border-r border-gray-400 px-3 text-center w-32 bg-teal-50">Surat Keterangan Domisili</th> {{-- [BARU] Kolom SKD --}}
-                            <th class="border-r border-gray-400 px-3 text-center w-32 bg-teal-50">Surat Pernyataan Tanggung Jawab Mutlak</th>
-                            <th class="border-r border-gray-400 px-3 text-center w-32 bg-teal-50">SK Aktif Mengajar</th>
+                            <th class="border-r border-gray-400 px-3 text-center w-32 bg-teal-50">IJOP ASLI (format pdf)</th>
+                            <th class="border-r border-gray-400 px-3 text-center w-32 bg-teal-50">Suket Domisili (Opsional)</th>
+                            <th class="border-r border-gray-400 px-3 text-center w-36 bg-purple-50">SPTJM dan SK AKTIF MENGAJAR</th>
+                            <th class="border-r border-gray-400 px-3 text-center w-32 bg-emerald-50">Data Santri/Murid (format excel)</th>
                             
                             <th class="border-l border-gray-400 px-2 text-center w-24 sticky right-0 bg-gray-100 z-10">Aksi</th>
                         </tr>
@@ -363,14 +363,15 @@
                                 {{-- 5. SANTRI (TOTAL + RINCIAN L/P) --}}
                                 <td class="border-r border-gray-400 px-1 py-1 text-center align-top">
                                     @php
-                                        $santriL = (int)($lembaga->jumlah_santri_l ?? 0);
-                                        $santriP = (int)($lembaga->jumlah_santri_p ?? 0);
-                                        $totalSantri = ($lembaga->jumlah_santri > 0) ? $lembaga->jumlah_santri : ($santriL + $santriP);
-                                        
-                                        // Fallback cerdas: Jika L & P masih 0 tapi total ada isinya, bagi 50:50 untuk tampilan
-                                        if (($santriL + $santriP) === 0 && $totalSantri > 0) {
-                                            $santriL = (int) ceil($totalSantri / 2);
-                                            $santriP = (int) floor($totalSantri / 2);
+                                        // Jika belum/tidak ada berkas Excel santri, kunci mutlak ke 0
+                                        if (empty($lembaga->file_skam)) {
+                                            $santriL = 0;
+                                            $santriP = 0;
+                                            $totalSantri = 0;
+                                        } else {
+                                            $santriL = (int)($lembaga->jumlah_santri_l ?? 0);
+                                            $santriP = (int)($lembaga->jumlah_santri_p ?? 0);
+                                            $totalSantri = ($santriL + $santriP > 0) ? ($santriL + $santriP) : (int)($lembaga->jumlah_santri ?? 0);
                                         }
                                     @endphp
 
@@ -518,11 +519,11 @@
                                     </div>
                                 </td>
 
-                                {{-- 9. LEGALITAS SUPER (SPTJM) --}}
+                                {{-- 9. LEGALITAS GABUNGAN: SPTJM & SK AKTIF MENGAJAR (PDF) --}}
                                 <td class="border-r border-gray-400 py-1 text-center align-top bg-purple-50/30">
                                     <div class="flex flex-col items-center gap-1">
                                         @if($lembaga->file_super)
-                                            <button onclick="bukaModalPdf('{{ asset('dokumen/' . $lembaga->file_super) }}', 'SPTJM - {{ addslashes($lembaga->nama_lembaga) }}')" class="flex items-center gap-1 text-green-600 text-[10px] font-bold bg-green-50 px-2 py-1 rounded border border-green-300 hover:bg-green-600 hover:text-white transition shadow-sm" title="Lihat SPTJM">
+                                            <button onclick="bukaModalPdf('{{ asset('dokumen/' . $lembaga->file_super) }}', 'SPTJM & SKAM - {{ addslashes($lembaga->nama_lembaga) }}')" class="flex items-center gap-1 text-purple-700 text-[10px] font-bold bg-purple-50 px-2 py-1 rounded border border-purple-300 hover:bg-purple-600 hover:text-white transition shadow-sm" title="Lihat SPTJM & SKAM">
                                                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg> Cek File
                                             </button>
                                         @else
@@ -539,13 +540,13 @@
                                     </div>
                                 </td>
 
-                                {{-- 10. LEGALITAS SKAM --}}
-                                <td class="border-r border-gray-400 py-1 text-center align-top bg-orange-50/30">
+                                {{-- 10. BERKAS BARU: DATA SANTRI / MURID (EXCEL) --}}
+                                <td class="border-r border-gray-400 py-1 text-center align-top bg-emerald-50/30">
                                     <div class="flex flex-col items-center gap-1">
                                         @if($lembaga->file_skam)
-                                            <button onclick="bukaModalPdf('{{ asset('dokumen/' . $lembaga->file_skam) }}', 'SKAM - {{ addslashes($lembaga->nama_lembaga) }}')" class="flex items-center gap-1 text-green-600 text-[10px] font-bold bg-green-50 px-2 py-1 rounded border border-green-300 hover:bg-green-600 hover:text-white transition shadow-sm" title="Lihat SKAM">
-                                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg> Cek File
-                                            </button>
+                                            <a href="{{ route('lembaga.download_santri', $lembaga->id) }}" class="flex items-center gap-1 text-emerald-700 text-[10px] font-bold bg-emerald-50 px-2 py-1 rounded border border-emerald-300 hover:bg-emerald-600 hover:text-white transition shadow-sm" title="Unduh File Excel Santri Milik Lembaga Ini">
+                                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg> Unduh Excel
+                                            </a>
                                         @else
                                             <div class="flex items-center gap-1 text-red-500 text-[10px] font-bold bg-red-50 px-1.5 py-0.5 rounded border border-red-200">
                                                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path></svg> Kosong
@@ -557,6 +558,11 @@
                                             };
                                         @endphp
                                         <span class="text-[9px] font-bold px-1.5 py-0.5 rounded {{ $badgeSkam }}">{{ $lembaga->status_skam ?? 'Pending' }}</span>
+
+                                        {{-- Link Unduh Format Blangko Kosong --}}
+                                        <a href="{{ route('lembaga.template_santri', ['lembaga_id' => $lembaga->id]) }}" class="mt-0.5 inline-flex items-center gap-0.5 text-[8px] font-bold text-emerald-700 hover:text-emerald-900 underline hover:no-underline tracking-tighter" title="Unduh format master santri untuk {{ $lembaga->nama_lembaga }}">
+                                            📥 Template Kosong
+                                        </a>
                                     </div>
                                 </td>
 

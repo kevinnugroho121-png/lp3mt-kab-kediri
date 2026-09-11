@@ -153,12 +153,13 @@
                         <h3 class="text-base font-bold text-black-800">Dokumen & Foto Lapangan</h3>
                     </div>
 
-                    {{-- DOKUMEN PDF (GRID 2x2) --}}
+                    {{-- DOKUMEN LEGALITAS & DATA SANTRI (GRID 2x2) --}}
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-                        {{-- 1. IJOP --}}
+                        
+                        {{-- 1. IJOP ASLI (PDF) --}}
                         <div class="bg-gray-50 p-2 rounded-lg border border-gray-300 shadow-sm">
                             <div class="flex justify-between items-center mb-2 border-b border-gray-200 pb-1">
-                                <label class="block text-xs font-bold text-black-800">1. Scan IJOP Asli</label>
+                                <label class="block text-xs font-bold text-black-800">1. IJOP ASLI (format pdf)</label>
                                 @php $cIjop = ($lembaga->status_ijop == 'Disetujui') ? 'bg-green-100 text-green-700' : (($lembaga->status_ijop == 'Ditolak') ? 'bg-red-100 text-red-700' : 'bg-yellow-100 text-yellow-700'); @endphp
                                 <span class="px-2 py-0.5 rounded text-[9px] font-bold {{ $cIjop }}">Status: {{ $lembaga->status_ijop ?? 'Pending' }}</span>
                             </div>
@@ -189,10 +190,10 @@
                             @endif
                         </div>
 
-                        {{-- 2. SKD --}}
+                        {{-- 2. SUKET DOMISILI (PDF) --}}
                         <div class="bg-gray-50 p-2 rounded-lg border border-gray-300 shadow-sm">
                             <div class="flex justify-between items-center mb-2 border-b border-gray-200 pb-1">
-                                <label class="block text-xs font-bold text-black-800">2. Scan SKD</label>
+                                <label class="block text-xs font-bold text-black-800">2. Suket Domisili (Opsional)</label>
                                 @php $cSkd = ($lembaga->status_skd == 'Disetujui') ? 'bg-green-100 text-green-700' : (($lembaga->status_skd == 'Ditolak') ? 'bg-red-100 text-red-700' : 'bg-yellow-100 text-yellow-700'); @endphp
                                 <span class="px-2 py-0.5 rounded text-[9px] font-bold {{ $cSkd }}">Status: {{ $lembaga->status_skd ?? 'Pending' }}</span>
                             </div>
@@ -204,10 +205,10 @@
                             @endif
                         </div>
 
-                        {{-- 3. SPTJM --}}
+                        {{-- 3. SPTJM & SKAM (PDF) --}}
                         <div class="bg-gray-50 p-2 rounded-lg border border-gray-300 shadow-sm">
                             <div class="flex justify-between items-center mb-2 border-b border-gray-200 pb-1">
-                                <label class="block text-xs font-bold text-black-800">3. Scan SPTJM Mutlak</label>
+                                <label class="block text-xs font-bold text-black-800">3. SPTJM dan SK AKTIF MENGAJAR (format pdf)</label>
                                 @php $cSuper = ($lembaga->status_super == 'Disetujui') ? 'bg-green-100 text-green-700' : (($lembaga->status_super == 'Ditolak') ? 'bg-red-100 text-red-700' : 'bg-yellow-100 text-yellow-700'); @endphp
                                 <span class="px-2 py-0.5 rounded text-[9px] font-bold {{ $cSuper }}">Status: {{ $lembaga->status_super ?? 'Pending' }}</span>
                             </div>
@@ -219,20 +220,34 @@
                             @endif
                         </div>
 
-                        {{-- 4. SKAM --}}
-                        <div class="bg-gray-50 p-2 rounded-lg border border-gray-300 shadow-sm">
-                            <div class="flex justify-between items-center mb-2 border-b border-gray-200 pb-1">
-                                <label class="block text-xs font-bold text-black-800">4. Scan SKAM</label>
-                                @php $cSkam = ($lembaga->status_skam == 'Disetujui') ? 'bg-green-100 text-green-700' : (($lembaga->status_skam == 'Ditolak') ? 'bg-red-100 text-red-700' : 'bg-yellow-100 text-yellow-700'); @endphp
-                                <span class="px-2 py-0.5 rounded text-[9px] font-bold {{ $cSkam }}">Status: {{ $lembaga->status_skam ?? 'Pending' }}</span>
+                        {{-- 4. DATA SANTRI / MURID (EXCEL) --}}
+                        <div class="bg-green-50/40 p-2 rounded-lg border border-green-400 shadow-sm flex flex-col justify-between">
+                            <div>
+                                <div class="flex justify-between items-center mb-2 border-b border-green-200 pb-1">
+                                    <label class="block text-xs font-bold text-black-800">4. Data Santri/Murid (format excel)</label>
+                                    @php $cSkam = ($lembaga->status_skam == 'Disetujui') ? 'bg-green-100 text-green-700' : (($lembaga->status_skam == 'Ditolak') ? 'bg-red-100 text-red-700' : 'bg-yellow-100 text-yellow-700'); @endphp
+                                    <span class="px-2 py-0.5 rounded text-[9px] font-bold {{ $cSkam }}">Status: {{ $lembaga->status_skam ?? 'Pending' }}</span>
+                                </div>
+                                <div class="mb-2 h-[15px]"></div>
                             </div>
-                            <div class="mb-2 h-[15px]"></div>
+
                             @if($lembaga->file_skam)
-                                <iframe src="{{ asset('dokumen/' . $lembaga->file_skam) }}#view=FitH" type="application/pdf" class="w-full h-[250px] border border-gray-400 rounded bg-white"></iframe>
+                                <div class="h-[250px] flex flex-col items-center justify-center bg-white border border-green-300 rounded p-4 text-center shadow-inner">
+                                    <div class="w-14 h-14 bg-green-100 text-green-700 rounded-full flex items-center justify-center mb-3">
+                                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                                    </div>
+                                    <span class="text-xs font-bold text-black-800 uppercase mb-1">File Excel Data Santri</span>
+                                    <span class="text-[11px] font-mono text-gray-500 mb-4 truncate max-w-[240px]">{{ $lembaga->file_skam }}</span>
+                                    <a href="{{ route('lembaga.download_santri', $lembaga->id) }}" class="inline-flex items-center gap-1.5 px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded text-xs font-bold shadow transition">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                                        Unduh / Buka Excel
+                                    </a>
+                                </div>
                             @else
                                 <div class="h-[250px] flex items-center justify-center bg-gray-100 border border-dashed border-gray-400 rounded text-black-400 text-xs italic">Belum diupload</div>
                             @endif
                         </div>
+
                     </div>
 
                     {{-- FOTO LAMA (2x2) --}}

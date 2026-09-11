@@ -191,13 +191,13 @@
                             <h3 class="text-base font-bold text-black-800">Dokumen & Foto Lapangan</h3>
                         </div>
 
-                        {{-- DOKUMEN PDF (GRID 2x2) --}}
+                        {{-- DOKUMEN LEGALITAS & DATA SANTRI (GRID 2x2) --}}
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
                             
-                            {{-- 1. IJOP --}}
+                            {{-- 1. IJOP ASLI (PDF) --}}
                             <div class="bg-gray-50 p-3 rounded-lg border border-gray-400 shadow-sm flex flex-col">
                                 <div class="flex items-center justify-between mb-2">
-                                    <label class="block text-xs font-bold text-black-800">1. Scan IJOP Asli</label>
+                                    <label class="block text-xs font-bold text-black-800">1. IJOP ASLI (format pdf)</label>
                                     @if($lembaga->file_ijop)
                                         <button type="button" onclick="triggerStatusUpdate('Yakin ingin menghapus permanen berkas IJOP ini sekarang?', 'form-delete-file-ijop')" class="text-[10px] text-red-600 hover:text-white font-bold bg-red-50 hover:bg-red-600 border border-red-300 px-2 py-0.5 rounded transition cursor-pointer">
                                             Hapus File
@@ -227,10 +227,10 @@
                                 <iframe id="preview_ijop_edit" class="hidden w-full h-[250px] border border-gray-300 rounded bg-white mt-auto"></iframe>
                             </div>
 
-                            {{-- 2. SKD --}}
+                            {{-- 2. SUKET DOMISILI (PDF - OPSIONAL) --}}
                             <div class="bg-gray-50 p-3 rounded-lg border border-gray-400 shadow-sm flex flex-col">
                                 <div class="flex items-center justify-between mb-2">
-                                    <label class="block text-xs font-bold text-black-800">2. Scan SKD (Opsional)</label>
+                                    <label class="block text-xs font-bold text-black-800">2. Suket Domisili (Opsional)</label>
                                     @if($lembaga->file_skd)
                                         <button type="button" onclick="triggerStatusUpdate('Yakin ingin menghapus permanen berkas SKD ini sekarang?', 'form-delete-file-skd')" class="text-[10px] text-red-600 hover:text-white font-bold bg-red-50 hover:bg-red-600 border border-red-300 px-2 py-0.5 rounded transition cursor-pointer">
                                              Hapus File
@@ -247,10 +247,10 @@
                                 <iframe id="preview_skd_edit" class="hidden w-full h-[250px] border border-gray-300 rounded bg-white mt-auto"></iframe>
                             </div>
 
-                            {{-- 3. SPTJM --}}
+                            {{-- 3. SPTJM & SKAM (PDF) --}}
                             <div class="bg-gray-50 p-3 rounded-lg border border-gray-400 shadow-sm flex flex-col">
                                 <div class="flex items-center justify-between mb-2">
-                                    <label class="block text-xs font-bold text-black-800">3. Scan SPTJM Mutlak</label>
+                                    <label class="block text-xs font-bold text-black-800">3. SPTJM dan SK AKTIF MENGAJAR (format pdf)</label>
                                     @if($lembaga->file_super)
                                         <button type="button" onclick="triggerStatusUpdate('Yakin ingin menghapus permanen berkas SPTJM ini sekarang?', 'form-delete-file-super')" class="text-[10px] text-red-600 hover:text-white font-bold bg-red-50 hover:bg-red-600 border border-red-300 px-2 py-0.5 rounded transition cursor-pointer">
                                              Hapus File
@@ -268,25 +268,45 @@
                                 <iframe id="preview_super_edit" class="hidden w-full h-[250px] border border-gray-300 rounded bg-white mt-auto"></iframe>
                             </div>
 
-                            {{-- 4. SKAM --}}
-                            <div class="bg-gray-50 p-3 rounded-lg border border-gray-400 shadow-sm flex flex-col">
+                            {{-- 4. DATA SANTRI / MURID (EXCEL) --}}
+                            <div class="bg-green-50/40 p-3 rounded-lg border border-green-400 shadow-sm flex flex-col">
                                 <div class="flex items-center justify-between mb-2">
-                                    <label class="block text-xs font-bold text-black-800">4. Scan SKAM</label>
+                                    <label class="block text-xs font-bold text-black-800">4. Data Santri/Murid (format excel)</label>
                                     @if($lembaga->file_skam)
-                                        <button type="button" onclick="triggerStatusUpdate('Yakin ingin menghapus permanen berkas SKAM ini sekarang?', 'form-delete-file-skam')" class="text-[10px] text-red-600 hover:text-white font-bold bg-red-50 hover:bg-red-600 border border-red-300 px-2 py-0.5 rounded transition cursor-pointer">
+                                        <button type="button" onclick="triggerStatusUpdate('Yakin ingin menghapus permanen berkas Excel Santri ini sekarang?', 'form-delete-file-skam')" class="text-[10px] text-red-600 hover:text-white font-bold bg-red-50 hover:bg-red-600 border border-red-300 px-2 py-0.5 rounded transition cursor-pointer">
                                              Hapus File
                                         </button>
                                     @endif
                                 </div>
                                 <div class="w-full text-left mb-3">
-                                    <input type="file" name="file_skam" id="file_skam" accept="application/pdf" class="block w-full text-[10px] text-black-500 file:mr-2 file:py-1 file:px-3 file:rounded file:border-0 file:text-[10px] file:font-bold file:bg-teal-600 file:text-white hover:file:bg-teal-700 cursor-pointer transition" onchange="handleFileSelect(this, 'preview_skam_edit', 'btn_reset_skam_edit', 'old_skam')">
-                                    <button type="button" id="btn_reset_skam_edit" onclick="resetFile('file_skam', 'preview_skam_edit', 'btn_reset_skam_edit', 'old_skam')" class="hidden mt-1 text-[10px] text-red-600 font-bold underline">&times; Batal Upload File Baru</button>
+                                    <input type="file" name="file_skam" id="file_skam" accept=".xlsx, .xls" class="block w-full text-[10px] text-gray-600 file:mr-2 file:py-1 file:px-3 file:rounded file:border-0 file:text-[10px] file:font-bold file:bg-green-600 file:text-white hover:file:bg-green-700 cursor-pointer transition" onchange="handleExcelSelectEdit(this, 'info_excel_santri_edit', 'btn_reset_skam_edit', 'old_excel_santri')">
+                                    <button type="button" id="btn_reset_skam_edit" onclick="resetExcelEdit('file_skam', 'info_excel_santri_edit', 'btn_reset_skam_edit', 'old_excel_santri')" class="hidden mt-1 text-[10px] text-red-600 font-bold underline">&times; Batal Upload File Baru</button>
                                 </div>
                                 <input type="hidden" name="status_skam" value="Pending">
+
+                                {{-- Card File Excel Lama yang Tersimpan di Server (Pengganti Iframe) --}}
                                 @if($lembaga->file_skam)
-                                    <iframe id="old_skam" src="{{ asset('dokumen/' . $lembaga->file_skam) }}" class="w-full h-[250px] border border-gray-300 rounded bg-white mt-auto"></iframe>
+                                    <div id="old_excel_santri" class="p-3 bg-white border border-green-300 rounded-md mt-auto shadow-sm flex flex-col gap-2">
+                                        <div class="flex items-center gap-2 text-green-800 text-xs">
+                                            <svg class="w-5 h-5 text-green-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                                            <div class="font-bold">File Excel Tersimpan di Server</div>
+                                        </div>
+                                        <a href="{{ route('lembaga.download_santri', $lembaga->id) }}" class="inline-flex items-center justify-center gap-1.5 w-full py-1.5 bg-green-600 hover:bg-green-700 text-white rounded text-xs font-bold transition shadow-sm">
+                                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                                            Unduh / Cek File Excel Santri
+                                        </a>
+                                    </div>
                                 @endif
-                                <iframe id="preview_skam_edit" class="hidden w-full h-[250px] border border-gray-300 rounded bg-white mt-auto"></iframe>
+
+                                {{-- Notifikasi File Excel Baru yang Dipilih Operator --}}
+                                <div id="info_excel_santri_edit" class="hidden mt-auto p-3 bg-green-100 border border-green-400 rounded-md text-green-900 text-xs flex items-center gap-2">
+                                    <svg class="w-5 h-5 text-green-700 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                                    <div>
+                                        <div class="font-bold text-[11px]">File Pengganti Siap Diunggah:</div>
+                                        <div id="nama_file_excel_edit" class="text-[11px] font-mono text-green-800 truncate max-w-[200px]"></div>
+                                    </div>
+                                </div>
+
                             </div>
 
                         </div>
@@ -444,6 +464,52 @@
                 const statusFisik = document.getElementById('status_fisik_ijop_edit');
                 if (statusFisik) statusFisik.value = hasExistingIjopFile ? 'ADA' : 'TIDAK ADA';
             }
+        }
+
+        // 2B. KHUSUS FILE EXCEL FORM EDIT (TIDAK PAKAI IFRAME)
+        function handleExcelSelectEdit(input, infoBoxId, btnId, oldCardId = null) {
+            const infoBox = document.getElementById(infoBoxId);
+            const btnReset = document.getElementById(btnId);
+            const namaFileEl = document.getElementById('nama_file_excel_edit');
+            if(oldCardId) {
+                const oldCard = document.getElementById(oldCardId);
+                if(oldCard) oldCard.classList.add('hidden');
+            }
+
+            if (input.files && input.files[0]) {
+                const file = input.files[0];
+                const validExtensions = ['.xlsx', '.xls'];
+                const fileExt = file.name.substring(file.name.lastIndexOf('.')).toLowerCase();
+
+                if (!validExtensions.includes(fileExt)) {
+                    alert("Mohon upload file data santri berformat Excel (.xlsx atau .xls)!");
+                    input.value = "";
+                    if(oldCardId) {
+                        const oldCard = document.getElementById(oldCardId);
+                        if(oldCard) oldCard.classList.remove('hidden');
+                    }
+                    return;
+                }
+
+                namaFileEl.textContent = file.name + " (" + (file.size / 1024).toFixed(1) + " KB)";
+                infoBox.classList.remove('hidden');
+                btnReset.classList.remove('hidden');
+            }
+        }
+
+        function resetExcelEdit(inputId, infoBoxId, btnId, oldCardId = null) {
+            const input = document.getElementById(inputId);
+            const infoBox = document.getElementById(infoBoxId);
+            const btnReset = document.getElementById(btnId);
+
+            if(oldCardId) {
+                const oldCard = document.getElementById(oldCardId);
+                if(oldCard) oldCard.classList.remove('hidden');
+            }
+
+            input.value = "";
+            infoBox.classList.add('hidden');
+            btnReset.classList.add('hidden');
         }
 
         // [BARU] FUNGSI PREVIEW GAMBAR UNTUK MENU EDIT

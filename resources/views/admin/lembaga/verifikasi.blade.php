@@ -28,12 +28,12 @@
                 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-3 px-1">
                     
-                    {{-- 1. KARTU VERIFIKASI IJOP --}}
+                    {{-- 1. KARTU VERIFIKASI IJOP ASLI (PDF) --}}
                     <div class="bg-gray-50 rounded-lg shadow-sm border border-blue-200 flex flex-col">
                         <div class="bg-blue-50 px-3 py-2 border-b border-blue-200 flex justify-between items-center rounded-t-lg">
                             <div class="flex items-center gap-2">
                                 <span class="bg-blue-600 text-white w-5 h-5 flex items-center justify-center rounded-full font-bold text-[10px]">1</span>
-                                <h3 class="font-bold text-xs text-blue-900 uppercase">Izin Operasional (IJOP)</h3>
+                                <h3 class="font-bold text-xs text-blue-900 uppercase">IJOP ASLI (format pdf)</h3>
                             </div>
                             <div class="flex items-center gap-1">
                                 <label class="text-[10px] font-bold text-black-600">Status:</label>
@@ -72,12 +72,12 @@
                         </div>
                     </div>
 
-                    {{-- 1B. KARTU VERIFIKASI SKD --}}
+                    {{-- 2. KARTU VERIFIKASI SUKET DOMISILI (PDF) --}}
                     <div class="bg-gray-50 rounded-lg shadow-sm border border-teal-200 flex flex-col">
                         <div class="bg-teal-50 px-3 py-2 border-b border-teal-200 flex justify-between items-center rounded-t-lg">
                             <div class="flex items-center gap-2">
-                                <span class="bg-teal-600 text-white w-5 h-5 flex items-center justify-center rounded-full font-bold text-[10px]">1B</span>
-                                <h3 class="font-bold text-xs text-teal-900 uppercase">Surat Ket. Domisili (SKD)</h3>
+                                <span class="bg-teal-600 text-white w-5 h-5 flex items-center justify-center rounded-full font-bold text-[10px]">2</span>
+                                <h3 class="font-bold text-xs text-teal-900 uppercase">Suket Domisili (Opsional)</h3>
                             </div>
                             <div class="flex items-center gap-1">
                                 <label class="text-[10px] font-bold text-black-600">Status:</label>
@@ -94,18 +94,18 @@
                             @else
                                 <div class="h-[350px] flex flex-col items-center justify-center border border-dashed border-gray-300 rounded bg-gray-100 p-4 text-center">
                                     <span class="text-black-500 font-bold text-xs italic">File SKD tidak ada/belum diupload.</span>
-                                    <span class="text-orange-500 font-bold text-[9px] mt-1">*Hanya wajib jika IJOP belum terbit.</span>
+                                    <span class="text-teal-600 font-bold text-[9px] mt-1">*Status berkas ini opsional.</span>
                                 </div>
                             @endif
                         </div>
                     </div>
 
-                    {{-- 2. KARTU VERIFIKASI SUPER --}}
+                    {{-- 3. KARTU VERIFIKASI SPTJM DAN SKAM (PDF) --}}
                     <div class="bg-gray-50 rounded-lg shadow-sm border border-purple-200 flex flex-col">
                         <div class="bg-purple-50 px-3 py-2 border-b border-purple-200 flex justify-between items-center rounded-t-lg">
                             <div class="flex items-center gap-2">
-                                <span class="bg-purple-600 text-white w-5 h-5 flex items-center justify-center rounded-full font-bold text-[10px]">2</span>
-                                <h3 class="font-bold text-xs text-purple-900 uppercase">SPTJM Mutlak</h3>
+                                <span class="bg-purple-600 text-white w-5 h-5 flex items-center justify-center rounded-full font-bold text-[10px]">3</span>
+                                <h3 class="font-bold text-xs text-purple-900 uppercase">SPTJM dan SK AKTIF MENGAJAR</h3>
                             </div>
                             <div class="flex items-center gap-1">
                                 <label class="text-[10px] font-bold text-black-600">Status:</label>
@@ -121,34 +121,44 @@
                                 <iframe src="{{ asset('dokumen/' . $lembaga->file_super) }}#view=FitH" type="application/pdf" class="w-full h-[350px] border border-gray-300 rounded bg-white"></iframe>
                             @else
                                 <div class="h-[350px] flex flex-col items-center justify-center border border-dashed border-gray-300 rounded bg-gray-100">
-                                    <span class="text-black-500 font-bold text-xs italic">File SPTJM belum diupload.</span>
+                                    <span class="text-black-500 font-bold text-xs italic">File SPTJM & SKAM belum diupload.</span>
                                 </div>
                             @endif
                         </div>
                     </div>
 
-                    {{-- 3. KARTU VERIFIKASI SKAM --}}
-                    <div class="bg-gray-50 rounded-lg shadow-sm border border-orange-200 flex flex-col">
-                        <div class="bg-orange-50 px-3 py-2 border-b border-orange-200 flex justify-between items-center rounded-t-lg">
+                    {{-- 4. KARTU VERIFIKASI DATA SANTRI (EXCEL) --}}
+                    <div class="bg-gray-50 rounded-lg shadow-sm border border-emerald-300 flex flex-col">
+                        <div class="bg-emerald-50 px-3 py-2 border-b border-emerald-300 flex justify-between items-center rounded-t-lg">
                             <div class="flex items-center gap-2">
-                                <span class="bg-orange-500 text-white w-5 h-5 flex items-center justify-center rounded-full font-bold text-[10px]">3</span>
-                                <h3 class="font-bold text-xs text-orange-900 uppercase">Surat Ket. Aktif Mengajar (SKAM)</h3>
+                                <span class="bg-emerald-600 text-white w-5 h-5 flex items-center justify-center rounded-full font-bold text-[10px]">4</span>
+                                <h3 class="font-bold text-xs text-emerald-900 uppercase">Data Santri/Murid (format excel)</h3>
                             </div>
                             <div class="flex items-center gap-1">
                                 <label class="text-[10px] font-bold text-black-600">Status:</label>
-                                <select name="status_skam" class="border-gray-400 rounded px-2 py-0.5 text-[10px] font-bold focus:ring-orange-500 focus:border-orange-500 bg-white cursor-pointer w-28">
+                                <select name="status_skam" class="border-gray-400 rounded px-2 py-0.5 text-[10px] font-bold focus:ring-emerald-500 focus:border-emerald-500 bg-white cursor-pointer w-28">
                                     <option value="Pending" {{ $lembaga->status_skam == 'Pending' ? 'selected' : '' }}>⏳ Pending</option>
                                     <option value="Disetujui" {{ $lembaga->status_skam == 'Disetujui' ? 'selected' : '' }}>✅ Disetujui</option>
                                     <option value="Ditolak" {{ $lembaga->status_skam == 'Ditolak' ? 'selected' : '' }}>❌ Ditolak</option>
                                 </select>
                             </div>
                         </div>
-                        <div class="p-2 flex-grow">
+                        <div class="p-2 flex-grow flex flex-col justify-center">
                             @if($lembaga->file_skam)
-                                <iframe src="{{ asset('dokumen/' . $lembaga->file_skam) }}#view=FitH" type="application/pdf" class="w-full h-[350px] border border-gray-300 rounded bg-white"></iframe>
+                                <div class="h-[350px] flex flex-col items-center justify-center bg-white border border-emerald-200 rounded-lg p-6 text-center shadow-inner">
+                                    <div class="w-16 h-16 bg-emerald-100 text-emerald-700 rounded-full flex items-center justify-center mb-4">
+                                        <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                                    </div>
+                                    <span class="text-sm font-bold text-black-800 uppercase mb-1">Dokumen Excel Terlampir</span>
+                                    <span class="text-xs font-mono text-gray-500 mb-6 truncate max-w-[280px] bg-gray-50 px-2 py-1 rounded border border-gray-200">{{ $lembaga->file_skam }}</span>
+                                    <a href="{{ asset('dokumen/' . $lembaga->file_skam) }}" download class="inline-flex items-center gap-2 px-5 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-md text-xs font-bold shadow transition">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                                        Unduh & Periksa Data Santri
+                                    </a>
+                                </div>
                             @else
                                 <div class="h-[350px] flex flex-col items-center justify-center border border-dashed border-gray-300 rounded bg-gray-100">
-                                    <span class="text-black-500 font-bold text-xs italic">File SKAM belum diupload.</span>
+                                    <span class="text-black-500 font-bold text-xs italic">File Data Santri Excel belum diupload.</span>
                                 </div>
                             @endif
                         </div>

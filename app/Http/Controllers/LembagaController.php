@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\DB;
 // Import Library Excel (Export & Import)
 use App\Imports\LembagaImport;
 use App\Exports\LembagaExport;
+use App\Exports\FormatSantriExport;
 use Maatwebsite\Excel\Facades\Excel;
 
 class LembagaController extends Controller
@@ -168,11 +169,11 @@ class LembagaController extends Controller
             'jumlah_santri_p'    => 'nullable|integer|min:0',
             'jumlah_guru'        => 'nullable|integer|min:0',
 
-            // Validasi File PDF
-            'file_ijop'          => 'nullable|mimes:pdf|max:2048', 
+            // Validasi File Dokumen & Excel
+            'file_ijop'          => 'required|mimes:pdf|max:2048', 
             'file_skd'           => 'nullable|mimes:pdf|max:2048',
-            'file_super'         => 'nullable|mimes:pdf|max:2048', 
-            'file_skam'          => 'nullable|mimes:pdf|max:2048',
+            'file_super'         => 'required|mimes:pdf|max:2048', 
+            'file_skam'          => 'required|mimes:xlsx,xls|max:5120',
 
             // Validasi Gambar Dokumentasi
             'foto_lembaga'       => 'nullable|image|mimes:jpeg,png,jpg,jfif|max:1024',
@@ -180,10 +181,14 @@ class LembagaController extends Controller
             'foto_bangunan'      => 'nullable|image|mimes:jpeg,png,jpg,jfif|max:1024',
             'foto_kbm'           => 'nullable|image|mimes:jpeg,png,jpg,jfif|max:1024',
         ], [
+            'file_ijop.required' => 'File IJOP Asli (PDF) wajib diunggah.',
             'file_ijop.mimes'    => 'File IJOP harus format PDF.',
             'file_ijop.max'      => 'Ukuran file IJOP maksimal 2MB.',
-            'file_super.mimes'   => 'File Surat Pernyataan harus format PDF.',
-            'file_skam.mimes'    => 'File Surat Ket. Aktif Mengajar harus format PDF.',
+            'file_super.required'=> 'File SPTJM dan SK Aktif Mengajar (PDF) wajib diunggah.',
+            'file_super.mimes'   => 'File SPTJM dan SK Aktif Mengajar harus format PDF.',
+            'file_skam.required' => 'File Data Santri/Murid (Excel) wajib diunggah.',
+            'file_skam.mimes'    => 'File Data Santri harus berformat Excel (.xlsx atau .xls).',
+            'file_skam.max'      => 'Ukuran file Excel Data Santri maksimal 5MB.',
             'foto_lembaga.image' => 'File profil lembaga wajib berupa format gambar (JPG/PNG) maksimal 1MB.',
             'foto_nambor.image'  => 'File papan nama wajib berupa format gambar (JPG/PNG) maksimal 1MB.',
             'foto_bangunan.image'=> 'File bangunan wajib berupa format gambar (JPG/PNG) maksimal 1MB.',
@@ -214,7 +219,38 @@ class LembagaController extends Controller
 
         $pathSkam = null;
         if ($request->hasFile('file_skam')) {
-            $pathSkam = $request->file('file_skam')->store('dokumen_lembaga', 'public');
+            $fileSkamObj = $request->file('file_skam');
+            $pathSkam = $fileSkamObj->store('dokumen_lembaga', 'public');
+
+            // [OPSI A] BACA OTOMATIS SANTRI L & P DARI EXCEL
+            try {
+                $sheets = Excel::toArray(new class {}, $fileSkamObj);
+                $rows = $sheets[0] ?? [];
+                if (!empty($rows)) {
+                    // Cari posisi index kolom L/P di baris header (Baris 1)
+                    $headerRow = array_map(fn($h) => strtoupper(trim((string)$h)), $rows[0]);
+                    $colIndexLP = array_search('L/P', $headerRow);
+                    if ($colIndexLP === false) { $colIndexLP = 2; } // Default Kolom C
+
+                    $countL = 0;
+                    $countP = 0;
+                    for ($i = 1; $i < count($rows); $i++) {
+                        $gender = strtoupper(trim((string)($rows[$i][$colIndexLP] ?? '')));
+                        if ($gender === 'L') { $countL++; }
+                        elseif ($gender === 'P') { $countP++; }
+                    }
+
+                    if ($countL > 0 || $countP > 0) {
+                        $request->merge([
+                            'jumlah_santri_l' => $countL,
+                            'jumlah_santri_p' => $countP,
+                            'jumlah_santri'   => $countL + $countP,
+                        ]);
+                    }
+                }
+            } catch (\Exception $e) {
+                // Lewati jika format excel di luar standar agar penyimpanan tidak gagal
+            }
         }
 
         // 3. SIMPAN KE DATABASE
@@ -259,17 +295,19 @@ class LembagaController extends Controller
         // Otomatis tentukan status Fisik IJOP berdasarkan keberadaan file yang diunggah
         $data['ijop'] = $request->hasFile('file_ijop') ? 'ADA' : 'TIDAK ADA';
 
-        // Hitung total santri otomatis dari L + P (atau bagi 50:50 jika hanya total yang diisi)
-        $data['jumlah_santri_l'] = (int)($request->jumlah_santri_l ?? 0);
-        $data['jumlah_santri_p'] = (int)($request->jumlah_santri_p ?? 0);
-        $totalInput = (int)($request->jumlah_santri ?? 0);
+        // Hitung total santri otomatis dari L + P: HANYA jika TIDAK upload file Excel
+        if (!$request->hasFile('file_skam')) {
+            $data['jumlah_santri_l'] = (int)($request->jumlah_santri_l ?? 0);
+            $data['jumlah_santri_p'] = (int)($request->jumlah_santri_p ?? 0);
+            $totalInput = (int)($request->jumlah_santri ?? 0);
 
-        if ($data['jumlah_santri_l'] > 0 || $data['jumlah_santri_p'] > 0) {
-            $data['jumlah_santri'] = $data['jumlah_santri_l'] + $data['jumlah_santri_p'];
-        } elseif ($totalInput > 0) {
-            $data['jumlah_santri'] = $totalInput;
-            $data['jumlah_santri_l'] = (int) ceil($totalInput / 2);
-            $data['jumlah_santri_p'] = (int) floor($totalInput / 2);
+            if ($data['jumlah_santri_l'] > 0 || $data['jumlah_santri_p'] > 0) {
+                $data['jumlah_santri'] = $data['jumlah_santri_l'] + $data['jumlah_santri_p'];
+            } elseif ($totalInput > 0) {
+                $data['jumlah_santri'] = $totalInput;
+                $data['jumlah_santri_l'] = (int) ceil($totalInput / 2);
+                $data['jumlah_santri_p'] = (int) floor($totalInput / 2);
+            }
         }
 
         $lembagaBaru = Lembaga::create($data);
@@ -395,11 +433,14 @@ class LembagaController extends Controller
             'file_ijop'          => 'nullable|mimes:pdf|max:2048',
             'file_skd'           => 'nullable|mimes:pdf|max:2048',
             'file_super'         => 'nullable|mimes:pdf|max:2048',
-            'file_skam'          => 'nullable|mimes:pdf|max:2048',
+            'file_skam'          => 'nullable|mimes:xlsx,xls|max:5120',
             'foto_lembaga'       => 'nullable|image|mimes:jpeg,png,jpg,jfif|max:1024',
             'foto_nambor'        => 'nullable|image|mimes:jpeg,png,jpg,jfif|max:1024',
             'foto_bangunan'      => 'nullable|image|mimes:jpeg,png,jpg,jfif|max:1024',
             'foto_kbm'           => 'nullable|image|mimes:jpeg,png,jpg,jfif|max:1024',
+        ], [
+            'file_skam.mimes'    => 'File Data Santri wajib berformat Excel (.xlsx atau .xls).',
+            'file_skam.max'      => 'Ukuran file Excel Data Santri maksimal 5MB.',
         ]);
 
         // 2. Satpam Anti-Duplikasi Lembaga saat Edit (Kecuali Lembaga Ini Sendiri)
@@ -484,13 +525,46 @@ class LembagaController extends Controller
             unset($data['file_super']);
         }
 
-        // [BARU] Cek Upload File Baru SKAM
+        // [BARU] Cek Upload File Baru SKAM & Hitung Otomatis Santri
         if ($request->hasFile('file_skam')) {
             if ($lembaga->file_skam && Storage::disk('public')->exists($lembaga->file_skam)) {
                 Storage::disk('public')->delete($lembaga->file_skam);
             }
-            $data['file_skam'] = $request->file('file_skam')->store('dokumen_lembaga', 'public');
+            $fileSkamObj = $request->file('file_skam');
+            $data['file_skam'] = $fileSkamObj->store('dokumen_lembaga', 'public');
             $data['status_skam'] = 'Pending'; 
+
+            // [OPSI A] BACA OTOMATIS SANTRI L & P DARI EXCEL PENGGANTI
+            try {
+                $sheets = Excel::toArray(new class {}, $fileSkamObj);
+                $rows = $sheets[0] ?? [];
+                if (!empty($rows)) {
+                    $headerRow = array_map(fn($h) => strtoupper(trim((string)$h)), $rows[0]);
+                    $colIndexLP = array_search('L/P', $headerRow);
+                    if ($colIndexLP === false) { $colIndexLP = 2; }
+
+                    $countL = 0;
+                    $countP = 0;
+                    for ($i = 1; $i < count($rows); $i++) {
+                        $gender = strtoupper(trim((string)($rows[$i][$colIndexLP] ?? '')));
+                        if ($gender === 'L') { $countL++; }
+                        elseif ($gender === 'P') { $countP++; }
+                    }
+
+                    if ($countL > 0 || $countP > 0) {
+                        $request->merge([
+                            'jumlah_santri_l' => $countL,
+                            'jumlah_santri_p' => $countP,
+                            'jumlah_santri'   => $countL + $countP,
+                        ]);
+                        $data['jumlah_santri_l'] = $countL;
+                        $data['jumlah_santri_p'] = $countP;
+                        $data['jumlah_santri']   = $countL + $countP;
+                    }
+                }
+            } catch (\Exception $e) {
+                // Lewati jika format excel di luar standar
+            }
         } else {
             unset($data['file_skam']);
         }
@@ -502,18 +576,20 @@ class LembagaController extends Controller
             $data['ijop'] = 'TIDAK ADA';
         }
 
-        // Sinkronisasi otomatis total santri saat data L & P diperbarui
-        if ($request->has('jumlah_santri_l') || $request->has('jumlah_santri_p') || $request->has('jumlah_santri')) {
-            $data['jumlah_santri_l'] = (int)($request->jumlah_santri_l ?? $lembaga->jumlah_santri_l ?? 0);
-            $data['jumlah_santri_p'] = (int)($request->jumlah_santri_p ?? $lembaga->jumlah_santri_p ?? 0);
-            $totalInput = (int)($request->jumlah_santri ?? $lembaga->jumlah_santri ?? 0);
+        // Sinkronisasi otomatis total santri: HANYA jalankan jika TIDAK upload file Excel baru
+        if (!$request->hasFile('file_skam')) {
+            if ($request->has('jumlah_santri_l') || $request->has('jumlah_santri_p') || $request->has('jumlah_santri')) {
+                $data['jumlah_santri_l'] = (int)($request->jumlah_santri_l ?? $lembaga->jumlah_santri_l ?? 0);
+                $data['jumlah_santri_p'] = (int)($request->jumlah_santri_p ?? $lembaga->jumlah_santri_p ?? 0);
+                $totalInput = (int)($request->jumlah_santri ?? $lembaga->jumlah_santri ?? 0);
 
-            if ($data['jumlah_santri_l'] > 0 || $data['jumlah_santri_p'] > 0) {
-                $data['jumlah_santri'] = $data['jumlah_santri_l'] + $data['jumlah_santri_p'];
-            } elseif ($totalInput > 0) {
-                $data['jumlah_santri'] = $totalInput;
-                $data['jumlah_santri_l'] = (int) ceil($totalInput / 2);
-                $data['jumlah_santri_p'] = (int) floor($totalInput / 2);
+                if ($data['jumlah_santri_l'] > 0 || $data['jumlah_santri_p'] > 0) {
+                    $data['jumlah_santri'] = $data['jumlah_santri_l'] + $data['jumlah_santri_p'];
+                } elseif ($totalInput > 0) {
+                    $data['jumlah_santri'] = $totalInput;
+                    $data['jumlah_santri_l'] = (int) ceil($totalInput / 2);
+                    $data['jumlah_santri_p'] = (int) floor($totalInput / 2);
+                }
             }
         }
 
@@ -557,7 +633,7 @@ class LembagaController extends Controller
             'foto_kbm'      => 'foto_kbm',
         ];
 
-        // Hapus Dokumen PDF
+        // Hapus Dokumen PDF / Excel
         if (array_key_exists($type, $pdfTypes)) {
             $fileCol = $pdfTypes[$type]['file'];
             $statusCol = $pdfTypes[$type]['status'];
@@ -571,17 +647,32 @@ class LembagaController extends Controller
                 if ($type === 'ijop') {
                     $lembaga->ijop = 'TIDAK ADA';
                 }
+                // [BARU] Jika berkas Excel santri dihapus, reset seluruh hitungan santri ke NOL
+                if ($type === 'skam') {
+                    $lembaga->jumlah_santri_l = 0;
+                    $lembaga->jumlah_santri_p = 0;
+                    $lembaga->jumlah_santri   = 0;
+                }
                 $lembaga->save();
+
+                // Pemetaan nama resmi agar notifikasi dan log terbaca rapi
+                $namaResmiBerkas = match($type) {
+                    'ijop'  => 'IJOP Asli',
+                    'skd'   => 'Suket Domisili (SKD)',
+                    'super' => 'SPTJM & SK Aktif Mengajar',
+                    'skam'  => 'Data Santri/Murid (Excel)',
+                    default => strtoupper($type)
+                };
 
                 DB::table('activity_logs')->insert([
                     'user_id'    => Auth::id(),
                     'nama_user'  => Auth::user()->name,
-                    'aksi'       => 'Menghapus Berkas ' . strtoupper($type),
+                    'aksi'       => 'Menghapus Berkas ' . $namaResmiBerkas,
                     'target'     => $lembaga->nama_lembaga,
                     'created_at' => now(),
                 ]);
 
-                return back()->with('success', 'Berkas ' . strtoupper($type) . ' berhasil dihapus.');
+                return back()->with('success', 'Berkas ' . $namaResmiBerkas . ' berhasil dihapus.');
             }
         }
 
@@ -738,5 +829,114 @@ class LembagaController extends Controller
         ]);
 
         return Excel::download(new LembagaExport($request), $namaFile);
+    }
+
+    /**
+     * 1. Unduh Blangko Kosong Master Santri
+     */
+    public function downloadTemplateSantri(Request $request)
+    {
+        $namaFile = 'BLANGKO KOSONG SANTRI.xlsx';
+
+        if ($request->filled('lembaga_id')) {
+            $lembaga = Lembaga::find($request->lembaga_id);
+            if ($lembaga) {
+                $jenis = strtoupper($lembaga->jenis_lembaga ?? '');
+                $cleanNama = preg_replace('/[^A-Za-z0-9\-\s_]/', '', $lembaga->nama_lembaga);
+                $namaFile = 'BLANGKO KOSONG SANTRI - ' . trim("{$jenis} " . strtoupper($cleanNama)) . '.xlsx';
+            }
+        }
+
+        return Excel::download(new FormatSantriExport, $namaFile);
+    }
+
+    /**
+     * 2. Unduh Berkas Excel Santri Terisi Milik Lembaga (Nama Rapi & Jelas)
+     */
+    public function downloadSantriLembaga($id)
+    {
+        $lembaga = Lembaga::findOrFail($id);
+
+        if (!$lembaga->file_skam || !Storage::disk('public')->exists($lembaga->file_skam)) {
+            return back()->with('error', 'Berkas Excel Santri belum diunggah atau tidak ditemukan.');
+        }
+
+        // Ambil jenis lembaga, jika di database kosong deteksi dari nama lembaga atau default ke TPQ
+        $cleanNama = strtoupper(trim(preg_replace('/[^A-Za-z0-9\-\s_]/', '', $lembaga->nama_lembaga)));
+        $jenis = strtoupper(trim($lembaga->jenis_lembaga ?? ''));
+        if (empty($jenis)) {
+            if (str_contains($cleanNama, 'MADIN')) { $jenis = 'MADIN'; }
+            elseif (str_contains($cleanNama, 'PONPES') || str_contains($cleanNama, 'PESANTREN')) { $jenis = 'PONPES'; }
+            else { $jenis = 'TPQ'; }
+        }
+
+        // Cegah nama ganda seperti "TPQ TPQ AL-HIDAYAH"
+        $namaTampil = str_starts_with($cleanNama, $jenis) ? $cleanNama : "{$jenis} {$cleanNama}";
+        $namaFile = 'DATA SANTRI TERISI - ' . $namaTampil . '.xlsx';
+
+        return response()->download(storage_path('app/public/' . $lembaga->file_skam), $namaFile);
+    }
+
+    /**
+     * Sinkronkan otomatis angka santri di database dari file Excel yang tersimpan
+     */
+    public function syncSantriDariExcel()
+    {
+        // 1. Nol-kan semua lembaga yang TIDAK memiliki file Excel santri (Null, string kosong, atau strip)
+        $resetCount = Lembaga::whereNull('file_skam')
+            ->orWhere('file_skam', '')
+            ->orWhere('file_skam', '-')
+            ->update([
+                'jumlah_santri_l' => 0,
+                'jumlah_santri_p' => 0,
+                'jumlah_santri'   => 0,
+            ]);
+
+        // 2. Hitung ulang hanya lembaga yang benar-benar memiliki file Excel di server
+        $lembagas = Lembaga::whereNotNull('file_skam')->get();
+        $updated = 0;
+
+        foreach ($lembagas as $l) {
+            $path = storage_path('app/public/' . $l->file_skam);
+            if (file_exists($path)) {
+                try {
+                    $sheets = Excel::toArray(new class {}, $path);
+                    $rows = $sheets[0] ?? [];
+                    if (!empty($rows)) {
+                        $header = array_map(fn($h) => strtoupper(trim((string)$h)), $rows[0]);
+                        $colLP = array_search('L/P', $header);
+                        if ($colLP === false) { $colLP = 2; }
+
+                        $lCount = 0;
+                        $pCount = 0;
+                        for ($i = 1; $i < count($rows); $i++) {
+                            $g = strtoupper(trim((string)($rows[$i][$colLP] ?? '')));
+                            if ($g === 'L') { $lCount++; }
+                            elseif ($g === 'P') { $pCount++; }
+                        }
+
+                        $l->update([
+                            'jumlah_santri_l' => $lCount,
+                            'jumlah_santri_p' => $pCount,
+                            'jumlah_santri'   => $lCount + $pCount,
+                        ]);
+                        $updated++;
+                    }
+                } catch (\Exception $e) {
+                    continue;
+                }
+            } else {
+                // Jika nama file tercatat di DB tapi fisiknya tidak ada di folder, nol-kan juga
+                $l->update([
+                    'file_skam'       => null,
+                    'status_skam'     => 'Pending',
+                    'jumlah_santri_l' => 0,
+                    'jumlah_santri_p' => 0,
+                    'jumlah_santri'   => 0,
+                ]);
+            }
+        }
+
+        return redirect()->route('lembaga.index')->with('success', "Pembersihan berhasil! {$resetCount} lembaga tanpa berkas dinolkan, dan {$updated} lembaga disinkronkan dari Excel.");
     }
 }

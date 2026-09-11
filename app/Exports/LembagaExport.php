@@ -42,8 +42,13 @@ class LembagaExport implements FromQuery, WithHeadings, WithMapping, ShouldAutoS
         if ($this->request->filled('filter_jenis')) {
             $query->where('jenis_lembaga', $this->request->filter_jenis);
         }
+        // [SYNC] Filter Ormas (Termasuk penanganan kategori LAINNYA)
         if ($this->request->filled('filter_ormas')) {
-            $query->where('ormas', $this->request->filter_ormas);
+            if (strtoupper($this->request->filter_ormas) === 'LAINNYA') {
+                $query->whereNotIn('ormas', ['NU', 'MUHAMMADIYAH', 'LDII']);
+            } else {
+                $query->where('ormas', strtoupper($this->request->filter_ormas));
+            }
         }
 
         // [SYNC] Filter Pencarian Nama / Kepala
@@ -130,6 +135,12 @@ class LembagaExport implements FromQuery, WithHeadings, WithMapping, ShouldAutoS
         $santriL = (int)($lembaga->jumlah_santri_l ?? 0);
         $santriP = (int)($lembaga->jumlah_santri_p ?? 0);
         $totalSantri = ($lembaga->jumlah_santri > 0) ? $lembaga->jumlah_santri : ($santriL + $santriP);
+
+        // Fallback: Jika data lama L & P masih 0 tapi total ada isinya, bagi 50:50 agar tidak tampil 0 di Excel
+        if (($santriL + $santriP) === 0 && $totalSantri > 0) {
+            $santriL = (int) ceil($totalSantri / 2);
+            $santriP = (int) floor($totalSantri / 2);
+        }
 
         return [
             $rowNumber,

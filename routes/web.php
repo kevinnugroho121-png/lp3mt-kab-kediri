@@ -262,6 +262,9 @@ Route::middleware(['auth', 'role:admin,verifikator,korcam'])->prefix('admin')->g
     Route::post('lembaga/{lembaga}/verifikasi', [LembagaController::class, 'prosesVerifikasi'])->name('lembaga.proses_verifikasi');
     Route::post('/lembaga/import', [LembagaController::class, 'import'])->name('lembaga.import');
     Route::get('/lembaga/export-excel', [LembagaController::class, 'exportExcel'])->name('lembaga.export');
+    Route::get('/lembaga/template-santri', [LembagaController::class, 'downloadTemplateSantri'])->name('lembaga.template_santri');
+    Route::get('/lembaga/{id}/download-santri', [LembagaController::class, 'downloadSantriLembaga'])->name('lembaga.download_santri');
+    Route::get('/lembaga/sync-santri-excel', [LembagaController::class, 'syncSantriDariExcel'])->name('lembaga.sync_santri');
     
     // [BARU] Rute Hapus Dokumen Fisik PDF & Foto Lembaga Instan
     Route::delete('/lembaga/{id}/delete-file/{type}', [LembagaController::class, 'deleteFile'])->name('lembaga.delete_file');
