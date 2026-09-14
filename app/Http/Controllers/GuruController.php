@@ -276,14 +276,15 @@ class GuruController extends Controller
             'kabupaten'         => 'required|string',
 
             'no_hp'             => 'required|numeric|unique:gurus,no_hp',
-            'nomor_rekening'    => 'nullable|numeric|unique:gurus,nomor_rekening',
+            'nomor_rekening'    => 'required|numeric|unique:gurus,nomor_rekening',
             
             'file_ktp'          => 'nullable|mimes:pdf|max:2048',
             'file_kk'           => 'nullable|mimes:pdf|max:2048',
             'file_bukurekening' => 'nullable|mimes:pdf|max:2048',
         ], [
-            'no_hp.unique'          => 'Nomor HP sudah terdaftar atas nama guru lain.',
-            'nomor_rekening.unique' => 'Nomor Rekening sudah digunakan oleh guru lain.',
+            'no_hp.unique'            => 'Nomor HP sudah terdaftar atas nama guru lain.',
+            'nomor_rekening.required' => 'Nomor Rekening Bank Jatim wajib diisi.',
+            'nomor_rekening.unique'   => 'Nomor Rekening sudah digunakan oleh guru lain.',
         ]);
 
         // 1. Satpam Wilayah: Domisili KTP Wajib Kabupaten Kediri
@@ -452,8 +453,9 @@ class GuruController extends Controller
             'jenis_kelamin'     => 'required|in:L,P',
             'nama_ibu_kandung'  => 'required|string',
             'agama'             => 'required|string',
+            'kabupaten'         => 'required|string',
             'no_hp'             => 'required|numeric|unique:gurus,no_hp,' . $id,
-            'nomor_rekening'    => 'nullable|numeric|unique:gurus,nomor_rekening,' . $id,
+            'nomor_rekening'    => 'required|numeric|unique:gurus,nomor_rekening,' . $id,
             'pekerjaan_utama'   => 'required|string',
             'status_kepegawaian'=> 'required|string',
             'status_sertifikasi'=> 'required|string',
@@ -464,8 +466,9 @@ class GuruController extends Controller
             'file_kk'           => 'nullable|mimes:pdf|max:2048',
             'file_bukurekening' => 'nullable|mimes:pdf|max:2048',
         ], [
-            'no_hp.unique'          => 'Nomor HP sudah terdaftar atas nama guru lain.',
-            'nomor_rekening.unique' => 'Nomor Rekening sudah digunakan oleh guru lain.',
+            'no_hp.unique'            => 'Nomor HP sudah terdaftar atas nama guru lain.',
+            'nomor_rekening.required' => 'Nomor Rekening Bank Jatim wajib diisi.',
+            'nomor_rekening.unique'   => 'Nomor Rekening sudah digunakan oleh guru lain.',
         ]);
 
         // 1. Satpam Wilayah saat Update: Domisili KTP Wajib Kabupaten Kediri

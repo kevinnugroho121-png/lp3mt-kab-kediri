@@ -54,7 +54,7 @@
                         <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 px-1">
                             <div class="md:col-span-2">
                                 <label class="block text-[10px] font-bold text-gray-600 uppercase mb-1">Nama Lembaga <span class="text-red-500">*</span></label>
-                                <input type="text" name="nama_lembaga" value="{{ old('nama_lembaga') }}" class="w-full border border-gray-400 rounded-md px-2 py-1 h-[32px] text-xs font-bold text-black-800 focus:border-blue-500 shadow-sm uppercase" placeholder="CONTOH: TPQ AL-HIDAYAH" required oninput="this.value = this.value.toUpperCase()">
+                                <input type="text" name="nama_lembaga" value="{{ old('nama_lembaga') }}" class="w-full border border-gray-400 rounded-md px-2 py-1 h-[32px] text-xs font-bold text-black-800 focus:border-blue-500 shadow-sm uppercase" placeholder="CONTOH: AL HIDAYAH" required oninput="this.value = this.value.toUpperCase()">
                             </div>
                             <div class="md:col-span-1">
                                 <label class="block text-[10px] font-bold text-gray-600 uppercase mb-1">Jenis Lembaga <span class="text-red-500">*</span></label>
@@ -188,11 +188,14 @@
                         {{-- DOKUMEN LEGALITAS & DATA SANTRI (GRID 2x2) --}}
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
                             
-                            {{-- 1. IJOP ASLI (PDF - WAJIB) --}}
+                            {{-- 1. IJOP ASLI (PDF - ALTERNATIF 1) --}}
                             <div class="bg-green-50/40 p-3 rounded-lg border border-green-400 shadow-sm flex flex-col">
-                                <label class="block text-xs font-bold text-black-800 mb-2">1. IJOP ASLI (format pdf) <span class="text-red-500">*</span></label>
+                                <div class="flex items-center justify-between mb-2">
+                                    <label class="block text-xs font-bold text-black-800">1. IJOP ASLI (format pdf)</label>
+                                    <span class="text-[9px] font-bold text-emerald-700 bg-emerald-100 px-1.5 py-0.5 rounded">*Wajib / Suket Domisili</span>
+                                </div>
                                 <div class="w-full text-left mb-3">
-                                    <input type="file" name="file_ijop" id="file_ijop" accept="application/pdf" required class="block w-full text-[10px] text-black-500 file:mr-2 file:py-1 file:px-3 file:rounded file:border-0 file:text-[10px] file:font-bold file:bg-blue-600 file:text-white hover:file:bg-blue-700 cursor-pointer transition" onchange="handleFileSelect(this, 'preview_ijop', 'btn_reset_ijop')">
+                                    <input type="file" name="file_ijop" id="file_ijop" accept="application/pdf" class="block w-full text-[10px] text-black-500 file:mr-2 file:py-1 file:px-3 file:rounded file:border-0 file:text-[10px] file:font-bold file:bg-blue-600 file:text-white hover:file:bg-blue-700 cursor-pointer transition" onchange="handleFileSelect(this, 'preview_ijop', 'btn_reset_ijop')">
                                     <button type="button" id="btn_reset_ijop" onclick="resetFile('file_ijop', 'preview_ijop', 'btn_reset_ijop')" class="hidden mt-1 text-[10px] text-red-600 font-bold underline">&times; Batal Upload</button>
                                 </div>
                                 <div class="grid grid-cols-2 gap-3 mb-3">
@@ -210,9 +213,12 @@
                                 <iframe id="preview_ijop" class="hidden w-full h-[250px] border border-gray-300 rounded bg-white mt-auto"></iframe>
                             </div>
 
-                            {{-- 2. SUKET DOMISILI (PDF - OPSIONAL) --}}
+                            {{-- 2. SUKET DOMISILI (PDF - ALTERNATIF 2 JIKA BELUM ADA IJOP) --}}
                             <div class="bg-gray-50 p-3 rounded-lg border border-gray-400 shadow-sm flex flex-col">
-                                <label class="block text-xs font-bold text-black-800 mb-2">2. Suket Domisili (Opsional)</label>
+                                <div class="flex items-center justify-between mb-2">
+                                    <label class="block text-xs font-bold text-black-800">2. Suket Domisili (format pdf)</label>
+                                    <span class="text-[9px] font-bold text-blue-700 bg-blue-100 px-1.5 py-0.5 rounded">*Jika belum ada IJOP</span>
+                                </div>
                                 <div class="w-full text-left mb-3">
                                     <input type="file" name="file_skd" id="file_skd" accept="application/pdf" class="block w-full text-[10px] text-black-500 file:mr-2 file:py-1 file:px-3 file:rounded file:border-0 file:text-[10px] file:font-bold file:bg-gray-600 file:text-white hover:file:bg-gray-700 cursor-pointer transition" onchange="handleFileSelect(this, 'preview_skd', 'btn_reset_skd')">
                                     <button type="button" id="btn_reset_skd" onclick="resetFile('file_skd', 'preview_skd', 'btn_reset_skd')" class="hidden mt-1 text-[10px] text-red-600 font-bold underline">&times; Batal Upload</button>

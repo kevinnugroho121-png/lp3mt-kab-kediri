@@ -169,9 +169,9 @@ class LembagaController extends Controller
             'jumlah_santri_p'    => 'nullable|integer|min:0',
             'jumlah_guru'        => 'nullable|integer|min:0',
 
-            // Validasi File Dokumen & Excel
-            'file_ijop'          => 'required|mimes:pdf|max:2048', 
-            'file_skd'           => 'nullable|mimes:pdf|max:2048',
+            // Validasi File Dokumen & Excel (IJOP atau Suket Domisili Wajib Salah Satu)
+            'file_ijop'          => 'required_without:file_skd|nullable|mimes:pdf|max:2048', 
+            'file_skd'           => 'required_without:file_ijop|nullable|mimes:pdf|max:2048',
             'file_super'         => 'required|mimes:pdf|max:2048', 
             'file_skam'          => 'required|mimes:xlsx,xls|max:5120',
 
@@ -181,9 +181,12 @@ class LembagaController extends Controller
             'foto_bangunan'      => 'nullable|image|mimes:jpeg,png,jpg,jfif|max:1024',
             'foto_kbm'           => 'nullable|image|mimes:jpeg,png,jpg,jfif|max:1024',
         ], [
-            'file_ijop.required' => 'File IJOP Asli (PDF) wajib diunggah.',
-            'file_ijop.mimes'    => 'File IJOP harus format PDF.',
-            'file_ijop.max'      => 'Ukuran file IJOP maksimal 2MB.',
+            'file_ijop.required_without' => 'Wajib mengunggah minimal salah satu: Berkas IJOP Asli atau Suket Domisili (jika belum ada IJOP).',
+            'file_skd.required_without'  => 'Wajib mengunggah Suket Domisili jika berkas IJOP Asli belum ada.',
+            'file_ijop.mimes'            => 'File IJOP harus format PDF.',
+            'file_ijop.max'              => 'Ukuran file IJOP maksimal 2MB.',
+            'file_skd.mimes'             => 'File Suket Domisili harus format PDF.',
+            'file_skd.max'               => 'Ukuran file Suket Domisili maksimal 2MB.',
             'file_super.required'=> 'File SPTJM dan SK Aktif Mengajar (PDF) wajib diunggah.',
             'file_super.mimes'   => 'File SPTJM dan SK Aktif Mengajar harus format PDF.',
             'file_skam.required' => 'File Data Santri/Murid (Excel) wajib diunggah.',
@@ -206,7 +209,137 @@ class LembagaController extends Controller
             ]);
         }
 
-        // 4. PROSES UPLOAD FILE
+        // ====================================================================
+        // 🛡️ SATPAM VALIDASI FILE EXCEL DATA SANTRI (SEBELUM DISIMPAN KE STORAGE)
+        // ====================================================================
+        $countL = 0;
+        $countP = 0;
+
+        if ($request->hasFile('file_skam')) {
+            $fileSkamObj = $request->file('file_skam');
+
+            try {
+                $sheets = Excel::toArray(new class {}, $fileSkamObj);
+                $rows = $sheets[0] ?? [];
+
+                // 1. Satpam Cek File Kosong Total
+                if (empty($rows) || count($rows) < 2) {
+                    return back()->withInput()->withErrors([
+                        'file_skam' => 'GAGAL: File Excel kosong atau tidak memiliki baris data santri!'
+                    ]);
+                }
+
+                // 2. Satpam Header Resmi: Wajib format Blangko Santri & Blokir File Guru
+                $headerIndex = -1;
+                $colIndexNama = false;
+                $colIndexLP = false;
+                $hasCiriSantri = false;
+
+                for ($r = 0; $r < min(5, count($rows)); $r++) {
+                    $rowUpper = array_map(fn($h) => strtoupper(trim((string)$h)), $rows[$r]);
+                    
+                    // A. BLOKIR OTOMATIS JIKA INI FILE GURU
+                    foreach ($rowUpper as $h) {
+                        if (str_contains($h, 'NIK') || str_contains($h, 'REKENING') || str_contains($h, 'GURU') || str_contains($h, 'SERTIFIKASI') || str_contains($h, 'PEKERJAAN')) {
+                            return back()->withInput()->withErrors([
+                                'file_skam' => 'GAGAL: File yang Anda upload terdeteksi sebagai DATA GURU! Wajib mengunggah Blangko Excel Santri.'
+                            ]);
+                        }
+                    }
+
+                    // B. DETEKSI CIRI KHAS BLANGKO SANTRI (Wajib ada NAMA, L/P, dan KELAS/USIA/SANTRI)
+                    foreach ($rowUpper as $idx => $headerVal) {
+                        if (str_contains($headerVal, 'NAMA')) {
+                            $colIndexNama = $idx;
+                        }
+                        if ($headerVal === 'L/P' || str_contains($headerVal, 'JENIS KELAMIN') || $headerVal === 'GENDER') {
+                            $colIndexLP = $idx;
+                        }
+                        if (str_contains($headerVal, 'KELAS') || str_contains($headerVal, 'USIA') || str_contains($headerVal, 'SANTRI')) {
+                            $hasCiriSantri = true;
+                        }
+                    }
+
+                    if ($colIndexNama !== false && $colIndexLP !== false && $hasCiriSantri) {
+                        $headerIndex = $r;
+                        break;
+                    }
+                }
+
+                // Jika bukan blangko santri resmi
+                if ($headerIndex === -1 || !$hasCiriSantri) {
+                    return back()->withInput()->withErrors([
+                        'file_skam' => 'GAGAL: Format file Excel BUKAN blangko santri resmi! Pastikan menggunakan template resmi santri (memuat kolom Santri, Kelas/Usia, dan L/P).'
+                    ]);
+                }
+
+                // 3. Satpam Pemeriksaan Baris Data Santri
+                $daftarNamaSantri = [];
+                $barisDataAda = 0;
+
+                for ($i = $headerIndex + 1; $i < count($rows); $i++) {
+                    $barisKe = $i + 1;
+                    $namaSantri = trim((string)($rows[$i][$colIndexNama] ?? ''));
+                    $gender = strtoupper(trim((string)($rows[$i][$colIndexLP] ?? '')));
+
+                    // Lewati baris kosong total
+                    if ($namaSantri === '' && $gender === '') {
+                        continue;
+                    }
+
+                    // Satpam Nama Kosong tapi gender diisi
+                    if ($namaSantri === '' && $gender !== '') {
+                        return back()->withInput()->withErrors([
+                            'file_skam' => "GAGAL di Baris ke-{$barisKe}: Kolom Nama Santri kosong padahal jenis kelamin terisi!"
+                        ]);
+                    }
+
+                    // Satpam Validitas Kolom L/P (Hanya boleh L atau P)
+                    if (!in_array($gender, ['L', 'P'])) {
+                        return back()->withInput()->withErrors([
+                            'file_skam' => "GAGAL di Baris ke-{$barisKe} (Santri: '{$namaSantri}'): Kolom L/P wajib diisi 'L' atau 'P' (Terdeteksi: '{$gender}')."
+                        ]);
+                    }
+
+                    // Satpam Anti-Duplikasi Santri di File yang Sama
+                    $namaBersih = strtoupper(preg_replace('/\s+/', ' ', $namaSantri));
+                    if (in_array($namaBersih, $daftarNamaSantri)) {
+                        return back()->withInput()->withErrors([
+                            'file_skam' => "GAGAL di Baris ke-{$barisKe}: Nama santri '{$namaSantri}' terdeteksi GANDA (duplikat) di dalam file ini."
+                        ]);
+                    }
+
+                    $daftarNamaSantri[] = $namaBersih;
+                    $barisDataAda++;
+
+                    if ($gender === 'L') { $countL++; }
+                    elseif ($gender === 'P') { $countP++; }
+                }
+
+                // Satpam Blangko Template Kosongan (Hanya ada header tanpa data santri)
+                if ($barisDataAda === 0) {
+                    return back()->withInput()->withErrors([
+                        'file_skam' => 'GAGAL: File Excel ini masih template kosong! Belum ada santri yang diisikan.'
+                    ]);
+                }
+
+                // Sinkronkan angka ke request
+                $request->merge([
+                    'jumlah_santri_l' => $countL,
+                    'jumlah_santri_p' => $countP,
+                    'jumlah_santri'   => $countL + $countP,
+                ]);
+
+            } catch (\Exception $e) {
+                return back()->withInput()->withErrors([
+                    'file_skam' => 'GAGAL: File Excel rusak atau tidak dapat dibaca. Pastikan format file .xlsx atau .xls valid.'
+                ]);
+            }
+        }
+
+        // ====================================================================
+        // 4. PROSES UPLOAD FILE (HANYA BERJALAN JIKA SELURUH SATPAM LOLOS)
+        // ====================================================================
         $pathIjop = null;
         if ($request->hasFile('file_ijop')) {
             $pathIjop = $request->file('file_ijop')->store('dokumen_lembaga', 'public');
@@ -219,38 +352,7 @@ class LembagaController extends Controller
 
         $pathSkam = null;
         if ($request->hasFile('file_skam')) {
-            $fileSkamObj = $request->file('file_skam');
-            $pathSkam = $fileSkamObj->store('dokumen_lembaga', 'public');
-
-            // [OPSI A] BACA OTOMATIS SANTRI L & P DARI EXCEL
-            try {
-                $sheets = Excel::toArray(new class {}, $fileSkamObj);
-                $rows = $sheets[0] ?? [];
-                if (!empty($rows)) {
-                    // Cari posisi index kolom L/P di baris header (Baris 1)
-                    $headerRow = array_map(fn($h) => strtoupper(trim((string)$h)), $rows[0]);
-                    $colIndexLP = array_search('L/P', $headerRow);
-                    if ($colIndexLP === false) { $colIndexLP = 2; } // Default Kolom C
-
-                    $countL = 0;
-                    $countP = 0;
-                    for ($i = 1; $i < count($rows); $i++) {
-                        $gender = strtoupper(trim((string)($rows[$i][$colIndexLP] ?? '')));
-                        if ($gender === 'L') { $countL++; }
-                        elseif ($gender === 'P') { $countP++; }
-                    }
-
-                    if ($countL > 0 || $countP > 0) {
-                        $request->merge([
-                            'jumlah_santri_l' => $countL,
-                            'jumlah_santri_p' => $countP,
-                            'jumlah_santri'   => $countL + $countP,
-                        ]);
-                    }
-                }
-            } catch (\Exception $e) {
-                // Lewati jika format excel di luar standar agar penyimpanan tidak gagal
-            }
+            $pathSkam = $request->file('file_skam')->store('dokumen_lembaga', 'public');
         }
 
         // 3. SIMPAN KE DATABASE
@@ -525,45 +627,134 @@ class LembagaController extends Controller
             unset($data['file_super']);
         }
 
-        // [BARU] Cek Upload File Baru SKAM & Hitung Otomatis Santri
+        // [BARU] Cek Upload File Baru SKAM dengan Satpam Ketat
         if ($request->hasFile('file_skam')) {
-            if ($lembaga->file_skam && Storage::disk('public')->exists($lembaga->file_skam)) {
-                Storage::disk('public')->delete($lembaga->file_skam);
-            }
             $fileSkamObj = $request->file('file_skam');
-            $data['file_skam'] = $fileSkamObj->store('dokumen_lembaga', 'public');
-            $data['status_skam'] = 'Pending'; 
 
-            // [OPSI A] BACA OTOMATIS SANTRI L & P DARI EXCEL PENGGANTI
+            // 1. SATPAM VALIDASI SEBELUM MENGHAPUS / MENIMPA FILE LAMA
             try {
                 $sheets = Excel::toArray(new class {}, $fileSkamObj);
                 $rows = $sheets[0] ?? [];
-                if (!empty($rows)) {
-                    $headerRow = array_map(fn($h) => strtoupper(trim((string)$h)), $rows[0]);
-                    $colIndexLP = array_search('L/P', $headerRow);
-                    if ($colIndexLP === false) { $colIndexLP = 2; }
 
-                    $countL = 0;
-                    $countP = 0;
-                    for ($i = 1; $i < count($rows); $i++) {
-                        $gender = strtoupper(trim((string)($rows[$i][$colIndexLP] ?? '')));
-                        if ($gender === 'L') { $countL++; }
-                        elseif ($gender === 'P') { $countP++; }
+                // A. Satpam File Kosong Total
+                if (empty($rows) || count($rows) < 2) {
+                    return back()->withInput()->withErrors([
+                        'file_skam' => 'GAGAL UPDATE: File Excel pengganti kosong atau tidak memiliki data santri!'
+                    ]);
+                }
+
+                // B. Satpam Header Resmi Blangko Santri (Cari kolom NAMA, L/P, dan Ciri Santri)
+                $headerIndex = -1;
+                $colIndexNama = false;
+                $colIndexLP = false;
+                $hasCiriSantri = false;
+
+                for ($r = 0; $r < min(5, count($rows)); $r++) {
+                    $rowUpper = array_map(fn($h) => strtoupper(trim((string)$h)), $rows[$r]);
+                    
+                    // A. BLOKIR OTOMATIS JIKA INI FILE GURU
+                    foreach ($rowUpper as $h) {
+                        if (str_contains($h, 'NIK') || str_contains($h, 'REKENING') || str_contains($h, 'GURU') || str_contains($h, 'SERTIFIKASI') || str_contains($h, 'PEKERJAAN')) {
+                            return back()->withInput()->withErrors([
+                                'file_skam' => 'GAGAL UPDATE: File yang Anda upload terdeteksi sebagai DATA GURU! Wajib mengunggah Blangko Excel Santri.'
+                            ]);
+                        }
                     }
 
-                    if ($countL > 0 || $countP > 0) {
-                        $request->merge([
-                            'jumlah_santri_l' => $countL,
-                            'jumlah_santri_p' => $countP,
-                            'jumlah_santri'   => $countL + $countP,
-                        ]);
-                        $data['jumlah_santri_l'] = $countL;
-                        $data['jumlah_santri_p'] = $countP;
-                        $data['jumlah_santri']   = $countL + $countP;
+                    // B. DETEKSI CIRI KHAS BLANGKO SANTRI
+                    foreach ($rowUpper as $idx => $headerVal) {
+                        if (str_contains($headerVal, 'NAMA')) {
+                            $colIndexNama = $idx;
+                        }
+                        if ($headerVal === 'L/P' || str_contains($headerVal, 'JENIS KELAMIN') || $headerVal === 'GENDER') {
+                            $colIndexLP = $idx;
+                        }
+                        if (str_contains($headerVal, 'KELAS') || str_contains($headerVal, 'USIA') || str_contains($headerVal, 'SANTRI')) {
+                            $hasCiriSantri = true;
+                        }
+                    }
+
+                    if ($colIndexNama !== false && $colIndexLP !== false && $hasCiriSantri) {
+                        $headerIndex = $r;
+                        break;
                     }
                 }
+
+                if ($headerIndex === -1 || !$hasCiriSantri) {
+                    return back()->withInput()->withErrors([
+                        'file_skam' => 'GAGAL UPDATE: File Excel pengganti BUKAN blangko santri resmi! Kolom khas santri (Kelas/Usia) tidak ditemukan.'
+                    ]);
+                }
+
+                // C. Satpam Baris Data Santri
+                $daftarNamaSantri = [];
+                $barisDataAda = 0;
+                $countL = 0;
+                $countP = 0;
+
+                for ($i = $headerIndex + 1; $i < count($rows); $i++) {
+                    $barisKe = $i + 1;
+                    $namaSantri = trim((string)($rows[$i][$colIndexNama] ?? ''));
+                    $gender = strtoupper(trim((string)($rows[$i][$colIndexLP] ?? '')));
+
+                    if ($namaSantri === '' && $gender === '') {
+                        continue;
+                    }
+
+                    if ($namaSantri === '' && $gender !== '') {
+                        return back()->withInput()->withErrors([
+                            'file_skam' => "GAGAL di Baris ke-{$barisKe}: Kolom Nama Santri kosong padahal jenis kelamin terisi!"
+                        ]);
+                    }
+
+                    if (!in_array($gender, ['L', 'P'])) {
+                        return back()->withInput()->withErrors([
+                            'file_skam' => "GAGAL di Baris ke-{$barisKe} (Santri: '{$namaSantri}'): Kolom L/P wajib diisi 'L' atau 'P' (Terdeteksi: '{$gender}')."
+                        ]);
+                    }
+
+                    $namaBersih = strtoupper(preg_replace('/\s+/', ' ', $namaSantri));
+                    if (in_array($namaBersih, $daftarNamaSantri)) {
+                        return back()->withInput()->withErrors([
+                            'file_skam' => "GAGAL di Baris ke-{$barisKe}: Nama santri '{$namaSantri}' terdeteksi GANDA di dalam file pengganti ini."
+                        ]);
+                    }
+
+                    $daftarNamaSantri[] = $namaBersih;
+                    $barisDataAda++;
+
+                    if ($gender === 'L') { $countL++; }
+                    elseif ($gender === 'P') { $countP++; }
+                }
+
+                if ($barisDataAda === 0) {
+                    return back()->withInput()->withErrors([
+                        'file_skam' => 'GAGAL UPDATE: File Excel pengganti masih template kosong!'
+                    ]);
+                }
+
+                // 2. EKSEKUSI PENGGANTIAN FILE (Hanya berjalan jika file baru 100% lolos satpam)
+                if ($lembaga->file_skam && Storage::disk('public')->exists($lembaga->file_skam)) {
+                    Storage::disk('public')->delete($lembaga->file_skam);
+                }
+
+                $data['file_skam'] = $fileSkamObj->store('dokumen_lembaga', 'public');
+                $data['status_skam'] = 'Pending'; 
+
+                $data['jumlah_santri_l'] = $countL;
+                $data['jumlah_santri_p'] = $countP;
+                $data['jumlah_santri']   = $countL + $countP;
+
+                $request->merge([
+                    'jumlah_santri_l' => $countL,
+                    'jumlah_santri_p' => $countP,
+                    'jumlah_santri'   => $countL + $countP,
+                ]);
+
             } catch (\Exception $e) {
-                // Lewati jika format excel di luar standar
+                return back()->withInput()->withErrors([
+                    'file_skam' => 'GAGAL UPDATE: Berkas Excel rusak atau tidak dapat dibaca.'
+                ]);
             }
         } else {
             unset($data['file_skam']);

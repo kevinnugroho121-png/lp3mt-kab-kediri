@@ -437,7 +437,7 @@
         });
 
         // 2. PREVIEW & RESET PDF (Disesuaikan untuk form EDIT)
-        const hasExistingIjopFile = {{ $lembaga->file_ijop ? 'true' : 'false' }};
+        const hasExistingIjopFile = "{{ $lembaga->file_ijop ? 'true' : 'false' }}" === 'true';
 
         function handleFileSelect(input, iframeId, btnId, oldFrameId = null) {
             const iframe = document.getElementById(iframeId); const btnReset = document.getElementById(btnId);

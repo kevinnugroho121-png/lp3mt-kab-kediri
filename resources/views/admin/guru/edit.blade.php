@@ -110,29 +110,29 @@
 
 
                             <div class="md:col-span-1">
-                                <label class="block text-[10px] font-bold text-gray-600 uppercase tracking-wider mb-1">Tempat Lahir</label>
-                                <input type="text" name="tempat_lahir" value="{{ old('tempat_lahir', $guru->tempat_lahir) }}" class="w-full border border-gray-600 rounded-md px-2 py-1 h-[32px] text-xs font-bold text-black-800 focus:border-blue-500 focus:ring-blue-500 shadow-sm uppercase" oninput="this.value = this.value.toUpperCase()">
+                                <label class="block text-[10px] font-bold text-gray-600 uppercase tracking-wider mb-1">Tempat Lahir <span class="text-red-500">*</span></label>
+                                <input type="text" name="tempat_lahir" value="{{ old('tempat_lahir', $guru->tempat_lahir) }}" required class="w-full border border-gray-600 rounded-md px-2 py-1 h-[32px] text-xs font-bold text-black-800 focus:border-blue-500 focus:ring-blue-500 shadow-sm uppercase" oninput="this.value = this.value.toUpperCase()">
                             </div>
 
                             <div class="md:col-span-1">
-                                <label class="block text-[10px] font-bold text-gray-600 uppercase tracking-wider mb-1">Tanggal Lahir</label>
-                                <input type="date" name="tanggal_lahir" value="{{ old('tanggal_lahir', $guru->tanggal_lahir ? \Carbon\Carbon::parse($guru->tanggal_lahir)->format('Y-m-d') : '') }}" class="w-full border border-gray-600 rounded-md px-2 py-1 h-[32px] text-xs font-bold text-black-800 focus:border-blue-500 focus:ring-blue-500 shadow-sm">
+                                <label class="block text-[10px] font-bold text-gray-600 uppercase tracking-wider mb-1">Tanggal Lahir <span class="text-red-500">*</span></label>
+                                <input type="text" name="tanggal_lahir" id="tanggal_lahir" value="{{ old('tanggal_lahir', $guru->tanggal_lahir ? \Carbon\Carbon::parse($guru->tanggal_lahir)->format('Y-m-d') : '') }}" required placeholder="dd-mm-yyyy" class="w-full border border-gray-600 rounded-md px-2 py-1 h-[32px] text-xs font-bold text-black-800 focus:border-blue-500 focus:ring-blue-500 shadow-sm bg-white">
                             </div>
 
                             <div class="md:col-span-1">
-                                <label class="block text-[10px] font-bold text-gray-600 uppercase tracking-wider mb-1">Nama Ibu Kandung</label>
-                                <input type="text" name="nama_ibu_kandung" value="{{ old('nama_ibu_kandung', $guru->nama_ibu_kandung) }}" class="w-full border border-gray-600 rounded-md px-2 py-1 h-[32px] text-xs font-bold text-black-800 focus:border-blue-500 focus:ring-blue-500 shadow-sm uppercase" oninput="this.value = this.value.toUpperCase()">
+                                <label class="block text-[10px] font-bold text-gray-600 uppercase tracking-wider mb-1">Nama Ibu Kandung <span class="text-red-500">*</span></label>
+                                <input type="text" name="nama_ibu_kandung" value="{{ old('nama_ibu_kandung', $guru->nama_ibu_kandung) }}" required class="w-full border border-gray-600 rounded-md px-2 py-1 h-[32px] text-xs font-bold text-black-800 focus:border-blue-500 focus:ring-blue-500 shadow-sm uppercase" oninput="this.value = this.value.toUpperCase()">
                             </div>
 
                             <div class="md:col-span-1">
-                                <label class="block text-[10px] font-bold text-gray-600 uppercase tracking-wider mb-1">Agama</label>
-                                <select name="agama" class="w-full border border-gray-600 rounded-md px-2 py-1 h-[32px] text-xs font-bold text-black-800 focus:border-blue-500 focus:ring-blue-500 shadow-sm">
-                                    <option value="Islam" {{ $guru->agama == 'Islam' ? 'selected' : '' }}>ISLAM</option>
-                                    <option value="Kristen" {{ $guru->agama == 'Kristen' ? 'selected' : '' }}>KRISTEN</option>
-                                    <option value="Katholik" {{ $guru->agama == 'Katholik' ? 'selected' : '' }}>KATHOLIK</option>
-                                    <option value="Hindu" {{ $guru->agama == 'Hindu' ? 'selected' : '' }}>HINDU</option>
-                                    <option value="Budha" {{ $guru->agama == 'Budha' ? 'selected' : '' }}>BUDHA</option>
-                                    <option value="Konghucu" {{ $guru->agama == 'Konghucu' ? 'selected' : '' }}>KONGHUCU</option>
+                                <label class="block text-[10px] font-bold text-gray-600 uppercase tracking-wider mb-1">Agama <span class="text-red-500">*</span></label>
+                                <select name="agama" required class="w-full border border-gray-600 rounded-md px-2 py-1 h-[32px] text-xs font-bold text-black-800 focus:border-blue-500 focus:ring-blue-500 shadow-sm">
+                                    <option value="Islam" {{ old('agama', $guru->agama) == 'Islam' ? 'selected' : '' }}>ISLAM</option>
+                                    <option value="Kristen" {{ old('agama', $guru->agama) == 'Kristen' ? 'selected' : '' }}>KRISTEN</option>
+                                    <option value="Katholik" {{ old('agama', $guru->agama) == 'Katholik' ? 'selected' : '' }}>KATHOLIK</option>
+                                    <option value="Hindu" {{ old('agama', $guru->agama) == 'Hindu' ? 'selected' : '' }}>HINDU</option>
+                                    <option value="Budha" {{ old('agama', $guru->agama) == 'Budha' ? 'selected' : '' }}>BUDHA</option>
+                                    <option value="Konghucu" {{ old('agama', $guru->agama) == 'Konghucu' ? 'selected' : '' }}>KONGHUCU</option>
                                 </select>
                             </div>
 
@@ -163,13 +163,13 @@
                             </div>
 
                             <div class="md:col-span-1">
-                                <label class="block text-[10px] font-bold text-gray-600 uppercase tracking-wider mb-1">Kabupaten</label>
-                                <input type="text" name="kabupaten" value="KEDIRI" class="w-full border border-gray-600 rounded-md px-2 py-1 h-[32px] font-bold text-xs bg-gray-100 shadow-sm" readonly>
+                                <label class="block text-[10px] font-bold text-gray-600 uppercase tracking-wider mb-1">Kabupaten <span class="text-red-500">*</span></label>
+                                <input type="text" name="kabupaten" value="KEDIRI" required class="w-full border border-gray-600 rounded-md px-2 py-1 h-[32px] font-bold text-xs bg-gray-100 shadow-sm cursor-not-allowed" readonly>
                             </div>
 
                             <div class="md:col-span-1">
-                                <label class="block text-[10px] font-bold text-gray-600 uppercase tracking-wider mb-1">Nomor HP</label>
-                                <input type="number" name="no_hp" value="{{ old('no_hp', $guru->no_hp) }}" class="w-full border border-gray-600 rounded-md px-2 py-1 h-[32px] text-xs font-bold text-black-800 focus:border-blue-500 focus:ring-blue-500 shadow-sm">
+                                <label class="block text-[10px] font-bold text-gray-600 uppercase tracking-wider mb-1">Nomor HP <span class="text-red-500">*</span></label>
+                                <input type="text" name="no_hp" value="{{ old('no_hp', $guru->no_hp) }}" required placeholder="08xxxxxxxxxx" class="w-full border border-gray-600 rounded-md px-2 py-1 h-[32px] text-xs font-bold text-black-800 focus:border-blue-500 focus:ring-blue-500 shadow-sm">
                             </div>
 
                             <div class="md:col-span-2">
@@ -183,8 +183,8 @@
                             </div>
 
                             <div class="md:col-span-1">
-                                <label class="block text-[10px] font-bold text-gray-600 uppercase tracking-wider mb-1">Nomor Rekening BANK JATIM</label>
-                                <input type="number" name="nomor_rekening" value="{{ old('nomor_rekening', $guru->nomor_rekening) }}" class="w-full border border-gray-600 rounded-md px-2 py-1 h-[32px] text-xs font-bold focus:border-blue-500 focus:ring-blue-500 shadow-sm">
+                                <label class="block text-[10px] font-bold text-gray-600 uppercase tracking-wider mb-1">Nomor Rekening BANK JATIM <span class="text-red-500">*</span></label>
+                                <input type="text" name="nomor_rekening" value="{{ old('nomor_rekening', $guru->nomor_rekening) }}" required placeholder="Nomor Rekening" class="w-full border border-gray-600 rounded-md px-2 py-1 h-[32px] text-xs font-bold text-black-800 focus:border-blue-500 focus:ring-blue-500 shadow-sm">
                             </div>
 
                         </div>
@@ -553,4 +553,18 @@
             </div>
         </div>
     </div>
+    {{-- Pustaka Pemilih Tanggal Berformat Strip (dd-mm-yy) --}}
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            flatpickr("#tanggal_lahir", {
+                dateFormat: "Y-m-d",     // Format yang tersimpan ke database MySQL
+                altInput: true,
+                altFormat: "d-m-Y",       // Format visual yang tampil di layar: dd-mm-yyyy
+                allowInput: true
+            });
+        });
+    </script>
+
 </x-app-layout>
