@@ -28,6 +28,8 @@ class LembagaImport implements ToCollection, WithHeadingRow
         // ========================================================
         // LOOP 1: VALIDASI KETAT & CEK GANDA (SISTEM REJECT-ALL)
         // ========================================================
+
+
         foreach ($rows as $index => $row) {
             $lineNumber = $index + 2; // Baris Excel (Header dihitung baris 1)
 
@@ -36,64 +38,73 @@ class LembagaImport implements ToCollection, WithHeadingRow
                 continue;
             }
 
+            // 1. Ambil No. Urut fisik kolom 'no'/'nomor' atau hitung urutan otomatis
+            $rawNoUrut = trim((string)($row['no'] ?? $row['nomor'] ?? ''));
+            $noUrut    = (!empty($rawNoUrut) && is_numeric($rawNoUrut)) ? $rawNoUrut : ($index + 1);
+
             // Antisipasi flexibilitas nama kolom (Mendukung KEC / KECAMATAN)
             $rawKec   = $row['kec'] ?? $row['kecamatan'] ?? null;
             $rawDesa  = $row['desa'] ?? null;
             $rawNama  = $row['nama_lembaga'] ?? null;
             $rawJenis = $row['jenis_lembaga'] ?? null;
 
+            // 2. Buat Label Identitas Khusus (No Urut + Baris Excel + Nama Lembaga)
+            $namaLembagaClean = strtoupper(preg_replace('/\s+/', ' ', trim((string)$rawNama)));
+            $labelNama        = !empty($namaLembagaClean) ? " - '{$namaLembagaClean}'" : "";
+            $tag              = "No. Urut {$noUrut} (Baris Excel {$lineNumber}){$labelNama}: ";
+            $infoBarisIni     = "No. Urut {$noUrut} (Baris Excel {$lineNumber})";
+
             // A. Validasi Kolom Wajib Kosong
-            if (empty(trim($rawNama))) {
-                $this->errors[] = "Baris Ke-{$lineNumber}: Kolom 'NAMA LEMBAGA' wajib diisi.";
+            if (empty(trim((string)$rawNama))) {
+                $this->errors[] = "No. Urut {$noUrut} (Baris Excel {$lineNumber}): Kolom 'NAMA LEMBAGA' wajib diisi.";
             }
-            if (empty(trim($rawJenis))) {
-                $this->errors[] = "Baris Ke-{$lineNumber}: Kolom 'JENIS LEMBAGA' wajib diisi.";
-            } elseif (!in_array(strtoupper(trim($rawJenis)), ['MADIN', 'TPQ', 'PONPES'])) {
-                $this->errors[] = "Baris Ke-{$lineNumber}: Jenis Lembaga '{$rawJenis}' tidak valid. Harus berisi MADIN, TPQ, atau PONPES.";
+            if (empty(trim((string)$rawJenis))) {
+                $this->errors[] = "{$tag}Kolom 'JENIS LEMBAGA' wajib diisi.";
+            } elseif (!in_array(strtoupper(trim((string)$rawJenis)), ['MADIN', 'TPQ', 'PONPES'])) {
+                $this->errors[] = "{$tag}Jenis Lembaga '{$rawJenis}' tidak valid. Harus berisi MADIN, TPQ, atau PONPES.";
             }
-            if (empty(trim($rawKec))) {
-                $this->errors[] = "Baris Ke-{$lineNumber}: Kolom 'KEC' (Kecamatan) wajib diisi.";
+            if (empty(trim((string)$rawKec))) {
+                $this->errors[] = "{$tag}Kolom 'KEC' (Kecamatan) wajib diisi.";
             }
-            if (empty(trim($rawDesa))) {
-                $this->errors[] = "Baris Ke-{$lineNumber}: Kolom 'DESA' wajib diisi.";
+            if (empty(trim((string)$rawDesa))) {
+                $this->errors[] = "{$tag}Kolom 'DESA' wajib diisi.";
             }
 
             // Jika ada kolom dasar yang kosong, lewati baris ini agar query wilayah tidak crash
-            if (empty(trim($rawNama)) || empty(trim($rawJenis)) || empty(trim($rawKec)) || empty(trim($rawDesa))) {
+            if (empty(trim((string)$rawNama)) || empty(trim((string)$rawJenis)) || empty(trim((string)$rawKec)) || empty(trim((string)$rawDesa))) {
                 continue;
             }
 
             // B. Validasi Keberadaan Wilayah di Sistem Database
-            $kecamatan = Kecamatan::where('nama_kecamatan', 'LIKE', '%' . trim($rawKec) . '%')->first();
+            $kecamatan = Kecamatan::where('nama_kecamatan', 'LIKE', '%' . trim((string)$rawKec) . '%')->first();
             if (!$kecamatan) {
-                $this->errors[] = "Baris Ke-{$lineNumber}: Kecamatan '{$rawKec}' tidak terdaftar dalam database sistem.";
+                $this->errors[] = "{$tag}Kecamatan '{$rawKec}' tidak terdaftar dalam database sistem.";
                 continue;
             }
 
             // Hak Akses Korcam: Tidak boleh import data kecamatan lain
             if ($this->user->role == 'korcam' && $kecamatan->id != $this->user->kecamatan_id) {
-                $this->errors[] = "Baris Ke-{$lineNumber}: Anda tidak memiliki wewenang mengimpor data di luar wilayah Kecamatan Anda.";
+                $this->errors[] = "{$tag}Anda tidak memiliki wewenang mengimpor data di luar wilayah Kecamatan Anda.";
                 continue;
             }
 
             $desa = Desa::where('kecamatan_id', $kecamatan->id)
-                        ->where('nama_desa', 'LIKE', '%' . trim($rawDesa) . '%')->first();
+                        ->where('nama_desa', 'LIKE', '%' . trim((string)$rawDesa) . '%')->first();
             if (!$desa) {
-                $this->errors[] = "Baris Ke-{$lineNumber}: Desa '{$rawDesa}' tidak ditemukan di wilayah Kecamatan '{$rawKec}'.";
+                $this->errors[] = "{$tag}Desa '{$rawDesa}' tidak ditemukan di wilayah Kecamatan '{$rawKec}'.";
                 continue;
             }
 
-            // C. Validasi Duplikasi Data Internal File Excel (Pembersihan Spasi Ganda)
-            $namaLembagaClean = strtoupper(preg_replace('/\s+/', ' ', trim($rawNama)));
-            $jenisLembagaUpper = strtoupper(trim($rawJenis));
+            // C. Validasi Duplikasi Data Internal File Excel
+            $jenisLembagaUpper = strtoupper(trim((string)$rawJenis));
             
             // Kunci unik: Nama bersih + Jenis + Kecamatan + Desa
             $keyKombinasiUnik = $namaLembagaClean . '|' . $jenisLembagaUpper . '|' . $kecamatan->id . '|' . $desa->id;
 
             if (isset($processedRows[$keyKombinasiUnik])) {
-                $this->errors[] = "Baris Ke-{$lineNumber}: Duplikasi internal Excel! Lembaga '{$namaLembagaClean}' ({$jenisLembagaUpper}) kembar dengan Baris Ke-" . $processedRows[$keyKombinasiUnik];
+                $this->errors[] = "{$tag}Duplikasi internal Excel! Lembaga '{$namaLembagaClean}' ({$jenisLembagaUpper}) kembar dengan " . $processedRows[$keyKombinasiUnik];
             } else {
-                $processedRows[$keyKombinasiUnik] = $lineNumber;
+                $processedRows[$keyKombinasiUnik] = $infoBarisIni;
             }
 
             // D. Validasi Duplikasi dengan Database Utama
@@ -103,9 +114,8 @@ class LembagaImport implements ToCollection, WithHeadingRow
                                        ->where('desa_id', $desa->id)
                                        ->exists();
             if ($isDuplicateInDb) {
-                $this->errors[] = "Baris Ke-{$lineNumber}: Lembaga '{$namaLembagaClean}' ({$jenisLembagaUpper}) di Desa '{$rawDesa}' SUDAH ADA di database.";
+                $this->errors[] = "{$tag}Lembaga '{$namaLembagaClean}' ({$jenisLembagaUpper}) di Desa '{$rawDesa}' SUDAH ADA di database.";
             }
-
 
         }
 

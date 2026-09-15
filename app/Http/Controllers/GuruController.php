@@ -722,12 +722,11 @@ class GuruController extends Controller
             $menuAsal = 'PONPES';
         }
 
-        // Inisialisasi $import di luar try agar terbaca jelas oleh VS Code
+        // Inisialisasi variabel di luar try agar terbaca aman oleh blok catch & VS Code
+        $namaFileAsli = $request->file('file_excel')->getClientOriginalName();
         $import = new GuruImport(Auth::user(), $menuAsal);
 
         try {
-            $namaFileAsli = $request->file('file_excel')->getClientOriginalName();
-
             Excel::import($import, $request->file('file_excel'));
 
             // [BARU] Catat Aktivitas Impor Berhasil ke CCTV Log

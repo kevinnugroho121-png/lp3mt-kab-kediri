@@ -288,6 +288,9 @@ class LembagaController extends Controller
 
                 for ($i = $headerIndex + 1; $i < count($rows); $i++) {
                     $barisKe = $i + 1;
+                    $rawNoUrut = trim((string)($rows[$i][0] ?? ''));
+                    $noUrut = !empty($rawNoUrut) && is_numeric($rawNoUrut) ? $rawNoUrut : ($i - $headerIndex);
+
                     $namaSantri = trim((string)($rows[$i][$colIndexNama] ?? ''));
                     $gender = strtoupper(trim((string)($rows[$i][$colIndexLP] ?? '')));
 
@@ -296,17 +299,19 @@ class LembagaController extends Controller
                         continue;
                     }
 
+                    $tagSantri = "No. Urut {$noUrut} (Baris Excel {$barisKe})";
+
                     // Satpam Nama Kosong tapi gender diisi
                     if ($namaSantri === '' && $gender !== '') {
                         return back()->withInput()->withErrors([
-                            'file_skam' => "GAGAL di Baris ke-{$barisKe}: Kolom Nama Santri kosong padahal jenis kelamin terisi!"
+                            'file_skam' => "GAGAL pada {$tagSantri}: Kolom Nama Santri kosong padahal jenis kelamin terisi!"
                         ]);
                     }
 
                     // Satpam Validitas Kolom L/P (Hanya boleh L atau P)
                     if (!in_array($gender, ['L', 'P'])) {
                         return back()->withInput()->withErrors([
-                            'file_skam' => "GAGAL di Baris ke-{$barisKe} (Santri: '{$namaSantri}'): Kolom L/P wajib diisi 'L' atau 'P' (Terdeteksi: '{$gender}')."
+                            'file_skam' => "GAGAL pada {$tagSantri} - Santri: '{$namaSantri}': Kolom L/P wajib diisi 'L' atau 'P' (Terdeteksi: '{$gender}')."
                         ]);
                     }
 
@@ -314,7 +319,7 @@ class LembagaController extends Controller
                     $namaBersih = strtoupper(preg_replace('/\s+/', ' ', $namaSantri));
                     if (in_array($namaBersih, $daftarNamaSantri)) {
                         return back()->withInput()->withErrors([
-                            'file_skam' => "GAGAL di Baris ke-{$barisKe}: Nama santri '{$namaSantri}' terdeteksi GANDA (duplikat) di dalam file ini."
+                            'file_skam' => "GAGAL pada {$tagSantri}: Nama santri '{$namaSantri}' terdeteksi GANDA (duplikat) di dalam file ini."
                         ]);
                     }
 
@@ -695,7 +700,7 @@ class LembagaController extends Controller
                     ]);
                 }
 
-                // C. Satpam Baris Data Santri
+                // C. Satpam Baris Data Santri (Format Jelas: No Urut + Baris Excel + Nama)
                 $daftarNamaSantri = [];
                 $barisDataAda = 0;
                 $countL = 0;
@@ -703,29 +708,35 @@ class LembagaController extends Controller
 
                 for ($i = $headerIndex + 1; $i < count($rows); $i++) {
                     $barisKe = $i + 1;
+                    $rawNoUrut = trim((string)($rows[$i][0] ?? ''));
+                    $noUrut = !empty($rawNoUrut) && is_numeric($rawNoUrut) ? $rawNoUrut : ($i - $headerIndex);
+
                     $namaSantri = trim((string)($rows[$i][$colIndexNama] ?? ''));
                     $gender = strtoupper(trim((string)($rows[$i][$colIndexLP] ?? '')));
 
+                    // Lewati baris kosong total
                     if ($namaSantri === '' && $gender === '') {
                         continue;
                     }
 
+                    $tagSantri = "No. Urut {$noUrut} (Baris Excel {$barisKe})";
+
                     if ($namaSantri === '' && $gender !== '') {
                         return back()->withInput()->withErrors([
-                            'file_skam' => "GAGAL di Baris ke-{$barisKe}: Kolom Nama Santri kosong padahal jenis kelamin terisi!"
+                            'file_skam' => "GAGAL UPDATE pada {$tagSantri}: Kolom Nama Santri kosong padahal jenis kelamin terisi!"
                         ]);
                     }
 
                     if (!in_array($gender, ['L', 'P'])) {
                         return back()->withInput()->withErrors([
-                            'file_skam' => "GAGAL di Baris ke-{$barisKe} (Santri: '{$namaSantri}'): Kolom L/P wajib diisi 'L' atau 'P' (Terdeteksi: '{$gender}')."
+                            'file_skam' => "GAGAL UPDATE pada {$tagSantri} - Santri '{$namaSantri}': Kolom L/P wajib diisi 'L' atau 'P' (Terdeteksi: '{$gender}')."
                         ]);
                     }
 
                     $namaBersih = strtoupper(preg_replace('/\s+/', ' ', $namaSantri));
                     if (in_array($namaBersih, $daftarNamaSantri)) {
                         return back()->withInput()->withErrors([
-                            'file_skam' => "GAGAL di Baris ke-{$barisKe}: Nama santri '{$namaSantri}' terdeteksi GANDA di dalam file pengganti ini."
+                            'file_skam' => "GAGAL UPDATE pada {$tagSantri} - Santri '{$namaSantri}': Terdeteksi GANDA (duplikat) di dalam file pengganti ini."
                         ]);
                     }
 

@@ -40,9 +40,18 @@ class GuruImport implements ToCollection, WithHeadingRow
 
             if (empty(array_filter($row->toArray()))) continue;
 
+            // 1. Ambil No. Urut manual dari kolom 'No' (jika diisi petugas) atau gunakan urutan otomatis
+            $rawNoUrut   = trim((string)($row['no'] ?? $row['nomor'] ?? ''));
+            $noUrut      = !empty($rawNoUrut) ? $rawNoUrut : ($index + 1);
+
             // Bersihkan format input (Mendukung Template Excel Lama & Baru)
             $rawNik          = preg_replace('/[^0-9]/', '', (string)($row['nik'] ?? ''));
             $rawNamaGuru     = trim((string)($row['nama_lengkap_tanpa_gelar'] ?? $row['nama_lengkap'] ?? ''));
+
+            // 2. Buat Label Identitas Khusus (Sebut Nama + No Urut + Baris Excel)
+            $labelNama   = !empty($rawNamaGuru) ? " - '{$rawNamaGuru}'" : "";
+            $tag         = "No. Urut {$noUrut} (Baris Excel {$lineNumber}){$labelNama}: ";
+            $infoBarisIni = "No. Urut {$noUrut} (Baris Excel {$lineNumber})";
             $rawLembaga      = trim((string)($row['nama_lembaga_tempat_mengajar'] ?? $row['nama_lembaga'] ?? ''));
             $rawJenisLembaga = trim((string)($row['jenis_lembaga'] ?? ''));
             $rawRekening     = trim(str_replace(["'", '"', ' '], '', (string)($row['nomer_rekening'] ?? $row['nomor_rekening'] ?? '')));
@@ -60,20 +69,20 @@ class GuruImport implements ToCollection, WithHeadingRow
                 $rawHp = '0' . $rawHp;
             }
 
-            // A. Validasi Kolom Wajib Dasar
+            // A. Validasi Kolom Wajib Dasar (Dengan Identitas Lengkap)
             if (empty($rawNik)) {
-                $this->errors[] = "Baris Ke-{$lineNumber}: Kolom 'NIK' wajib diisi.";
+                $this->errors[] = "{$tag}Kolom 'NIK' wajib diisi.";
             } elseif (strlen($rawNik) !== 16) {
-                $this->errors[] = "Baris Ke-{$lineNumber}: NIK '{$rawNik}' tidak valid (Harus 16 digit angka murni).";
+                $this->errors[] = "{$tag}NIK '{$rawNik}' tidak valid (Harus 16 digit angka murni).";
             }
-            if (empty($rawNamaGuru))   $this->errors[] = "Baris Ke-{$lineNumber}: Nama Guru kosong.";
-            if (empty($rawLembaga))    $this->errors[] = "Baris Ke-{$lineNumber}: Nama Lembaga kosong.";
-            if (empty($rawRekening))   $this->errors[] = "Baris Ke-{$lineNumber}: Kolom 'NOMER REKENING' wajib diisi.";
-            if (empty($rawKecGuru))    $this->errors[] = "Baris Ke-{$lineNumber}: Kolom 'KEC GURU' (Kecamatan Rumah Guru) wajib diisi.";
-            if (empty($rawDesaGuru))   $this->errors[] = "Baris Ke-{$lineNumber}: Kolom 'DESA GURU' (Desa Rumah Guru) wajib diisi.";
-            if (empty($rawIbuKandung)) $this->errors[] = "Baris Ke-{$lineNumber}: Kolom 'NAMA IBU KANDUNG' wajib diisi.";
+            if (empty($rawNamaGuru))   $this->errors[] = "No. Urut {$noUrut} (Baris Excel {$lineNumber}): Nama Guru kosong.";
+            if (empty($rawLembaga))    $this->errors[] = "{$tag}Nama Lembaga tempat mengajar kosong.";
+            if (empty($rawRekening))   $this->errors[] = "{$tag}Kolom 'NOMER REKENING' wajib diisi.";
+            if (empty($rawKecGuru))    $this->errors[] = "{$tag}Kolom 'KEC GURU' (Kecamatan Rumah Guru) wajib diisi.";
+            if (empty($rawDesaGuru))   $this->errors[] = "{$tag}Kolom 'DESA GURU' (Desa Rumah Guru) wajib diisi.";
+            if (empty($rawIbuKandung)) $this->errors[] = "{$tag}Kolom 'NAMA IBU KANDUNG' wajib diisi.";
             if (empty($rawJk) || !in_array($rawJk, ['L', 'P'])) {
-                $this->errors[] = "Baris Ke-{$lineNumber}: Jenis Kelamin harus 'L' atau 'P'.";
+                $this->errors[] = "{$tag}Jenis Kelamin harus diisi 'L' atau 'P'.";
             }
 
             // ========================================================
@@ -159,9 +168,9 @@ class GuruImport implements ToCollection, WithHeadingRow
             // E. DETEKSI DUPLIKASI NIK
             if (!empty($rawNik)) {
                 if (isset($processedNiks[$rawNik])) {
-                    $this->errors[] = "Baris Ke-{$lineNumber}: DUPLIKASI EXCEL! NIK {$rawNik} kembar dengan data di Baris Ke-" . $processedNiks[$rawNik];
+                    $this->errors[] = "{$tag}DUPLIKASI EXCEL! NIK {$rawNik} kembar dengan data di " . $processedNiks[$rawNik];
                 } else {
-                    $processedNiks[$rawNik] = $lineNumber;
+                    $processedNiks[$rawNik] = $infoBarisIni;
                 }
                 
                 // Cek ke database dan tarik info lembaganya
