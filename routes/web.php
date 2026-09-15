@@ -86,8 +86,15 @@ Route::get('/dashboard', function () {
     // 1. Progress Lembaga
     $totalLembagaBerkas = (clone $queryLembaga)->count();
     $lembagaLengkap = (clone $queryLembaga)
-        ->whereNotNull('file_ijop')->whereNotNull('file_super')->whereNotNull('file_skam')
-        ->where('status_ijop', 'Disetujui')->where('status_super', 'Disetujui')->where('status_skam', 'Disetujui')
+        ->where(function($sub) {
+            $sub->where(function($qIjop) {
+                $qIjop->whereNotNull('file_ijop')->where('status_ijop', 'Disetujui');
+            })->orWhere(function($qSkd) {
+                $qSkd->whereNotNull('file_skd')->where('status_skd', 'Disetujui');
+            });
+        })
+        ->whereNotNull('file_super')->where('status_super', 'Disetujui')
+        ->whereNotNull('file_skam')->where('status_skam', 'Disetujui')
         ->count();
     $persenLembaga = $totalLembagaBerkas > 0 ? round(($lembagaLengkap / $totalLembagaBerkas) * 100) : 0;
 

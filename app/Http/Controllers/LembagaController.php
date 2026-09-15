@@ -54,35 +54,44 @@ class LembagaController extends Controller
         }
 
 
-        // [REVISI] Filter Cerdas (Smart Sort) Dokumen Lembaga
+        // [REVISI] Filter Cerdas Dokumen Lembaga (Sudah Mendukung Suket Domisili)
         if ($request->filled('filter_berkas')) {
             $filterBerkas = $request->filter_berkas;
 
             if ($filterBerkas == 'kosong') {
                 $query->where(function($q) {
-                    $q->whereNull('file_ijop')
-                      ->orWhereNull('file_super')
-                      ->orWhereNull('file_skam');
+                    // Berkas dianggap kosong jika IJOP dan SKD dua-duanya tidak ada, atau SPTJM kosong, atau Excel kosong
+                    $q->where(function($sub) {
+                        $sub->whereNull('file_ijop')->whereNull('file_skd');
+                    })
+                    ->orWhereNull('file_super')
+                    ->orWhereNull('file_skam');
                 });
             } elseif ($filterBerkas == 'pending') {
                 $query->where(function($q) {
                     $q->where('status_ijop', 'Pending')
+                      ->orWhere('status_skd', 'Pending')
                       ->orWhere('status_super', 'Pending')
                       ->orWhere('status_skam', 'Pending');
                 });
             } elseif ($filterBerkas == 'ditolak') {
                 $query->where(function($q) {
                     $q->where('status_ijop', 'Ditolak')
+                      ->orWhere('status_skd', 'Ditolak')
                       ->orWhere('status_super', 'Ditolak')
                       ->orWhere('status_skam', 'Ditolak');
                 });
             } elseif ($filterBerkas == 'disetujui') {
-                $query->whereNotNull('file_ijop')
-                      ->whereNotNull('file_super')
-                      ->whereNotNull('file_skam')
-                      ->where('status_ijop', 'Disetujui')
-                      ->where('status_super', 'Disetujui')
-                      ->where('status_skam', 'Disetujui');
+                $query->where(function($sub) {
+                        // Legalitas cukup salah satu yang disetujui (IJOP Asli atau Suket Domisili)
+                        $sub->where(function($qIjop) {
+                            $qIjop->whereNotNull('file_ijop')->where('status_ijop', 'Disetujui');
+                        })->orWhere(function($qSkd) {
+                            $qSkd->whereNotNull('file_skd')->where('status_skd', 'Disetujui');
+                        });
+                    })
+                    ->whereNotNull('file_super')->where('status_super', 'Disetujui')
+                    ->whereNotNull('file_skam')->where('status_skam', 'Disetujui');
             }
         }
 
