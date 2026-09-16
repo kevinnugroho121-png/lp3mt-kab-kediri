@@ -75,16 +75,21 @@ class LembagaImport implements ToCollection, WithHeadingRow
                 continue;
             }
 
-            // B. Validasi Keberadaan Wilayah di Sistem Database
-            $kecamatan = Kecamatan::where('nama_kecamatan', 'LIKE', '%' . trim((string)$rawKec) . '%')->first();
+            // B. Validasi Keberadaan Wilayah di Sistem Database (Pembersihan Otomatis Kata 'Kec.' / 'Kecamatan')
+            $cleanKecStr = strtoupper(trim(preg_replace('/^(KEC\.|KECAMATAN)\s+/i', '', (string)$rawKec)));
+            $kecamatan = Kecamatan::where('nama_kecamatan', $cleanKecStr)
+                                  ->orWhere('nama_kecamatan', 'LIKE', '%' . $cleanKecStr . '%')
+                                  ->first();
+
             if (!$kecamatan) {
                 $this->errors[] = "{$tag}Kecamatan '{$rawKec}' tidak terdaftar dalam database sistem.";
                 continue;
             }
 
-            // Hak Akses Korcam: Tidak boleh import data kecamatan lain
+            // 🛡️ SATPAM WILAYAH KORCAM (Sesuai Arahan Pak Arif di Video)
             if ($this->user->role == 'korcam' && $kecamatan->id != $this->user->kecamatan_id) {
-                $this->errors[] = "{$tag}Anda tidak memiliki wewenang mengimpor data di luar wilayah Kecamatan Anda.";
+                $namaKecamatanAkun = $this->user->kecamatan->nama_kecamatan ?? 'wilayah Anda';
+                $this->errors[] = "{$tag}AKSI DITOLAK! File Excel ini memuat data Kecamatan {$kecamatan->nama_kecamatan}. Anda login sebagai KORCAM {$namaKecamatanAkun} dan HANYA berhak mengimpor data untuk Kecamatan {$namaKecamatanAkun}.";
                 continue;
             }
 
@@ -136,8 +141,15 @@ class LembagaImport implements ToCollection, WithHeadingRow
                 $rawKec  = $row['kec'] ?? $row['kecamatan'] ?? null;
                 $rawDesa = $row['desa'] ?? null;
 
-                $kecamatan = Kecamatan::where('nama_kecamatan', 'LIKE', '%' . trim($rawKec) . '%')->first();
-                $desa      = Desa::where('kecamatan_id', $kecamatan->id)
+                $cleanKecStr = strtoupper(trim(preg_replace('/^(KEC\.|KECAMATAN)\s+/i', '', (string)$rawKec)));
+                $kecamatan = Kecamatan::where('nama_kecamatan', $cleanKecStr)
+                                      ->orWhere('nama_kecamatan', 'LIKE', '%' . $cleanKecStr . '%')
+                                      ->first();
+
+                // Kunci gembok mutlak untuk Korcam
+                $targetKecamatanId = ($this->user->role == 'korcam') ? $this->user->kecamatan_id : ($kecamatan->id ?? null);
+
+                $desa      = Desa::where('kecamatan_id', $targetKecamatanId)
                                  ->where('nama_desa', 'LIKE', '%' . trim($rawDesa) . '%')->first();
 
                 // Parsing format tanggal Masa Berlaku IJOP (Anti-Crash berbagai format)

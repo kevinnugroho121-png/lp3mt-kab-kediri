@@ -1033,14 +1033,31 @@ class LembagaController extends Controller
 
     public function exportExcel(Request $request)
     {
-        $namaFile = 'Data_Lembaga_LP3MT_' . date('d-M-Y') . '.xlsx';
+        $user = \Illuminate\Support\Facades\Auth::user();
+        $namaWilayah = '';
+
+        // 1. Deteksi Nama Kecamatan (Jika Korcam atau Admin sedang filter kecamatan)
+        if ($user->role == 'korcam') {
+            $namaWilayah = $user->kecamatan->nama_kecamatan ?? 'KORCAM';
+        } elseif ($request->filled('filter_kecamatan')) {
+            $kec = \App\Models\Kecamatan::find($request->filter_kecamatan);
+            if ($kec) {
+                $namaWilayah = $kec->nama_kecamatan;
+            }
+        }
+
+        // 2. Susun format imbuhan nama wilayah (Bersihkan spasi menjadi garis bawah)
+        $labelWilayah = !empty($namaWilayah) ? strtoupper(str_replace(' ', '_', trim($namaWilayah))) . '_' : 'KAB_KEDIRI_';
+
+        // 3. Nama File Otomatis Memuat Kecamatan: contoh "Data_Lembaga_LP3MT_PARE_16-Sep-2026.xlsx"
+        $namaFile = 'Data_Lembaga_LP3MT_' . $labelWilayah . date('d-M-Y') . '.xlsx';
         
         // Catat di log aktivitas
         \Illuminate\Support\Facades\DB::table('activity_logs')->insert([
-            'user_id'    => \Illuminate\Support\Facades\Auth::id(),
-            'nama_user'  => \Illuminate\Support\Facades\Auth::user()->name,
+            'user_id'    => $user->id,
+            'nama_user'  => $user->name,
             'aksi'       => 'Download Rekap Excel',
-            'target'     => 'Data Lembaga',
+            'target'     => 'Data Lembaga ' . (!empty($namaWilayah) ? $namaWilayah : 'Semua Kecamatan'),
             'created_at' => now(),
         ]);
 

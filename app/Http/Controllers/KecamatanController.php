@@ -167,8 +167,8 @@ class KecamatanController extends Controller
 
         // 🛡️ SATPAM 1: Tolak keras jika Total Pagu Kuota Kabupaten masih 0 (belum disetel)
         $totalPagu = (int) Cache::get('pagu_induk_kabupaten', 0);
-        if ($totalPagu <= 0 && $kuotaBaru > 0) {
-            return $redirectTarget->with('error', 'AKSI DITOLAK! Total Pagu Kuota Kabupaten masih 0. Harap isi dan simpan "Total Pagu Kuota Kabupaten" terlebih dahulu.');
+        if ($totalPagu <= 0) {
+            return $redirectTarget->with('error', 'AKSI DITOLAK! Total Pagu Kuota Kabupaten masih 0. Harap tentukan dan simpan "Total Pagu Kuota Kabupaten" terlebih dahulu sebelum mengatur kuota kecamatan.');
         }
 
         // 🛡️ SATPAM 2: Tolak jika kuota yang diminta melebihi sisa pagu kabupaten
@@ -209,15 +209,23 @@ class KecamatanController extends Controller
         }
 
         $request->validate([
-            'pagu_induk' => 'required|integer|min:0'
+            'pagu_induk' => 'required|integer|min:1'
         ], [
             'pagu_induk.required' => 'Total kuota kabupaten wajib diisi.',
-            'pagu_induk.integer'  => 'Total kuota harus berupa angka.',
-            'pagu_induk.min'      => 'Total kuota minimal 0.'
+            'pagu_induk.integer'  => 'Total kuota harus berupa angka bulat.',
+            'pagu_induk.min'      => 'Total kuota kabupaten minimal 1 jatah.'
         ]);
 
-        Cache::forever('pagu_induk_kabupaten', $request->pagu_induk);
+        $paguBaru = (int) $request->pagu_induk;
+        $totalTerdistribusi = (int) Kecamatan::sum('kuota_insentif');
 
-        return redirect()->route('kecamatan.index')->with('success', "Alhamdulillah! Total Pagu Kuota Kabupaten berhasil diatur menjadi " . number_format($request->pagu_induk) . " jatah.");
+        // 🛡️ SATPAM ANGGARAN: Pagu tidak boleh lebih kecil dari kuota yang sudah dibagikan ke kecamatan
+        if ($paguBaru < $totalTerdistribusi) {
+            return redirect()->route('kecamatan.index')->with('error', "AKSI DITOLAK! Total Pagu Kabupaten (" . number_format($paguBaru) . " slot) tidak boleh lebih kecil dari total kuota yang sudah dibagikan ke seluruh kecamatan (" . number_format($totalTerdistribusi) . " slot). Harap kurangi jatah kecamatan terlebih dahulu jika ingin menurunkan pagu.");
+        }
+
+        Cache::forever('pagu_induk_kabupaten', $paguBaru);
+
+        return redirect()->route('kecamatan.index')->with('success', "Alhamdulillah! Total Pagu Kuota Kabupaten berhasil diatur menjadi " . number_format($paguBaru) . " jatah.");
     }
 }

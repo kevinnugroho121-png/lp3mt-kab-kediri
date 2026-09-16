@@ -865,15 +865,32 @@ class GuruController extends Controller
     // ==========================================
     public function exportExcel(Request $request)
     {
+        $user = Auth::user();
         $jenis = $request->query('type', 'ALL');
-        $namaFile = 'Data_Guru_LP3MT_' . $jenis . '_' . date('d-M-Y') . '.xlsx';
+        $namaWilayah = '';
+
+        // 1. Deteksi Nama Kecamatan (Jika Korcam atau Admin sedang filter kecamatan)
+        if ($user->role == 'korcam') {
+            $namaWilayah = Kecamatan::where('id', $user->kecamatan_id)->value('nama_kecamatan') ?? ($user->kecamatan->nama_kecamatan ?? 'KORCAM');
+        } elseif ($request->filled('filter_kecamatan')) {
+            $kec = Kecamatan::find($request->filter_kecamatan);
+            if ($kec) {
+                $namaWilayah = $kec->nama_kecamatan;
+            }
+        }
+
+        // 2. Susun format imbuhan nama wilayah (Spasi diubah menjadi garis bawah)
+        $labelWilayah = !empty($namaWilayah) ? strtoupper(str_replace(' ', '_', trim($namaWilayah))) . '_' : 'KAB_KEDIRI_';
+
+        // 3. Nama File Otomatis: contoh "Data_Guru_LP3MT_MADIN_PARE_16-Sep-2026.xlsx"
+        $namaFile = 'Data_Guru_LP3MT_' . $jenis . '_' . $labelWilayah . date('d-M-Y') . '.xlsx';
         
         // [CCTV LOG] Catat diam-diam siapa yang mengunduh database
         DB::table('activity_logs')->insert([
             'user_id'    => Auth::id(),
             'nama_user'  => Auth::user()->name,
             'aksi'       => 'Download Rekap Excel',
-            'target'     => 'Data ' . $jenis,
+            'target'     => 'Data ' . $jenis . ' ' . (!empty($namaWilayah) ? $namaWilayah : 'Semua Kecamatan'),
             'created_at' => now(),
         ]);
 

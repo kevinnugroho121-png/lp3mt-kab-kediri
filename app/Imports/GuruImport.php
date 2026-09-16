@@ -54,6 +54,8 @@ class GuruImport implements ToCollection, WithHeadingRow
             $infoBarisIni = "No. Urut {$noUrut} (Baris Excel {$lineNumber})";
             $rawLembaga      = trim((string)($row['nama_lembaga_tempat_mengajar'] ?? $row['nama_lembaga'] ?? ''));
             $rawJenisLembaga = trim((string)($row['jenis_lembaga'] ?? ''));
+            $rawKecLembaga   = trim((string)($row['kecamatan_lembaga'] ?? $row['kec_lembaga'] ?? '')); // [BARU] Baca kecamatan sekolah
+            $rawDesaLembaga  = trim((string)($row['desa_lembaga'] ?? ''));                             // [BARU] Baca desa sekolah
             $rawRekening     = trim(str_replace(["'", '"', ' '], '', (string)($row['nomer_rekening'] ?? $row['nomor_rekening'] ?? '')));
             $rawKecGuru      = trim((string)($row['kec_guru'] ?? $row['kecamatan_guru'] ?? $row['kecamatan'] ?? $row['kec'] ?? $row['kec_1'] ?? '')); 
             $rawDesaGuru     = trim((string)($row['desa_guru'] ?? $row['desa'] ?? '')); 
@@ -150,19 +152,43 @@ class GuruImport implements ToCollection, WithHeadingRow
 
             if (empty($rawLembaga)) continue;
 
-            // D. PENCARIAN LEMBAGA SECARA GLOBAL
-            $lembaga = Lembaga::where('nama_lembaga', 'LIKE', '%' . $rawLembaga . '%')
-                              ->where('jenis_lembaga', $this->menuAktif)
-                              ->first();
-                              
-            if (!$lembaga) {
-                $this->errors[] = "Baris Ke-{$lineNumber}: Gagal! Lembaga '{$rawLembaga}' dengan jenis {$this->menuAktif} tidak ditemukan di database.";
+            // D. PENCARIAN LEMBAGA BERKUNCI WILAYAH (Sesuai Arahan Pak Arif)
+            $cleanKecLembagaStr = strtoupper(trim(preg_replace('/^(KEC\.|KECAMATAN)\s+/i', '', $rawKecLembaga)));
+            $kecLembagaDb = !empty($cleanKecLembagaStr) 
+                ? Kecamatan::where('nama_kecamatan', $cleanKecLembagaStr)->orWhere('nama_kecamatan', 'LIKE', '%' . $cleanKecLembagaStr . '%')->first() 
+                : null;
+
+            // 🛡️ SATPAM 1: Jika di Excel tertulis Kecamatan Lembaga yang BUKAN wilayah Korcam yang login
+            if ($this->user->role == 'korcam' && $kecLembagaDb && $kecLembagaDb->id != $this->user->kecamatan_id) {
+                $namaKecUser = $this->user->kecamatan->nama_kecamatan ?? 'wilayah Anda';
+                $this->errors[] = "{$tag}AKSI DITOLAK! File Excel memuat lembaga di Kecamatan {$kecLembagaDb->nama_kecamatan}. Anda login sebagai KORCAM {$namaKecUser} dan HANYA berhak mengimpor data guru di Kecamatan {$namaKecUser}.";
                 continue;
             }
 
-            // FILTER WILAYAH KERJA KORCAM
+            // Query Lembaga: Jika Korcam, wajib kunci HANYA mencari lembaga di kecamatannya sendiri
+            $lembagaQuery = Lembaga::where('nama_lembaga', 'LIKE', '%' . $rawLembaga . '%')
+                                  ->where('jenis_lembaga', $this->menuAktif);
+
+            if ($this->user->role == 'korcam') {
+                $lembagaQuery->where('kecamatan_id', $this->user->kecamatan_id);
+            } elseif ($kecLembagaDb) {
+                $lembagaQuery->where('kecamatan_id', $kecLembagaDb->id);
+            }
+
+            $lembaga = $lembagaQuery->first();
+                              
+            if (!$lembaga) {
+                $namaKecTampil = ($this->user->role == 'korcam') ? ($this->user->kecamatan->nama_kecamatan ?? '') : ($rawKecLembaga ?: '');
+                $infoWilayah = !empty($namaKecTampil) ? " di wilayah Kecamatan {$namaKecTampil}" : "";
+                $this->errors[] = "{$tag}Gagal! Lembaga '{$rawLembaga}' ({$this->menuAktif}) tidak ditemukan{$infoWilayah}. Pastikan data Lembaga sudah diimpor terlebih dahulu.";
+                continue;
+            }
+
+            // 🛡️ SATPAM 2: Pengaman ganda wilayah kerja Korcam
             if ($this->user->role == 'korcam' && $lembaga->kecamatan_id != $this->user->kecamatan_id) {
-                $this->errors[] = "Baris Ke-{$lineNumber}: Hak Akses Ditolak! Lembaga '{$rawLembaga}' berada di luar wilayah kerja Kecamatan Anda.";
+                $namaKecUser = $this->user->kecamatan->nama_kecamatan ?? 'wilayah Anda';
+                $this->errors[] = "{$tag}Hak Akses Ditolak! Lembaga '{$rawLembaga}' berada di luar wilayah Kecamatan {$namaKecUser}.";
+                continue;
             }
 
             // E. DETEKSI DUPLIKASI NIK
@@ -261,9 +287,14 @@ class GuruImport implements ToCollection, WithHeadingRow
                 if (empty(array_filter($row->toArray()))) continue;
 
                 $namaLembagaTarget = trim($row['nama_lembaga_tempat_mengajar'] ?? $row['nama_lembaga'] ?? '');
-                $lembaga = Lembaga::where('nama_lembaga', 'LIKE', '%' . $namaLembagaTarget . '%')
-                                  ->where('jenis_lembaga', $this->menuAktif)
-                                  ->first();
+                $lembagaQuery = Lembaga::where('nama_lembaga', 'LIKE', '%' . $namaLembagaTarget . '%')
+                                      ->where('jenis_lembaga', $this->menuAktif);
+
+                if ($this->user->role == 'korcam') {
+                    $lembagaQuery->where('kecamatan_id', $this->user->kecamatan_id);
+                }
+
+                $lembaga = $lembagaQuery->first();
 
                 // Update langsung ke tabel lembagas via DB Query
                 $rawAlamatLembaga = trim($row['alamat_lembaga'] ?? '');
