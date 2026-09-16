@@ -161,18 +161,42 @@ class KecamatanController extends Controller
             'kuota_insentif.min'      => 'Kuota minimal adalah angka 0.'
         ]);
 
-        // 3. Eksekusi simpan perubahan
         $kecamatan = Kecamatan::findOrFail($id);
-        $kecamatan->update([
-            'kuota_insentif' => $request->kuota_insentif
-        ]);
+        $kuotaBaru = (int) $request->kuota_insentif;
+        $redirectTarget = $request->filled('current_page_url') ? redirect($request->current_page_url) : redirect()->route('kecamatan.index');
 
-        // Cek apakah ada request 'current_page_url' dari form
-        if ($request->filled('current_page_url')) {
-            return redirect($request->current_page_url)->with('success', "Alhamdulillah! Kuota untuk Kecamatan {$kecamatan->nama_kecamatan} berhasil diatur menjadi {$request->kuota_insentif} jatah.");
+        // 🛡️ SATPAM 1: Tolak keras jika Total Pagu Kuota Kabupaten masih 0 (belum disetel)
+        $totalPagu = (int) Cache::get('pagu_induk_kabupaten', 0);
+        if ($totalPagu <= 0 && $kuotaBaru > 0) {
+            return $redirectTarget->with('error', 'AKSI DITOLAK! Total Pagu Kuota Kabupaten masih 0. Harap isi dan simpan "Total Pagu Kuota Kabupaten" terlebih dahulu.');
         }
 
-        return redirect()->route('kecamatan.index')->with('success', "Alhamdulillah! Kuota untuk Kecamatan {$kecamatan->nama_kecamatan} berhasil diatur menjadi {$request->kuota_insentif} jatah.");
+        // 🛡️ SATPAM 2: Tolak jika kuota yang diminta melebihi sisa pagu kabupaten
+        $kuotaKecamatanLain = (int) Kecamatan::where('id', '!=', $kecamatan->id)->sum('kuota_insentif');
+        $sisaPaguTersedia = $totalPagu - $kuotaKecamatanLain;
+
+        if ($kuotaBaru > $sisaPaguTersedia) {
+            $sisaTampil = number_format(max(0, $sisaPaguTersedia));
+            return $redirectTarget->with('error', "AKSI DITOLAK! Jatah untuk Kecamatan {$kecamatan->nama_kecamatan} ({$kuotaBaru} slot) melebihi pagu anggaran kabupaten. Sisa kuota yang belum dibagi hanya tersisa {$sisaTampil} slot.");
+        }
+
+        // 🛡️ SATPAM 3: Tolak jika kuota baru dipangkas lebih kecil dari guru yang sudah diajukan
+        $kuotaTerpakai = DB::table('gurus')
+            ->join('lembagas', 'gurus.lembaga_id', '=', 'lembagas.id')
+            ->where('lembagas.kecamatan_id', $kecamatan->id)
+            ->where('gurus.penerima_insentif', 1)
+            ->count();
+
+        if ($kuotaBaru < $kuotaTerpakai) {
+            return $redirectTarget->with('error', "AKSI DITOLAK! Kuota tidak boleh diperkecil menjadi {$kuotaBaru} karena sudah ada {$kuotaTerpakai} guru di Kecamatan {$kecamatan->nama_kecamatan} yang sedang diajukan insentif.");
+        }
+
+        // 3. Eksekusi simpan perubahan jika 100% lolos 3 satpam di atas
+        $kecamatan->update([
+            'kuota_insentif' => $kuotaBaru
+        ]);
+
+        return $redirectTarget->with('success', "Alhamdulillah! Kuota untuk Kecamatan {$kecamatan->nama_kecamatan} berhasil diatur menjadi {$kuotaBaru} jatah.");
     }
 
     /**

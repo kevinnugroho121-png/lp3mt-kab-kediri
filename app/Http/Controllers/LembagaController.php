@@ -815,6 +815,11 @@ class LembagaController extends Controller
             'created_at' => now(),
         ]);
 
+        // [BARU] Jika form disubmit dari menu Santri, kembalikan ke menu Santri
+        if ($request->from == 'santri') {
+            return redirect()->route('santri.index')->with('success', 'Data berkas santri berhasil diperbarui.');
+        }
+
         return redirect()->route('lembaga.index')->with('success', 'Data lembaga berhasil diperbarui');
     }
 

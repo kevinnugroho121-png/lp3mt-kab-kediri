@@ -17,13 +17,13 @@
                 {{-- KOTAK 2: HIJAU --}}
                 <div class="bg-emerald-600 text-white px-4 py-2 rounded-lg shadow-sm flex items-center justify-between">
                     <p class="text-xs font-bold uppercase tracking-wider leading-tight w-2/3">Kuota Terpakai</p>
-                    <h4 class="text-4xl font-black leading-none">{{ $kuotaSistem['terpakai'] }}</h4>
+                    <h4 id="kuota-terpakai" class="text-4xl font-black leading-none">{{ $kuotaSistem['terpakai'] }}</h4>
                 </div>
 
                 {{-- KOTAK 3: MERAH --}}
                 <div class="bg-red-500 text-white px-4 py-2 rounded-lg shadow-sm flex items-center justify-between">
                     <p class="text-xs font-bold uppercase tracking-wider leading-tight w-2/3">Sisa Kuota</p>
-                    <h4 class="text-5xl font-black leading-none">{{ $kuotaSistem['sisa'] }}</h4>
+                    <h4 id="kuota-sisa" class="text-5xl font-black leading-none">{{ $kuotaSistem['sisa'] }}</h4>
                 </div>
                 
             </div>
@@ -233,9 +233,9 @@
         {{-- 2. TABEL DATA --}}
         {{-- =========================== --}}
         <div class="border border-gray-600 bg-white overflow-hidden">
-            <div class="overflow-x-auto">
+            <div id="tabelGuruScroll" class="overflow-x-auto">
                 {{-- PERLEBAR TABEL AGAR MUAT BANYAK KOLOM --}}
-                <table class="w-full text-xs border-collapse min-w-[3000px]"> 
+                <table class="w-full text-xs border-collapse min-w-[3000px]">
                     
 
 
@@ -447,7 +447,7 @@
                                 }
                             @endphp
 
-                            <tr class="{{ $rowClass }} transition duration-75 whitespace-nowrap">
+                            <tr id="row-guru-{{ $guru->id }}" class="{{ $rowClass }} transition duration-75 whitespace-nowrap">
                               
                                 {{-- 1. NO (Excel) --}}
                                 <td class="border border-gray-600 py-1 text-center font-medium sticky left-0 z-10 {{ $isTidakLayak ? 'bg-red-100' : 'bg-gray-50' }}">
@@ -576,18 +576,20 @@
                                         </span>
                                     @else
                                         @if(Auth::user()->role == 'korcam' && isset($filterType) && $filterType == 'INSENTIF')
-                                            <form id="form-toggle-{{ $guru->id }}" action="{{ route('guru.toggle_insentif', $guru->id) }}" method="POST">
+                                            <form id="form-toggle-{{ $guru->id }}" action="{{ route('guru.toggle_insentif', $guru->id) }}" method="POST" onsubmit="event.preventDefault(); toggleInsentifSatset({{ $guru->id }});">
                                                 @csrf
-                                                @if($guru->penerima_insentif == 1)
-                                                    <button type="button" onclick="triggerStatusUpdate('Apakah Anda yakin ingin mengubah status alokasi insentif untuk guru ini?', 'form-toggle-{{ $guru->id }}')" class="text-[10px] font-bold px-2 py-1 rounded-md bg-green-600 text-white border border-green-700 hover:bg-red-600 hover:text-white transition duration-200 shadow-sm group w-full text-center">
-                                                        <span class="group-hover:hidden">BERHAK & DIAJUKAN</span>
-                                                        <span class="hidden group-hover:inline">COPOT JATAH</span>
-                                                    </button>
-                                                @else
-                                                    <button type="button" onclick="triggerStatusUpdate('Apakah Anda yakin ingin mengubah status alokasi insentif untuk guru ini?', 'form-toggle-{{ $guru->id }}')" class="text-[10px] font-bold px-2 py-1 rounded-md bg-yellow-500 text-white border border-yellow-600 hover:bg-emerald-600 hover:text-white transition duration-200 shadow-sm w-full text-center">
-                                                        BERHAK (tidak diajukan)
-                                                    </button>
-                                                @endif
+                                                <div id="btn-container-{{ $guru->id }}">
+                                                    @if($guru->penerima_insentif == 1)
+                                                        <button type="submit" class="text-[10px] font-bold px-2 py-1 rounded-md bg-green-600 text-white border border-green-700 hover:bg-red-600 hover:text-white transition duration-200 shadow-sm group w-full text-center cursor-pointer">
+                                                            <span class="group-hover:hidden">BERHAK & DIAJUKAN</span>
+                                                            <span class="hidden group-hover:inline">COPOT JATAH</span>
+                                                        </button>
+                                                    @else
+                                                        <button type="submit" class="text-[10px] font-bold px-2 py-1 rounded-md bg-yellow-500 text-white border border-yellow-600 hover:bg-emerald-600 hover:text-white transition duration-200 shadow-sm w-full text-center cursor-pointer">
+                                                            BERHAK (tidak diajukan)
+                                                        </button>
+                                                    @endif
+                                                </div>
                                             </form>
                                         @else
                                             @if($guru->penerima_insentif == 1)
@@ -805,6 +807,20 @@
         </div>
     </div>
 
+    {{-- 🛑 MODAL PERINGATAN ELEGAN PRESISI TENGAH LAYAR --}}
+    <div id="custom-alert-modal" style="z-index: 9999999;" class="hidden fixed inset-0 flex items-center justify-center bg-black/60 p-4 backdrop-blur-xs">
+        <div class="bg-white rounded-xl border border-gray-300 shadow-2xl w-full max-w-sm p-5 text-center transform scale-95 transition-transform duration-200">
+            <div class="w-12 h-12 rounded-full bg-red-100 text-red-600 flex items-center justify-center mx-auto mb-3 text-2xl font-bold shadow-inner">
+                ⚠️
+            </div>
+            <h3 id="custom-alert-title" class="text-sm font-bold text-gray-900 uppercase tracking-wide mb-1.5">Pemberitahuan Sistem</h3>
+            <p id="custom-alert-message" class="text-xs text-gray-600 font-medium leading-relaxed mb-5 whitespace-pre-line text-center"></p>
+            <button type="button" onclick="closeCustomAlert()" class="w-full py-2 bg-gray-900 hover:bg-black text-white text-xs font-bold rounded-lg shadow-sm transition cursor-pointer">
+                Saya Mengerti
+            </button>
+        </div>
+    </div>
+
     <script>
         // 1. Fungsi Inti untuk Membangun & Menampilkan Modal
         function showConfirmDialog(message, onConfirmCallback) {
@@ -902,5 +918,127 @@
                 tutupModalPdf();
             }
         });
+
+        // 1. SCROLL MEMORY: Mengunci & Mengembalikan Posisi Geser Kolom Terakhir
+        const elTabelScroll = document.getElementById('tabelGuruScroll');
+        if (elTabelScroll) {
+            // Rekam posisi koordinat X setiap kali tabel digeser
+            elTabelScroll.addEventListener('scroll', function() {
+                sessionStorage.setItem('posisi_scroll_tabel_guru', elTabelScroll.scrollLeft);
+            });
+
+            // Kembalikan posisi tabel saat menu navbar diklik atau halaman dimuat ulang
+            const posisiTersimpan = sessionStorage.getItem('posisi_scroll_tabel_guru');
+            if (posisiTersimpan !== null) {
+                elTabelScroll.scrollLeft = posisiTersimpan;
+            }
+        }
+
+        // FUNGSI PENGENDALI MODAL PERINGATAN TENGAH LAYAR
+        function showCustomAlert(title, message) {
+            const modal = document.getElementById('custom-alert-modal');
+            const titleEl = document.getElementById('custom-alert-title');
+            const msgEl = document.getElementById('custom-alert-message');
+
+            if (!modal) return;
+            titleEl.textContent = title;
+            msgEl.textContent = message;
+
+            modal.classList.remove('hidden');
+            setTimeout(() => {
+                modal.firstElementChild.classList.replace('scale-95', 'scale-100');
+            }, 10);
+        }
+
+        function closeCustomAlert() {
+            const modal = document.getElementById('custom-alert-modal');
+            if (!modal) return;
+            modal.firstElementChild.classList.replace('scale-100', 'scale-95');
+            setTimeout(() => {
+                modal.classList.add('hidden');
+            }, 150);
+        }
+
+        // 2. FUNGSI TOGGLE INSENTIF SATSET DENGAN MODAL ALERT ELEGAN
+        function toggleInsentifSatset(guruId) {
+            const form = document.getElementById('form-toggle-' + guruId);
+            const container = document.getElementById('btn-container-' + guruId);
+            const row = document.getElementById('row-guru-' + guruId);
+            const elTerpakai = document.getElementById('kuota-terpakai');
+            const elSisa = document.getElementById('kuota-sisa');
+
+            if (!form || !container) return;
+
+            const isCurrentlyActive = container.querySelector('.bg-green-600') !== null;
+            const sisaSaatIni = elSisa ? parseInt(elSisa.innerText) : 0;
+
+            // 🛡️ SATPAM FRONTEND: Munculkan modal tengah layar jika kuota habis
+            if (!isCurrentlyActive && sisaSaatIni <= 0) {
+                showCustomAlert(
+                    "KUOTA INSENTIF HABIS!",
+                    "Jatah alokasi insentif untuk kecamatan Anda sudah terisi penuh (Sisa: 0 slot).\n\nSilakan klik 'COPOT JATAH' pada guru lain terlebih dahulu jika ingin mengalihkan jatah kuota."
+                );
+                return;
+            }
+
+            const htmlAwal = container.innerHTML;
+
+            // 1. Ubah visual tombol seketika (Optimistic UI)
+            if (isCurrentlyActive) {
+                container.innerHTML = `
+                    <button type="submit" class="text-[10px] font-bold px-2 py-1 rounded-md bg-yellow-500 text-white border border-yellow-600 hover:bg-emerald-600 hover:text-white transition duration-200 shadow-sm w-full text-center cursor-pointer">
+                        BERHAK (tidak diajukan)
+                    </button>
+                `;
+                if (row) {
+                    row.classList.remove('bg-emerald-50', 'hover:bg-emerald-100');
+                    row.classList.add('bg-white', 'hover:bg-gray-50');
+                }
+                if (elTerpakai && elSisa) {
+                    elTerpakai.innerText = Math.max(0, parseInt(elTerpakai.innerText) - 1);
+                    elSisa.innerText = parseInt(elSisa.innerText) + 1;
+                }
+            } else {
+                container.innerHTML = `
+                    <button type="submit" class="text-[10px] font-bold px-2 py-1 rounded-md bg-green-600 text-white border border-green-700 hover:bg-red-600 hover:text-white transition duration-200 shadow-sm group w-full text-center cursor-pointer">
+                        <span class="group-hover:hidden">BERHAK & DIAJUKAN</span>
+                        <span class="hidden group-hover:inline">COPOT JATAH</span>
+                    </button>
+                `;
+                if (row) {
+                    row.classList.remove('bg-white', 'hover:bg-gray-50');
+                    row.classList.add('bg-emerald-50', 'hover:bg-emerald-100');
+                }
+                if (elTerpakai && elSisa) {
+                    elTerpakai.innerText = parseInt(elTerpakai.innerText) + 1;
+                    elSisa.innerText = Math.max(0, parseInt(elSisa.innerText) - 1);
+                }
+            }
+
+            // 2. Kirim ke database di latar belakang
+            fetch(form.action, {
+                method: 'POST',
+                body: new FormData(form),
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'Accept': 'application/json',
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                }
+            })
+            .then(async response => {
+                const data = await response.json();
+                
+                if (!response.ok || !data.success) {
+                    container.innerHTML = htmlAwal;
+                    showCustomAlert("AKSI DITOLAK!", data.message || 'Sistem menolak perubahan alokasi insentif.');
+                    setTimeout(() => { window.location.reload(); }, 1800);
+                }
+            })
+            .catch(error => {
+                container.innerHTML = htmlAwal;
+                showCustomAlert("KONEKSI TERPUTUS", "Gagal menghubungi server. Layar akan dimuat ulang.");
+                setTimeout(() => { window.location.reload(); }, 1500);
+            });
+        }
     </script>
 </x-app-layout>

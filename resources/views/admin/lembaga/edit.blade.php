@@ -16,7 +16,7 @@
 
                     <p class="text-sm text-black-500 mt-1">Perbarui data identitas, statistik, atau dokumen.</p>
                 </div>
-                <a href="{{ route('lembaga.index') }}" class="inline-flex items-center px-4 py-2 bg-white border border-gray-300 rounded-md font-semibold text-xs text-black-700 uppercase tracking-widest shadow-sm hover:bg-gray-50 transition">
+                <a href="{{ request('from') == 'santri' ? route('santri.index') : route('lembaga.index') }}" class="inline-flex items-center px-4 py-2 bg-white border border-gray-300 rounded-md font-semibold text-xs text-black-700 uppercase tracking-widest shadow-sm hover:bg-gray-50 transition">
                     &larr; Kembali
                 </a>
             </div>
@@ -27,6 +27,7 @@
                 <form action="{{ route('lembaga.update', $lembaga->id) }}" method="POST" enctype="multipart/form-data" class="p-8">
                     @csrf
                     @method('PUT')
+                    <input type="hidden" name="from" value="{{ request('from') }}">
 
                     {{-- [BARU] ALERT NOTIFIKASI JIKA ADA ERROR VALIDASI / NAMA GANDA --}}
                     @if ($errors->any())
@@ -269,7 +270,7 @@
                             </div>
 
                             {{-- 4. DATA SANTRI / MURID (EXCEL) --}}
-                            <div class="bg-green-50/40 p-3 rounded-lg border border-green-400 shadow-sm flex flex-col">
+                            <div id="section-santri" class="scroll-mt-32 bg-green-50/40 p-3 rounded-lg border border-green-400 shadow-sm flex flex-col {{ request('from') == 'santri' ? 'ring-2 ring-emerald-500 bg-emerald-50/60' : '' }}">
                                 <div class="flex items-center justify-between mb-2">
                                     <label class="block text-xs font-bold text-black-800">4. Data Santri/Murid (format excel)</label>
                                     @if($lembaga->file_skam)
@@ -387,7 +388,7 @@
                             <input type="text" name="keterangan" value="{{ old('keterangan', $lembaga->keterangan) }}" class="w-full border border-gray-400 rounded-md px-2 py-1 h-[32px] text-xs font-bold text-black-800 shadow-sm focus:border-blue-500 uppercase" placeholder="TULIS JIKA ADA..." oninput="this.value = this.value.toUpperCase()">
                         </div>
                         <div class="flex gap-2 w-full md:w-auto">
-                            <a href="{{ route('lembaga.index') }}" class="px-5 py-1.5 text-xs font-bold text-gray-700 bg-white border border-gray-400 rounded-md hover:bg-gray-100 transition flex items-center">Batal</a>
+                            <a href="{{ request('from') == 'santri' ? route('santri.index') : route('lembaga.index') }}" class="px-5 py-1.5 text-xs font-bold text-gray-700 bg-white border border-gray-400 rounded-md hover:bg-gray-100 transition flex items-center">Batal</a>
                             <button type="submit" class="px-6 py-1.5 text-xs font-bold text-white bg-blue-600 rounded-md shadow-sm hover:bg-blue-700 transition flex items-center gap-1">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg>
                                 SIMPAN PERUBAHAN
@@ -548,6 +549,18 @@
             const santriP = parseInt(document.getElementById('santri_p').value) || 0;
             document.getElementById('santri_total').value = santriL + santriP;
         }
+
+        // 5. AUTO SCROLL TEPAT DI TENGAH LAYAR JIKA DIBUKA DARI MENU SANTRI
+        document.addEventListener('DOMContentLoaded', function() {
+            if (window.location.hash === '#section-santri' || "{{ request('from') }}" === 'santri') {
+                setTimeout(function() {
+                    const targetEl = document.getElementById('section-santri');
+                    if (targetEl) {
+                        targetEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    }
+                }, 200);
+            }
+        });
     </script>
 
     {{-- ================================================================= --}}

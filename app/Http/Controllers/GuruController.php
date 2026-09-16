@@ -761,59 +761,101 @@ class GuruController extends Controller
     }
 
     /**
-     * [BARU - FASE 2] SAKLAR INSENTIF KORCAM (Kunci & Lepas Jatah Kuota)
+     * [BARU - FASE 2] SAKLAR INSENTIF KORCAM (Kunci & Lepas Jatah Kuota - Satpam Ketat)
      */
     public function toggleInsentif(Request $request, $id)
     {
         $guru = Guru::with('lembaga.kecamatan')->findOrFail($id);
         $user = Auth::user();
 
-        // 1. Hak Akses: Korcam hanya boleh utak-atik guru di kecamatannya sendiri
+        // 🛡️ SATPAM 1: Hak Akses Wilayah (Korcam hanya boleh utak-atik guru di wilayahnya)
         if ($user->role == 'korcam' && $guru->lembaga->kecamatan_id != $user->kecamatan_id) {
+            if ($request->ajax() || $request->wantsJson()) {
+                return response()->json(['success' => false, 'message' => 'Akses Ditolak! Guru ini di luar wilayah kecamatan Anda.'], 403);
+            }
             return back()->with('error', 'Akses Ditolak! Guru ini di luar wilayah kecamatan Anda.');
         }
 
-        // 2. Logika jika Korcam mau MENGAKTIFKAN insentif (dari 0 ke 1)
+        // Logika jika mau MENGAKTIFKAN insentif (dari 0 ke 1)
         if ($guru->penerima_insentif == 0) {
-            // Ambil batasan kuota kecamatan
-            $maxKuota = $guru->lembaga->kecamatan->kuota_insentif ?? 0;
 
-            // Hitung yang sudah terpakai di kecamatan tersebut saat ini
+            // 🛡️ SATPAM 2: Blokir Mutlak ASN (PNS, PPPK, atau Inpassing Dilarang Keras Dapat Insentif)
+            $isAsn = in_array(strtoupper($guru->status_kepegawaian ?? ''), ['PNS', 'PPPK']) || strtoupper($guru->status_sertifikasi ?? '') == 'INPASSING';
+            if ($isAsn) {
+                $pesanError = "AKSI ILEGAL! {$guru->nama_lengkap} berstatus {$guru->status_kepegawaian} dan DILARANG menerima insentif daerah.";
+                if ($request->ajax() || $request->wantsJson()) {
+                    return response()->json(['success' => false, 'message' => $pesanError], 422);
+                }
+                return back()->with('error', $pesanError);
+            }
+
+            // 🛡️ SATPAM 3: Batasan Kuota Kecamatan
+            $maxKuota = (int) ($guru->lembaga->kecamatan->kuota_insentif ?? 0);
+
+            if ($maxKuota <= 0) {
+                $pesanError = "GAGAL! Kecamatan {$guru->lembaga->kecamatan->nama_kecamatan} belum memiliki alokasi kuota insentif (Kuota masih 0). Hubungi Admin Kabupaten.";
+                if ($request->ajax() || $request->wantsJson()) {
+                    return response()->json(['success' => false, 'message' => $pesanError], 422);
+                }
+                return back()->with('error', $pesanError);
+            }
+
+            // Hitung guru yang sudah aktif menerima insentif di kecamatan ini
             $terpakai = Guru::whereHas('lembaga', function($q) use ($guru) {
                 $q->where('kecamatan_id', $guru->lembaga->kecamatan_id);
             })->where('penerima_insentif', 1)->count();
 
-            // Jika peluru habis, BLOKIR AKSI!
+            // Tolak jika kuota kecamatan sudah penuh
             if ($terpakai >= $maxKuota) {
-                return back()->with('error', "Gagal Aktifkan! Jatah Kuota Insentif untuk Kecamatan {$guru->lembaga->kecamatan->nama_kecamatan} sudah HABIS ({$terpakai}/{$maxKuota}).");
+                $pesanError = "KUOTA PENUH! Jatah Insentif Kecamatan {$guru->lembaga->kecamatan->nama_kecamatan} sudah habis ({$terpakai}/{$maxKuota} slot terisi).";
+                if ($request->ajax() || $request->wantsJson()) {
+                    return response()->json(['success' => false, 'message' => $pesanError], 422);
+                }
+                return back()->with('error', $pesanError);
             }
 
-            // Jika aman, set jadi aktif
+            // Eksekusi jika lolos seluruh satpam
             $guru->update(['penerima_insentif' => 1]);
 
-            // [BARU] Cctv Log Aktifkan Insentif
             DB::table('activity_logs')->insert([
                 'user_id'    => Auth::id(),
                 'nama_user'  => Auth::user()->name,
                 'aksi'       => 'Mengaktifkan Status Insentif',
-                'target'     => $guru->nama_lengkap,
+                'target'     => $guru->nama_lengkap . ' (Kec. ' . $guru->lembaga->kecamatan->nama_kecamatan . ')',
                 'created_at' => now(),
             ]);
+
+            if ($request->ajax() || $request->wantsJson()) {
+                return response()->json([
+                    'success' => true,
+                    'status'  => 1,
+                    'message' => "Alhamdulillah! {$guru->nama_lengkap} resmi dialokasikan sebagai penerima insentif."
+                ]);
+            }
+
             return back()->with('success', "Alhamdulillah! {$guru->nama_lengkap} resmi dialokasikan sebagai penerima insentif.");
         } 
         
-        // 3. Logika jika Korcam mau MENCOPOT/STANDBY-KAN insentif (dari 1 ke 0)
+        // Logika jika mau MENCOPOT insentif (dari 1 ke 0)
         else {
             $guru->update(['penerima_insentif' => 0]);
 
-            // [BARU] Cctv Log Copot Insentif
             DB::table('activity_logs')->insert([
                 'user_id'    => Auth::id(),
                 'nama_user'  => Auth::user()->name,
                 'aksi'       => 'Mencopot Status Insentif',
-                'target'     => $guru->nama_lengkap,
+                'target'     => $guru->nama_lengkap . ' (Kec. ' . $guru->lembaga->kecamatan->nama_kecamatan . ')',
                 'created_at' => now(),
             ]);
+
+            if ($request->ajax() || $request->wantsJson()) {
+                return response()->json([
+                    'success' => true,
+                    'status'  => 0,
+                    'message' => "Status insentif {$guru->nama_lengkap} berhasil dicopot dan kembali Standby."
+                ]);
+            }
+
             return back()->with('success', "Status insentif {$guru->nama_lengkap} berhasil dicopot dan kembali Standby.");
         }
     }
