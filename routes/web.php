@@ -283,6 +283,8 @@ Route::middleware(['auth', 'role:admin,verifikator,korcam'])->prefix('admin')->g
     Route::get('guru/madin', [GuruController::class, 'indexMadin'])->name('guru.madin');
     Route::get('guru/tpq', [GuruController::class, 'indexTpq'])->name('guru.tpq');
     Route::get('guru/ponpes', [GuruController::class, 'indexPonpes'])->name('guru.ponpes');
+    Route::get('/santri', [LembagaController::class, 'indexSantri'])->name('santri.index');
+    Route::get('/lembaga/{id}/preview-santri', [LembagaController::class, 'previewSantriJson'])->name('lembaga.preview_santri');
     Route::get('guru/insentif', [GuruController::class, 'indexInsentif'])->name('guru.insentif');
     
     Route::get('guru/{id}/verifikasi', [GuruController::class, 'verifikasi'])->name('guru.verifikasi');

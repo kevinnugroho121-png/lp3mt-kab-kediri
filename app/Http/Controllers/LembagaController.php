@@ -182,7 +182,7 @@ class LembagaController extends Controller
             'file_ijop'          => 'required_without:file_skd|nullable|mimes:pdf|max:2048', 
             'file_skd'           => 'required_without:file_ijop|nullable|mimes:pdf|max:2048',
             'file_super'         => 'required|mimes:pdf|max:2048', 
-            'file_skam'          => 'required|mimes:xlsx,xls|max:5120',
+            'file_skam'          => 'nullable|mimes:xlsx,xls|max:5120',
 
             // Validasi Gambar Dokumentasi
             'foto_lembaga'       => 'nullable|image|mimes:jpeg,png,jpg,jfif|max:1024',
@@ -1093,15 +1093,16 @@ class LembagaController extends Controller
      */
     public function syncSantriDariExcel()
     {
-        // 1. Nol-kan semua lembaga yang TIDAK memiliki file Excel santri (Null, string kosong, atau strip)
-        $resetCount = Lembaga::whereNull('file_skam')
-            ->orWhere('file_skam', '')
-            ->orWhere('file_skam', '-')
-            ->update([
-                'jumlah_santri_l' => 0,
-                'jumlah_santri_p' => 0,
-                'jumlah_santri'   => 0,
-            ]);
+        // [AMANKAN] Jangan nol-kan data manual operator desa yang belum punya file Excel
+        // $resetCount = Lembaga::whereNull('file_skam')
+        //     ->orWhere('file_skam', '')
+        //     ->orWhere('file_skam', '-')
+        //     ->update([
+        //         'jumlah_santri_l' => 0,
+        //         'jumlah_santri_p' => 0,
+        //         'jumlah_santri'   => 0,
+        //     ]);
+        $resetCount = 0;
 
         // 2. Hitung ulang hanya lembaga yang benar-benar memiliki file Excel di server
         $lembagas = Lembaga::whereNotNull('file_skam')->get();
@@ -1149,5 +1150,78 @@ class LembagaController extends Controller
         }
 
         return redirect()->route('lembaga.index')->with('success', "Pembersihan berhasil! {$resetCount} lembaga tanpa berkas dinolkan, dan {$updated} lembaga disinkronkan dari Excel.");
+    }
+
+    /**
+     * [BARU] Halaman Rekapitulasi Semua Santri/Murid per Lembaga
+     */
+    public function indexSantri(Request $request)
+    {
+        $user = Auth::user();
+        $query = Lembaga::with(['kecamatan', 'desa']);
+
+        if ($user->role == 'korcam') {
+            $query->where('kecamatan_id', $user->kecamatan_id);
+        }
+
+        if ($user->role != 'korcam' && $request->filled('filter_kecamatan')) {
+            $query->where('kecamatan_id', $request->filter_kecamatan);
+        }
+
+        if ($request->filled('filter_desa')) {
+            $query->where('desa_id', $request->filter_desa);
+        }
+
+        if ($request->filled('filter_jenis')) {
+            $query->where('jenis_lembaga', $request->filter_jenis);
+        }
+
+        if ($request->filled('search')) {
+            $query->where('nama_lembaga', 'like', '%' . $request->search . '%');
+        }
+
+        $lembagas = $query->orderBy('nama_lembaga')->paginate(20)->withQueryString();
+
+        if ($user->role == 'korcam') {
+            $data_kecamatan = Kecamatan::where('id', $user->kecamatan_id)->get();
+            $data_desa = Desa::where('kecamatan_id', $user->kecamatan_id)->orderBy('nama_desa')->get();
+        } else {
+            $data_kecamatan = Kecamatan::orderBy('nama_kecamatan')->get();
+            $data_desa = Desa::orderBy('nama_desa')->get();
+        }
+
+        return view('admin.santri.index', compact('lembagas', 'data_kecamatan', 'data_desa'));
+    }
+
+    /**
+     * [BARU] Ambil data isi Excel santri untuk Pop-up Modal Preview
+     */
+    public function previewSantriJson($id)
+    {
+        $lembaga = Lembaga::findOrFail($id);
+
+        if (!$lembaga->file_skam || !Storage::disk('public')->exists($lembaga->file_skam)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Berkas Excel santri belum diunggah.'
+            ], 404);
+        }
+
+        try {
+            $path = storage_path('app/public/' . $lembaga->file_skam);
+            $sheets = Excel::toArray(new class {}, $path);
+            $rows = $sheets[0] ?? [];
+
+            return response()->json([
+                'success' => true,
+                'nama_lembaga' => $lembaga->nama_lembaga,
+                'rows' => $rows
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Gagal membaca berkas Excel.'
+            ], 500);
+        }
     }
 }

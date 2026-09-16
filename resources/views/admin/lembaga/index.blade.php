@@ -363,16 +363,10 @@
                                 {{-- 5. SANTRI (TOTAL + RINCIAN L/P) --}}
                                 <td class="border-r border-gray-400 px-1 py-1 text-center align-top">
                                     @php
-                                        // Jika belum/tidak ada berkas Excel santri, kunci mutlak ke 0
-                                        if (empty($lembaga->file_skam)) {
-                                            $santriL = 0;
-                                            $santriP = 0;
-                                            $totalSantri = 0;
-                                        } else {
-                                            $santriL = (int)($lembaga->jumlah_santri_l ?? 0);
-                                            $santriP = (int)($lembaga->jumlah_santri_p ?? 0);
-                                            $totalSantri = ($santriL + $santriP > 0) ? ($santriL + $santriP) : (int)($lembaga->jumlah_santri ?? 0);
-                                        }
+                                        // Ambil data aktual riil dari database (baik input manual maupun dari Excel)
+                                        $santriL = (int)($lembaga->jumlah_santri_l ?? 0);
+                                        $santriP = (int)($lembaga->jumlah_santri_p ?? 0);
+                                        $totalSantri = ($santriL + $santriP > 0) ? ($santriL + $santriP) : (int)($lembaga->jumlah_santri ?? 0);
                                     @endphp
 
                                     {{-- Angka Total Santri --}}

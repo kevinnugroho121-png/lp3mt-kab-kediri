@@ -114,6 +114,14 @@
                                <span class="text-sm font-bold">GURU</span>
                             </a>
 
+                            {{-- [BARU] SEMUA SANTRI / MURID --}}
+                            <a href="{{ route('santri.index') }}" 
+                               class="flex flex-col items-center justify-center h-12 px-4 rounded-lg transition-all duration-200 border border-transparent leading-none
+                               {{ request()->routeIs('santri.*') ? 'bg-green-50 text-green-700 border-green-200 shadow-sm' : 'text-black-500 hover:bg-gray-50 hover:text-green-700 font-medium' }}">
+                               <span class="text-[10px] font-medium uppercase tracking-wide opacity-80 mb-0.5">MENU</span>
+                               <span class="text-sm font-bold">SANTRI</span>
+                            </a>
+
                             {{-- H. INSENTIF (SEMUA ROLE) --}}
                             <a href="{{ route('guru.insentif') }}" 
                                class="flex flex-col items-center justify-center h-12 px-4 rounded-lg transition-all duration-200 border border-transparent leading-none
