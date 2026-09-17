@@ -307,6 +307,38 @@ class GuruController extends Controller
             ]);
         }
 
+        // 🛡️ SATPAM 1: Kunci Lembaga Korcam (Cegah tambah guru ke lembaga kecamatan lain)
+        $lembaga = Lembaga::with('kecamatan')->findOrFail($request->lembaga_id);
+        $userLogin = Auth::user();
+        if ($userLogin->role == 'korcam' && $lembaga->kecamatan_id != $userLogin->kecamatan_id) {
+            return back()->withInput()->withErrors([
+                'lembaga_id' => "Akses Ditolak! Lembaga '{$lembaga->nama_lembaga}' berada di luar wilayah kecamatan Anda."
+            ]);
+        }
+
+        // 🛡️ SATPAM 2: Kunci Kuota & Kelayakan Insentif jika dipilih 'Diajukan' (1)
+        if ($request->penerima_insentif == 1) {
+            // A. Tolak jika berstatus PNS, PPPK, atau Inpassing
+            $isAsn = in_array(strtoupper($request->status_kepegawaian), ['PNS', 'PPPK']) || strtoupper($request->status_sertifikasi) == 'INPASSING';
+            if ($isAsn) {
+                return back()->withInput()->withErrors([
+                    'penerima_insentif' => "Aksi Ditolak! Guru berstatus {$request->status_kepegawaian} / {$request->status_sertifikasi} DILARANG menerima insentif daerah."
+                ]);
+            }
+
+            // B. Cek Sisa Kuota Kecamatan
+            $maxKuota = (int) ($lembaga->kecamatan->kuota_insentif ?? 0);
+            $terpakai = Guru::whereHas('lembaga', function($q) use ($lembaga) {
+                $q->where('kecamatan_id', $lembaga->kecamatan_id);
+            })->where('penerima_insentif', 1)->count();
+
+            if ($maxKuota <= 0 || $terpakai >= $maxKuota) {
+                return back()->withInput()->withErrors([
+                    'penerima_insentif' => "KUOTA PENUH! Jatah Insentif Kecamatan {$lembaga->kecamatan->nama_kecamatan} sudah habis ({$terpakai}/{$maxKuota} slot terisi). Simpan guru ini sebagai 'Tidak Diajukan'."
+                ]);
+            }
+        }
+
         // 2. Proses Upload File
 
 
@@ -399,13 +431,15 @@ class GuruController extends Controller
         $semua_kecamatan_kediri = Kecamatan::orderBy('nama_kecamatan')->get();
         $semua_desa_kediri = Desa::orderBy('nama_desa')->get();
 
-        // Filter Dropdown Lembaga & Wilayah Kerja di Halaman Edit
+        // Filter Dropdown Lembaga Sesuai Jenis Guru (MADIN/TPQ/PONPES) agar tidak salah kamar
+        $lembagaQuery = Lembaga::where('jenis_lembaga', $guru->jenis_guru)->orderBy('nama_lembaga');
+
         if ($user->role == 'korcam') {
-            $lembagas = Lembaga::where('kecamatan_id', $user->kecamatan_id)->orderBy('nama_lembaga')->get();
+            $lembagas = $lembagaQuery->where('kecamatan_id', $user->kecamatan_id)->get();
             $kecamatans = Kecamatan::where('id', $user->kecamatan_id)->orderBy('nama_kecamatan')->get();
             $desas = Desa::where('kecamatan_id', $user->kecamatan_id)->orderBy('nama_desa')->get();
         } else {
-            $lembagas = Lembaga::orderBy('nama_lembaga')->get();
+            $lembagas = $lembagaQuery->get();
             $kecamatans = $semua_kecamatan_kediri;
             $desas = $semua_desa_kediri;
         }
@@ -505,9 +539,11 @@ class GuruController extends Controller
         $data['no_hp'] = $noHp;
 
         // PENGAMAN KUOTA KORCAM:
-        // Jika status pegawai diubah jadi ASN (PNS/PPPK), jatah otomatis dicabut (0).
-        // Jika tetap Non-ASN, pertahankan status asli database (tidak akan berubah jadi hijau sendiri).
-        if (in_array(strtoupper($request->status_kepegawaian), ['PNS', 'PPPK'])) {
+        // Jika status pegawai diubah jadi ASN (PNS/PPPK) atau INPASSING, jatah insentif otomatis dicabut (0).
+        // Jika tetap Non-ASN & bukan Inpassing, pertahankan status asli database.
+        $isTidakLayak = in_array(strtoupper($request->status_kepegawaian), ['PNS', 'PPPK']) || strtoupper($request->status_sertifikasi) == 'INPASSING';
+
+        if ($isTidakLayak) {
             $data['penerima_insentif'] = 0;
         } else {
             $data['penerima_insentif'] = $guru->penerima_insentif;

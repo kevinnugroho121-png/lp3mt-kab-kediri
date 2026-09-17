@@ -74,18 +74,18 @@
                             <div class="md:col-span-1">
                                 <label class="block text-[10px] font-bold text-gray-600 uppercase tracking-wider mb-1">Status Guru <span class="text-red-500">*</span></label>
                                 <select name="status_kepegawaian" id="status_kepegawaian" class="w-full border border-gray-600 rounded-md px-2 py-1 h-[32px] text-xs font-bold text-black-800 focus:border-blue-500 focus:ring-blue-500 shadow-sm" onchange="checkInsentifEligibility()">
-                                    <option value="Non-ASN">NON-ASN</option>
-                                    <option value="PNS">PNS</option>
-                                    <option value="PPPK">PPPK (P3K)</option>
+                                    <option value="Non-ASN" {{ old('status_kepegawaian') == 'Non-ASN' ? 'selected' : '' }}>NON-ASN</option>
+                                    <option value="PNS" {{ old('status_kepegawaian') == 'PNS' ? 'selected' : '' }}>PNS</option>
+                                    <option value="PPPK" {{ old('status_kepegawaian') == 'PPPK' ? 'selected' : '' }}>PPPK (P3K)</option>
                                 </select>
                             </div>
 
                             <div class="md:col-span-1">
                                 <label class="block text-[10px] font-bold text-gray-600 uppercase tracking-wider mb-1">Status Sertifikasi <span class="text-red-500">*</span></label>
                                 <select name="status_sertifikasi" id="status_sertifikasi" class="w-full border border-gray-600 rounded-md px-2 py-1 h-[32px] text-xs font-bold text-black-800 focus:border-blue-500 focus:ring-blue-500 shadow-sm" onchange="checkInsentifEligibility()">
-                                    <option value="Belum">BELUM SERTIFIKASI</option>
-                                    <option value="Sertifikasi">SUDAH SERTIFIKASI</option>
-                                    <option value="Inpassing">SUDAH INPASING</option>
+                                    <option value="Belum" {{ old('status_sertifikasi') == 'Belum' ? 'selected' : '' }}>BELUM SERTIFIKASI</option>
+                                    <option value="Sertifikasi" {{ old('status_sertifikasi') == 'Sertifikasi' ? 'selected' : '' }}>SUDAH SERTIFIKASI</option>
+                                    <option value="Inpassing" {{ old('status_sertifikasi') == 'Inpassing' ? 'selected' : '' }}>SUDAH INPASING</option>
                                 </select>
                             </div>
 
@@ -292,10 +292,6 @@
                             </div>
 
                         </div>
-
-
-
-                        </div>
                     </div>
 
                     <div class="flex items-center justify-end gap-3 pt-6 border-t border-gray-600">
@@ -330,38 +326,32 @@
             checkInsentifEligibility();
         }
 
-        // --- 1. LOGIKA VALIDASI INSENTIF (PNS=TIDAK, NON-ASN=YA) ---
+        // --- 1. LOGIKA VALIDASI INSENTIF (PNS / PPPK / INPASSING DILARANG) ---
         function checkInsentifEligibility() {
             const pegawai = document.getElementById('status_kepegawaian').value.toUpperCase();
+            const sertifikasi = document.getElementById('status_sertifikasi').value.toUpperCase();
             const insentifSelect = document.getElementById('penerima_insentif');
             const insentifBox = document.getElementById('box_insentif');
             const msg = document.getElementById('msg_insentif');
 
-            // Jika PNS atau PPPK -> KUNCI "TIDAK" (0)
-            if (pegawai === 'PNS' || pegawai === 'PPPK') {
+            // 🛡️ Jika PNS, PPPK, atau SUDAH INPASSING -> MUTLAK KUNCI "TIDAK" (0)
+            if (pegawai === 'PNS' || pegawai === 'PPPK' || sertifikasi === 'INPASSING') {
                 insentifSelect.value = '0';
                 insentifSelect.style.pointerEvents = 'none'; 
                 insentifSelect.style.backgroundColor = '#f3f4f6'; 
                 insentifSelect.style.borderColor = '#d1d5db'; 
-                insentifBox.className = 'md:col-span-2 p-4 rounded-lg border transition-colors bg-red-50 border-red-200';
-                msg.innerHTML = '<span class="text-red-600 font-bold">🚫 Status PNS/PPPK TIDAK BERHAK menerima insentif.</span>';
+                insentifBox.className = 'md:col-span-2 px-1 py-1 rounded-md border transition-colors bg-red-50 border-red-200 flex flex-col justify-center';
+                
+                const labelAlasan = (sertifikasi === 'INPASSING') ? 'Status SUDAH INPASSING' : 'Status PNS/PPPK';
+                msg.innerHTML = `<span class="text-red-600 font-bold">🚫 ${labelAlasan} DILARANG menerima insentif daerah.</span>`;
             } 
-            // Jika NON-ASN (Swasta) -> KUNCI "YA" (1)
-            else if (pegawai === 'NON-ASN') {
-                insentifSelect.value = '1';
-                insentifSelect.style.pointerEvents = 'none'; 
-                insentifSelect.style.backgroundColor = '#f3f4f6'; 
-                insentifSelect.style.borderColor = '#d1d5db'; 
-                insentifBox.className = 'md:col-span-2 p-4 rounded-lg border transition-colors bg-emerald-50 border-emerald-200';
-                msg.innerHTML = '<span class="text-emerald-600 font-bold">✅ Guru Swasta / Non-ASN OTOMATIS BERHAK menerima insentif.</span>';
-            }
-            // Sisanya (Jaga-jaga)
+            // 🛡️ Jika NON-ASN & BUKAN INPASSING -> Berhak diajukan, tapi opsi tetap BISA DIPILIH (Penting jika kuota penuh)
             else {
-                insentifSelect.style.pointerEvents = 'auto';
-                insentifSelect.style.backgroundColor = 'white';
-                insentifSelect.style.borderColor = '#facc15';
-                insentifBox.className = 'md:col-span-2 p-4 rounded-lg border transition-colors bg-yellow-50 border-yellow-200';
-                msg.innerHTML = '*Pilih status penerimaan insentif.';
+                insentifSelect.style.pointerEvents = 'auto'; 
+                insentifSelect.style.backgroundColor = 'white'; 
+                insentifSelect.style.borderColor = '#facc15'; 
+                insentifBox.className = 'md:col-span-2 px-1 py-1 rounded-md border transition-colors bg-emerald-50 border-emerald-200 flex flex-col justify-center';
+                msg.innerHTML = '<span class="text-emerald-700 font-bold">✅ Guru Non-ASN berhak diajukan. (Pilih YA jika jatah kuota tersedia, atau TIDAK jika kuota penuh/standby).</span>';
             }
         }
 

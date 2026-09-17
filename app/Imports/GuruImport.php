@@ -98,14 +98,14 @@ class GuruImport implements ToCollection, WithHeadingRow
                 $kecamatanDb = Kecamatan::where('nama_kecamatan', 'LIKE', $cleanKec)->first();
 
                 if (!$kecamatanDb) {
-                    $this->errors[] = "Baris Ke-{$lineNumber}: Kecamatan Guru '{$rawKecGuru}' tidak ditemukan di database Kabupaten Kediri.";
+                    $this->errors[] = "{$tag}Kecamatan Guru '{$rawKecGuru}' tidak ditemukan di database Kabupaten Kediri.";
                 } else {
                     $desaValid = Desa::where('kecamatan_id', $kecamatanDb->id)
                                      ->where('nama_desa', 'LIKE', $cleanDesa)
                                      ->exists();
 
                     if (!$desaValid) {
-                        $this->errors[] = "Baris Ke-{$lineNumber}: Desa '{$rawDesaGuru}' BUKAN bagian dari Kecamatan {$kecamatanDb->nama_kecamatan}. Silakan periksa kembali.";
+                        $this->errors[] = "{$tag}Desa '{$rawDesaGuru}' BUKAN bagian dari Kecamatan {$kecamatanDb->nama_kecamatan}. Silakan periksa kembali.";
                     }
                 }
             }
@@ -115,7 +115,7 @@ class GuruImport implements ToCollection, WithHeadingRow
 
             // 1. Satpam Domisili KTP: Wajib Warga Kabupaten Kediri
             if (!empty($rawKabGuru) && !str_contains($rawKabGuru, 'KEDIRI') && $rawKabGuru !== '-') {
-                $this->errors[] = "Baris Ke-{$lineNumber}: Domisili KTP Guru '{$rawNamaGuru}' terdata di luar Kabupaten Kediri ({$rawKabGuru}). Guru wajib berdomisili di Kabupaten Kediri.";
+                $this->errors[] = "{$tag}Domisili KTP Guru terdata di luar Kabupaten Kediri ({$rawKabGuru}). Guru wajib berdomisili di Kabupaten Kediri.";
             }
 
             // 2. Validasi Format Tanggal Lahir (Cek Kevalidan Kalender Saja Tanpa Mengunci ke Digit NIK)
@@ -133,7 +133,7 @@ class GuruImport implements ToCollection, WithHeadingRow
                     try {
                         Carbon::parse($tglDeteksi);
                     } catch (\Exception $e) {
-                        $this->errors[] = "Baris Ke-{$lineNumber}: Format Tanggal Lahir pada '{$rawTtl}' tidak valid/tidak terbaca kalender.";
+                        $this->errors[] = "{$tag}Format Tanggal Lahir pada '{$rawTtl}' tidak valid/tidak terbaca kalender.";
                     }
                 }
             }
@@ -142,11 +142,11 @@ class GuruImport implements ToCollection, WithHeadingRow
             if (!empty($rawJenisLembaga)) {
                 $jenisUpper = strtoupper($rawJenisLembaga);
                 if ($jenisUpper !== $this->menuAktif) {
-                    $this->errors[] = "Baris Ke-{$lineNumber}: Salah Kamar! Lembaga di baris ini berjenis '{$jenisUpper}', TIDAK BOLEH di-import melalui Halaman Guru {$this->menuAktif}.";
+                    $this->errors[] = "{$tag}Salah Kamar! Lembaga di baris ini berjenis '{$jenisUpper}', TIDAK BOLEH di-import melalui Halaman Guru {$this->menuAktif}.";
                     continue;
                 }
             } else {
-                $this->errors[] = "Baris Ke-{$lineNumber}: Kolom 'JENIS LEMBAGA' di Excel wajib diisi.";
+                $this->errors[] = "{$tag}Kolom 'JENIS LEMBAGA' di Excel wajib diisi.";
                 continue;
             }
 
@@ -207,7 +207,7 @@ class GuruImport implements ToCollection, WithHeadingRow
                     $kecLembaga  = $guruDb->lembaga->kecamatan->nama_kecamatan ?? '';
                     $lokasi      = trim("{$namaLembaga}");
 
-                    $this->errors[] = "Baris Ke-{$lineNumber}: NIK {$rawNik} sudah terdaftar di database dan terdaftar di lembaga {$lokasi}.";
+                    $this->errors[] = "{$tag}NIK {$rawNik} sudah terdaftar di database dan terdaftar di lembaga {$lokasi}.";
                 }
             }
 
@@ -216,9 +216,9 @@ class GuruImport implements ToCollection, WithHeadingRow
                 $keyIdentitas = strtoupper($rawNamaGuru) . '|' . strtoupper($rawIbuKandung);
                 
                 if (isset($processedNamaIbu[$keyIdentitas])) {
-                    $this->errors[] = "Baris Ke-{$lineNumber}: INDIKASI DATA GANDA! Guru '{$rawNamaGuru}' dengan Ibu Kandung '{$rawIbuKandung}' kembar dengan data di Baris Ke-" . $processedNamaIbu[$keyIdentitas];
+                    $this->errors[] = "{$tag}INDIKASI DATA GANDA! Guru dengan Ibu Kandung '{$rawIbuKandung}' kembar dengan data di " . $processedNamaIbu[$keyIdentitas];
                 } else {
-                    $processedNamaIbu[$keyIdentitas] = $lineNumber;
+                    $processedNamaIbu[$keyIdentitas] = $infoBarisIni;
                 }
 
                 $duplikatDb = Guru::with(['lembaga.desa', 'lembaga.kecamatan'])
@@ -231,16 +231,16 @@ class GuruImport implements ToCollection, WithHeadingRow
                     $kecLembaga  = $duplikatDb->lembaga->kecamatan->nama_kecamatan ?? '';
                     $lokasi      = trim("{$namaLembaga}");
 
-                    $this->errors[] = "Baris Ke-{$lineNumber}: GAGAL! Guru '{$rawNamaGuru}' dengan Ibu Kandung '{$rawIbuKandung}' sudah terdaftar di database di lembaga {$lokasi} (NIK: {$duplikatDb->nik}).";
+                    $this->errors[] = "{$tag}GAGAL! Guru dengan Ibu Kandung '{$rawIbuKandung}' sudah terdaftar di database di lembaga {$lokasi} (NIK: {$duplikatDb->nik}).";
                 }
             }
 
             // G. DETEKSI DUPLIKASI NOMOR REKENING
             if (!empty($rawRekening)) {
                 if (isset($processedRekenings[$rawRekening])) {
-                    $this->errors[] = "Baris Ke-{$lineNumber}: REKENING GANDA DI EXCEL! Nomor Rekening '{$rawRekening}' sama dengan data di Baris Ke-" . $processedRekenings[$rawRekening];
+                    $this->errors[] = "{$tag}REKENING GANDA DI EXCEL! Nomor Rekening '{$rawRekening}' sama dengan data di " . $processedRekenings[$rawRekening];
                 } else {
-                    $processedRekenings[$rawRekening] = $lineNumber;
+                    $processedRekenings[$rawRekening] = $infoBarisIni;
                 }
                 
                 $rekDb = Guru::with(['lembaga.desa', 'lembaga.kecamatan'])->where('nomor_rekening', $rawRekening)->first();
@@ -250,16 +250,16 @@ class GuruImport implements ToCollection, WithHeadingRow
                     $kecLembaga  = $rekDb->lembaga->kecamatan->nama_kecamatan ?? '';
                     $lokasi      = trim("{$namaLembaga}");
 
-                    $this->errors[] = "Baris Ke-{$lineNumber}: GAGAL! Nomor Rekening '{$rawRekening}' sudah terdaftar atas nama guru {$rekDb->nama_lengkap} di lembaga {$lokasi}.";
+                    $this->errors[] = "{$tag}GAGAL! Nomor Rekening '{$rawRekening}' sudah terdaftar atas nama guru {$rekDb->nama_lengkap} di lembaga {$lokasi}.";
                 }
             }
 
             // H. [BARU] DETEKSI DUPLIKASI NO HP
             if (!empty($rawHp)) {
                 if (isset($processedHp[$rawHp])) {
-                    $this->errors[] = "Baris Ke-{$lineNumber}: NO HP GANDA DI EXCEL! Nomor '{$rawHp}' sama dengan data di Baris Ke-" . $processedHp[$rawHp];
+                    $this->errors[] = "{$tag}NO HP GANDA DI EXCEL! Nomor '{$rawHp}' sama dengan data di " . $processedHp[$rawHp];
                 } else {
-                    $processedHp[$rawHp] = $lineNumber;
+                    $processedHp[$rawHp] = $infoBarisIni;
                 }
 
                 $hpDb = Guru::with(['lembaga.desa', 'lembaga.kecamatan'])->where('no_hp', $rawHp)->first();
@@ -269,7 +269,7 @@ class GuruImport implements ToCollection, WithHeadingRow
                     $kecLembaga  = $hpDb->lembaga->kecamatan->nama_kecamatan ?? '';
                     $lokasi      = trim("{$namaLembaga}");
 
-                    $this->errors[] = "Baris Ke-{$lineNumber}: GAGAL! Nomor HP '{$rawHp}' sudah digunakan atas nama guru {$hpDb->nama_lengkap} di lembaga {$lokasi}.";
+                    $this->errors[] = "{$tag}GAGAL! Nomor HP '{$rawHp}' sudah digunakan atas nama guru {$hpDb->nama_lengkap} di lembaga {$lokasi}.";
                 }
             }
         }

@@ -60,14 +60,48 @@ class GuruExport implements FromQuery, WithHeadings, WithMapping, ShouldAutoSize
         if ($this->request->filled('filter_insentif')) {
             $query->where('penerima_insentif', $this->request->filter_insentif);
         }
+
+        // 🔍 SINKRONISASI FILTER BERKAS DENGAN WEB
+        if ($this->request->filled('filter_berkas')) {
+            $filterBerkas = $this->request->filter_berkas;
+            if ($filterBerkas == 'kosong') {
+                $query->where(function($q) {
+                    $q->whereNull('file_ktp')->orWhereNull('file_kk')->orWhereNull('file_bukurekening');
+                });
+            } elseif ($filterBerkas == 'pending') {
+                $query->where(function($q) {
+                    $q->where('status_ktp', 'Pending')->orWhere('status_kk', 'Pending')->orWhere('status_bukurekening', 'Pending');
+                });
+            } elseif ($filterBerkas == 'ditolak') {
+                $query->where(function($q) {
+                    $q->where('status_ktp', 'Ditolak')->orWhere('status_kk', 'Ditolak')->orWhere('status_bukurekening', 'Ditolak');
+                });
+            } elseif ($filterBerkas == 'disetujui') {
+                $query->whereNotNull('file_ktp')->whereNotNull('file_kk')->whereNotNull('file_bukurekening')
+                      ->where('status_ktp', 'Disetujui')->where('status_kk', 'Disetujui')->where('status_bukurekening', 'Disetujui');
+            }
+        }
+
+        // 🔍 SINKRONISASI PENCARIAN SPESIFIK PER KOLOM
+        if ($this->request->filled('col_nama')) $query->where('nama_lengkap', 'like', '%' . $this->request->col_nama . '%');
+        if ($this->request->filled('col_nik')) $query->where('nik', 'like', '%' . $this->request->col_nik . '%');
+        if ($this->request->filled('col_status_pegawai')) $query->where('status_kepegawaian', 'like', '%' . $this->request->col_status_pegawai . '%');
+        if ($this->request->filled('col_alamat')) $query->where('alamat_ktp', 'like', '%' . $this->request->col_alamat . '%');
+
         if ($this->request->filled('search')) {
-
-
             $search = $this->request->search;
             $query->where(function($q) use ($search) {
                 $q->where('nama_lengkap', 'like', "%{$search}%")
                   ->orWhere('nik', 'like', "%{$search}%");
             });
+        }
+
+        // 🔍 SINKRONISASI URUTAN (A-Z / Z-A)
+        if ($this->request->filled('sort_col') && $this->request->filled('sort_dir')) {
+            $allowedSorts = ['nama_lengkap', 'nik', 'status_kepegawaian', 'jenis_guru'];
+            if (in_array($this->request->sort_col, $allowedSorts)) {
+                return $query->orderBy($this->request->sort_col, $this->request->sort_dir);
+            }
         }
 
         return $query->latest();

@@ -39,8 +39,10 @@ class LembagaExport implements FromQuery, WithHeadings, WithMapping, ShouldAutoS
         if ($this->request->filled('filter_desa')) {
             $query->where('desa_id', $this->request->filter_desa);
         }
-        if ($this->request->filled('filter_jenis')) {
-            $query->where('jenis_lembaga', $this->request->filter_jenis);
+        // Fleksibel menangkap parameter 'filter_jenis' atau 'filter_jenis_lembaga' dari web
+        $jenisTarget = $this->request->filter_jenis ?? $this->request->filter_jenis_lembaga ?? null;
+        if (!empty($jenisTarget)) {
+            $query->where('jenis_lembaga', $jenisTarget);
         }
         // [SYNC] Filter Ormas (Termasuk penanganan kategori LAINNYA)
         if ($this->request->filled('filter_ormas')) {
@@ -110,22 +112,22 @@ class LembagaExport implements FromQuery, WithHeadings, WithMapping, ShouldAutoS
         }
         $formattedHp = !empty($cleanHp) ? "'" . $cleanHp : '-';
 
-        // 2. Perhitungan Real-Time Data Guru dari Relasi Database
+        // 2. Perhitungan Real-Time Data Guru dari Relasi Database (Aman dari null PHP 8.1+)
         $gurus = $lembaga->gurus ?? collect();
         $totalGuru = $gurus->count();
         $pns = $gurus->where('status_kepegawaian', 'PNS')->count();
         $pppk = $gurus->filter(function($g) {
-            $status = strtoupper($g->status_kepegawaian);
+            $status = strtoupper((string)($g->status_kepegawaian ?? ''));
             return $status === 'PPPK' || $status === 'PPPK PARUH WAKTU';
         })->count();
         $sertifikasi = $gurus->filter(function($g) {
-            $sertif = strtoupper($g->status_sertifikasi);
+            $sertif = strtoupper((string)($g->status_sertifikasi ?? ''));
             return $sertif === 'SERTIFIKASI' || $sertif === 'INPASSING';
         })->count();
 
         $sesuaiKriteria = $gurus->filter(function($g) {
-            $statusPegawai = strtoupper($g->status_kepegawaian);
-            $statusSertifikasi = strtoupper($g->status_sertifikasi);
+            $statusPegawai = strtoupper((string)($g->status_kepegawaian ?? ''));
+            $statusSertifikasi = strtoupper((string)($g->status_sertifikasi ?? ''));
             return !in_array($statusPegawai, ['PNS', 'PPPK', 'PPPK PARUH WAKTU']) && $statusSertifikasi !== 'INPASSING';
         });
 
@@ -140,6 +142,17 @@ class LembagaExport implements FromQuery, WithHeadings, WithMapping, ShouldAutoS
         if (($santriL + $santriP) === 0 && $totalSantri > 0) {
             $santriL = (int) ceil($totalSantri / 2);
             $santriP = (int) floor($totalSantri / 2);
+        }
+
+        // 🛡️ ANTI-CRASH: Tanggal Masa Berlaku IJOP (Aman dari karakter '-' atau format aneh)
+        $tglIjopFormatted = '-';
+        $rawTglIjop = trim((string)($lembaga->masa_berlaku_ijop ?? ''));
+        if (!empty($rawTglIjop) && $rawTglIjop !== '-') {
+            try {
+                $tglIjopFormatted = \Carbon\Carbon::parse($rawTglIjop)->format('d-m-Y');
+            } catch (\Exception $e) {
+                $tglIjopFormatted = $rawTglIjop;
+            }
         }
 
         return [
@@ -157,7 +170,7 @@ class LembagaExport implements FromQuery, WithHeadings, WithMapping, ShouldAutoS
             $diajukan,
             $tidakDiajukan,
             $lembaga->ijop ?? 'ADA',
-            $lembaga->masa_berlaku_ijop ? \Carbon\Carbon::parse($lembaga->masa_berlaku_ijop)->format('d-m-Y') : '-',
+            $tglIjopFormatted,
             $lembaga->status ?? 'AKTIF',
             $lembaga->kepala_lembaga ?? '-',
             $formattedHp,
