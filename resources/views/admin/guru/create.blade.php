@@ -273,7 +273,7 @@
 
                             {{-- Kotak KK --}}
                             <div class="bg-gray-50 p-3 rounded-lg border border-gray-600 shadow-sm flex flex-col items-start">
-                                <label class="block text-xs font-bold text-black-800 mb-2">2. Scan Kartu Keluarga *</label>
+                                <label class="block text-xs font-bold text-black-800 mb-2">2. Scan Kartu Keluarga{{ in_array(strtoupper($type ?? ''), ['MADIN', 'TPQ']) ? ' (Opsional)' : ' *' }}</label>
                                 <div class="w-full text-left">
                                     <input type="file" name="file_kk" id="file_kk" accept="application/pdf" class="block w-full text-[10px] text-black-500 file:mr-2 file:py-1 file:px-3 file:rounded file:border-0 file:text-[10px] file:font-bold file:bg-green-600 file:text-white hover:file:bg-green-700 transition cursor-pointer" onchange="handleFileSelect(this, 'preview_kk', 'btn_reset_kk')">
                                     <button type="button" id="btn_reset_kk" onclick="resetFile('file_kk', 'preview_kk', 'btn_reset_kk')" class="hidden mt-1 text-[10px] text-red-600 font-bold underline">&times; Batal Upload</button>

@@ -282,7 +282,7 @@
 
                             {{-- Kotak KK --}}
                             <div class="bg-gray-50 p-3 rounded-lg border border-gray-600 shadow-sm flex flex-col items-start">
-                                <label class="block text-xs font-bold text-black-800 mb-2">2. Scan Kartu Keluarga *</label>
+                                <label class="block text-xs font-bold text-black-800 mb-2">2. Scan Kartu Keluarga{{ in_array(strtoupper($guru->jenis_guru ?? ''), ['MADIN', 'TPQ']) ? ' (Opsional)' : ' *' }}</label>
                                 @if($guru->file_kk)
                                     <div class="flex items-center justify-between w-full mb-1.5">
                                         <span class="text-[10px] text-green-600 font-bold">✓ File Tersimpan</span>
